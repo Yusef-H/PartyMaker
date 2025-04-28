@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
             //set actionbar background
             Drawable d = getResources().getDrawable(R.drawable.fade);
             actionBar.setBackgroundDrawable(d);
+            //Set bar above all
+            actionBar.setElevation(8f);
         }
 
         lv1 = (ListView) findViewById(R.id.lv1);
