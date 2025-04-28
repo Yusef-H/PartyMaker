@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    tools:context="com.example.partymaker.Login">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="280dp">
+        <ImageButton
+            android:id="@+id/btnAbout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bubble"
+            android:background="#00000000"
+            android:layout_marginLeft="200dp" />
+    <ImageView
+        android:id="@+id/imgLogin"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        app:srcCompat="@drawable/cake"
+        android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+
+
+    <EditText
+        android:id="@+id/etEmailL"
+        android:layout_width="262dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50px"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/etPasswordL"
+        android:layout_width="264dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30px"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="188dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50px"
+        android:text="Login" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="81dp"
+            android:text="dont have an account?" />
+
+        <Button
+            android:id="@+id/btnPressL"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="71dp"
+            android:background="#00ffffff"
+            android:text="Press Here"
+            android:textAllCaps="false"
+            android:textColor="#ff00ae" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+
+        <CheckBox
+            android:id="@+id/cbRememberMe"
+            android:layout_width="188dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="130dp"
+            android:buttonTint="#696969"
+            android:text="Stay connected"
+            android:textColor="#696969" />
+
+        <Button
+            android:id="@+id/btnResetPass"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="110dp"
+            android:background="#00ffffff"
+            android:text="Reset"
+            android:textColor="#595959"
+            android:textAllCaps="false"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:id="@+id/tvReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="185dp"
+            android:layout_marginTop="10dp"
+            android:text="your password"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+</LinearLayout>

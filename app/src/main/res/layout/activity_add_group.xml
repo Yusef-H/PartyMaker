@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background3"
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context="com.example.partymaker.AddGroup">
+
+    <ImageView
+        android:id="@+id/imgLogin"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        app:srcCompat="@drawable/cake3" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgGroupPicture"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="115dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/addpicture"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:civ_border_width="3dp"
+        tools:ignore="MissingClass" />
+
+    <TextView
+        android:id="@+id/tvGroupPicture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:text="Group's Picture"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tvPartyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imgLogin"
+        android:gravity="center"
+        android:text="Your Party's Name"
+        android:textColor="#000000"
+        android:textSize="25dp" />
+
+    <CheckBox
+        android:id="@+id/cbGroupType"
+        android:layout_width="188dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etPartyName"
+        android:buttonTint="#696969"
+        android:text="Private Party"
+        android:textColor="#696969" />
+
+    <TextView
+        android:id="@+id/tvPartyLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imgLogin"
+        android:gravity="center"
+        android:text="Your Party's Location"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tvPartyDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imgLogin"
+        android:gravity="center"
+        android:text="Your Party's Date"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:visibility="invisible" />
+
+    <EditText
+        android:id="@+id/etPartyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvPartyName"
+        android:backgroundTint="#000000"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/etPartyLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvPartyName"
+        android:backgroundTint="#000000"
+        android:ems="10"
+        android:hint="Adress"
+        android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:visibility="invisible" />
+
+    <Spinner
+        android:id="@+id/spnDateDay"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvPartyName"
+        android:layout_marginLeft="75dp"
+        android:hint="Day"
+        android:textAlignment="center"
+        android:visibility="invisible" />
+
+    <Spinner
+        android:id="@+id/spnDateMonth"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvPartyName"
+        android:layout_marginLeft="175dp"
+        android:hint="Month"
+        android:textAlignment="center"
+        android:visibility="invisible" />
+
+    <Spinner
+        android:id="@+id/spnDateYear"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvPartyName"
+        android:layout_marginLeft="275dp"
+        android:hint="Year"
+        android:textAlignment="center"
+        android:visibility="invisible" />
+
+
+    <Button
+        android:id="@+id/btnAddGroup"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_weight="0.07"
+        android:background="#00000000"
+        android:text="Create Party"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnNext1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="320dp"
+        android:layout_weight="0.07"
+        android:background="#00000000"
+        android:text="Next"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btnNext2"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="320dp"
+        android:layout_weight="0.07"
+        android:background="#00000000"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnBack1"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.07"
+        android:background="#00000000"
+        android:text="Back"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnBack2"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.07"
+        android:background="#00000000"
+        android:text="Back"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tvHours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/cbGroupType"
+        android:layout_alignStart="@+id/spnDateDay"
+        android:layout_marginLeft="30dp"
+        android:text="Pick an hour:"
+        android:textColor="#000000"
+        android:visibility="invisible" />
+
+    <Spinner
+        android:id="@+id/spnHours"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvHours"
+        android:layout_marginLeft="30dp"
+        android:layout_toEndOf="@+id/cbGroupType"
+        android:hint="Hours"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnAddGroup"
+        android:layout_below="@+id/spnHours"
+        android:layout_marginTop="175dp"
+        android:background="#1000e9ba"
+        android:text="Done"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+</RelativeLayout>

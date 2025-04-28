@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgMLprofile"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/profileicon" />
+    -->
+
+    <TextView
+        android:id="@+id/tvMsgText"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Message Text"
+        android:textColor="#039694"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/tvMsgUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="UserName"
+        android:textColor="#004f56" />
+
+    <TextView
+        android:id="@+id/tvMsgDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Date"
+        android:textColor="#000000" />
+</RelativeLayout>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147371928837",
+    "project_id": "partymaker-9c966",
+    "storage_bucket": "partymaker-9c966.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147371928837:android:3751e436a08f876e315b6c",
+        "android_client_info": {
+          "package_name": "com.example.partymaker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9JBO7Xg31PqC99CuxI-rIusPZIlqX1t8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

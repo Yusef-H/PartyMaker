@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
+    tools:context="com.example.partymaker.DeletePeople">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <ImageButton
+            android:id="@+id/btnBack4"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="#00000000"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/back"/>
+
+        <ImageView
+            android:id="@+id/imgDeletePeople"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/cake00" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/etDeleteEmail"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#0081d1"
+        android:hint="Input your friend's email"
+        android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:textColor="#0081d1"
+        android:textColorHint="#0081d1" />
+
+    <TextView
+        android:id="@+id/tvInstructions3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type in your friend's email above and press delete Friend to delete him from current group"
+        android:textAlignment="center"
+        android:textColor="#0081d1"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnDeleteFriend"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="280dp"
+        android:background="#106e6e6e"
+        android:shadowColor="#e4e9ef"
+        android:shadowDx="-0"
+        android:shadowDy="-0"
+        android:shadowRadius="25"
+        android:text="Delete Friend"
+        android:textAllCaps="false"
+        android:textColor="#0081d1"
+        android:textSize="15dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <Button
+            android:id="@+id/btnHelp3"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="210dp"
+            android:background="#0000ffff"
+            android:text="Press Here"
+            android:textAllCaps="false"
+            android:textColor="#0081d1" />
+
+        <TextView
+            android:id="@+id/tvHelp3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="130dp"
+            android:layout_marginTop="5dp"
+            android:text="Need Help?"
+            android:textColor="#0081d1" />
+
+        <Button
+            android:id="@+id/btnHide3"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="200dp"
+            android:background="#0000ffff"
+            android:text="Hide it"
+            android:textAllCaps="false"
+            android:textColor="#0081d1"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tvHide3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="150dp"
+            android:layout_marginTop="5dp"
+            android:text="Got Help?"
+            android:textColor="#0081d1"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+</LinearLayout>
