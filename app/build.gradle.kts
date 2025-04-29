@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.cardview)
+    implementation("com.google.android.material:material:1.5.0")
+    implementation("androidx.cardview:cardview:1.0.0")
 
     // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
@@ -62,6 +64,8 @@ dependencies {
 
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

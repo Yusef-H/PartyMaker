@@ -1,5 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App Info -->
     <string name="app_name">PartyMaker</string>
+
+    <!-- Content Descriptions -->
+    <string name="desc_app_logo">Party Maker app logo</string>
+    <string name="desc_about_button">About information</string>
+
+    <!-- Login Screen -->
+    <string name="email">E-Mail</string>
+    <string name="password">Password</string>
+    <string name="stay_connected">Stay connected!</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot you password?</string>
+    <string name="dont_have_account">Dont have an account?</string>
+    <string name="register_now">Register now!</string>
+    <string name="app_logo">Logo</string>
+    <string name="about_info">About Us</string>
+
+    <!-- These can be safely kept empty since they're defined above with different names -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="label_stay_connected">Stay connected</string>
+    <string name="action_login">Login</string>
+    <string name="label_forgot_password">Forgot Password?</string>
+    <string name="label_no_account">No account?</string>
+    <string name="action_register" translatable="false">Register!</string>
+
+    <!-- Registration Screen -->
+    <string name="title_register">Create Account</string>
+    <string name="hint_name">Full Name</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+    <string name="action_register_submit">REGISTER</string>
+    <string name="label_have_account">Already have an account?</string>
+    <string name="action_login_now">Login now!</string>
+
+    <!-- Password Reset -->
+    <string name="title_password_reset">Reset Password</string>
+    <string name="message_password_reset">Enter your email address and we\'ll send you a link to reset your password</string>
+    <string name="action_send_reset_link">SEND RESET LINK</string>
+
+    <!-- Validation Messages -->
+    <string name="error_required_field">This field is required</string>
+    <string name="error_invalid_email">Please enter a valid email address</string>
+    <string name="error_password_length">Password must be at least 8 characters</string>
+    <string name="error_passwords_dont_match">Passwords don\'t match</string>
+
+    <!-- Success Messages -->
+    <string name="success_registration">Account created successfully!</string>
+    <string name="success_password_reset">Password reset link sent to your email</string>
+
+    <!-- Error Messages -->
+    <string name="error_authentication">Invalid email or password</string>
+    <string name="error_network">Network error. Please check your connection and try again</string>
+    <string name="error_general">Something went wrong. Please try again later</string>
+
+    <!-- Welcome Slider -->
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="start">Login</string>
+    <string name="title_slide1">About the programmer</string>
+    <string name="desc_slide1">Natanel Fishman, Student, born in Israel made This application as a final project</string>
+    <string name="title_slide2">The applications purpose</string>
+    <string name="desc_slide2">The app was created to make order because when it comes to parties there are no apps that helps with this subject.</string>
+    <string name="title_slide3">About the app</string>
+    <string name="desc_slide3">The app was made by Nati Fishman as a final project</string>
+    <string name="group_s_picture">Group\'s Picture</string>
+    <string name="your_party_s_name">Your Party\'s Name</string>
+    <string name="private_party">Private Party</string>
+    <string name="your_party_s_location">Your Party\'s Location</string>
+    <string name="your_party_s_date">Your Party\'s Date</string>
+    <string name="name">Name</string>
+    <string name="adress">Adress</string>
+    <string name="day">Day</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="create_party">Create Party</string>
+    <string name="back">Back</string>
+    <string name="pick_an_hour">Pick an hour:</string>
+    <string name="hours">Hours</string>
+    <string name="done">Done</string>
+    <string name="todo">TODO</string>
+
+    <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
         <item>01</item>
         <item>02</item>
@@ -104,13 +187,4 @@
         <item>00:00</item>
         <item>00:30</item>
     </string-array>
-    <string name="next">Next</string>
-    <string name="skip">Skip</string>
-    <string name="start">Login</string>
-    <string name="title_slide1">About the programmer</string>
-    <string name="desc_slide1">Nati Fishman, 17 years old Student that born in Israel made This application as a final project</string>
-    <string name="title_slide2">The applications purpose</string>
-    <string name="desc_slide2">The app was created to make order because when it comes to parties there are no apps that helps with this subject.</string>
-    <string name="title_slide3">About the app</string>
-    <string name="desc_slide3">The app was made by Nati Fishman as a final project</string>
 </resources>

@@ -1,21 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="colorPrimary">#000000</color>
-<color name="colorPrimaryDark">#000000</color>
-<color name="colorAccent">#FF4081</color>
-<color name="colorWhite">#ffffff</color>
-<color name="colorBlack">#000000</color>
-<color name="colorGray">#848484</color>
+    <!-- Primary Colors -->
+    <color name="pink_50">#FFF8F9FB</color>
+    <color name="pink_100">#FFFFEEF4</color>
+    <color name="pink_200">#FFFFD6E4</color>
+    <color name="pink_300">#FFFCB6D0</color>
+    <color name="pink_400">#FFF993B8</color>
+    <color name="pink_500">#FFFF6CA0</color>
+    <color name="pink_600">#FFE8518C</color>
+    <color name="pink_700">#FFC73972</color>
+    <color name="pink_800">#FF9E2754</color>
+    <color name="pink_900">#FF7A1E40</color>
 
-<!-- Screens background -->
-<color name="bg_screen1">#4f8500fa</color>
-<color name="bg_screen2">#4fed00fa</color>
-<color name="bg_screen3">#4ffa009a</color>
+    <!-- Neutral Colors -->
+    <color name="gray_50">#FFF9FAFB</color>
+    <color name="gray_100">#FFF3F4F6</color>
+    <color name="gray_200">#FFE5E7EB</color>
+    <color name="gray_300">#FFD1D5DB</color>
+    <color name="gray_400">#FF9CA3AF</color>
+    <color name="gray_500">#FF6B7280</color>
+    <color name="gray_600">#FF4B5563</color>
+    <color name="gray_700">#FF374151</color>
+    <color name="gray_800">#FF1F2937</color>
+    <color name="gray_900">#FF111827</color>
 
-<!-- dots active colors -->
-<color name="dot_active">#000000</color>
+    <!-- Semantic Colors -->
+    <color name="success">#FF22C55E</color>
+    <color name="warning">#FFEAB308</color>
+    <color name="error">#FFEF4444</color>
+    <color name="info">#FF3B82F6</color>
 
+    <!-- Standard Colors -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="teal">#039694</color>
 
-<!-- dots inactive colors -->
-<color name="dot_inactive">#cccccc</color>
+    <!-- Original color definitions -->
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#848484</color>
+
+    <!-- Screens background -->
+    <color name="bg_screen1">#4f8500fa</color>
+    <color name="bg_screen2">#4fed00fa</color>
+    <color name="bg_screen3">#4ffa009a</color>
+
+    <!-- dots active colors -->
+    <color name="dot_active">#000000</color>
+
+    <!-- dots inactive colors -->
+    <color name="dot_inactive">#cccccc</color>
+
+    <!-- App-specific semantic colors -->
+    <color name="colorBackground">@color/pink_100</color>
+    <color name="colorSurface">@color/white</color>
+    <color name="colorText">@color/gray_800</color>
+    <color name="colorTextSecondary">@color/gray_600</color>
+    <color name="colorDisabled">@color/gray_400</color>
 </resources>

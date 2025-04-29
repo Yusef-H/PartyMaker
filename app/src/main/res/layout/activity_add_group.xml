@@ -7,6 +7,7 @@
     android:background="@drawable/background3"
     android:orientation="vertical"
     android:weightSum="1"
+    android:fitsSystemWindows="true"
     tools:context="com.example.partymaker.AddGroup">
 
     <ImageView
@@ -16,13 +17,15 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="21dp"
-        app:srcCompat="@drawable/cake3" />
+        android:contentDescription="@string/todo"
+        app:srcCompat="@drawable/cake3"
+         />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgGroupPicture"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginLeft="115dp"
+        android:layout_marginStart="115dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/addpicture"
         android:clickable="true"
@@ -35,10 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
-        android:text="Group's Picture"
+        android:text="@string/group_s_picture"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:visibility="invisible" />
 
     <TextView
@@ -48,18 +51,18 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/imgLogin"
         android:gravity="center"
-        android:text="Your Party's Name"
+        android:text="@string/your_party_s_name"
         android:textColor="#000000"
-        android:textSize="25dp" />
+        android:textSize="25sp" />
 
     <CheckBox
         android:id="@+id/cbGroupType"
         android:layout_width="188dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/etPartyName"
         android:buttonTint="#696969"
-        android:text="Private Party"
+        android:text="@string/private_party"
         android:textColor="#696969" />
 
     <TextView
@@ -69,9 +72,9 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/imgLogin"
         android:gravity="center"
-        android:text="Your Party's Location"
+        android:text="@string/your_party_s_location"
         android:textColor="#000000"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:visibility="invisible" />
 
     <TextView
@@ -81,20 +84,22 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/imgLogin"
         android:gravity="center"
-        android:text="Your Party's Date"
+        android:text="@string/your_party_s_date"
         android:textColor="#000000"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:visibility="invisible" />
 
     <EditText
         android:id="@+id/etPartyName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvPartyName"
+        android:autofillHints=""
         android:backgroundTint="#000000"
         android:ems="10"
-        android:hint="Name"
+        android:padding="12dp"
+        android:hint="@string/name"
         android:inputType="textPersonName"
         android:textAlignment="center" />
 
@@ -104,9 +109,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvPartyName"
+        android:autofillHints=""
         android:backgroundTint="#000000"
         android:ems="10"
-        android:hint="Adress"
+        android:hint="@string/adress"
         android:inputType="textPersonName"
         android:textAlignment="center"
         android:visibility="invisible" />
@@ -117,8 +123,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvPartyName"
-        android:layout_marginLeft="75dp"
-        android:hint="Day"
+        android:layout_marginStart="75dp"
+        android:hint="@string/day"
         android:textAlignment="center"
         android:visibility="invisible" />
 
@@ -128,8 +134,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvPartyName"
-        android:layout_marginLeft="175dp"
-        android:hint="Month"
+        android:layout_marginStart="175dp"
+        android:hint="@string/month"
         android:textAlignment="center"
         android:visibility="invisible" />
 
@@ -139,8 +145,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvPartyName"
-        android:layout_marginLeft="275dp"
-        android:hint="Year"
+        android:layout_marginStart="275dp"
+        android:hint="@string/year"
         android:textAlignment="center"
         android:visibility="invisible" />
 
@@ -152,9 +158,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_weight="0.07"
         android:background="#00000000"
-        android:text="Create Party"
+        android:text="@string/create_party"
         android:textAllCaps="false"
         android:visibility="invisible" />
 
@@ -164,10 +169,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="320dp"
-        android:layout_weight="0.07"
+        android:layout_marginStart="320dp"
         android:background="#00000000"
-        android:text="Next"
+        android:text="@string/next"
         android:textAllCaps="false" />
 
     <Button
@@ -176,10 +180,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="320dp"
-        android:layout_weight="0.07"
+        android:layout_marginStart="320dp"
         android:background="#00000000"
-        android:text="Next"
+        android:text="@string/next"
         android:textAllCaps="false"
         android:visibility="invisible" />
 
@@ -188,9 +191,8 @@
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_weight="0.07"
         android:background="#00000000"
-        android:text="Back"
+        android:text="@string/back"
         android:textAllCaps="false"
         android:visibility="invisible" />
 
@@ -199,9 +201,8 @@
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_weight="0.07"
         android:background="#00000000"
-        android:text="Back"
+        android:text="@string/back"
         android:textAllCaps="false"
         android:visibility="invisible" />
 
@@ -211,8 +212,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/cbGroupType"
         android:layout_alignStart="@+id/spnDateDay"
-        android:layout_marginLeft="30dp"
-        android:text="Pick an hour:"
+        android:layout_marginStart="30dp"
+        android:text="@string/pick_an_hour"
         android:textColor="#000000"
         android:visibility="invisible" />
 
@@ -221,9 +222,9 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tvHours"
-        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_toEndOf="@+id/cbGroupType"
-        android:hint="Hours"
+        android:hint="@string/hours"
         android:visibility="invisible" />
 
     <Button
@@ -234,7 +235,7 @@
         android:layout_below="@+id/spnHours"
         android:layout_marginTop="175dp"
         android:background="#1000e9ba"
-        android:text="Done"
+        android:text="@string/done"
         android:textAllCaps="false"
         android:visibility="invisible" />
 </RelativeLayout>
