@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -51,7 +50,7 @@ public class Intro extends Activity {
         addBottomDots(0);
 
         viewPagerAdapter = new ViewPagerAdapter();
-        viewPager.setAdapter(viewPager.getAdapter());
+        viewPager.setAdapter(viewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
     }
 
