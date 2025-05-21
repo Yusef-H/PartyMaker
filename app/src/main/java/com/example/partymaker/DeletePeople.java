@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -154,21 +156,11 @@ public class DeletePeople extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), AdminOptions.class);
-                intent.putExtra("GroupName", GroupName);
-                intent.putExtra("groupKey", GroupKey);
-                intent.putExtra("groupDays", GroupDay);
-                intent.putExtra("groupMonths", GroupMonth);
-                intent.putExtra("groupYears", GroupYear);
-                intent.putExtra("groupHours", GroupHour);
-                intent.putExtra("groupLocation", GroupLocation);
-                intent.putExtra("adminKey", AdminKey);
-                intent.putExtra("createdAt", CreatedAt);
-                intent.putExtra("GroupType", GroupType);
-                intent.putExtra("GroupPrice", GroupPrice);
-                intent.putExtra("CanAdd", CanAdd);
-                intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                        GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                        AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                        FriendKeys, ComingKeys, MessageKeys);
+                Common.addExtrasToIntent(intent, extras);
                 startActivity(intent);
             }
         });

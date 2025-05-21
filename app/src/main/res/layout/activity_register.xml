@@ -16,6 +16,17 @@
         app:srcCompat="@drawable/cake2"
         android:layout_marginTop="80dp"/>
 
+    <TextView
+        android:id="@+id/loginTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50px"
+        android:text="Register Page"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColorLink="#A93838"
+        android:textStyle="bold" />
+
     <EditText
         android:id="@+id/etEmailR"
         android:layout_width="262dp"

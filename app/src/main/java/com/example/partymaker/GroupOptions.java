@@ -1,5 +1,22 @@
 package com.example.partymaker;
 
+import static com.example.partymaker.utilities.Constants.ADMIN_KEY;
+import static com.example.partymaker.utilities.Constants.CAN_ADD;
+import static com.example.partymaker.utilities.Constants.COMING_KEYS;
+import static com.example.partymaker.utilities.Constants.CREATED_AT;
+import static com.example.partymaker.utilities.Constants.DEFAULT_KEY;
+import static com.example.partymaker.utilities.Constants.FRIEND_KEYS;
+import static com.example.partymaker.utilities.Constants.GROUP_DAYS;
+import static com.example.partymaker.utilities.Constants.GROUP_HOURS;
+import static com.example.partymaker.utilities.Constants.GROUP_KEY;
+import static com.example.partymaker.utilities.Constants.GROUP_LOCATION;
+import static com.example.partymaker.utilities.Constants.GROUP_MONTHS;
+import static com.example.partymaker.utilities.Constants.GROUP_NAME;
+import static com.example.partymaker.utilities.Constants.GROUP_PRICE;
+import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
+import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
+import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +36,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -52,21 +71,21 @@ public class GroupOptions extends AppCompatActivity {
         actionBar.hide();
 
         //Get Values from GroupScreen By intent + connection between intent and current activity objects
-        GroupName = getIntent().getExtras().getString("GroupName", "defaultKey");
-        GroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
-        GroupDay = getIntent().getExtras().getString("groupDays", "defaultKey");
-        GroupMonth = getIntent().getExtras().getString("groupMonths", "defaultKey");
-        GroupYear = getIntent().getExtras().getString("groupYears", "defaultKey");
-        GroupHour = getIntent().getExtras().getString("groupHours", "defaultKey");
-        GroupLocation = getIntent().getExtras().getString("groupLocation", "defaultKey");
-        AdminKey = getIntent().getExtras().getString("adminKey", "defaultKey");
-        CreatedAt = getIntent().getExtras().getString("createdAt", "defaultKey");
-        GroupType = getIntent().getExtras().getInt("GroupType"); //if 0 so Public group if 1 so Private group
-        GroupPrice = getIntent().getExtras().getString("GroupPrice");
-        CanAdd = getIntent().getExtras().getBoolean("CanAdd");
-        FriendKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("FriendKeys");
-        ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
-        MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
+        GroupName = getIntent().getExtras().getString(GROUP_NAME, DEFAULT_KEY);
+        GroupKey = getIntent().getExtras().getString(GROUP_KEY, DEFAULT_KEY);
+        GroupDay = getIntent().getExtras().getString(GROUP_DAYS, DEFAULT_KEY);
+        GroupMonth = getIntent().getExtras().getString(GROUP_MONTHS, DEFAULT_KEY);
+        GroupYear = getIntent().getExtras().getString(GROUP_YEARS, DEFAULT_KEY);
+        GroupHour = getIntent().getExtras().getString(GROUP_HOURS, DEFAULT_KEY);
+        GroupLocation = getIntent().getExtras().getString(GROUP_LOCATION, DEFAULT_KEY);
+        AdminKey = getIntent().getExtras().getString(ADMIN_KEY, DEFAULT_KEY);
+        CreatedAt = getIntent().getExtras().getString(CREATED_AT, DEFAULT_KEY);
+        GroupType = getIntent().getExtras().getInt(GROUP_TYPE); //if 0 so Public group if 1 so Private group
+        GroupPrice = getIntent().getExtras().getString(GROUP_PRICE);
+        CanAdd = getIntent().getExtras().getBoolean(CAN_ADD);
+        FriendKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(FRIEND_KEYS);
+        ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(COMING_KEYS);
+        MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
 
         //connection
         GroupGrid = (GridLayout) findViewById(R.id.GroupGrid);
@@ -143,7 +162,7 @@ public class GroupOptions extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         //if pressed changed name
                         GroupName = edittext.getText().toString();
-                        DBref.refGroups.child(GroupKey).child("groupName").setValue(GroupName);
+                        DBref.refGroups.child(GroupKey).child(GROUP_NAME).setValue(GroupName);
                         tvNameGroup.setText(GroupName);
                         Toast.makeText(GroupOptions.this, "Name Changed", Toast.LENGTH_SHORT).show();
                     }
@@ -242,21 +261,11 @@ public class GroupOptions extends AppCompatActivity {
                     {
                         //intent to AdminOptions Activity with Values
                         Intent intent = new Intent(getBaseContext(),AdminOptions.class);
-                        intent.putExtra("GroupName", GroupName);
-                        intent.putExtra("groupKey", GroupKey);
-                        intent.putExtra("groupDays", GroupDay);
-                        intent.putExtra("groupMonths", GroupMonth);
-                        intent.putExtra("groupYears", GroupYear);
-                        intent.putExtra("groupHours", GroupHour);
-                        intent.putExtra("groupLocation", GroupLocation);
-                        intent.putExtra("adminKey", AdminKey);
-                        intent.putExtra("createdAt", CreatedAt);
-                        intent.putExtra("GroupType", GroupType);
-                        intent.putExtra("GroupPrice", GroupPrice);
-                        intent.putExtra("CanAdd", CanAdd);
-                        intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                        intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                        intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                        ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                                GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                                AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                                FriendKeys, ComingKeys, MessageKeys);
+                        Common.addExtrasToIntent(intent, extras);
                         startActivity(intent);
                     }
 

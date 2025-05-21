@@ -1,5 +1,8 @@
 package com.example.partymaker;
 
+import static com.example.partymaker.utilities.Constants.IS_CHECKED;
+import static com.example.partymaker.utilities.Constants.PREFS_NAME;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -45,8 +48,8 @@ public class Splash extends AppCompatActivity {
                 }
                 finish();
                 //retrieves the value of isChecked from cache which was set in Login (as boolean in Splash)
-                SharedPreferences settings1 = getSharedPreferences("PREFS_NAME", 0);
-                boolean isChecked = settings1.getBoolean("isChecked", false);
+                SharedPreferences settings1 = getSharedPreferences(PREFS_NAME, 0);
+                boolean isChecked = settings1.getBoolean(IS_CHECKED, false);
                 //if account already signed - intent to main if not intent to login activity
                 Intent intent = new Intent();
                 //if account exist and RememberMe=True
