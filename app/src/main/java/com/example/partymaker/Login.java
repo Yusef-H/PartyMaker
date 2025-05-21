@@ -1,5 +1,8 @@
 package com.example.partymaker;
 
+import static com.example.partymaker.utilities.Constants.IS_CHECKED;
+import static com.example.partymaker.utilities.Constants.PREFS_NAME;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -71,9 +74,8 @@ public class Login extends AppCompatActivity {
                 String password = etPassword.getText().toString();
                 if (email.matches("")||password.matches("")) {
                     Toast.makeText(Login.this, "input both to login", Toast.LENGTH_SHORT).show();
-
                 }
-               else {
+                else {
                     final ProgressDialog pd = ProgressDialog.show(Login.this, "connecting", "please wait... ", true);
                     pd.show();
                     DBref.Auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
@@ -81,9 +83,9 @@ public class Login extends AppCompatActivity {
                         public void onComplete(Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 //Saves IsChecked - True/False in app's cache
-                                SharedPreferences settings = getSharedPreferences("PREFS_NAME", 0);
+                                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                                 SharedPreferences.Editor editor = settings.edit();
-                                editor.putBoolean("isChecked", cbRememberMe.isChecked());
+                                editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
                                 editor.commit();
 
                                 Intent intent = new Intent();
@@ -92,7 +94,7 @@ public class Login extends AppCompatActivity {
                                 btnAbout.clearAnimation();
                                 startActivity(intent);
                             } else {
-                                Toast.makeText(Login.this, "email or password are not exist", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
                                 pd.dismiss();
                                 btnResetPass.setVisibility(View.VISIBLE);
                                 tvReset.setVisibility(View.VISIBLE);

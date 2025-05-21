@@ -1,5 +1,21 @@
 package com.example.partymaker;
 
+import static com.example.partymaker.utilities.Constants.ADMIN_KEY;
+import static com.example.partymaker.utilities.Constants.CAN_ADD;
+import static com.example.partymaker.utilities.Constants.COMING_KEYS;
+import static com.example.partymaker.utilities.Constants.CREATED_AT;
+import static com.example.partymaker.utilities.Constants.FRIEND_KEYS;
+import static com.example.partymaker.utilities.Constants.GROUP_DAYS;
+import static com.example.partymaker.utilities.Constants.GROUP_HOURS;
+import static com.example.partymaker.utilities.Constants.GROUP_KEY;
+import static com.example.partymaker.utilities.Constants.GROUP_LOCATION;
+import static com.example.partymaker.utilities.Constants.GROUP_MONTHS;
+import static com.example.partymaker.utilities.Constants.GROUP_NAME;
+import static com.example.partymaker.utilities.Constants.GROUP_PRICE;
+import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
+import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
+import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
+
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +29,8 @@ import android.widget.ListView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,37 +79,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //intent Value
-                String GroupName = group.get(position).getGroupName();
-                String groupKey = group.get(position).getGroupKey();
-                String groupDays = group.get(position).getGroupDays();
-                String groupMonths = group.get(position).getGroupMonths();
-                String groupYears = group.get(position).getGroupYears();
-                String groupHours = group.get(position).getGroupHours();
-                String groupLocation = group.get(position).getGroupLocation();
-                String adminKey = group.get(position).getAdminKey();
-                String createdAt = group.get(position).getCreatedAt();
-                String GroupPrice = group.get(position).getGroupPrice();
-                int GroupType = group.get(position).getGroupType();
-                boolean CanAdd = group.get(position).isCanAdd();
-                HashMap<String, Object> FriendKeys = group.get(position).getFriendKeys();
-                HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
-                HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
+                var chosenGroup = group.get(position);
+                String GroupName = chosenGroup.getGroupName();
+                String GroupKey = chosenGroup.getGroupKey();
+                String GroupDays = chosenGroup.getGroupDays();
+                String GroupMonths = chosenGroup.getGroupMonths();
+                String GroupYears = chosenGroup.getGroupYears();
+                String GroupHours = chosenGroup.getGroupHours();
+                String GroupLocation = chosenGroup.getGroupLocation();
+                String AdminKey = chosenGroup.getAdminKey();
+                String CreatedAt = chosenGroup.getCreatedAt();
+                String GroupPrice = chosenGroup.getGroupPrice();
+                int GroupType = chosenGroup.getGroupType();
+                boolean CanAdd = chosenGroup.isCanAdd();
+                HashMap<String, Object> FriendKeys = chosenGroup.getFriendKeys();
+                HashMap<String, Object> ComingKeys = chosenGroup.getComingKeys();
+                HashMap<String, Object> MessageKeys = chosenGroup.getMessageKeys();
                 Intent intent = new Intent(getBaseContext(), GroupScreen.class);
-                intent.putExtra("GroupName", GroupName);
-                intent.putExtra("groupKey", groupKey);
-                intent.putExtra("groupDays", groupDays);
-                intent.putExtra("groupMonths", groupMonths);
-                intent.putExtra("groupYears", groupYears);
-                intent.putExtra("groupHours", groupHours);
-                intent.putExtra("groupLocation", groupLocation);
-                intent.putExtra("adminKey", adminKey);
-                intent.putExtra("createdAt", createdAt);
-                intent.putExtra("GroupPrice", GroupPrice);
-                intent.putExtra("GroupType", GroupType);
-                intent.putExtra("CanAdd", CanAdd);
-                intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                        GroupDays, GroupMonths, GroupYears, GroupHours, GroupLocation,
+                        AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                        FriendKeys, ComingKeys, MessageKeys);
+                Common.addExtrasToIntent(intent, extras);
+                startActivity(intent);
                 startActivity(intent);
             }
         });

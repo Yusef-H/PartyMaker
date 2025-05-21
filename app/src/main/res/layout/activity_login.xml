@@ -28,8 +28,19 @@
             android:layout_marginTop="80dp"
             app:srcCompat="@drawable/cake"
             android:layout_centerHorizontal="true"/>
+
     </RelativeLayout>
 
+
+    <TextView
+        android:id="@+id/loginTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Login Page"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColorLink="#A93838"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etEmailL"

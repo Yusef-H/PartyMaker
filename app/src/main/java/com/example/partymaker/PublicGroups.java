@@ -14,6 +14,8 @@ import android.widget.ListView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,7 +62,7 @@ public class PublicGroups extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //intent Value
-                String GroupName = group.get(position).getGroupName();
+                String groupName = group.get(position).getGroupName();
                 String groupKey = group.get(position).getGroupKey();
                 String groupDays = group.get(position).getGroupDays();
                 String groupMonths = group.get(position).getGroupMonths();
@@ -76,21 +78,11 @@ public class PublicGroups extends AppCompatActivity {
                 HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
                 HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
                 Intent intent = new Intent(getBaseContext(), GroupJoin.class);
-                intent.putExtra("GroupName", GroupName);
-                intent.putExtra("groupKey", groupKey);
-                intent.putExtra("groupDays", groupDays);
-                intent.putExtra("groupMonths", groupMonths);
-                intent.putExtra("groupYears", groupYears);
-                intent.putExtra("groupHours", groupHours);
-                intent.putExtra("groupLocation", groupLocation);
-                intent.putExtra("adminKey", adminKey);
-                intent.putExtra("createdAt", createdAt);
-                intent.putExtra("GroupPrice", GroupPrice);
-                intent.putExtra("GroupType", GroupType);
-                intent.putExtra("CanAdd", CanAdd);
-                intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                ExtrasMetadata extras = new ExtrasMetadata(groupName, groupKey,
+                        groupDays, groupMonths, groupYears, groupHours, groupLocation,
+                        adminKey, createdAt, GroupPrice, GroupType, CanAdd,
+                        FriendKeys, ComingKeys, MessageKeys);
+                Common.addExtrasToIntent(intent, extras);
                 startActivity(intent);
             }
         });

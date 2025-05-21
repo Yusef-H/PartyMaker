@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.partymaker.data.DBref;
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -149,41 +151,21 @@ public class AdminOptions extends AppCompatActivity {
                     {
                         //intent from AdminOptions to ChangeDate
                         Intent intent = new Intent(getBaseContext(), ChangeDate.class);
-                        intent.putExtra("GroupName", GroupName);
-                        intent.putExtra("groupKey", GroupKey);
-                        intent.putExtra("groupDays", GroupDay);
-                        intent.putExtra("groupMonths", GroupMonth);
-                        intent.putExtra("groupYears", GroupYear);
-                        intent.putExtra("groupHours", GroupHour);
-                        intent.putExtra("groupLocation", GroupLocation);
-                        intent.putExtra("adminKey", AdminKey);
-                        intent.putExtra("createdAt", CreatedAt);
-                        intent.putExtra("GroupType", GroupType);
-                        intent.putExtra("GroupPrice", GroupPrice);
-                        intent.putExtra("CanAdd", CanAdd);
-                        intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                        intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                        intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                        ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                                GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                                AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                                FriendKeys, ComingKeys, MessageKeys);
+                        Common.addExtrasToIntent(intent, extras);
                         startActivity(intent);
 
                     } else if (finalI == 2) //open 2,1 (3) Delete People
                     {
                         Intent intent = new Intent(getBaseContext(), DeletePeople.class);
-                        intent.putExtra("GroupName", GroupName);
-                        intent.putExtra("groupKey", GroupKey);
-                        intent.putExtra("groupDays", GroupDay);
-                        intent.putExtra("groupMonths", GroupMonth);
-                        intent.putExtra("groupYears", GroupYear);
-                        intent.putExtra("groupHours", GroupHour);
-                        intent.putExtra("groupLocation", GroupLocation);
-                        intent.putExtra("adminKey", AdminKey);
-                        intent.putExtra("createdAt", CreatedAt);
-                        intent.putExtra("GroupType", GroupType);
-                        intent.putExtra("GroupPrice", GroupPrice);
-                        intent.putExtra("CanAdd", CanAdd);
-                        intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                        intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                        intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                        ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                                GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                                AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                                FriendKeys, ComingKeys, MessageKeys);
+                        Common.addExtrasToIntent(intent, extras);;
                         startActivity(intent);
                     } else if (finalI == 3) //open 2,2 (4) Change Entry Price
                     {
@@ -191,42 +173,22 @@ public class AdminOptions extends AppCompatActivity {
                     {
                         //intent to GroupOptions Activity with Values
                         Intent intent = new Intent(getBaseContext(),GroupOptions.class);
-                        intent.putExtra("GroupName", GroupName);
-                        intent.putExtra("groupKey", GroupKey);
-                        intent.putExtra("groupDays", GroupDay);
-                        intent.putExtra("groupMonths", GroupMonth);
-                        intent.putExtra("groupYears", GroupYear);
-                        intent.putExtra("groupHours", GroupHour);
-                        intent.putExtra("groupLocation", GroupLocation);
-                        intent.putExtra("adminKey", AdminKey);
-                        intent.putExtra("createdAt", CreatedAt);
-                        intent.putExtra("GroupType", GroupType);
-                        intent.putExtra("GroupPrice", GroupPrice);
-                        intent.putExtra("CanAdd", CanAdd);
-                        intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                        intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                        intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                        ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                                GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                                AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                                FriendKeys, ComingKeys, MessageKeys);
+                        Common.addExtrasToIntent(intent, extras);
                         startActivity(intent);
 
                     } else if (finalI == 5) //open 3,2 (6) Back
                     {
                         //intent back to GroupScreen Activity with Values
                         Intent intent = new Intent(getBaseContext(),GroupScreen.class);
-                        intent.putExtra("GroupName", GroupName);
-                        intent.putExtra("groupKey", GroupKey);
-                        intent.putExtra("groupDays", GroupDay);
-                        intent.putExtra("groupMonths", GroupMonth);
-                        intent.putExtra("groupYears", GroupYear);
-                        intent.putExtra("groupHours", GroupHour);
-                        intent.putExtra("groupLocation", GroupLocation);
-                        intent.putExtra("adminKey", AdminKey);
-                        intent.putExtra("createdAt", CreatedAt);
-                        intent.putExtra("GroupType", GroupType);
-                        intent.putExtra("GroupPrice", GroupPrice);
-                        intent.putExtra("CanAdd", CanAdd);
-                        intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                        intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                        intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                        ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                                GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                                AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                                FriendKeys, ComingKeys, MessageKeys);
+                        Common.addExtrasToIntent(intent, extras);
                         startActivity(intent);
                     }
 
