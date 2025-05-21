@@ -34,8 +34,8 @@ import com.example.partymaker.data.DBref;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 
-import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class ChangeDate extends AppCompatActivity {
     private Button btnHide, btnHelp, btnChangeDate;
@@ -45,7 +45,6 @@ public class ChangeDate extends AppCompatActivity {
     private int GroupType;
     private boolean CanAdd;
     private Spinner spnDays, spnMonths, spnYears , spnHours;
-    private ArrayAdapter<CharSequence> DaysAdapter, MonthsAdapter, YearsAdapter, HoursAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +53,11 @@ public class ChangeDate extends AppCompatActivity {
 
         //this 2 lines disables the action bar only in this activity
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.hide();
 
         //Get Values from MainActivity By intent + connection between intent and current activity objects
-        GroupName = getIntent().getExtras().getString(GROUP_NAME, DEFAULT_KEY);
+        GroupName = Objects.requireNonNull(getIntent().getExtras()).getString(GROUP_NAME, DEFAULT_KEY);
         GroupKey = getIntent().getExtras().getString(GROUP_KEY, DEFAULT_KEY);
         GroupDay = getIntent().getExtras().getString(GROUP_DAYS, DEFAULT_KEY);
         GroupMonth = getIntent().getExtras().getString(GROUP_MONTHS, DEFAULT_KEY);
@@ -74,80 +74,71 @@ public class ChangeDate extends AppCompatActivity {
         MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
 
         //connection
-        btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
-        btnHide = (Button) findViewById(R.id.btnHide2);
-        btnHelp = (Button) findViewById(R.id.btnHelp2);
-        tvHide = (TextView) findViewById(R.id.tvHide2);
-        tvHelp = (TextView) findViewById(R.id.tvHelp2);
-        tvInstructions1 = (TextView) findViewById(R.id.tvInstructions2);
-        spnDays = (Spinner) findViewById(R.id.spnDayDate);
-        spnMonths = (Spinner) findViewById(R.id.spnMonthDate);
-        spnYears = (Spinner) findViewById(R.id.spnYearDate);
-        spnHours = (Spinner) findViewById(R.id.spnHourDate);
+        btnChangeDate = findViewById(R.id.btnChangeDate);
+        btnHide =  findViewById(R.id.btnHide2);
+        btnHelp =  findViewById(R.id.btnHelp2);
+        tvHide =  findViewById(R.id.tvHide2);
+        tvHelp =  findViewById(R.id.tvHelp2);
+        tvInstructions1 =  findViewById(R.id.tvInstructions2);
+        spnDays =  findViewById(R.id.spnDayDate);
+        spnMonths =  findViewById(R.id.spnMonthDate);
+        spnYears =  findViewById(R.id.spnYearDate);
+        spnHours =  findViewById(R.id.spnHourDate);
         //spinner adapter for days
-        DaysAdapter = ArrayAdapter.createFromResource(this, R.array.array_days, android.R.layout.simple_spinner_item);
-        DaysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> daysAdapter = ArrayAdapter.createFromResource(this, R.array.array_days, android.R.layout.simple_spinner_item);
+        daysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //spinner adapter for months
-        MonthsAdapter = ArrayAdapter.createFromResource(this, R.array.array_months, android.R.layout.simple_spinner_item);
-        MonthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> monthsAdapter = ArrayAdapter.createFromResource(this, R.array.array_months, android.R.layout.simple_spinner_item);
+        monthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //spinner adapter for years
-        YearsAdapter = ArrayAdapter.createFromResource(this, R.array.array_years, android.R.layout.simple_spinner_item);
-        YearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> yearsAdapter = ArrayAdapter.createFromResource(this, R.array.array_years, android.R.layout.simple_spinner_item);
+        yearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //spinner adapter for hours
-        HoursAdapter = ArrayAdapter.createFromResource(this, R.array.array_hours, android.R.layout.simple_spinner_item);
-        HoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> hoursAdapter = ArrayAdapter.createFromResource(this, R.array.array_hours, android.R.layout.simple_spinner_item);
+        hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //set adapter for each spinner
-        spnDays.setAdapter(DaysAdapter);
-        spnMonths.setAdapter(MonthsAdapter);
-        spnYears.setAdapter(YearsAdapter);
-        spnHours.setAdapter(HoursAdapter);
+        spnDays.setAdapter(daysAdapter);
+        spnMonths.setAdapter(monthsAdapter);
+        spnYears.setAdapter(yearsAdapter);
+        spnHours.setAdapter(hoursAdapter);
 
         evantHandler();
     }
 
     private void evantHandler() {
-        btnHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvInstructions1.setVisibility(View.VISIBLE);
-                btnHelp.setVisibility(View.INVISIBLE);
-                tvHelp.setVisibility(View.INVISIBLE);
-                btnHide.setVisibility(View.VISIBLE);
-                tvHide.setVisibility(View.VISIBLE);
-            }
+        btnHelp.setOnClickListener(v -> {
+            tvInstructions1.setVisibility(View.VISIBLE);
+            btnHelp.setVisibility(View.INVISIBLE);
+            tvHelp.setVisibility(View.INVISIBLE);
+            btnHide.setVisibility(View.VISIBLE);
+            tvHide.setVisibility(View.VISIBLE);
         });
 
-        btnHide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvInstructions1.setVisibility(View.INVISIBLE);
-                btnHide.setVisibility(View.INVISIBLE);
-                tvHide.setVisibility(View.INVISIBLE);
-                btnHelp.setVisibility(View.VISIBLE);
-                tvHelp.setVisibility(View.VISIBLE);
-            }
+        btnHide.setOnClickListener(v -> {
+            tvInstructions1.setVisibility(View.INVISIBLE);
+            btnHide.setVisibility(View.INVISIBLE);
+            tvHide.setVisibility(View.INVISIBLE);
+            btnHelp.setVisibility(View.VISIBLE);
+            tvHelp.setVisibility(View.VISIBLE);
         });
-        btnChangeDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //set new value in firebase
-                DBref.refGroups.child(GroupKey).child("groupDays").setValue(GroupDay);
-                DBref.refGroups.child(GroupKey).child("groupMonths").setValue(GroupMonth);
-                DBref.refGroups.child(GroupKey).child("groupYears").setValue(GroupYear);
-                DBref.refGroups.child(GroupKey).child("groupHours").setValue(GroupHour);
+        btnChangeDate.setOnClickListener(v -> {
+            //set new value in firebase
+            DBref.refGroups.child(GroupKey).child("groupDays").setValue(GroupDay);
+            DBref.refGroups.child(GroupKey).child("groupMonths").setValue(GroupMonth);
+            DBref.refGroups.child(GroupKey).child("groupYears").setValue(GroupYear);
+            DBref.refGroups.child(GroupKey).child("groupHours").setValue(GroupHour);
 
-                //Type Successfully Changes
-                Toast.makeText(ChangeDate.this, "Successfully Changed", Toast.LENGTH_SHORT).show();
+            //Type Successfully Changes
+            Toast.makeText(ChangeDate.this, "Successfully Changed", Toast.LENGTH_SHORT).show();
 
-                //intent from ChangeDate to AdminOptions
-                Intent intent = new Intent(getBaseContext(),AdminOptions.class);
-                ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
-                        GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
-                        AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
-                        FriendKeys, ComingKeys, MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
-            }
+            //intent from ChangeDate to AdminOptions
+            Intent intent = new Intent(getBaseContext(),AdminOptions.class);
+            ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                    GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                    AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                    FriendKeys, ComingKeys, MessageKeys);
+            Common.addExtrasToIntent(intent, extras);
+            startActivity(intent);
         });
         spnDays.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
