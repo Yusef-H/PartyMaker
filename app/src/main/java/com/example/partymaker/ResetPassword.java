@@ -30,7 +30,7 @@ public class ResetPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
 
-        //this 2 lines disables the action bar only in this activity
+        //this 3 lines disables the action bar only in this activity
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();

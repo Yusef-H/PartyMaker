@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,8 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.User;
-
-import java.io.Serializable;
 import java.util.HashMap;
 
 public class DeletePeople extends AppCompatActivity {
@@ -40,8 +39,10 @@ public class DeletePeople extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_people);
-        //this 2 lines disables the action bar only in this activity
+
+        //this 3 lines disables the action bar only in this activity
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.hide();
 
         //Get Values from MainActivity By intent + connection between intent and current activity objects
@@ -65,14 +66,14 @@ public class DeletePeople extends AppCompatActivity {
         database = FirebaseDatabase.getInstance().getReference("Users");
 
         //connection
-        btnDeleteFriend = (Button) findViewById(R.id.btnDeleteFriend);
-        btnHide = (Button) findViewById(R.id.btnHide3);
-        btnHelp = (Button) findViewById(R.id.btnHelp3);
-        tvHide = (TextView) findViewById(R.id.tvHide3);
-        tvHelp = (TextView) findViewById(R.id.tvHelp3);
-        tvInstructions1 = (TextView) findViewById(R.id.tvInstructions3);
-        etFriendEmail = (EditText) findViewById(R.id.etDeleteEmail);
-        btnBack = (ImageButton) findViewById(R.id.btnBack4);
+        btnDeleteFriend = findViewById(R.id.btnDeleteFriend);
+        btnHide = findViewById(R.id.btnHide3);
+        btnHelp = findViewById(R.id.btnHelp3);
+        tvHide = findViewById(R.id.tvHide3);
+        tvHelp = findViewById(R.id.tvHelp3);
+        tvInstructions1 = findViewById(R.id.tvInstructions3);
+        etFriendEmail = findViewById(R.id.etDeleteEmail);
+        btnBack = findViewById(R.id.btnBack4);
 
 
         EventHandler();
@@ -120,9 +121,10 @@ public class DeletePeople extends AppCompatActivity {
                                     for (String GroupFriend : GroupFriends.keySet()) {
                                         if (CurrentUserEmail.equals(GroupFriend)) {
                                             flag1 = true;
+                                            break;
                                         }
                                     }
-                                    if (flag1 == true) {
+                                    if (flag1) {
                                         FriendKeys.remove(CurrentFriend);
                                         DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
                                         DBref.refGroups.child(GroupKey).child("FriendKeys").updateChildren(FriendKeys);
@@ -130,20 +132,19 @@ public class DeletePeople extends AppCompatActivity {
                                         DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
                                         DBref.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
                                         Toast.makeText(DeletePeople.this, "Friend successfully deleted", Toast.LENGTH_SHORT).show();
-                                        flag = true;
-                                    } else if (flag1 == false) {
+                                    } else {
                                         Toast.makeText(DeletePeople.this, "User not in group", Toast.LENGTH_SHORT).show();
-                                        flag = true;
                                     }
+                                    flag = true;
                                 }
                             }
-                            if (flag == false) {
+                            if (!flag) {
                                 Toast.makeText(DeletePeople.this, "Email not Exist", Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
                         }
                     });
@@ -152,17 +153,14 @@ public class DeletePeople extends AppCompatActivity {
                 }
             }
         });
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), AdminOptions.class);
-                ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
-                        GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
-                        AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
-                        FriendKeys, ComingKeys, MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
-            }
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(getBaseContext(), AdminOptions.class);
+            ExtrasMetadata extras = new ExtrasMetadata(GroupName, GroupKey,
+                    GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation,
+                    AdminKey, CreatedAt, GroupPrice, GroupType, CanAdd,
+                    FriendKeys, ComingKeys, MessageKeys);
+            Common.addExtrasToIntent(intent, extras);
+            startActivity(intent);
         });
     }
     /*/

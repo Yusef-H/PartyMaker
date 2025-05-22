@@ -3,19 +3,14 @@ package com.example.partymaker;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.User;
@@ -36,11 +31,11 @@ public class Register extends AppCompatActivity {
         }
 
         //connection between XML and Java
-        etEmail = (EditText) findViewById(R.id.etEmailR);
-        etUsername = (EditText) findViewById(R.id.etUsername);
-        etPassword = (EditText) findViewById(R.id.etPasswordR);
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnPress = (Button) findViewById(R.id.btnPressR);
+        etEmail =  findViewById(R.id.etEmailR);
+        etUsername =  findViewById(R.id.etUsername);
+        etPassword =  findViewById(R.id.etPasswordR);
+        btnRegister =  findViewById(R.id.btnRegister);
+        btnPress = findViewById(R.id.btnPressR);
 
         evantHandler();
     }
@@ -48,27 +43,17 @@ public class Register extends AppCompatActivity {
     public void sendNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.cake).setContentTitle("The registration was successful").setContentText("Welcome " + etUsername.getText() + "!");
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotificationManager.notify(001, mBuilder.build());
+        mNotificationManager.notify(1, mBuilder.build());
     }
 
     private void evantHandler() {
         //register button
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SignUp();
-            }
-        });
+        btnRegister.setOnClickListener(view -> SignUp());
         //press here if you have an account
-        btnPress.setOnClickListener(new View.OnClickListener()
-
-        {
-            @Override
-            public void onClick(View view) {
-                //when click on "press here" it takes you to LoginActivity
-                Intent i = new Intent(Register.this, Login.class);
-                startActivity(i);
-            }
+        btnPress.setOnClickListener(view -> {
+            //when click on "press here" it takes you to LoginActivity
+            Intent i = new Intent(Register.this, Login.class);
+            startActivity(i);
         });
     }
 
@@ -80,25 +65,22 @@ public class Register extends AppCompatActivity {
         if (email.matches("") || username.matches("") || password.matches("")) {
             Toast.makeText(Register.this, "input all to register", Toast.LENGTH_SHORT).show();
         } else {
-            DBref.Auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        sendNotification();
-                        //put email and username in database
-                        User u = new User(email, username);
-                        DBref.refUsers.child(email.replace('.', ' ')).setValue(u);
-                        //Login Successful
-                        Toast.makeText(Register.this, "Register Successful !", Toast.LENGTH_SHORT).show();
-                        //when click on "Register" it takes you to LoginActivity
-                        Intent i = new Intent(Register.this, Login.class);
-                        startActivity(i);
-                    } else {
-                        if (task.getException() instanceof FirebaseAuthUserCollisionException)
-                            Toast.makeText(Register.this, "Email is exist", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(Register.this, "Register Error !", Toast.LENGTH_SHORT).show();
-                    }
+            DBref.Auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Register.this, task -> {
+                if (task.isSuccessful()) {
+                    sendNotification();
+                    //put email and username in database
+                    User u = new User(email, username);
+                    DBref.refUsers.child(email.replace('.', ' ')).setValue(u);
+                    //Login Successful
+                    Toast.makeText(Register.this, "Register Successful !", Toast.LENGTH_SHORT).show();
+                    //when click on "Register" it takes you to LoginActivity
+                    Intent i = new Intent(Register.this, Login.class);
+                    startActivity(i);
+                } else {
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                        Toast.makeText(Register.this, "Email is exist", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(Register.this, "Register Error !", Toast.LENGTH_SHORT).show();
                 }
             });
         }
