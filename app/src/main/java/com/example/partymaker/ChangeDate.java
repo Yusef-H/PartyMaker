@@ -75,15 +75,15 @@ public class ChangeDate extends AppCompatActivity {
 
         //connection
         btnChangeDate = findViewById(R.id.btnChangeDate);
-        btnHide =  findViewById(R.id.btnHide2);
-        btnHelp =  findViewById(R.id.btnHelp2);
-        tvHide =  findViewById(R.id.tvHide2);
-        tvHelp =  findViewById(R.id.tvHelp2);
-        tvInstructions1 =  findViewById(R.id.tvInstructions2);
-        spnDays =  findViewById(R.id.spnDayDate);
-        spnMonths =  findViewById(R.id.spnMonthDate);
-        spnYears =  findViewById(R.id.spnYearDate);
-        spnHours =  findViewById(R.id.spnHourDate);
+        btnHide = findViewById(R.id.btnHide2);
+        btnHelp =findViewById(R.id.btnHelp2);
+        tvHide = findViewById(R.id.tvHide2);
+        tvHelp = findViewById(R.id.tvHelp2);
+        tvInstructions1 = findViewById(R.id.tvInstructions2);
+        spnDays = findViewById(R.id.spnDayDate);
+        spnMonths =findViewById(R.id.spnMonthDate);
+        spnYears =findViewById(R.id.spnYearDate);
+        spnHours = findViewById(R.id.spnHourDate);
         //spinner adapter for days
         ArrayAdapter<CharSequence> daysAdapter = ArrayAdapter.createFromResource(this, R.array.array_days, android.R.layout.simple_spinner_item);
         daysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
