@@ -18,6 +18,9 @@
     <string name="app_logo">Logo</string>
     <string name="about_info">About Us</string>
 
+    <!-- Google Auth -->
+    <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
+
     <!-- These can be safely kept empty since they're defined above with different names -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>

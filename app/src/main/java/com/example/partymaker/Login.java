@@ -17,12 +17,22 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.example.partymaker.data.DBref;
 
 public class Login extends AppCompatActivity {
@@ -31,11 +41,26 @@ public class Login extends AppCompatActivity {
     private Button btnLogin, btnPress, btnResetPass;
     private TextView tvReset;
     private CheckBox cbRememberMe;
+    private SignInButton btnGoogleSignIn;
+    private GoogleSignInClient mGoogleSignInClient;
+    private static final int RC_SIGN_IN = 9001;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         //this 2 lines disables the action bar only in this activity
         ActionBar actionBar = getSupportActionBar();
@@ -44,14 +69,15 @@ public class Login extends AppCompatActivity {
         }
 
         //connection between XML and Java
-        btnAbout =  (ImageButton) findViewById(R.id.btnAbout);
-        etEmail = (EditText) findViewById(R.id.etEmailL);
-        etPassword = (EditText) findViewById(R.id.etPasswordL);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnPress = (Button) findViewById(R.id.btnPressL);
-        cbRememberMe = (CheckBox) findViewById(R.id.cbRememberMe);
-        btnResetPass = (Button) findViewById(R.id.btnResetPass);
-        tvReset = (TextView) findViewById(R.id.tvReset);
+        btnAbout = findViewById(R.id.btnAbout);
+        etEmail = findViewById(R.id.etEmailL);
+        etPassword = findViewById(R.id.etPasswordL);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnPress = findViewById(R.id.btnPressL);
+        cbRememberMe = findViewById(R.id.cbRememberMe);
+        btnResetPass = findViewById(R.id.btnResetPass);
+        tvReset = findViewById(R.id.tvReset);
+        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
 
         //start animation on ImageButton btnAbout
         Animation myFadeInAnimation = AnimationUtils.loadAnimation(Login.this, R.anim.fadein);
@@ -72,10 +98,9 @@ public class Login extends AppCompatActivity {
             private void SignIn() {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
-                if (email.matches("")||password.matches("")) {
+                if (email.matches("") || password.matches("")) {
                     Toast.makeText(Login.this, "input both to login", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     final ProgressDialog pd = ProgressDialog.show(Login.this, "connecting", "please wait... ", true);
                     pd.show();
                     DBref.Auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
@@ -104,6 +129,15 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
+
+        // Google Sign In button click listener
+        btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithGoogle();
+            }
+        });
+
         //Press Here Onclick
         btnPress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,5 +163,44 @@ public class Login extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    private void signInWithGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Toast.makeText(Login.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(Login.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

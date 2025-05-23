@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,13 +23,11 @@
             android:id="@+id/imgLogin"
             android:layout_width="314dp"
             android:layout_height="162dp"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="80dp"
-            app:srcCompat="@drawable/cake"
-            android:layout_centerHorizontal="true"/>
-
+            app:srcCompat="@drawable/cake" />
     </RelativeLayout>
-
 
     <TextView
         android:id="@+id/loginTitle"
@@ -63,13 +60,29 @@
         android:inputType="textPassword"
         android:textAlignment="center" />
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="188dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="50px"
-        android:text="Login" />
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/btnGoogleSignIn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Login" />
+    </LinearLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -89,8 +102,8 @@
             android:id="@+id/btnPressL"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginEnd="71dp"
             android:background="#00ffffff"
             android:text="Press Here"
@@ -118,10 +131,9 @@
             android:layout_marginLeft="110dp"
             android:background="#00ffffff"
             android:text="Reset"
-            android:textColor="#595959"
             android:textAllCaps="false"
-            android:visibility="invisible"
-            />
+            android:textColor="#595959"
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/tvReset"
@@ -130,7 +142,6 @@
             android:layout_marginLeft="185dp"
             android:layout_marginTop="10dp"
             android:text="your password"
-            android:visibility="invisible"/>
-
+            android:visibility="visible" />
     </RelativeLayout>
 </LinearLayout>
