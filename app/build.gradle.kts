@@ -1,8 +1,10 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.gms.google-services")
+    id("com.diffplug.spotless") version "6.15.0"
 }
 
 android {
@@ -41,6 +43,21 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "2.0.0"
+    }
+}
+
+spotless {
+    java {
+        target("src/**/*.java")
+
+        googleJavaFormat("1.7")
+        // (optionally point at your own Eclipse-style XML:)
+        //   eclipse().configFile(file("$rootDir/spotless/eclipse-format.xml"))
+
+        // common cleanup steps
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
     }
 }
 
