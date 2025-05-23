@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.data.DBref;
@@ -42,7 +44,7 @@ public class PublicGroups extends AppCompatActivity {
     actionBar.setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
 
     // set actionbar background
-    Drawable d = getResources().getDrawable(R.drawable.background5);
+    @SuppressLint("UseCompatLoadingForDrawables") Drawable d = getResources().getDrawable(R.drawable.background5);
     actionBar.setBackgroundDrawable(d);
 
     // connection
@@ -121,12 +123,15 @@ public class PublicGroups extends AppCompatActivity {
               if (p.getGroupType() == 0) { // if group is public
                 boolean flag = false;
                 for (String userKey : UserKeys.keySet()) { // scan all group friends
-                  if (UserKey.equals(
-                      userKey)) // if current user not friend in current group so it show
+                    if (UserKey.equals(
+                            userKey)) // if current user not friend in current group so it show
                     // current group
-                    flag = true;
+                    {
+                        flag = true;
+                        break;
+                    }
                 }
-                if (flag == false) {
+                if (!flag) {
                   group.add(p);
                 }
               }
@@ -136,7 +141,7 @@ public class PublicGroups extends AppCompatActivity {
           }
 
           @Override
-          public void onCancelled(DatabaseError databaseError) {}
+          public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
   }
 
