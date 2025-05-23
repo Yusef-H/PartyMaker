@@ -28,329 +28,350 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.Group;
-
 import java.util.HashMap;
 import java.util.Objects;
 
 public class AddGroup extends AppCompatActivity {
-    private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
-    private TextView tvPartyName, tvPartyLocation, tvPartyDate, tvGroupPicture, tvHours;
-    private EditText etPartyName, etPartyLocation;
-    private ImageView imgLogin, imgGroupPicture;
-    private String GroupKey1, DaysSelected, MonthsSelected, YearsSelected, HoursSelected;
-    private CheckBox cbGroupType;
-    private Spinner spnDays, spnMonths, spnYears, spnHours;
+  private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
+  private TextView tvPartyName, tvPartyLocation, tvPartyDate, tvGroupPicture, tvHours;
+  private EditText etPartyName, etPartyLocation;
+  private ImageView imgLogin, imgGroupPicture;
+  private String GroupKey1, DaysSelected, MonthsSelected, YearsSelected, HoursSelected;
+  private CheckBox cbGroupType;
+  private Spinner spnDays, spnMonths, spnYears, spnHours;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_group);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_add_group);
 
-        // Better approach for setting a colored ActionBar title
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Define color using resources for better maintainability
-            int titleColor = ContextCompat.getColor(this, R.color.teal);
+    // Better approach for setting a colored ActionBar title
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      // Define color using resources for better maintainability
+      int titleColor = ContextCompat.getColor(this, R.color.teal);
 
-            // Create a SpannableString for styling the title
-            SpannableString spannableTitle = new SpannableString("New Party");
-            spannableTitle.setSpan(new ForegroundColorSpan(titleColor),
-                    0,
-                    spannableTitle.length(),
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+      // Create a SpannableString for styling the title
+      SpannableString spannableTitle = new SpannableString("New Party");
+      spannableTitle.setSpan(
+          new ForegroundColorSpan(titleColor),
+          0,
+          spannableTitle.length(),
+          Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
-            actionBar.setTitle(spannableTitle);
+      actionBar.setTitle(spannableTitle);
+    }
+
+    // set actionbar background
+    Drawable d = ContextCompat.getDrawable(this, R.drawable.background3);
+    assert actionBar != null;
+    actionBar.setBackgroundDrawable(d);
+
+    imgLogin = findViewById(R.id.imgLogin);
+    imgGroupPicture = findViewById(R.id.imgGroupPicture);
+    btnNext1 = findViewById(R.id.btnNext1);
+    btnNext2 = findViewById(R.id.btnNext2);
+    btnBack1 = findViewById(R.id.btnBack1);
+    btnBack2 = findViewById(R.id.btnBack2);
+    btnDone = findViewById(R.id.btnDone);
+    btnAddGroup = findViewById(R.id.btnAddGroup);
+    tvPartyName = findViewById(R.id.tvPartyName);
+    tvPartyLocation = findViewById(R.id.tvPartyLocation);
+    tvPartyDate = findViewById(R.id.tvPartyDate);
+    tvGroupPicture = findViewById(R.id.tvGroupPicture);
+    tvHours = findViewById(R.id.tvHours);
+    etPartyName = findViewById(R.id.etPartyName);
+    etPartyLocation = findViewById(R.id.etPartyLocation);
+    cbGroupType = findViewById(R.id.cbGroupType);
+    spnDays = findViewById(R.id.spnDateDay);
+    spnMonths = findViewById(R.id.spnDateMonth);
+    spnYears = findViewById(R.id.spnDateYear);
+    spnHours = findViewById(R.id.spnHours);
+    // spinner adapter for days
+    ArrayAdapter<CharSequence> daysAdapter =
+        ArrayAdapter.createFromResource(
+            this, R.array.array_days, android.R.layout.simple_spinner_item);
+    daysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    // spinner adapter for months
+    ArrayAdapter<CharSequence> monthsAdapter =
+        ArrayAdapter.createFromResource(
+            this, R.array.array_months, android.R.layout.simple_spinner_item);
+    monthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    // spinner adapter for years
+    ArrayAdapter<CharSequence> yearsAdapter =
+        ArrayAdapter.createFromResource(
+            this, R.array.array_years, android.R.layout.simple_spinner_item);
+    yearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    // spinner adapter for hours
+    ArrayAdapter<CharSequence> hoursAdapter =
+        ArrayAdapter.createFromResource(
+            this, R.array.array_hours, android.R.layout.simple_spinner_item);
+    hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    // set adapter for each spinner
+    spnDays.setAdapter(daysAdapter);
+    spnMonths.setAdapter(monthsAdapter);
+    spnYears.setAdapter(yearsAdapter);
+    spnHours.setAdapter(hoursAdapter);
+
+    evantHandler();
+  }
+
+  @SuppressLint("SetTextI18n")
+  private void evantHandler() {
+    btnNext1.setOnClickListener(
+        v -> {
+          tvPartyName.setVisibility(View.INVISIBLE);
+          etPartyName.setVisibility(View.INVISIBLE);
+          tvPartyLocation.setVisibility(View.VISIBLE);
+          etPartyLocation.setVisibility(View.VISIBLE);
+          btnNext1.setVisibility(View.INVISIBLE);
+          btnNext2.setVisibility(View.VISIBLE);
+          btnBack1.setVisibility(View.VISIBLE);
+        });
+    btnNext2.setOnClickListener(
+        v -> {
+          tvPartyLocation.setVisibility(View.INVISIBLE);
+          etPartyLocation.setVisibility(View.INVISIBLE);
+          cbGroupType.setVisibility(View.INVISIBLE);
+          tvPartyDate.setVisibility(View.VISIBLE);
+          tvHours.setVisibility(View.VISIBLE);
+          spnDays.setVisibility(View.VISIBLE);
+          spnMonths.setVisibility(View.VISIBLE);
+          spnYears.setVisibility(View.VISIBLE);
+          spnHours.setVisibility(View.VISIBLE);
+          btnNext2.setVisibility(View.INVISIBLE);
+          btnAddGroup.setVisibility(View.VISIBLE);
+          btnBack1.setVisibility(View.INVISIBLE);
+          btnBack2.setVisibility(View.VISIBLE);
+        });
+    btnBack1.setOnClickListener(
+        v -> {
+          tvPartyName.setVisibility(View.VISIBLE);
+          etPartyName.setVisibility(View.VISIBLE);
+          tvPartyLocation.setVisibility(View.INVISIBLE);
+          etPartyLocation.setVisibility(View.INVISIBLE);
+          btnNext1.setVisibility(View.VISIBLE);
+          btnNext2.setVisibility(View.INVISIBLE);
+          btnBack1.setVisibility(View.INVISIBLE);
+        });
+    btnBack2.setOnClickListener(
+        v -> {
+          tvPartyLocation.setVisibility(View.VISIBLE);
+          etPartyLocation.setVisibility(View.VISIBLE);
+          cbGroupType.setVisibility(View.VISIBLE);
+          tvPartyDate.setVisibility(View.INVISIBLE);
+          tvHours.setVisibility(View.INVISIBLE);
+          spnDays.setVisibility(View.INVISIBLE);
+          spnMonths.setVisibility(View.INVISIBLE);
+          spnYears.setVisibility(View.INVISIBLE);
+          spnHours.setVisibility(View.INVISIBLE);
+          btnNext2.setVisibility(View.VISIBLE);
+          btnAddGroup.setVisibility(View.INVISIBLE);
+          btnBack1.setVisibility(View.VISIBLE);
+          btnBack2.setVisibility(View.INVISIBLE);
+        });
+    btnAddGroup.setOnClickListener(
+        v -> {
+          Group p = new Group();
+          // Group's name
+          p.setGroupName(etPartyName.getText().toString());
+          // admin name
+          p.setAdminKey(
+              Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail())
+                  .replace('.', ' '));
+
+          // set group's type if 0 so Public group if 1 so Private group
+          if (cbGroupType.isChecked()) {
+            p.setGroupType(1);
+          } else {
+            p.setGroupType(0);
+          }
+
+          // set if people can add their friends
+          if (p.getGroupType() == 0) // if group is public
+          p.setCanAdd(true); // so people can add
+          else if (p.getGroupType() == 1) // if group is private
+          p.setCanAdd(false); // so people cant add
+
+          // Time when opened Group
+          Calendar c = Calendar.getInstance();
+          @SuppressLint("SimpleDateFormat")
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          String strDate = sdf.format(c.getTime());
+          p.setCreatedAt(strDate);
+
+          // set Group's entry price to 0 (free)
+          p.setGroupPrice("0");
+
+          // Group's Location
+          p.setGroupLocation(etPartyLocation.getText().toString());
+
+          // Group's date
+          p.setGroupDays(DaysSelected);
+          p.setGroupMonths(MonthsSelected);
+          p.setGroupYears(YearsSelected);
+          p.setGroupHours(HoursSelected);
+
+          // create unique key for Group
+          String GroupKey = DBref.refGroups.push().getKey();
+          GroupKey1 = GroupKey;
+          p.setGroupKey(GroupKey);
+
+          // create unique key for FriendKey
+          String FriendKey = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
+
+          // set key in database
+          assert GroupKey != null;
+          DBref.refGroups.child(GroupKey).setValue(p);
+
+          // adding reference to FriendKeys with the admin email
+          HashMap<String, Object> result1 = new HashMap<>();
+          result1.put(FriendKey, "true");
+          DBref.refGroups.child(p.getGroupKey()).child("FriendKeys").updateChildren(result1);
+          // adding reference to ComingKeys with the admin email
+          DBref.refGroups.child(p.getGroupKey()).child("ComingKeys").updateChildren(result1);
+
+          // create empty HashMap for Chat
+          HashMap<String, Object> result3 = new HashMap<>();
+          DBref.refGroups.child(p.getGroupKey()).child("MessageKeys").updateChildren(result3);
+
+          // write Group created successfully
+          Toast.makeText(AddGroup.this, "Group successfully created", Toast.LENGTH_SHORT).show();
+
+          // Design
+          imgLogin.setVisibility(View.INVISIBLE);
+          tvPartyDate.setVisibility(View.INVISIBLE);
+          tvHours.setVisibility(View.INVISIBLE);
+          spnDays.setVisibility(View.INVISIBLE);
+          spnMonths.setVisibility(View.INVISIBLE);
+          spnYears.setVisibility(View.INVISIBLE);
+          spnHours.setVisibility(View.INVISIBLE);
+          btnBack2.setVisibility(View.INVISIBLE);
+          btnAddGroup.setVisibility(View.INVISIBLE);
+          cbGroupType.setVisibility(View.INVISIBLE);
+          imgGroupPicture.setVisibility(View.VISIBLE);
+          tvGroupPicture.setVisibility(View.VISIBLE);
+          btnDone.setVisibility(View.VISIBLE);
+
+          // Set title in action bar - i chose no title
+          ActionBar actionBar = getSupportActionBar();
+          assert actionBar != null;
+          actionBar.setTitle(Html.fromHtml("<font color='#039694'>Set party's picture</font>"));
+
+          // wait 2 seconds and after it makes text Disappeared
+          Handler handler = new Handler();
+          handler.postDelayed(
+              () -> tvGroupPicture.setText("Tap on the picture above to set a profile picture"),
+              3000);
+        });
+    imgGroupPicture.setOnClickListener(
+        v -> {
+          Intent i = new Intent();
+          i.setType("image/*");
+          i.setAction(Intent.ACTION_GET_CONTENT);
+          startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
+          tvGroupPicture.setVisibility(View.INVISIBLE);
+        });
+    spnDays.setOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            DaysSelected = parent.getItemAtPosition(position).toString();
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    spnMonths.setOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            MonthsSelected = parent.getItemAtPosition(position).toString();
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    spnYears.setOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            YearsSelected = parent.getItemAtPosition(position).toString();
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    spnHours.setOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            HoursSelected = parent.getItemAtPosition(position).toString();
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    btnDone.setOnClickListener(
+        v -> {
+          Intent intent = new Intent(getBaseContext(), MainActivity.class);
+          startActivity(intent);
+        });
+  }
+
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == Activity.RESULT_OK) {
+      if (requestCode == 100) {
+        Uri uri = data.getData();
+        if (null != uri) {
+
+          ((ImageView) findViewById(R.id.imgGroupPicture)).setImageURI(uri);
+
+          DBref.refStorage
+              .child("Groups/" + GroupKey1)
+              .putFile(uri)
+              .addOnSuccessListener(
+                  taskSnapshot -> Toast.makeText(AddGroup.this, "saved", Toast.LENGTH_SHORT).show())
+              .addOnFailureListener(
+                  exception ->
+                      Toast.makeText(AddGroup.this, "error while saving ", Toast.LENGTH_SHORT)
+                          .show());
         }
+      }
+    }
+  }
 
-        //set actionbar background
-        Drawable d = ContextCompat.getDrawable(this, R.drawable.background3);
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(d);
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    Intent goToNextActivity;
 
-        imgLogin = findViewById(R.id.imgLogin);
-        imgGroupPicture = findViewById(R.id.imgGroupPicture);
-        btnNext1 = findViewById(R.id.btnNext1);
-        btnNext2 = findViewById(R.id.btnNext2);
-        btnBack1 = findViewById(R.id.btnBack1);
-        btnBack2 = findViewById(R.id.btnBack2);
-        btnDone = findViewById(R.id.btnDone);
-        btnAddGroup = findViewById(R.id.btnAddGroup);
-        tvPartyName = findViewById(R.id.tvPartyName);
-        tvPartyLocation = findViewById(R.id.tvPartyLocation);
-        tvPartyDate = findViewById(R.id.tvPartyDate);
-        tvGroupPicture = findViewById(R.id.tvGroupPicture);
-        tvHours = findViewById(R.id.tvHours);
-        etPartyName = findViewById(R.id.etPartyName);
-        etPartyLocation = findViewById(R.id.etPartyLocation);
-        cbGroupType = findViewById(R.id.cbGroupType);
-        spnDays = findViewById(R.id.spnDateDay);
-        spnMonths = findViewById(R.id.spnDateMonth);
-        spnYears = findViewById(R.id.spnDateYear);
-        spnHours = findViewById(R.id.spnHours);
-        //spinner adapter for days
-        ArrayAdapter<CharSequence> daysAdapter = ArrayAdapter.createFromResource(this, R.array.array_days, android.R.layout.simple_spinner_item);
-        daysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //spinner adapter for months
-        ArrayAdapter<CharSequence> monthsAdapter = ArrayAdapter.createFromResource(this, R.array.array_months, android.R.layout.simple_spinner_item);
-        monthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //spinner adapter for years
-        ArrayAdapter<CharSequence> yearsAdapter = ArrayAdapter.createFromResource(this, R.array.array_years, android.R.layout.simple_spinner_item);
-        yearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //spinner adapter for hours
-        ArrayAdapter<CharSequence> hoursAdapter = ArrayAdapter.createFromResource(this, R.array.array_hours, android.R.layout.simple_spinner_item);
-        hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //set adapter for each spinner
-        spnDays.setAdapter(daysAdapter);
-        spnMonths.setAdapter(monthsAdapter);
-        spnYears.setAdapter(yearsAdapter);
-        spnHours.setAdapter(hoursAdapter);
-
-        evantHandler();
+    if (item.getItemId() == R.id.idMenu) {
+      goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+      startActivity(goToNextActivity);
+    } else if (item.getItemId() == R.id.idAddProfile) {
+      goToNextActivity = new Intent(getApplicationContext(), AddGroup.class);
+      startActivity(goToNextActivity);
+    } else if (item.getItemId() == R.id.idEditProfile) {
+      goToNextActivity = new Intent(getApplicationContext(), EditProfile.class);
+      startActivity(goToNextActivity);
+    } else if (item.getItemId() == R.id.idPublicParties) {
+      goToNextActivity = new Intent(getApplicationContext(), PublicGroups.class);
+      startActivity(goToNextActivity);
+    } else if (item.getItemId() == R.id.idLogout) {
+      DBref.Auth.signOut();
+      DBref.CurrentUser = null;
+      goToNextActivity = new Intent(getApplicationContext(), Login.class);
+      startActivity(goToNextActivity);
     }
 
-    @SuppressLint("SetTextI18n")
-    private void evantHandler() {
-        btnNext1.setOnClickListener(v -> {
-            tvPartyName.setVisibility(View.INVISIBLE);
-            etPartyName.setVisibility(View.INVISIBLE);
-            tvPartyLocation.setVisibility(View.VISIBLE);
-            etPartyLocation.setVisibility(View.VISIBLE);
-            btnNext1.setVisibility(View.INVISIBLE);
-            btnNext2.setVisibility(View.VISIBLE);
-            btnBack1.setVisibility(View.VISIBLE);
+    return true;
+  }
 
-        });
-        btnNext2.setOnClickListener(v -> {
-            tvPartyLocation.setVisibility(View.INVISIBLE);
-            etPartyLocation.setVisibility(View.INVISIBLE);
-            cbGroupType.setVisibility(View.INVISIBLE);
-            tvPartyDate.setVisibility(View.VISIBLE);
-            tvHours.setVisibility(View.VISIBLE);
-            spnDays.setVisibility(View.VISIBLE);
-            spnMonths.setVisibility(View.VISIBLE);
-            spnYears.setVisibility(View.VISIBLE);
-            spnHours.setVisibility(View.VISIBLE);
-            btnNext2.setVisibility(View.INVISIBLE);
-            btnAddGroup.setVisibility(View.VISIBLE);
-            btnBack1.setVisibility(View.INVISIBLE);
-            btnBack2.setVisibility(View.VISIBLE);
-        });
-        btnBack1.setOnClickListener(v -> {
-            tvPartyName.setVisibility(View.VISIBLE);
-            etPartyName.setVisibility(View.VISIBLE);
-            tvPartyLocation.setVisibility(View.INVISIBLE);
-            etPartyLocation.setVisibility(View.INVISIBLE);
-            btnNext1.setVisibility(View.VISIBLE);
-            btnNext2.setVisibility(View.INVISIBLE);
-            btnBack1.setVisibility(View.INVISIBLE);
-        });
-        btnBack2.setOnClickListener(v -> {
-            tvPartyLocation.setVisibility(View.VISIBLE);
-            etPartyLocation.setVisibility(View.VISIBLE);
-            cbGroupType.setVisibility(View.VISIBLE);
-            tvPartyDate.setVisibility(View.INVISIBLE);
-            tvHours.setVisibility(View.INVISIBLE);
-            spnDays.setVisibility(View.INVISIBLE);
-            spnMonths.setVisibility(View.INVISIBLE);
-            spnYears.setVisibility(View.INVISIBLE);
-            spnHours.setVisibility(View.INVISIBLE);
-            btnNext2.setVisibility(View.VISIBLE);
-            btnAddGroup.setVisibility(View.INVISIBLE);
-            btnBack1.setVisibility(View.VISIBLE);
-            btnBack2.setVisibility(View.INVISIBLE);
-        });
-        btnAddGroup.setOnClickListener(v -> {
-            Group p = new Group();
-            //Group's name
-            p.setGroupName(etPartyName.getText().toString());
-            //admin name
-            p.setAdminKey(Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' '));
-
-            //set group's type if 0 so Public group if 1 so Private group
-            if (cbGroupType.isChecked()) {
-                p.setGroupType(1);
-            } else {
-                p.setGroupType(0);
-            }
-
-            //set if people can add their friends
-            if (p.getGroupType() == 0) //if group is public
-                p.setCanAdd(true); // so people can add
-            else if (p.getGroupType() == 1) //if group is private
-                p.setCanAdd(false); //so people cant add
-
-            //Time when opened Group
-            Calendar c = Calendar.getInstance();
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String strDate = sdf.format(c.getTime());
-            p.setCreatedAt(strDate);
-
-            //set Group's entry price to 0 (free)
-            p.setGroupPrice("0");
-
-            //Group's Location
-            p.setGroupLocation(etPartyLocation.getText().toString());
-
-            //Group's date
-            p.setGroupDays(DaysSelected);
-            p.setGroupMonths(MonthsSelected);
-            p.setGroupYears(YearsSelected);
-            p.setGroupHours(HoursSelected);
-
-            //create unique key for Group
-            String GroupKey = DBref.refGroups.push().getKey();
-            GroupKey1 = GroupKey;
-            p.setGroupKey(GroupKey);
-
-            //create unique key for FriendKey
-            String FriendKey = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
-
-            //set key in database
-            assert GroupKey != null;
-            DBref.refGroups.child(GroupKey).setValue(p);
-
-            // adding reference to FriendKeys with the admin email
-            HashMap<String, Object> result1 = new HashMap<>();
-            result1.put(FriendKey, "true");
-            DBref.refGroups.child(p.getGroupKey()).child("FriendKeys").updateChildren(result1);
-            // adding reference to ComingKeys with the admin email
-            DBref.refGroups.child(p.getGroupKey()).child("ComingKeys").updateChildren(result1);
-
-            //create empty HashMap for Chat
-            HashMap<String, Object> result3 = new HashMap<>();
-            DBref.refGroups.child(p.getGroupKey()).child("MessageKeys").updateChildren(result3);
-
-            //write Group created successfully
-            Toast.makeText(AddGroup.this, "Group successfully created", Toast.LENGTH_SHORT).show();
-
-            //Design
-            imgLogin.setVisibility(View.INVISIBLE);
-            tvPartyDate.setVisibility(View.INVISIBLE);
-            tvHours.setVisibility(View.INVISIBLE);
-            spnDays.setVisibility(View.INVISIBLE);
-            spnMonths.setVisibility(View.INVISIBLE);
-            spnYears.setVisibility(View.INVISIBLE);
-            spnHours.setVisibility(View.INVISIBLE);
-            btnBack2.setVisibility(View.INVISIBLE);
-            btnAddGroup.setVisibility(View.INVISIBLE);
-            cbGroupType.setVisibility(View.INVISIBLE);
-            imgGroupPicture.setVisibility(View.VISIBLE);
-            tvGroupPicture.setVisibility(View.VISIBLE);
-            btnDone.setVisibility(View.VISIBLE);
-
-            //Set title in action bar - i chose no title
-            ActionBar actionBar = getSupportActionBar();
-            assert actionBar != null;
-            actionBar.setTitle(Html.fromHtml("<font color='#039694'>Set party's picture</font>"));
-
-            //wait 2 seconds and after it makes text Disappeared
-            Handler handler = new Handler();
-            handler.postDelayed(() -> tvGroupPicture.setText("Tap on the picture above to set a profile picture"), 3000);
-        });
-        imgGroupPicture.setOnClickListener(v -> {
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
-            tvGroupPicture.setVisibility(View.INVISIBLE);
-        });
-        spnDays.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                DaysSelected = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spnMonths.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                MonthsSelected = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spnYears.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                YearsSelected = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spnHours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                HoursSelected = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        btnDone.setOnClickListener(v -> {
-            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == 100) {
-                Uri uri = data.getData();
-                if (null != uri) {
-
-                    ((ImageView) findViewById(R.id.imgGroupPicture)).setImageURI(uri);
-
-                    DBref.refStorage.child("Groups/" + GroupKey1).putFile(uri).addOnSuccessListener(taskSnapshot -> Toast.makeText(AddGroup.this, "saved", Toast.LENGTH_SHORT).show()).addOnFailureListener(exception -> Toast.makeText(AddGroup.this, "error while saving ", Toast.LENGTH_SHORT).show());
-                }
-            }
-        }
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent goToNextActivity;
-
-        if (item.getItemId() == R.id.idMenu) {
-            goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(goToNextActivity);
-        } else if (item.getItemId() == R.id.idAddProfile) {
-            goToNextActivity = new Intent(getApplicationContext(), AddGroup.class);
-            startActivity(goToNextActivity);
-        } else if (item.getItemId() == R.id.idEditProfile) {
-            goToNextActivity = new Intent(getApplicationContext(), EditProfile.class);
-            startActivity(goToNextActivity);
-        } else if (item.getItemId() == R.id.idPublicParties) {
-            goToNextActivity = new Intent(getApplicationContext(), PublicGroups.class);
-            startActivity(goToNextActivity);
-        } else if (item.getItemId() == R.id.idLogout) {
-            DBref.Auth.signOut();
-            DBref.CurrentUser = null;
-            goToNextActivity = new Intent(getApplicationContext(), Login.class);
-            startActivity(goToNextActivity);
-        }
-
-        return true;
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu, menu);
+    return true;
+  }
 }
