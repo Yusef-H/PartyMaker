@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context="com.example.partymaker.DeletePeople">
 
     <RelativeLayout
@@ -34,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:backgroundTint="#0081d1"
+        android:layout_marginTop="50dp"
         android:hint="Input your friend's email"
         android:inputType="textPersonName"
         android:textAlignment="center"

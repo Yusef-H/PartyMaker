@@ -15,8 +15,9 @@
             android:id="@+id/btnAbout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="200dp"
+            android:layout_marginStart="200dp"
             android:background="#00000000"
+            android:contentDescription="@string/about_us"
             android:src="@drawable/bubble" />
 
         <ImageView
@@ -26,6 +27,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="80dp"
+            android:contentDescription="@string/cake"
             app:srcCompat="@drawable/cake" />
     </RelativeLayout>
 
@@ -34,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Login Page"
+        android:text="@string/login_page"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColorLink="#A93838"
         android:textStyle="bold" />
@@ -44,8 +46,9 @@
         android:layout_width="262dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="50px"
-        android:hint="Email"
+        android:layout_marginTop="10dp"
+        android:autofillHints="Email"
+        android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
         android:textAlignment="center" />
 
@@ -54,9 +57,10 @@
         android:layout_width="264dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="30px"
+        android:layout_marginTop="10dp"
+        android:autofillHints="Password"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:textAlignment="center" />
 
@@ -80,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Login" />
+            android:text="@string/Login" />
     </LinearLayout>
 
 
@@ -96,7 +100,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:layout_marginStart="81dp"
-            android:text="dont have an account?" />
+            android:text="@string/dont_have_an_account" />
 
         <Button
             android:id="@+id/btnPressL"
@@ -106,7 +110,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="71dp"
             android:background="#00ffffff"
-            android:text="Press Here"
+            android:text="@string/Press_Here"
             android:textAllCaps="false"
             android:textColor="#ff00ae" />
     </RelativeLayout>
@@ -121,16 +125,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="130dp"
             android:buttonTint="#696969"
-            android:text="Stay connected"
+            android:text="@string/stay_connected"
             android:textColor="#696969" />
 
         <Button
             android:id="@+id/btnResetPass"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="110dp"
+            android:layout_marginStart="110dp"
             android:background="#00ffffff"
-            android:text="Reset"
+            android:text="@string/reset"
             android:textAllCaps="false"
             android:textColor="#595959"
             android:visibility="visible" />
@@ -139,9 +143,9 @@
             android:id="@+id/tvReset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="185dp"
+            android:layout_marginStart="185dp"
             android:layout_marginTop="10dp"
-            android:text="your password"
+            android:text="@string/your_password"
             android:visibility="visible" />
     </RelativeLayout>
 </LinearLayout>
