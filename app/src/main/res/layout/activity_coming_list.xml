@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="#6cd7efff"
     tools:context="com.example.partymaker.ComingList"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
 
     <ListView
