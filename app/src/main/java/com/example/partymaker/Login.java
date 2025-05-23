@@ -75,7 +75,6 @@ public class Login extends AppCompatActivity {
     btnPress = findViewById(R.id.btnPressL);
     cbRememberMe = findViewById(R.id.cbRememberMe);
     btnResetPass = findViewById(R.id.btnResetPass);
-    tvReset = findViewById(R.id.tvReset);
     btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
 
     // start animation on ImageButton btnAbout
