@@ -14,30 +14,27 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.data.DBref;
+import com.example.partymaker.data.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class Login extends AppCompatActivity {
   private EditText etEmail, etPassword;
   private ImageButton btnAbout;
   private Button btnLogin, btnPress, btnResetPass;
-  private TextView tvReset;
   private CheckBox cbRememberMe;
   private SignInButton btnGoogleSignIn;
   private GoogleSignInClient mGoogleSignInClient;
@@ -75,7 +72,6 @@ public class Login extends AppCompatActivity {
     btnPress = findViewById(R.id.btnPressL);
     cbRememberMe = findViewById(R.id.cbRememberMe);
     btnResetPass = findViewById(R.id.btnResetPass);
-    tvReset = findViewById(R.id.tvReset);
     btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
 
     // start animation on ImageButton btnAbout
@@ -107,72 +103,54 @@ public class Login extends AppCompatActivity {
               DBref.Auth.signInWithEmailAndPassword(email, password)
                   .addOnCompleteListener(
                       Login.this,
-                      new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(Task<AuthResult> task) {
-                          if (task.isSuccessful()) {
-                            // Saves IsChecked - True/False in app's cache
-                            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                            editor.commit();
+                          task -> {
+                            if (task.isSuccessful()) {
+                              // Saves IsChecked - True/False in app's cache
+                              SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                              SharedPreferences.Editor editor = settings.edit();
+                              editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
+                              editor.apply();
 
-                            Intent intent = new Intent();
-                            Toast.makeText(Login.this, "Connected", Toast.LENGTH_SHORT).show();
-                            intent.setClass(getBaseContext(), MainActivity.class);
-                            btnAbout.clearAnimation();
-                            startActivity(intent);
-                          } else {
-                            Toast.makeText(
-                                    Login.this, "Invalid Email or Password", Toast.LENGTH_SHORT)
-                                .show();
-                            pd.dismiss();
-                            btnResetPass.setVisibility(View.VISIBLE);
-                            tvReset.setVisibility(View.VISIBLE);
-                          }
-                        }
-                      });
+                              Intent intent = new Intent();
+                              Toast.makeText(Login.this, "Connected", Toast.LENGTH_SHORT).show();
+                              intent.setClass(getBaseContext(), MainActivity.class);
+                              btnAbout.clearAnimation();
+                              startActivity(intent);
+                            } else {
+                              Toast.makeText(
+                                      Login.this, "Invalid Email or Password", Toast.LENGTH_SHORT)
+                                  .show();
+                              pd.dismiss();
+                              btnResetPass.setVisibility(View.VISIBLE);
+                            }
+                          });
             }
           }
         });
 
     // Google Sign In button click listener
     btnGoogleSignIn.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            signInWithGoogle();
-          }
-        });
+            v -> signInWithGoogle());
 
     // Press Here Onclick
     btnPress.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            // when click on "press here" it takes you to RegisterActivity
-            Intent i = new Intent(Login.this, Register.class);
-            btnAbout.clearAnimation();
-            startActivity(i);
-          }
-        });
+            view -> {
+              // when click on "press here" it takes you to RegisterActivity
+              Intent i = new Intent(Login.this, Register.class);
+              btnAbout.clearAnimation();
+              startActivity(i);
+            });
     btnResetPass.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Intent i = new Intent(Login.this, ResetPassword.class);
-            btnAbout.clearAnimation();
-            startActivity(i);
-          }
-        });
+            v -> {
+              Intent i = new Intent(Login.this, ResetPassword.class);
+              btnAbout.clearAnimation();
+              startActivity(i);
+            });
     btnAbout.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Intent i = new Intent(Login.this, Intro.class);
-            startActivity(i);
-          }
-        });
+            v -> {
+              Intent i = new Intent(Login.this, Intro.class);
+              startActivity(i);
+            });
   }
 
   private void signInWithGoogle() {
@@ -202,21 +180,29 @@ public class Login extends AppCompatActivity {
         .signInWithCredential(credential)
         .addOnCompleteListener(
             this,
-            new OnCompleteListener<AuthResult>() {
-              @Override
-              public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                  // Sign in success
-                  Intent intent = new Intent(Login.this, MainActivity.class);
-                  startActivity(intent);
-                  finish();
-                } else {
-                  // If sign in fails, display a message to the user.
-                  Toast.makeText(Login.this, task.toString(), Toast.LENGTH_LONG).show();
-                  // Toast.makeText(Login.this, "Authentication Failed",
-                  // Toast.LENGTH_SHORT).show();
-                }
-              }
-            });
+                task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success
+                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            String email = firebaseUser.getEmail();
+                            String username = firebaseUser.getDisplayName();
+
+
+                            User u = new User(email, username);
+
+                            // Replace dots with spaces in the email to make it a valid key in Firebase
+                            assert email != null;
+                            DBref.refUsers.child(email.replace('.', ' ')).setValue(u);
+                        }
+
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(Login.this, task.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
   }
 }

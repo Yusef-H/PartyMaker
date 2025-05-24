@@ -95,6 +95,8 @@
     <string name="Press_Here">Press Here</string>
     <string name="reset">Reset</string>
     <string name="your_password">your password</string>
+    <string name="reset_you_password">Reset you password</string>
+    <string name="reset_your_password">Reset your password</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
@@ -145,11 +147,11 @@
         <item>December</item>
     </string-array>
     <string-array name="array_years">
-        <item>2018</item>
-        <item>2019</item>
-        <item>2020</item>
-        <item>2021</item>
-        <item>2022</item>
+        <item>2025</item>
+        <item>2026</item>
+        <item>2027</item>
+        <item>2028</item>
+        <item>2029</item>
     </string-array>
     <string-array name="array_hours">
         <item>01:00</item>
