@@ -96,6 +96,7 @@
     <string name="reset">Reset</string>
     <string name="your_password">your password</string>
     <string name="reset_you_password">Reset you password</string>
+    <string name="reset_your_password">Reset your password</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
