@@ -101,6 +101,21 @@
     <string name="make_every_party_unforgettable">Make Every Party Unforgettable</string>
     <string name="partymaker">PartyMaker</string>
     <string name="logo">LOGO</string>
+    <string name="admin_options">Admin Options</string>
+    <string name="admin_email">Admin Email</string>
+    <string name="location">Location</string>
+    <string name="date">Date</string>
+    <string name="press_to_see_time">press to see time</string>
+    <string name="press_to_see_date">press to see date</string>
+    <string name="invited">invited</string>
+    <string name="delete_people">Delete People</string>
+    <string name="entry">entry</string>
+    <string name="group_options">Group Options</string>
+    <string name="change_price">Change Price</string>
+    <string name="arrow">arrow</string>
+    <string name="calendar">calendar</string>
+    <string name="options">options</string>
+    <string name="leave">leave</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
