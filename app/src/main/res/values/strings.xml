@@ -116,6 +116,7 @@
     <string name="calendar">calendar</string>
     <string name="options">options</string>
     <string name="leave">leave</string>
+    <string name="input_your_friend_s_email">Input your friend\'s email</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
