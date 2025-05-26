@@ -74,7 +74,7 @@
     <string name="your_party_s_location">Your Party\'s Location</string>
     <string name="your_party_s_date">Your Party\'s Date</string>
     <string name="name">Name</string>
-    <string name="adress">Adress</string>
+    <string name="adress">Address</string>
     <string name="day">Day</string>
     <string name="month">Month</string>
     <string name="year">Year</string>
@@ -97,6 +97,10 @@
     <string name="your_password">your password</string>
     <string name="reset_you_password">Reset you password</string>
     <string name="reset_your_password">Reset your password</string>
+    <string name="version_1_0">Version 1.0</string>
+    <string name="make_every_party_unforgettable">Make Every Party Unforgettable</string>
+    <string name="partymaker">PartyMaker</string>
+    <string name="logo">LOGO</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
