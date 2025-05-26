@@ -117,6 +117,7 @@
     <string name="options">options</string>
     <string name="leave">leave</string>
     <string name="input_your_friend_s_email">Input your friend\'s email</string>
+    <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend\'s email above and press delete Friend to delete him from current group</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
