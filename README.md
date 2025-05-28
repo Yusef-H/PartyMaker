@@ -56,6 +56,13 @@ PartyMaker is a social event planning application that helps users organize gath
 - Improved user location display on the home screen
 - Enhanced group joining functionality
 
+- ## Setup Instructions
+
+1. Copy `google-services.json.template` to `google-services.json` in the app folder
+2. Copy `api_keys.xml.template` to `app/src/main/res/values/api_keys.xml`
+3. Fill in your actual API keys and Firebase configuration
+4. These files are ignored by git for security
+
 ## Getting Started
 
 1. Clone the repository
