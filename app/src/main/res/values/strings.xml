@@ -118,6 +118,11 @@
     <string name="leave">leave</string>
     <string name="input_your_friend_s_email">Input your friend\'s email</string>
     <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend\'s email above and press delete Friend to delete him from current group</string>
+    <string name="register_cake">Register Cake</string>
+    <string name="register_page">Register Page</string>
+    <string name="register">Register</string>
+    <string name="have_an_account">Have an account?</string>
+    <string name="username_register">Username</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

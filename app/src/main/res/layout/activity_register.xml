@@ -15,6 +15,7 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:layout_marginTop="60dp"
+        android:contentDescription="@string/register_cake"
         app:srcCompat="@drawable/cake2" />
 
     <TextView
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:text="Register Page"
+        android:text="@string/register_page"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#A93838"
         android:textStyle="bold" />
@@ -34,11 +35,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:autofillHints=""
+        android:drawableStart="@drawable/email_logo1"
+        android:drawablePadding="10dp"
         android:background="@drawable/edittext_background"
-        android:hint="Email"
+        android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
-        android:padding="12dp"
-        android:textAlignment="center" />
+        android:padding="12dp" />
 
     <EditText
         android:id="@+id/etUsername"
@@ -47,10 +49,11 @@
         android:layout_marginTop="16dp"
         android:autofillHints=""
         android:background="@drawable/edittext_background"
-        android:hint="Username"
+        android:hint="@string/username_register"
         android:inputType="text"
         android:padding="12dp"
-        android:textAlignment="center" />
+        android:drawableStart="@drawable/username_logo2"
+        android:drawablePadding="10dp" />
 
     <EditText
         android:id="@+id/etPasswordR"
@@ -59,10 +62,11 @@
         android:layout_marginTop="16dp"
         android:autofillHints=""
         android:background="@drawable/edittext_background"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="12dp"
-        android:textAlignment="center" />
+        android:drawableStart="@drawable/password_logo1"
+        android:drawablePadding="10dp" />
 
     <Button
         android:id="@+id/btnRegister"
@@ -71,7 +75,7 @@
         android:layout_marginTop="30dp"
         android:backgroundTint="#A93838"
         android:padding="12dp"
-        android:text="Register"
+        android:text="@string/register"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
 
@@ -85,7 +89,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Have an account?"
+            android:text="@string/have_an_account"
             android:textColor="#444444" />
 
         <Button
@@ -93,8 +97,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:text=" Press Here"
+            android:text="@string/press_here"
             android:textColor="#8800ff"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginStart="5dp"/>
     </LinearLayout>
 </LinearLayout>
