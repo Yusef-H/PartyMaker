@@ -16,12 +16,14 @@ import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
 import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
 import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     GroupAdpter allGroupsAdapter;
     String UserKey;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +85,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, GptChatActivity.class);
                 startActivity(intent);
+            }
+        });
+        fabChat.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                return Common.dragChatButtonOnTouch(view, event);
             }
         });
     }
