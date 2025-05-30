@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +45,12 @@ public class GptChatActivity extends AppCompatActivity {
         // Initialize OpenAI API helper
         String apiKey = getApiKey();
         openAiApi = new OpenAiApi(apiKey);
+
+        // this 3 lines disables the action bar only in this activity
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         // Initialize views
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
