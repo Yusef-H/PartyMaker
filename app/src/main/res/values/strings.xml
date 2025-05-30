@@ -123,6 +123,7 @@
     <string name="register">Register</string>
     <string name="have_an_account">Have an account?</string>
     <string name="username_register">Username</string>
+    <string name="chat_with_ai_assistant">Chat with AI Assistant</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
