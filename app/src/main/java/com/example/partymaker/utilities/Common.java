@@ -16,10 +16,19 @@ import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
 import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
 import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
 
 /** Utility methods for working with Intents and ExtrasMetadata. */
 public class Common {
+  private static float downX, downY, dX, dY;
+  private static int touchSlop;
+
+
   /** Packs all fields from ExtrasMetadata into the given Intent. */
   public static void addExtrasToIntent(Intent intent, ExtrasMetadata extras) {
     intent.putExtra(GROUP_NAME, extras.getGroupName());
@@ -37,5 +46,47 @@ public class Common {
     intent.putExtra(FRIEND_KEYS, extras.getFriendKeys());
     intent.putExtra(COMING_KEYS, extras.getComingKeys());
     intent.putExtra(MESSAGE_KEYS, extras.getMessageKeys());
+  }
+
+  @SuppressLint("ClickableViewAccessibility")
+  public static boolean dragChatButtonOnTouch(View view, MotionEvent event) {
+    // lazy‐init slop
+    if (touchSlop == 0) {
+      touchSlop = ViewConfiguration.get(view.getContext())
+              .getScaledTouchSlop();
+    }
+
+    switch (event.getActionMasked()) {
+      case MotionEvent.ACTION_DOWN:
+        downX = event.getRawX();
+        downY = event.getRawY();
+        dX    = view.getX() - downX;
+        dY    = view.getY() - downY;
+        return true;
+
+      case MotionEvent.ACTION_MOVE:
+        float newX = event.getRawX() + dX;
+        float newY = event.getRawY() + dY;
+        View parent = (View) view.getParent();
+        // clamp inside parent bounds
+        newX = Math.max(0, Math.min(newX, parent.getWidth()  - view.getWidth()));
+        newY = Math.max(0, Math.min(newY, parent.getHeight() - view.getHeight()));
+        view.setX(newX);
+        view.setY(newY);
+        return true;
+
+      case MotionEvent.ACTION_UP:
+      case MotionEvent.ACTION_CANCEL:
+        float upX = event.getRawX();
+        float upY = event.getRawY();
+        // if finger didn’t move more than slop → it’s a tap
+        if (Math.hypot(upX - downX, upY - downY) < touchSlop) {
+          view.performClick();
+        }
+        return true;
+
+      default:
+        return false;
+    }
   }
 }

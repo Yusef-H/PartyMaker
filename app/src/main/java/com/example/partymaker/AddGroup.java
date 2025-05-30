@@ -15,7 +15,9 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,6 +32,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.Group;
+import com.example.partymaker.utilities.Common;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
@@ -45,6 +50,7 @@ public class AddGroup extends AppCompatActivity {
   private CheckBox cbGroupType;
   private Calendar selectedDate;
   private TimePicker timePicker;
+  private FloatingActionButton fabChat;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +98,7 @@ public class AddGroup extends AppCompatActivity {
     cbGroupType = findViewById(R.id.cbGroupType);
     selectedDate = Calendar.getInstance();
     timePicker = findViewById(R.id.timePicker);
+    fabChat = findViewById(R.id.fabChat);
 
     // spinner adapter for hours
     ArrayAdapter<CharSequence> hoursAdapter =
@@ -102,7 +109,7 @@ public class AddGroup extends AppCompatActivity {
     evantHandler();
   }
 
-  @SuppressLint("SetTextI18n")
+  @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
   private void evantHandler() {
     btnNext1.setOnClickListener(
         v -> {
@@ -269,6 +276,23 @@ public class AddGroup extends AppCompatActivity {
           Intent intent = new Intent(getBaseContext(), MainActivity.class);
           startActivity(intent);
         });
+
+
+
+      fabChat.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
+              startActivity(intent);
+          }
+      });
+      fabChat.setOnTouchListener(new View.OnTouchListener() {
+          @SuppressLint("ClickableViewAccessibility")
+          @Override
+          public boolean onTouch(View view, MotionEvent event) {
+              return Common.dragChatButtonOnTouch(view, event);
+          }
+      });
   }
 
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
