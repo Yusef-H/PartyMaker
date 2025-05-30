@@ -1,15 +1,10 @@
 package com.example.partymaker;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,11 +25,10 @@ import com.google.android.material.appbar.MaterialToolbar;
 public class GptChatActivity extends AppCompatActivity {
     private RecyclerView chatRecyclerView;
     private EditText messageInput;
-    private ImageButton sendButton;
     private List<SimpleChatMessage> messages;
     private ChatAdapter2 chatAdapter;
     private OpenAiApi openAiApi;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -55,7 +49,7 @@ public class GptChatActivity extends AppCompatActivity {
         // Initialize views
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         messageInput = findViewById(R.id.messageInput);
-        sendButton = findViewById(R.id.sendButton);
+        ImageButton sendButton = findViewById(R.id.sendButton);
         MaterialToolbar toolbar = findViewById(R.id.chatToolbar);
 
         // Toolbar back button
@@ -73,19 +67,14 @@ public class GptChatActivity extends AppCompatActivity {
         chatAdapter.notifyDataSetChanged();
 
         // Set keyboard to Hebrew if possible (API 24+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            messageInput.setImeHintLocales(new android.os.LocaleList(new Locale("he")));
-        }
+        messageInput.setImeHintLocales(new android.os.LocaleList(new Locale("he")));
 
         // Setup send button click listener
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userMessage = messageInput.getText().toString().trim();
-                if (!userMessage.isEmpty()) {
-                    sendMessage(userMessage);
-                    messageInput.setText("");
-                }
+        sendButton.setOnClickListener(v -> {
+            String userMessage = messageInput.getText().toString().trim();
+            if (!userMessage.isEmpty()) {
+                sendMessage(userMessage);
+                messageInput.setText("");
             }
         });
     }
@@ -125,9 +114,7 @@ public class GptChatActivity extends AppCompatActivity {
                     chatRecyclerView.scrollToPosition(messages.size() - 1);
                 });
             } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         });
     }
