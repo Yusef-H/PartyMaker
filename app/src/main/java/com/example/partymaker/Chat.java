@@ -42,8 +42,9 @@ public class Chat extends AppCompatActivity {
 
         //this 2 lines changes title's name
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Chat");
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#98bad5")));
 
         //connection between values from intent
         HashMap<String, Object> hashMessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
