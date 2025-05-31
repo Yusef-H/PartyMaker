@@ -1,10 +1,9 @@
 package com.example.partymaker;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
@@ -24,17 +23,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentContainerView;
-
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.Group;
 import com.example.partymaker.utilities.Common;
@@ -42,7 +37,6 @@ import com.example.partymaker.utilities.MapUtilities;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -53,13 +47,10 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
-import android.app.DatePickerDialog;
-import android.widget.TimePicker;
 
 public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
   private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
@@ -78,16 +69,13 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
   private FusedLocationProviderClient locationClient;
   private final int FINE_PERMISSION_CODE = 1;
 
-
-
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_add_group);
 
-
     if (!Places.isInitialized()) {
-        Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
+      Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
     }
 
     // Better approach for setting a colored ActionBar title
@@ -130,30 +118,29 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
     selectedDate = Calendar.getInstance();
     timePicker = findViewById(R.id.timePicker);
     fabChat = findViewById(R.id.fabChat);
-    mapFrag = (SupportMapFragment)
-            getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+    mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
     mapFrag.getMapAsync(this);
-    autocompleteFragment = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+    autocompleteFragment =
+        (AutocompleteSupportFragment)
+            getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     autocompleteFragment.setPlaceFields(
-                Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-        );
-    locationClient = LocationServices
-            .getFusedLocationProviderClient(this);
+        Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+    locationClient = LocationServices.getFusedLocationProviderClient(this);
 
-    autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-        @Override
-        public void onPlaceSelected(@NonNull Place place) {
+    autocompleteFragment.setOnPlaceSelectedListener(
+        new PlaceSelectionListener() {
+          @Override
+          public void onPlaceSelected(@NonNull Place place) {
             chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
-        }
+          }
 
-        @Override
-        public void onError(@NonNull Status status) {
-            Toast.makeText(AddGroup.this,
-                    "Search error: " + status.getStatusMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
-    });
+          @Override
+          public void onError(@NonNull Status status) {
+            Toast.makeText(
+                    AddGroup.this, "Search error: " + status.getStatusMessage(), Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
 
     // spinner adapter for hours
     ArrayAdapter<CharSequence> hoursAdapter =
@@ -175,7 +162,8 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
           btnBack1.setVisibility(View.VISIBLE);
 
           findViewById(R.id.mapFragment).setVisibility(View.VISIBLE);
-          MapUtilities.requestLocationPermission(AddGroup.this, map, locationClient, FINE_PERMISSION_CODE);
+          MapUtilities.requestLocationPermission(
+              AddGroup.this, map, locationClient, FINE_PERMISSION_CODE);
           findViewById(R.id.autocomplete_fragment).setVisibility(View.VISIBLE);
         });
     btnNext2.setOnClickListener(
@@ -247,16 +235,17 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
           p.setGroupPrice("0");
 
           // Group's Location
-            String locationValue;
-            if (chosenLatLng != null) {
-                locationValue = MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
-                p.setGroupLocation(locationValue);
-            } else {
-                Toast.makeText(AddGroup.this, "Warning: You have not set an address for your party.", Toast.LENGTH_LONG).show();
-            }
-
-
-
+          String locationValue;
+          if (chosenLatLng != null) {
+            locationValue = MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+            p.setGroupLocation(locationValue);
+          } else {
+            Toast.makeText(
+                    AddGroup.this,
+                    "Warning: You have not set an address for your party.",
+                    Toast.LENGTH_LONG)
+                .show();
+          }
 
           // Group's date
           p.setGroupDays(DaysSelected);
@@ -339,22 +328,22 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
           startActivity(intent);
         });
 
-
-
-      fabChat.setOnClickListener(new View.OnClickListener() {
+    fabChat.setOnClickListener(
+        new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-              Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
-              startActivity(intent);
+            Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
+            startActivity(intent);
           }
-      });
-      fabChat.setOnTouchListener(new View.OnTouchListener() {
+        });
+    fabChat.setOnTouchListener(
+        new View.OnTouchListener() {
           @SuppressLint("ClickableViewAccessibility")
           @Override
           public boolean onTouch(View view, MotionEvent event) {
-              return Common.dragChatButtonOnTouch(view, event);
+            return Common.dragChatButtonOnTouch(view, event);
           }
-      });
+        });
   }
 
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -412,52 +401,52 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
   }
 
   private void showDatePicker() {
-    DatePickerDialog datePickerDialog = new DatePickerDialog(
-        this,
-        (view, year, month, dayOfMonth) -> {
-          selectedDate.set(year, month, dayOfMonth);
-          updateSelectedDate();
-        },
-        selectedDate.get(Calendar.YEAR),
-        selectedDate.get(Calendar.MONTH),
-        selectedDate.get(Calendar.DAY_OF_MONTH)
-    );
+    DatePickerDialog datePickerDialog =
+        new DatePickerDialog(
+            this,
+            (view, year, month, dayOfMonth) -> {
+              selectedDate.set(year, month, dayOfMonth);
+              updateSelectedDate();
+            },
+            selectedDate.get(Calendar.YEAR),
+            selectedDate.get(Calendar.MONTH),
+            selectedDate.get(Calendar.DAY_OF_MONTH));
     datePickerDialog.show();
   }
-  
+
   private void updateSelectedDate() {
     // Get month name in English
     String monthName = new SimpleDateFormat("MMMM", Locale.ENGLISH).format(selectedDate.getTime());
-    
+
     // Update the selected date text
-    tvSelectedDate.setText(String.format("%d %s %d", 
-        selectedDate.get(Calendar.DAY_OF_MONTH),
-        monthName,
-        selectedDate.get(Calendar.YEAR)));
-    
+    tvSelectedDate.setText(
+        String.format(
+            "%d %s %d",
+            selectedDate.get(Calendar.DAY_OF_MONTH), monthName, selectedDate.get(Calendar.YEAR)));
+
     // Store the values
     DaysSelected = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
     MonthsSelected = monthName;
     YearsSelected = String.valueOf(selectedDate.get(Calendar.YEAR));
   }
 
-    @Override
-    public void onRequestPermissionsResult(int code,
-                                           @NonNull String[] perms, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(code, perms, grantResults);
-        MapUtilities.handlePermissionsResult(this, code, grantResults, FINE_PERMISSION_CODE, map, locationClient);
-    }
+  @Override
+  public void onRequestPermissionsResult(
+      int code, @NonNull String[] perms, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(code, perms, grantResults);
+    MapUtilities.handlePermissionsResult(
+        this, code, grantResults, FINE_PERMISSION_CODE, map, locationClient);
+  }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.map = googleMap;
-        // Wherever the user clicks gets stored in chosenLatLng
-        map.setOnMapClickListener(latlng -> {
-            chosenLatLng = latlng;
-            map.clear();
-            map.addMarker(new MarkerOptions()
-                    .position(latlng)
-                    .title("Party here"));
+  @Override
+  public void onMapReady(GoogleMap googleMap) {
+    this.map = googleMap;
+    // Wherever the user clicks gets stored in chosenLatLng
+    map.setOnMapClickListener(
+        latlng -> {
+          chosenLatLng = latlng;
+          map.clear();
+          map.addMarker(new MarkerOptions().position(latlng).title("Party here"));
         });
-    }
+  }
 }

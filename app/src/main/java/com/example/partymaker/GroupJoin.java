@@ -13,9 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.data.DBref;
-import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.MapUtilities;
-
 import java.util.HashMap;
 
 public class GroupJoin extends AppCompatActivity {

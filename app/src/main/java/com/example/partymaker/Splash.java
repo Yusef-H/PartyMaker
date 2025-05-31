@@ -95,9 +95,7 @@ public class Splash extends AppCompatActivity {
     SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     boolean isChecked = settings.getBoolean(IS_CHECKED, false);
 
-    Class<?> targetActivity = shouldNavigateToMain(isChecked)
-            ? MainActivity.class
-            : Login.class;
+    Class<?> targetActivity = shouldNavigateToMain(isChecked) ? MainActivity.class : Login.class;
 
     Intent intent = new Intent(this, targetActivity);
     startActivity(intent);
