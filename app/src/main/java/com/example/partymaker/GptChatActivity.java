@@ -10,13 +10,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.partymaker.utilities.Common;
-import com.google.android.material.appbar.MaterialToolbar;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Locale;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class GptChatActivity extends AppCompatActivity {
     private RecyclerView chatRecyclerView;
@@ -72,39 +76,46 @@ public class GptChatActivity extends AppCompatActivity {
                 sendMessage(userMessage);
                 messageInput.setText("");
             }
-          }
         });
-  }
+    }
 
-  @SuppressLint("NotifyDataSetChanged")
-  private void sendMessage(String userMessage) {
-    // Add user message to the chat
-    messages.add(new SimpleChatMessage("user", userMessage));
-    chatAdapter.notifyDataSetChanged();
-    chatRecyclerView.scrollToPosition(messages.size() - 1);
+    private String getApiKey() {
+        try {
+            Properties properties = new Properties();
+            InputStream inputStream = getAssets().open("local.properties");
+            properties.load(inputStream);
+            return properties.getProperty("OPENAI_API_KEY");
+        } catch (IOException e) {
+            System.out.println("error");
+            return "";
+        }
+    }
 
-    // Send request to OpenAI in background, always include system prompt
-    executor.execute(
-        () -> {
-          try {
-            // Always send the system prompt and all messages
-            List<SimpleChatMessage> allMessages = new ArrayList<>();
-            allMessages.add(
-                new SimpleChatMessage("system", "ענה תמיד בעברית, גם אם השאלה באנגלית."));
-            for (SimpleChatMessage m : messages) {
-              if (!"system".equals(m.role)) allMessages.add(m);
-            }
-            String assistantMessage = openAiApi.sendMessageWithHistory(allMessages);
-            runOnUiThread(
-                () -> {
-                  messages.add(new SimpleChatMessage("assistant", assistantMessage));
-                  chatAdapter.notifyDataSetChanged();
-                  chatRecyclerView.scrollToPosition(messages.size() - 1);
+    @SuppressLint("NotifyDataSetChanged")
+    private void sendMessage(String userMessage) {
+        // Add user message to the chat
+        messages.add(new SimpleChatMessage("user", userMessage));
+        chatAdapter.notifyDataSetChanged();
+        chatRecyclerView.scrollToPosition(messages.size() - 1);
+
+        // Send request to OpenAI in background, always include system prompt
+        executor.execute(() -> {
+            try {
+                // Always send the system prompt and all messages
+                List<SimpleChatMessage> allMessages = new ArrayList<>();
+                allMessages.add(new SimpleChatMessage("system", "ענה תמיד בעברית, גם אם השאלה באנגלית."));
+                for (SimpleChatMessage m : messages) {
+                    if (!"system".equals(m.role)) allMessages.add(m);
+                }
+                String assistantMessage = openAiApi.sendMessageWithHistory(allMessages);
+                runOnUiThread(() -> {
+                    messages.add(new SimpleChatMessage("assistant", assistantMessage));
+                    chatAdapter.notifyDataSetChanged();
+                    chatRecyclerView.scrollToPosition(messages.size() - 1);
                 });
-
             } catch (Exception e) {
                 runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         });
-  }
+    }
 }
