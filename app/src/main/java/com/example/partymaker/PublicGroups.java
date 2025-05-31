@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,7 +43,8 @@ public class PublicGroups extends AppCompatActivity {
     actionBar.setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
 
     // set actionbar background
-    @SuppressLint("UseCompatLoadingForDrawables") Drawable d = getResources().getDrawable(R.drawable.background5);
+    @SuppressLint("UseCompatLoadingForDrawables")
+    Drawable d = getResources().getDrawable(R.drawable.background5);
     actionBar.setBackgroundDrawable(d);
 
     // connection
@@ -123,13 +123,13 @@ public class PublicGroups extends AppCompatActivity {
               if (p.getGroupType() == 0) { // if group is public
                 boolean flag = false;
                 for (String userKey : UserKeys.keySet()) { // scan all group friends
-                    if (UserKey.equals(
-                            userKey)) // if current user not friend in current group so it show
-                    // current group
-                    {
-                        flag = true;
-                        break;
-                    }
+                  if (UserKey.equals(
+                      userKey)) // if current user not friend in current group so it show
+                  // current group
+                  {
+                    flag = true;
+                    break;
+                  }
                 }
                 if (!flag) {
                   group.add(p);
