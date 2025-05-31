@@ -9,7 +9,7 @@
         android:id="@+id/chatToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="#E8E8E8"
         android:title="צ'אט עם עוזר בינה מלאכותית"
         android:titleTextColor="@android:color/white"
         app:navigationIcon="@android:drawable/ic_media_previous"/>
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="8dp"
-            android:background="#F5F5F5">
+            android:background="@drawable/bg_send_message_bubble">
 
             <EditText
                 android:id="@+id/messageInput"
@@ -43,6 +43,7 @@
                 android:hint="הקלד כאן את ההודעה שלך..."
                 android:inputType="textMultiLine"
                 android:maxLines="4"
+                android:background="@drawable/edittext_background"
                 android:padding="12dp"
                 android:textDirection="rtl"
                 android:gravity="right|center_vertical"/>
@@ -52,9 +53,10 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
+                android:layout_marginStart="5dp"
                 android:background="@drawable/bg_send_button"
                 android:src="@android:drawable/ic_menu_send"
                 android:contentDescription="שלח הודעה"/>
         </LinearLayout>
     </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout> 
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

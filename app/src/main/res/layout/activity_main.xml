@@ -16,7 +16,8 @@
         <ListView
             android:id="@+id/lv1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@drawable/background3"/>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -27,6 +28,6 @@
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_dialog_email"
         app:fabSize="normal"
-        android:contentDescription="Chat with AI Assistant"/>
+        android:contentDescription="@string/chat_with_ai_assistant"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -25,46 +25,47 @@ import java.util.HashMap;
 
 public class Chat extends AppCompatActivity {
 
-  private ListView lv4;
-  private EditText etMessage;
-  private ImageButton btnSend;
-  private ImageButton btnGpt;
-  private String GroupKey;
-  private HashMap<String, Object> MessageKeys;
+    private ListView lv4;
+    private EditText etMessage;
+    private ImageButton btnSend;
+    private ImageButton btnGpt;
+    private String GroupKey;
+    private HashMap<String, Object> MessageKeys;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_chat);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
 
-    // this 2 lines changes title's name
-    ActionBar actionBar = getSupportActionBar();
-    actionBar.setTitle("Chat");
-    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+        // Actionbar settings
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Chat");
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
-    // connection between values from intent
-    HashMap<String, Object> hashMessageKeys =
-        (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
-    MessageKeys = hashMessageKeys;
-    String strGroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
-    GroupKey = strGroupKey;
+        //connection between values from intent
+        HashMap<String, Object> hashMessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
+        MessageKeys = hashMessageKeys;
+        String strGroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
+        GroupKey = strGroupKey;
 
-    // connection
-    lv4 = (ListView) findViewById(R.id.lv4);
-    etMessage = (EditText) findViewById(R.id.etMessage);
-    btnSend = (ImageButton) findViewById(R.id.btnSend);
-    btnGpt = (ImageButton) findViewById(R.id.btnGpt);
+        //connection
+        lv4 = (ListView) findViewById(R.id.lv4);
+        etMessage = (EditText) findViewById(R.id.etMessage);
+        btnSend = (ImageButton) findViewById(R.id.btnSend);
+        btnGpt = (ImageButton) findViewById(R.id.btnGpt);
 
-    ShowData();
-    eventHandler();
-    setupGptButton();
-  }
+        ShowData();
+        eventHandler();
+        setupGptButton();
+    }
 
-  private void eventHandler() {
-    lv4.setOnItemClickListener(
-        new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {}
+    private void eventHandler() {
+        lv4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
         });
     lv4.setOnItemLongClickListener(
         new AdapterView.OnItemLongClickListener() {
