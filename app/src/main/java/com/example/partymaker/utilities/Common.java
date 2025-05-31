@@ -28,7 +28,6 @@ public class Common {
   private static float downX, downY, dX, dY;
   private static int touchSlop;
 
-
   /** Packs all fields from ExtrasMetadata into the given Intent. */
   public static void addExtrasToIntent(Intent intent, ExtrasMetadata extras) {
     intent.putExtra(GROUP_NAME, extras.getGroupName());
@@ -52,16 +51,15 @@ public class Common {
   public static boolean dragChatButtonOnTouch(View view, MotionEvent event) {
     // lazy‐init slop
     if (touchSlop == 0) {
-      touchSlop = ViewConfiguration.get(view.getContext())
-              .getScaledTouchSlop();
+      touchSlop = ViewConfiguration.get(view.getContext()).getScaledTouchSlop();
     }
 
     switch (event.getActionMasked()) {
       case MotionEvent.ACTION_DOWN:
         downX = event.getRawX();
         downY = event.getRawY();
-        dX    = view.getX() - downX;
-        dY    = view.getY() - downY;
+        dX = view.getX() - downX;
+        dY = view.getY() - downY;
         return true;
 
       case MotionEvent.ACTION_MOVE:
@@ -69,7 +67,7 @@ public class Common {
         float newY = event.getRawY() + dY;
         View parent = (View) view.getParent();
         // clamp inside parent bounds
-        newX = Math.max(0, Math.min(newX, parent.getWidth()  - view.getWidth()));
+        newX = Math.max(0, Math.min(newX, parent.getWidth() - view.getWidth()));
         newY = Math.max(0, Math.min(newY, parent.getHeight() - view.getHeight()));
         view.setX(newX);
         view.setY(newY);
@@ -87,6 +85,17 @@ public class Common {
 
       default:
         return false;
+    }
+  }
+
+  public static String getApiKey(Context ctx, String key) {
+    try {
+      java.util.Properties properties = new java.util.Properties();
+      java.io.InputStream inputStream = ctx.getAssets().open("local.properties");
+      properties.load(inputStream);
+      return properties.getProperty(key);
+    } catch (java.io.IOException e) {
+      return "";
     }
   }
 }

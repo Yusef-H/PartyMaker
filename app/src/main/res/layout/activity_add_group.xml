@@ -65,17 +65,22 @@
         android:text="@string/private_party"
         android:textColor="#696969" />
 
-    <TextView
-        android:id="@+id/tvPartyLocation"
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/autocomplete_fragment"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/imgLogin"
-        android:gravity="center"
-        android:text="@string/your_party_s_location"
-        android:textColor="#000000"
-        android:textSize="25sp"
-        android:visibility="invisible" />
+        android:visibility="gone" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/autocomplete_fragment"
+        android:visibility="gone"/>
+
 
     <LinearLayout
         android:id="@+id/dateTimeContainer"
@@ -145,20 +150,6 @@
         android:inputType="textPersonName"
         android:textAlignment="center" />
 
-    <EditText
-        android:id="@+id/etPartyLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvPartyName"
-        android:autofillHints=""
-        android:backgroundTint="#000000"
-        android:ems="10"
-        android:hint="@string/adress"
-        android:inputType="textPersonName"
-        android:textAlignment="center"
-        android:visibility="invisible" />
-
     <Button
         android:id="@+id/btnAddGroup"
         android:layout_width="100dp"
@@ -218,9 +209,9 @@
         android:id="@+id/btnDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/btnAddGroup"
-        android:layout_below="@+id/timePicker"
-        android:layout_marginTop="175dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
         android:background="#1000e9ba"
         android:text="@string/done"
         android:textAllCaps="false"

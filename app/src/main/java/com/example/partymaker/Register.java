@@ -12,9 +12,9 @@ import androidx.core.app.NotificationCompat;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.User;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class Register extends AppCompatActivity {
   private EditText etEmail, etUsername, etPassword;
@@ -89,16 +89,26 @@ public class Register extends AppCompatActivity {
                 } else {
                   Exception e = task.getException();
                   if (e instanceof FirebaseAuthUserCollisionException) {
-                    Toast.makeText(Register.this, "האימייל כבר קיים במערכת. נסה להתחבר.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            Register.this,
+                            "האימייל כבר קיים במערכת. נסה להתחבר.",
+                            Toast.LENGTH_SHORT)
+                        .show();
                   } else if (e instanceof FirebaseAuthWeakPasswordException) {
-                    Toast.makeText(Register.this, "הסיסמה חלשה מדי. בחר סיסמה חזקה יותר (לפחות 6 תווים).", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            Register.this,
+                            "הסיסמה חלשה מדי. בחר סיסמה חזקה יותר (לפחות 6 תווים).",
+                            Toast.LENGTH_SHORT)
+                        .show();
                   } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    Toast.makeText(Register.this, "כתובת האימייל אינה תקינה.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "כתובת האימייל אינה תקינה.", Toast.LENGTH_SHORT)
+                        .show();
                   } else if (e instanceof FirebaseAuthException) {
                     String errorCode = ((FirebaseAuthException) e).getErrorCode();
                     Toast.makeText(Register.this, "שגיאה: " + errorCode, Toast.LENGTH_SHORT).show();
                   } else {
-                    Toast.makeText(Register.this, "שגיאת הרשמה לא ידועה.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "שגיאת הרשמה לא ידועה.", Toast.LENGTH_SHORT)
+                        .show();
                   }
                 }
               });
