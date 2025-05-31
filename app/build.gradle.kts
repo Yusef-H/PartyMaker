@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.gms.google-services")
     id("com.diffplug.spotless") version "6.15.0"
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -109,4 +110,9 @@ dependencies {
     // OkHttp and org.json dependencies
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("org.json:json:20220320")
+
+    // Google maps
+    implementation("com.google.android.gms:play-services-maps:17.0.0")
+    implementation("com.google.android.gms:play-services-location:17.0.0")
+    implementation("com.google.android.libraries.places:places:4.3.1")
 }

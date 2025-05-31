@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.Locale;
 
+import com.example.partymaker.utilities.Common;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class GptChatActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class GptChatActivity extends AppCompatActivity {
         setContentView(R.layout.chat_dialog);
 
         // Initialize OpenAI API helper
-        String apiKey = getApiKey();
+        String apiKey = Common.getApiKey(this, "OPENAI_API_KEY");
         openAiApi = new OpenAiApi(apiKey);
 
         // Initialize views
@@ -81,18 +82,6 @@ public class GptChatActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private String getApiKey() {
-        try {
-            Properties properties = new Properties();
-            InputStream inputStream = getAssets().open("local.properties");
-            properties.load(inputStream);
-            return properties.getProperty("OPENAI_API_KEY");
-        } catch (IOException e) {
-            System.out.println("error");
-            return "";
-        }
     }
 
     @SuppressLint("NotifyDataSetChanged")

@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+
 /** Utility methods for working with Intents and ExtrasMetadata. */
 public class Common {
   private static float downX, downY, dX, dY;
@@ -87,6 +88,17 @@ public class Common {
 
       default:
         return false;
+    }
+  }
+
+  public static String getApiKey(Context ctx, String key) {
+    try {
+      java.util.Properties properties = new java.util.Properties();
+      java.io.InputStream inputStream = ctx.getAssets().open("local.properties");
+      properties.load(inputStream);
+      return properties.getProperty(key);
+    } catch (java.io.IOException e) {
+      return "";
     }
   }
 }

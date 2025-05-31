@@ -1,8 +1,10 @@
 package com.example.partymaker;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
@@ -17,8 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,35 +27,68 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentContainerView;
+
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.Group;
 import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.MapUtilities;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 import android.app.DatePickerDialog;
 import android.widget.TimePicker;
 
-public class AddGroup extends AppCompatActivity {
+public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
   private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
-  private TextView tvPartyName, tvPartyLocation, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
-  private EditText etPartyName, etPartyLocation;
+  private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
+  private EditText etPartyName;
   private ImageView imgLogin, imgGroupPicture;
   private String GroupKey1, DaysSelected, MonthsSelected, YearsSelected, HoursSelected;
   private CheckBox cbGroupType;
   private Calendar selectedDate;
   private TimePicker timePicker;
   private FloatingActionButton fabChat;
+  private GoogleMap map;
+  private AutocompleteSupportFragment autocompleteFragment;
+  private LatLng chosenLatLng;
+  private SupportMapFragment mapFrag;
+  private FusedLocationProviderClient locationClient;
+  private final int FINE_PERMISSION_CODE = 1;
 
-  @Override
+
+
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_add_group);
+
+
+    if (!Places.isInitialized()) {
+        Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
+    }
 
     // Better approach for setting a colored ActionBar title
     ActionBar actionBar = getSupportActionBar();
@@ -88,17 +121,39 @@ public class AddGroup extends AppCompatActivity {
     btnDone = findViewById(R.id.btnDone);
     btnAddGroup = findViewById(R.id.btnAddGroup);
     tvPartyName = findViewById(R.id.tvPartyName);
-    tvPartyLocation = findViewById(R.id.tvPartyLocation);
     tvPartyDate = findViewById(R.id.tvPartyDate);
     tvGroupPicture = findViewById(R.id.tvGroupPicture);
     tvHours = findViewById(R.id.tvHours);
     tvSelectedDate = findViewById(R.id.tvSelectedDate);
     etPartyName = findViewById(R.id.etPartyName);
-    etPartyLocation = findViewById(R.id.etPartyLocation);
     cbGroupType = findViewById(R.id.cbGroupType);
     selectedDate = Calendar.getInstance();
     timePicker = findViewById(R.id.timePicker);
     fabChat = findViewById(R.id.fabChat);
+    mapFrag = (SupportMapFragment)
+            getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+    mapFrag.getMapAsync(this);
+    autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+    autocompleteFragment.setPlaceFields(
+                Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+        );
+    locationClient = LocationServices
+            .getFusedLocationProviderClient(this);
+
+    autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        @Override
+        public void onPlaceSelected(@NonNull Place place) {
+            chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
+        }
+
+        @Override
+        public void onError(@NonNull Status status) {
+            Toast.makeText(AddGroup.this,
+                    "Search error: " + status.getStatusMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    });
 
     // spinner adapter for hours
     ArrayAdapter<CharSequence> hoursAdapter =
@@ -115,16 +170,16 @@ public class AddGroup extends AppCompatActivity {
         v -> {
           tvPartyName.setVisibility(View.INVISIBLE);
           etPartyName.setVisibility(View.INVISIBLE);
-          tvPartyLocation.setVisibility(View.VISIBLE);
-          etPartyLocation.setVisibility(View.VISIBLE);
           btnNext1.setVisibility(View.INVISIBLE);
           btnNext2.setVisibility(View.VISIBLE);
           btnBack1.setVisibility(View.VISIBLE);
+
+          findViewById(R.id.mapFragment).setVisibility(View.VISIBLE);
+          MapUtilities.requestLocationPermission(AddGroup.this, map, locationClient, FINE_PERMISSION_CODE);
+          findViewById(R.id.autocomplete_fragment).setVisibility(View.VISIBLE);
         });
     btnNext2.setOnClickListener(
         v -> {
-          tvPartyLocation.setVisibility(View.INVISIBLE);
-          etPartyLocation.setVisibility(View.INVISIBLE);
           cbGroupType.setVisibility(View.INVISIBLE);
           tvPartyDate.setVisibility(View.VISIBLE);
           tvHours.setVisibility(View.VISIBLE);
@@ -134,22 +189,20 @@ public class AddGroup extends AppCompatActivity {
           btnAddGroup.setVisibility(View.VISIBLE);
           btnBack1.setVisibility(View.INVISIBLE);
           btnBack2.setVisibility(View.VISIBLE);
+          findViewById(R.id.mapFragment).setVisibility(View.INVISIBLE);
+          findViewById(R.id.autocomplete_fragment).setVisibility(View.INVISIBLE);
           showDatePicker();
         });
     btnBack1.setOnClickListener(
         v -> {
           tvPartyName.setVisibility(View.VISIBLE);
           etPartyName.setVisibility(View.VISIBLE);
-          tvPartyLocation.setVisibility(View.INVISIBLE);
-          etPartyLocation.setVisibility(View.INVISIBLE);
           btnNext1.setVisibility(View.VISIBLE);
           btnNext2.setVisibility(View.INVISIBLE);
           btnBack1.setVisibility(View.INVISIBLE);
         });
     btnBack2.setOnClickListener(
         v -> {
-          tvPartyLocation.setVisibility(View.VISIBLE);
-          etPartyLocation.setVisibility(View.VISIBLE);
           cbGroupType.setVisibility(View.VISIBLE);
           tvPartyDate.setVisibility(View.INVISIBLE);
           tvHours.setVisibility(View.INVISIBLE);
@@ -194,7 +247,16 @@ public class AddGroup extends AppCompatActivity {
           p.setGroupPrice("0");
 
           // Group's Location
-          p.setGroupLocation(etPartyLocation.getText().toString());
+            String locationValue;
+            if (chosenLatLng != null) {
+                locationValue = MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+                p.setGroupLocation(locationValue);
+            } else {
+                Toast.makeText(AddGroup.this, "Warning: You have not set an address for your party.", Toast.LENGTH_LONG).show();
+            }
+
+
+
 
           // Group's date
           p.setGroupDays(DaysSelected);
@@ -378,4 +440,24 @@ public class AddGroup extends AppCompatActivity {
     MonthsSelected = monthName;
     YearsSelected = String.valueOf(selectedDate.get(Calendar.YEAR));
   }
+
+    @Override
+    public void onRequestPermissionsResult(int code,
+                                           @NonNull String[] perms, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(code, perms, grantResults);
+        MapUtilities.handlePermissionsResult(this, code, grantResults, FINE_PERMISSION_CODE, map, locationClient);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.map = googleMap;
+        // Wherever the user clicks gets stored in chosenLatLng
+        map.setOnMapClickListener(latlng -> {
+            chosenLatLng = latlng;
+            map.clear();
+            map.addMarker(new MarkerOptions()
+                    .position(latlng)
+                    .title("Party here"));
+        });
+    }
 }

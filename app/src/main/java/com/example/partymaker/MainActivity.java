@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                         FriendKeys, ComingKeys, MessageKeys);
                 Common.addExtrasToIntent(intent, extras);
                 startActivity(intent);
-                startActivity(intent);
             }
         });
         lv1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

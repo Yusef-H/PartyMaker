@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -38,11 +39,14 @@ import com.example.partymaker.data.ChatMessage;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.MapUtilities;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class GroupScreen extends AppCompatActivity {
@@ -257,10 +261,7 @@ public class GroupScreen extends AppCompatActivity {
             public void onClick(View view) {
               if (finalI == 0) // open 1,1 (1) Location
               {
-                tvGroupLocation.setText(GroupLocation);
-                imgLocation.setVisibility(View.INVISIBLE);
-                tvLocation.setVisibility(View.INVISIBLE);
-                tvGroupLocation.setVisibility(View.VISIBLE);
+                MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupScreen.this);
               } else if (finalI == 1) // open 1,2 (2) Date
               {
                 IsClicked = isClicked(IsClicked);
@@ -423,10 +424,7 @@ public class GroupScreen extends AppCompatActivity {
             public void onClick(View view) {
               if (finalI == 0) // open 1,1 (1) Location
               {
-                tvGroupLocation.setText(GroupLocation);
-                imgLocation.setVisibility(View.INVISIBLE);
-                tvLocation.setVisibility(View.INVISIBLE);
-                tvGroupLocation.setVisibility(View.VISIBLE);
+                MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupScreen.this);
               } else if (finalI == 1) // open 1,2 (2) Date
               {
                 IsClicked = isClicked(IsClicked);

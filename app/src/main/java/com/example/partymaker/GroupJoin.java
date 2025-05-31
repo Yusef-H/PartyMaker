@@ -13,6 +13,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.data.DBref;
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.MapUtilities;
+
 import java.util.HashMap;
 
 public class GroupJoin extends AppCompatActivity {
@@ -141,10 +144,7 @@ public class GroupJoin extends AppCompatActivity {
             public void onClick(View view) {
               if (finalI == 0) // open 1,1 (1) Location
               {
-                tvGroupLocation.setText(GroupLocation);
-                imgLocation.setVisibility(View.INVISIBLE);
-                tvLocation.setVisibility(View.INVISIBLE);
-                tvGroupLocation.setVisibility(View.VISIBLE);
+                MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupJoin.this);
               } else if (finalI == 1) // open 1,2 (2) Date
               {
                 IsClicked = isClicked(IsClicked);
