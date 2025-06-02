@@ -12,6 +12,7 @@ PartyMaker is a social event planning application that helps users organize gath
 - **Admin Tools**: Special options for event and group administrators
 - **Messaging**: In-app chat system for communication between users
 - **Invitation Tracking**: Monitor who is attending your events
+- **AI Chatbot**: In-app AI chat system
 
 ## App Screens
 
