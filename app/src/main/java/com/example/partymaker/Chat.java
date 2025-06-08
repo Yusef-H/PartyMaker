@@ -20,6 +20,7 @@ import com.example.partymaker.data.ChatAdpter;
 import com.example.partymaker.data.ChatMessage;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.Group;
+import com.example.partymaker.data.OpenAiApi;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
