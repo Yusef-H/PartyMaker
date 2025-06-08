@@ -1,4 +1,4 @@
-package com.example.partymaker;
+package com.example.partymaker.data;
 
 public class SimpleChatMessage {
   public String role;
