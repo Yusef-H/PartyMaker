@@ -20,4 +20,15 @@ public class DBref {
   public static DatabaseReference refUsers = DataBase.getReference("Users");
   public static DatabaseReference refMessages = DataBase.getReference("GroupsMessages");
   public static StorageReference refStorage = Storage.getReference("UsersImagProfile");
+
+  public static void checkImageExists(String path, OnImageExistsListener listener) {
+    StorageReference imageRef = refStorage.child(path);
+    imageRef.getDownloadUrl()
+      .addOnSuccessListener(uri -> listener.onImageExists(true))
+      .addOnFailureListener(exception -> listener.onImageExists(false));
+  }
+
+  public interface OnImageExistsListener {
+    void onImageExists(boolean exists);
+  }
 }

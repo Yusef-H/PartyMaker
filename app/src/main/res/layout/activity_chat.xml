@@ -29,8 +29,13 @@
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:backgroundTint="#1986ed"
-            android:hint="Type a message"
-            android:inputType="textPersonName" />
+            android:hint="הקלד הודעה"
+            android:inputType="textMultiLine|textImeMultiLine"
+            android:imeOptions="actionSend"
+            android:maxLines="4"
+            android:gravity="right|center_vertical"
+            android:textDirection="rtl"
+            android:textAlignment="textStart" />
 
         <ImageButton
             android:id="@+id/btnGpt"
