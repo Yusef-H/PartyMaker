@@ -74,7 +74,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.cardview)
-    implementation("com.google.android.material:material:1.5.0")
+    implementation(libs.material)
     implementation("androidx.cardview:cardview:1.0.0")
 
     // Firebase dependencies
