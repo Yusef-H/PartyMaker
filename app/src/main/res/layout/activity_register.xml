@@ -36,21 +36,11 @@
 
                 <ImageView
                     android:id="@+id/imgRegister"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:contentDescription="@string/register_cake"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/cake2" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/loginTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/register_page"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="?attr/colorOnPrimaryContainer"
-                    android:textStyle="bold" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
