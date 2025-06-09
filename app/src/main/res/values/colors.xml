@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Login Screen -->
+    <color name="login_theme_primary">#B00020</color>
+    <color name="login_theme_primaryContainer">#FDECEC</color>
+    <color name="login_theme_onPrimaryContainer">#7C0000</color>
+    <color name="login_theme_secondary">#F48FB1</color>
+
+    <!-- Register Screen -->
+    <color name="md_theme_light_primary">#6750A4</color>
+    <color name="md_theme_light_primaryContainer">#EADDFF</color>
+    <color name="md_theme_light_onPrimaryContainer">#21005D</color>
+    <color name="md_theme_light_secondary">#625B71</color>
+
     <!-- Primary Colors -->
     <color name="pink_50">#FFF8F9FB</color>
     <color name="pink_100">#FFFFEEF4</color>
