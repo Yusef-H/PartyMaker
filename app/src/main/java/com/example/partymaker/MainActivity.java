@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
       // צבעי gradient יפים - כחול לסגול
       gradient.setColors(new int[]{
-              Color.parseColor("#039694"), // cyan
-              Color.parseColor("#004f56")  // bright blue
+              Color.parseColor("#004f56"), // cyan
+              Color.parseColor("#039694")  // bright blue
       });
 
       // כיוון השיפוע
