@@ -27,7 +27,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Login" />
+        <activity
+            android:name=".Login"
+            android:theme="@style/Theme.Material3.Login" />
+        <activity
+            android:name=".Register"
+            android:theme="@style/Theme.Material3.Register" />
         <activity android:name=".MainActivity" />
         <activity android:name=".AddFriends" />
         <activity android:name=".AddGroup" />
@@ -44,9 +49,6 @@
         <activity android:name=".Intro" />
         <activity android:name=".invitedList" />
         <activity android:name=".PublicGroups" />
-        <activity
-            android:name=".Register"
-            android:theme="@style/Theme.Material3.Register" />
         <activity android:name=".ResetPassword" />
         <activity android:name=".GptChatActivity" />
 
