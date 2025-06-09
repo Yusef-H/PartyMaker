@@ -35,9 +35,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
@@ -50,12 +52,9 @@ android {
 spotless {
     java {
         target("src/**/*.java")
-
         googleJavaFormat("1.7")
-        // (optionally point at your own Eclipse-style XML:)
-        //   eclipse().configFile(file("$rootDir/spotless/eclipse-format.xml"))
 
-        // common cleanup steps
+        // Common cleanup steps
         trimTrailingWhitespace()
         indentWithSpaces(4)
         endWithNewline()
@@ -63,35 +62,51 @@ spotless {
 }
 
 dependencies {
-
+    // Core AndroidX libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.constraintlayout)
+
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.cardview)
+
+    // Material Design
     implementation(libs.material)
-    implementation("androidx.cardview:cardview:1.0.0")
 
-    // Firebase dependencies
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-storage")
-
-    // Google Auth dependencies - Sign in
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    implementation("com.squareup.picasso:picasso:2.8")
-    implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.material)
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.google.firebase.auth)
+    implementation(libs.google.firebase.database)
+    implementation(libs.google.firebase.storage)
     implementation(libs.firebase.firestore)
+
+    // Google Auth
+    implementation(libs.gms.play.services.auth)
+
+    // Google Maps & Location
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.places)
+
+    // Media & UI
+    implementation(libs.picasso)
+    implementation(libs.circleimageview)
+
+    // OpenAI & HTTP
+    implementation(libs.openai.client)
+    implementation(libs.ktor.client.android)
+    implementation(libs.okhttp)
+    implementation(libs.json)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -99,20 +114,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // OpenAI API
-    implementation("com.aallam.openai:openai-client:3.5.0")
-    implementation("io.ktor:ktor-client-android:2.3.7")
-
-    // Google Auth dependencies - Sign in
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    // OkHttp and org.json dependencies
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("org.json:json:20220320")
-
-    // Google maps
-    implementation("com.google.android.gms:play-services-maps:17.0.0")
-    implementation("com.google.android.gms:play-services-location:17.0.0")
-    implementation("com.google.android.libraries.places:places:4.3.1")
 }
