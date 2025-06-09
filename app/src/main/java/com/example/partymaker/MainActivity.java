@@ -2,7 +2,6 @@ package com.example.partymaker;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
@@ -26,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 
 public class MainActivity extends AppCompatActivity {
   private ListView lv1;
@@ -40,15 +41,36 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    // Change title Name and Color
+    // Action bar Design
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
-      actionBar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Your Parties</font>"));
-      // set actionbar background
-      Drawable d = getResources().getDrawable(R.drawable.fade);
-      actionBar.setBackgroundDrawable(d);
-      // Set bar above everything
-      actionBar.setElevation(8f);
+      // צור gradient מקצועי וצבעוני
+      GradientDrawable gradient = new GradientDrawable();
+      gradient.setShape(GradientDrawable.RECTANGLE);
+
+      // צבעי gradient יפים - כחול לסגול
+      gradient.setColors(new int[]{
+              Color.parseColor("#039694"), // cyan
+              Color.parseColor("#004f56")  // bright blue
+      });
+
+      // כיוון השיפוע
+      gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+
+      // הגדר את הרקע החדש
+      actionBar.setBackgroundDrawable(gradient);
+
+      // טקסט מעוצב עם אמוג'י
+      actionBar.setTitle(Html.fromHtml(
+              "<font color='#FFFFFF'><b>My Parties</b></font>"
+      ));
+
+      // deep shadow
+      actionBar.setElevation(15f);
+
+      // הצגת אייקון בית (אופציונלי)
+      actionBar.setDisplayShowHomeEnabled(true);
+      actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
     lv1 = (ListView) findViewById(R.id.lv1);
