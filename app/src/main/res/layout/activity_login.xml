@@ -44,52 +44,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
             android:text="@string/login_page"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="#A93838"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:textStyle="bold" />
 
-        <!-- אימייל -->
-        <EditText
-            android:id="@+id/etEmailL"
+        <!-- Email -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:autofillHints=""
-            android:background="@drawable/edittext_background"
-            android:drawableStart="@drawable/email_logo1"
-            android:drawablePadding="10dp"
-            android:hint="@string/hint_email"
-            android:inputType="textEmailAddress"
-            android:minHeight="48dp"
-            android:textColorHint="#757575"
-            tools:ignore="VisualLintTextFieldSize" />
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#A93838"
+            app:startIconDrawable="@drawable/email_logo1">
 
-        <!-- סיסמה -->
-        <EditText
-            android:id="@+id/etPasswordL"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmailL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_background"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:autofillHints=""
-            android:background="@drawable/edittext_background"
-            android:drawableStart="@drawable/password_logo1"
-            android:drawablePadding="10dp"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:textColorHint="#757575"
-            tools:ignore="VisualLintTextFieldSize" />
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#A93838"
+            app:endIconMode="password_toggle"
+            app:startIconDrawable="@drawable/password_logo1">
 
-        <!-- Stay connected -->
-        <CheckBox
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPasswordL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_background"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Checkbox -->
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cbRememberMe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:buttonTint="#696969"
-            android:minHeight="48dp"
             android:text="@string/stay_connected"
             android:textColor="#696969" />
 
@@ -98,25 +101,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/btnGoogleSignIn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/Login"
                 android:backgroundTint="#A93838"
+                android:text="@string/Login"
                 android:textColor="@android:color/white"
                 tools:ignore="VisualLintButtonSize" />
+
         </LinearLayout>
 
         <!-- הרשמה -->
@@ -124,8 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textView"
@@ -151,8 +155,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnResetPass"
