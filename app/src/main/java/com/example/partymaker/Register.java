@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-
 import java.util.Objects;
 
 public class Register extends AppCompatActivity {
@@ -66,30 +65,32 @@ public class Register extends AppCompatActivity {
   }
 
   private void createNotificationChannel() {
-      CharSequence name = "Registration Notifications";
-      String description = "Notifications for successful registration";
-      int importance = NotificationManager.IMPORTANCE_DEFAULT;
-      NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-      channel.setDescription(description);
+    CharSequence name = "Registration Notifications";
+    String description = "Notifications for successful registration";
+    int importance = NotificationManager.IMPORTANCE_DEFAULT;
+    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+    channel.setDescription(description);
 
-      NotificationManager notificationManager = getSystemService(NotificationManager.class);
-      notificationManager.createNotificationChannel(channel);
+    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+    notificationManager.createNotificationChannel(channel);
   }
 
   private void setupEventHandlers() {
     // Register button click
-    btnRegister.setOnClickListener(view -> {
-      if (validateInputs()) {
-        signUp();
-      }
-    });
+    btnRegister.setOnClickListener(
+        view -> {
+          if (validateInputs()) {
+            signUp();
+          }
+        });
 
     // Login link click
-    btnPress.setOnClickListener(view -> {
-      Intent intent = new Intent(Register.this, Login.class);
-      startActivity(intent);
-      finish(); // Close current activity
-    });
+    btnPress.setOnClickListener(
+        view -> {
+          Intent intent = new Intent(Register.this, Login.class);
+          startActivity(intent);
+          finish(); // Close current activity
+        });
   }
 
   private boolean validateInputs() {
@@ -147,7 +148,9 @@ public class Register extends AppCompatActivity {
     String password = Objects.requireNonNull(etPassword.getText()).toString();
 
     DBref.Auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(Register.this, task -> {
+        .addOnCompleteListener(
+            Register.this,
+            task -> {
               // Re-enable button
               btnRegister.setEnabled(true);
               btnRegister.setText(getString(R.string.register));
@@ -197,7 +200,8 @@ public class Register extends AppCompatActivity {
   }
 
   private void sendSuccessNotification(String username) {
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+    NotificationCompat.Builder builder =
+        new NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.cake)
             .setContentTitle("ההרשמה בוצעה בהצלחה!")
             .setContentText("ברוך הבא " + username + "! תתחיל ליצור מסיבות מדהימות")
@@ -205,7 +209,7 @@ public class Register extends AppCompatActivity {
             .setAutoCancel(true);
 
     NotificationManager notificationManager =
-            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     notificationManager.notify(1, builder.build());
   }
 }

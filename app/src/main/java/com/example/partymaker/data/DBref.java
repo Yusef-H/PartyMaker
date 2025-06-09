@@ -23,9 +23,10 @@ public class DBref {
 
   public static void checkImageExists(String path, OnImageExistsListener listener) {
     StorageReference imageRef = refStorage.child(path);
-    imageRef.getDownloadUrl()
-      .addOnSuccessListener(uri -> listener.onImageExists(true))
-      .addOnFailureListener(exception -> listener.onImageExists(false));
+    imageRef
+        .getDownloadUrl()
+        .addOnSuccessListener(uri -> listener.onImageExists(true))
+        .addOnFailureListener(exception -> listener.onImageExists(false));
   }
 
   public interface OnImageExistsListener {
