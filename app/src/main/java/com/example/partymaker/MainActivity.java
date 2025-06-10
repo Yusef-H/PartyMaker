@@ -2,6 +2,8 @@ package com.example.partymaker;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
@@ -25,8 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 
 public class MainActivity extends AppCompatActivity {
   private ListView lv1;
@@ -49,10 +49,11 @@ public class MainActivity extends AppCompatActivity {
       gradient.setShape(GradientDrawable.RECTANGLE);
 
       // צבעי gradient יפים - כחול לסגול
-      gradient.setColors(new int[]{
-              Color.parseColor("#006099"), // blue
-              Color.parseColor("#DBE3EF")  // bright gray
-      });
+      gradient.setColors(
+          new int[] {
+            Color.parseColor("#006099"), // blue
+            Color.parseColor("#DBE3EF") // bright gray
+          });
 
       // כיוון השיפוע
       gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
@@ -61,9 +62,7 @@ public class MainActivity extends AppCompatActivity {
       actionBar.setBackgroundDrawable(gradient);
 
       // טקסט מעוצב עם אמוג'י
-      actionBar.setTitle(Html.fromHtml(
-              "<font color='#FFFFFF'><b>My Parties</b></font>"
-      ));
+      actionBar.setTitle(Html.fromHtml("<font color='#FFFFFF'><b>My Parties</b></font>"));
 
       // deep shadow
       actionBar.setElevation(15f);
