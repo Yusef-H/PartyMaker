@@ -14,7 +14,7 @@
         android:layout_height="31dp"
         android:textSize="25dp"
         android:text="GroupName"
-        android:textColor="#004f56"
+        android:textColor="@color/md_theme_primary"
         android:layout_marginLeft="75dp"
         android:layout_alignParentTop="true" />
 
