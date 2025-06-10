@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
       actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
-    lv1 = (ListView) findViewById(R.id.lv1);
+    lv1 = findViewById(R.id.lv1);
     UserKey = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
     database = FirebaseDatabase.getInstance().getReference("Groups");
     retriveData();

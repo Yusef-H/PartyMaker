@@ -10,7 +10,7 @@ import com.example.partymaker.R;
 import java.util.List;
 
 public class ChatAdapter2 extends RecyclerView.Adapter<ChatAdapter2.MessageViewHolder> {
-  private List<SimpleChatMessage> messages;
+  private final List<SimpleChatMessage> messages;
 
   public ChatAdapter2(List<SimpleChatMessage> messages) {
     this.messages = messages;

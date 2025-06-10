@@ -37,9 +37,9 @@ public class EditProfile extends AppCompatActivity {
     actionBar.setBackgroundDrawable(d);
 
     // connectionU
-    imgProfile = (ImageView) findViewById(R.id.imgProfile);
+    imgProfile = findViewById(R.id.imgProfile);
 
-    String User = DBref.Auth.getCurrentUser().getEmail().toString();
+    String User = DBref.Auth.getCurrentUser().getEmail();
     String email = User.replace('.', ' ');
 
     DBref.refStorage

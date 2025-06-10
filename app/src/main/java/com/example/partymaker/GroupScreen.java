@@ -30,10 +30,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
 import com.example.partymaker.data.ChatMessage;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.utilities.Common;
@@ -42,7 +44,7 @@ import com.example.partymaker.utilities.MapUtilities;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import java.io.Serializable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,42 +125,42 @@ public class GroupScreen extends AppCompatActivity {
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
 
     // connection
-    mainGrid = (GridLayout) findViewById(R.id.MainGrid);
-    back5 = (Button) findViewById(R.id.back5);
-    imgCalender = (ImageView) findViewById(R.id.imgCalender);
-    imgThumbUp = (ImageView) findViewById(R.id.imgThumbUp);
-    imgThumbDown = (ImageView) findViewById(R.id.imgThumbDown);
-    imgLocation = (ImageView) findViewById(R.id.imgLocation);
-    imgSeeHours = (ImageView) findViewById(R.id.imgSeeHours);
-    imgAddFriend = (ImageView) findViewById(R.id.imgAddFriend);
-    imgOptions = (ImageView) findViewById(R.id.imgOptions);
-    btnEditName = (ImageButton) findViewById(R.id.btnEditName);
-    tvDateText = (TextView) findViewById(R.id.tvDateText);
-    tvDateDays = (TextView) findViewById(R.id.tvDateDays);
-    tvDateMonths = (TextView) findViewById(R.id.tvDateMonths);
-    tvDateYears = (TextView) findViewById(R.id.tvDateYears);
-    tvDateHours = (TextView) findViewById(R.id.tvDateHours);
-    tvComing = (TextView) findViewById(R.id.tvComing);
-    tvNotComing = (TextView) findViewById(R.id.tvNotComing);
-    tvGroupName = (TextView) findViewById(R.id.tvGroupName);
-    tvCreatedBy = (TextView) findViewById(R.id.tvCreatedBy);
-    tvLocation = (TextView) findViewById(R.id.tvLocation);
-    tvGroupLocation = (TextView) findViewById(R.id.tvGroupLocation);
-    tvSeeHours = (TextView) findViewById(R.id.tvSeeHours);
-    tvSeeDate = (TextView) findViewById(R.id.tvSeeDate);
-    tvAddFriend = (TextView) findViewById(R.id.tvAddFriend);
-    tvOptions = (TextView) findViewById(R.id.tvOptions);
-    tvAt = (TextView) findViewById(R.id.tvAt);
-    tvEntryPrice = (TextView) findViewById(R.id.tvEntryPrice);
-    tvYourEntry = (TextView) findViewById(R.id.tvYourEntry);
-    card1 = (CardView) findViewById(R.id.Card1);
-    card2 = (CardView) findViewById(R.id.Card2);
-    card3 = (CardView) findViewById(R.id.Card3);
-    card4 = (CardView) findViewById(R.id.Card4);
-    card5 = (CardView) findViewById(R.id.Card5);
-    card6 = (CardView) findViewById(R.id.Card6);
-    card7 = (CardView) findViewById(R.id.Card7);
-    card8 = (CardView) findViewById(R.id.Card8);
+    mainGrid = findViewById(R.id.MainGrid);
+    back5 = findViewById(R.id.back5);
+    imgCalender = findViewById(R.id.imgCalender);
+    imgThumbUp = findViewById(R.id.imgThumbUp);
+    imgThumbDown = findViewById(R.id.imgThumbDown);
+    imgLocation = findViewById(R.id.imgLocation);
+    imgSeeHours = findViewById(R.id.imgSeeHours);
+    imgAddFriend = findViewById(R.id.imgAddFriend);
+    imgOptions = findViewById(R.id.imgOptions);
+    btnEditName = findViewById(R.id.btnEditName);
+    tvDateText = findViewById(R.id.tvDateText);
+    tvDateDays = findViewById(R.id.tvDateDays);
+    tvDateMonths = findViewById(R.id.tvDateMonths);
+    tvDateYears = findViewById(R.id.tvDateYears);
+    tvDateHours = findViewById(R.id.tvDateHours);
+    tvComing = findViewById(R.id.tvComing);
+    tvNotComing = findViewById(R.id.tvNotComing);
+    tvGroupName = findViewById(R.id.tvGroupName);
+    tvCreatedBy = findViewById(R.id.tvCreatedBy);
+    tvLocation = findViewById(R.id.tvLocation);
+    tvGroupLocation = findViewById(R.id.tvGroupLocation);
+    tvSeeHours = findViewById(R.id.tvSeeHours);
+    tvSeeDate = findViewById(R.id.tvSeeDate);
+    tvAddFriend = findViewById(R.id.tvAddFriend);
+    tvOptions = findViewById(R.id.tvOptions);
+    tvAt = findViewById(R.id.tvAt);
+    tvEntryPrice = findViewById(R.id.tvEntryPrice);
+    tvYourEntry = findViewById(R.id.tvYourEntry);
+    card1 = findViewById(R.id.Card1);
+    card2 = findViewById(R.id.Card2);
+    card3 = findViewById(R.id.Card3);
+    card4 = findViewById(R.id.Card4);
+    card5 = findViewById(R.id.Card5);
+    card6 = findViewById(R.id.Card6);
+    card7 = findViewById(R.id.Card7);
+    card8 = findViewById(R.id.Card8);
 
     // get current account's email
     CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
@@ -173,7 +175,7 @@ public class GroupScreen extends AppCompatActivity {
       tvEntryPrice.setVisibility(View.INVISIBLE);
       tvYourEntry.setText("Free Party");
     } else {
-      tvEntryPrice.setText(String.valueOf(GroupPrice));
+      tvEntryPrice.setText(GroupPrice);
     } // convert int to string
 
     // if current account is admin
@@ -265,12 +267,12 @@ public class GroupScreen extends AppCompatActivity {
               } else if (finalI == 2) // open 2,1 (3) People Invited
               {
                 Intent i = new Intent(getBaseContext(), invitedList.class);
-                i.putExtra("FriendKeys", (Serializable) FriendKeys);
+                i.putExtra("FriendKeys", FriendKeys);
                 startActivity(i);
               } else if (finalI == 3) // open 2,2 (4) People Coming
               {
                 Intent i = new Intent(getBaseContext(), ComingList.class);
-                i.putExtra("ComingKeys", (Serializable) ComingKeys);
+                i.putExtra("ComingKeys", ComingKeys);
                 startActivity(i);
               } else if (finalI == 4) // open 3,1 (5) Admin Options
               {
@@ -300,7 +302,7 @@ public class GroupScreen extends AppCompatActivity {
               {
 
                 Intent i = new Intent(getBaseContext(), Chat.class);
-                i.putExtra("MessageKeys", (Serializable) MessageKeys);
+                i.putExtra("MessageKeys", MessageKeys);
                 i.putExtra("groupKey", GroupKey);
                 startActivity(i);
 
@@ -428,16 +430,16 @@ public class GroupScreen extends AppCompatActivity {
               } else if (finalI == 2) // open 2,1 (3) People Invited
               {
                 Intent i = new Intent(getBaseContext(), invitedList.class);
-                i.putExtra("FriendKeys", (Serializable) FriendKeys);
+                i.putExtra("FriendKeys", FriendKeys);
                 startActivity(i);
               } else if (finalI == 3) // open 2,2 (4) People Coming
               {
                 Intent i = new Intent(getBaseContext(), ComingList.class);
-                i.putExtra("ComingKeys", (Serializable) ComingKeys);
+                i.putExtra("ComingKeys", ComingKeys);
                 startActivity(i);
               } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
               {
-                if (isComing == false) {
+                if (!isComing) {
                   String CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
                   ComingKeys.put(CurrentUser, "true");
                   DBref.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
@@ -452,14 +454,14 @@ public class GroupScreen extends AppCompatActivity {
               {
 
                 Intent i = new Intent(getBaseContext(), Chat.class);
-                i.putExtra("MessageKeys", (Serializable) MessageKeys);
+                i.putExtra("MessageKeys", MessageKeys);
                 i.putExtra("groupKey", GroupKey);
                 startActivity(i);
 
               } else if (finalI == 6) // open 4,1 (7) Add Friends
               {
                 // if its a public group/got admin set to add
-                if (CanAdd == true) {
+                if (CanAdd) {
                   Intent intent = new Intent(getBaseContext(), AddFriends.class);
                   intent.putExtra("GroupName", GroupName);
                   intent.putExtra("groupKey", GroupKey);
@@ -473,9 +475,9 @@ public class GroupScreen extends AppCompatActivity {
                   intent.putExtra("GroupType", GroupType);
                   intent.putExtra("GroupPrice", GroupPrice);
                   intent.putExtra("CanAdd", CanAdd);
-                  intent.putExtra("FriendKeys", (Serializable) FriendKeys);
-                  intent.putExtra("ComingKeys", (Serializable) ComingKeys);
-                  intent.putExtra("MessageKeys", (Serializable) MessageKeys);
+                  intent.putExtra("FriendKeys", FriendKeys);
+                  intent.putExtra("ComingKeys", ComingKeys);
+                  intent.putExtra("MessageKeys", MessageKeys);
                   startActivity(intent);
                 }
               } else if (finalI == 7) // open 4,2 (8) Leave
@@ -569,7 +571,7 @@ public class GroupScreen extends AppCompatActivity {
         flag = true;
       }
     }
-    if (flag == false) {
+    if (!flag) {
       tvComing.setVisibility(View.INVISIBLE);
       imgThumbUp.setVisibility(View.INVISIBLE);
       imgOptions.setVisibility(View.INVISIBLE);

@@ -60,7 +60,7 @@ public class GroupJoin extends AppCompatActivity {
   private int GroupType;
   private int IsClicked = 1;
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
-  private boolean isComing = true;
+  private final boolean isComing = true;
   private boolean CanAdd;
 
   @Override
@@ -92,24 +92,24 @@ public class GroupJoin extends AppCompatActivity {
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
 
     // connection
-    joinGrid = (GridLayout) findViewById(R.id.joinGrid);
-    imgCalender = (ImageView) findViewById(R.id.imgGroupDate);
-    imgLocation = (ImageView) findViewById(R.id.imgLocation1);
-    imgSeeHours = (ImageView) findViewById(R.id.imgSeeHours1);
-    tvDateText = (TextView) findViewById(R.id.tvGroupDateText);
-    tvDateDays = (TextView) findViewById(R.id.tvGroupDateDays);
-    tvDateMonths = (TextView) findViewById(R.id.tvGroupDateMonths);
-    tvDateYears = (TextView) findViewById(R.id.tvGroupDateYears);
-    tvDateHours = (TextView) findViewById(R.id.tvGroupDateHours);
-    tvGroupName = (TextView) findViewById(R.id.tvGroupName1);
-    tvCreatedBy = (TextView) findViewById(R.id.tvCreatedBy1);
-    tvLocation = (TextView) findViewById(R.id.tvLocation1);
-    tvGroupLocation = (TextView) findViewById(R.id.tvGroupLocation1);
-    tvSeeHours = (TextView) findViewById(R.id.tvSeeHours1);
-    tvSeeDate = (TextView) findViewById(R.id.tvSeeDate1);
-    tvAt = (TextView) findViewById(R.id.tvGroupAt);
-    tvEntryPrice = (TextView) findViewById(R.id.tvEntryPrice1);
-    tvYourEntry = (TextView) findViewById(R.id.tvYourEntry1);
+    joinGrid = findViewById(R.id.joinGrid);
+    imgCalender = findViewById(R.id.imgGroupDate);
+    imgLocation = findViewById(R.id.imgLocation1);
+    imgSeeHours = findViewById(R.id.imgSeeHours1);
+    tvDateText = findViewById(R.id.tvGroupDateText);
+    tvDateDays = findViewById(R.id.tvGroupDateDays);
+    tvDateMonths = findViewById(R.id.tvGroupDateMonths);
+    tvDateYears = findViewById(R.id.tvGroupDateYears);
+    tvDateHours = findViewById(R.id.tvGroupDateHours);
+    tvGroupName = findViewById(R.id.tvGroupName1);
+    tvCreatedBy = findViewById(R.id.tvCreatedBy1);
+    tvLocation = findViewById(R.id.tvLocation1);
+    tvGroupLocation = findViewById(R.id.tvGroupLocation1);
+    tvSeeHours = findViewById(R.id.tvSeeHours1);
+    tvSeeDate = findViewById(R.id.tvSeeDate1);
+    tvAt = findViewById(R.id.tvGroupAt);
+    tvEntryPrice = findViewById(R.id.tvEntryPrice1);
+    tvYourEntry = findViewById(R.id.tvYourEntry1);
 
     // get current account's email
     CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
@@ -124,7 +124,7 @@ public class GroupJoin extends AppCompatActivity {
       tvEntryPrice.setVisibility(View.INVISIBLE);
       tvYourEntry.setText("Free Party");
     } else {
-      tvEntryPrice.setText(String.valueOf(GroupPrice));
+      tvEntryPrice.setText(GroupPrice);
     } // convert int to string
 
     JoinEvent(joinGrid);

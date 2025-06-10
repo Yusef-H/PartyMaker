@@ -40,7 +40,7 @@ public class ComingList extends AppCompatActivity {
         (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
     ComingKeys = hashComingKeys;
 
-    lv3 = (ListView) findViewById(R.id.lv3);
+    lv3 = findViewById(R.id.lv3);
 
     ShowData();
     EventHandler();

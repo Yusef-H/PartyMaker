@@ -48,7 +48,7 @@ public class PublicGroups extends AppCompatActivity {
     actionBar.setBackgroundDrawable(d);
 
     // connection
-    lv1 = (ListView) findViewById(R.id.lv5);
+    lv1 = findViewById(R.id.lv5);
     UserKey = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
     database = FirebaseDatabase.getInstance().getReference("Groups");
     retriveData();

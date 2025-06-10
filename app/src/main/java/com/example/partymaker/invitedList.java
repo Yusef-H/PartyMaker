@@ -35,7 +35,7 @@ public class invitedList extends AppCompatActivity {
     // connection between intent from GroupScreen and InvitedList
     FriendKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("FriendKeys");
 
-    lv2 = (ListView) findViewById(R.id.lv2);
+    lv2 = findViewById(R.id.lv2);
 
     ShowData();
     EventHandler();

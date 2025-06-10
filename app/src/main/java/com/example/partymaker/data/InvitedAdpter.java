@@ -39,13 +39,13 @@ public class InvitedAdpter extends ArrayAdapter<User> {
     View view = layoutInflater.inflate(R.layout.invited_list, parent, false);
     User temp = InvitedList.get(position);
 
-    TextView tvpUserName = (TextView) view.findViewById(R.id.tvILusername);
+    TextView tvpUserName = view.findViewById(R.id.tvILusername);
     tvpUserName.setText(temp.getUserName());
 
-    TextView tvpEmail = (TextView) view.findViewById(R.id.tvILemail);
+    TextView tvpEmail = view.findViewById(R.id.tvILemail);
     tvpEmail.setText(temp.getEmail());
 
-    final ImageView imageView = (ImageView) view.findViewById(R.id.imgILprofile);
+    final ImageView imageView = view.findViewById(R.id.imgILprofile);
 
     String UserImageProfile = temp.getEmail();
     String email = UserImageProfile.replace('.', ' ');

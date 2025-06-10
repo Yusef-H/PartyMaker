@@ -65,10 +65,10 @@ public class AdminOptions extends AppCompatActivity {
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
 
     // connection between XML and AdminOptions
-    MyGrid = (GridLayout) findViewById(R.id.MyGrid);
-    tvAdminEmail = (TextView) findViewById(R.id.tvAdminEmail);
-    CardPrice = (CardView) findViewById(R.id.CardPrice);
-    CardLocation = (CardView) findViewById(R.id.CardLocation);
+    MyGrid = findViewById(R.id.MyGrid);
+    tvAdminEmail = findViewById(R.id.tvAdminEmail);
+    CardPrice = findViewById(R.id.CardPrice);
+    CardLocation = findViewById(R.id.CardLocation);
 
     // settings + things to see when activity starts
     tvAdminEmail.setText(AdminKey.replace(' ', '.'));
@@ -210,8 +210,7 @@ public class AdminOptions extends AppCompatActivity {
                         ComingKeys,
                         MessageKeys);
                 Common.addExtrasToIntent(intent, extras);
-                ;
-                startActivity(intent);
+                  startActivity(intent);
               } else if (finalI == 3) // open 2,2 (4) Change Entry Price
               {
               } else if (finalI == 4) // open 3,1 (5) Group Options

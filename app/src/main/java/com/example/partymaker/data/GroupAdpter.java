@@ -42,15 +42,15 @@ public class GroupAdpter extends ArrayAdapter<Group> {
     View view = layoutInflater.inflate(R.layout.group_list, parent, false);
     Group temp = GroupList.get(position);
 
-    TextView tvpGroupName = (TextView) view.findViewById(R.id.tvGLgroupname);
+    TextView tvpGroupName = view.findViewById(R.id.tvGLgroupname);
     tvpGroupName.setText(temp.getGroupName());
 
-    TextView tvpGroupDate = (TextView) view.findViewById(R.id.tvGLgroupdate);
+    TextView tvpGroupDate = view.findViewById(R.id.tvGLgroupdate);
     String GroupDate =
         (temp.getGroupDays() + " " + temp.getGroupMonths() + " " + temp.getGroupYears());
     tvpGroupDate.setText(GroupDate);
 
-    final ImageView imageView = (ImageView) view.findViewById(R.id.imgGLpicture);
+    final ImageView imageView = view.findViewById(R.id.imgGLpicture);
 
     String GroupKey = temp.getGroupKey();
 

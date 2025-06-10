@@ -53,10 +53,10 @@ public class Chat extends AppCompatActivity {
     GroupKey = strGroupKey;
 
     // connection
-    lv4 = (ListView) findViewById(R.id.lv4);
-    etMessage = (EditText) findViewById(R.id.etMessage);
-    btnSend = (ImageButton) findViewById(R.id.btnSend);
-    btnGpt = (ImageButton) findViewById(R.id.btnGpt);
+    lv4 = findViewById(R.id.lv4);
+    etMessage = findViewById(R.id.etMessage);
+    btnSend = findViewById(R.id.btnSend);
+    btnGpt = findViewById(R.id.btnGpt);
 
     ShowData();
     eventHandler();

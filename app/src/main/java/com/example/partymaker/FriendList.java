@@ -24,7 +24,7 @@ public class FriendList extends AppCompatActivity {
     setContentView(R.layout.activity_friend_list);
     contextOfApplication = getApplicationContext();
 
-    lv = (ListView) findViewById(R.id.lv);
+    lv = findViewById(R.id.lv);
     ShowData();
     eventHandler();
   }
