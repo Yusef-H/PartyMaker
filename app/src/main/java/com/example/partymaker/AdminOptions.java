@@ -210,7 +210,7 @@ public class AdminOptions extends AppCompatActivity {
                         ComingKeys,
                         MessageKeys);
                 Common.addExtrasToIntent(intent, extras);
-                  startActivity(intent);
+                startActivity(intent);
               } else if (finalI == 3) // open 2,2 (4) Change Entry Price
               {
               } else if (finalI == 4) // open 3,1 (5) Group Options

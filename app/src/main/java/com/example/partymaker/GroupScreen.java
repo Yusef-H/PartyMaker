@@ -30,12 +30,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import com.example.partymaker.data.ChatMessage;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.utilities.Common;
@@ -44,7 +42,6 @@ import com.example.partymaker.utilities.MapUtilities;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.HashMap;
 import java.util.Map;
 

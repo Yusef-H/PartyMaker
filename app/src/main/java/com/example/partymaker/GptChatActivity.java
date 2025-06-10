@@ -6,17 +6,14 @@ import android.os.LocaleList;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.partymaker.data.ChatAdapter2;
 import com.example.partymaker.data.OpenAiApi;
 import com.example.partymaker.data.SimpleChatMessage;
 import com.google.android.material.appbar.MaterialToolbar;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
