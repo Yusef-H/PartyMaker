@@ -127,7 +127,12 @@
     <string name="by_signing_up_you_agree_to_our_terms_of_service_and_privacy_policy">By signing up, you agree to our Terms of Service and Privacy Policy</string>
     <string name="join_us_and_start_creating_unforgettable_parties">Join us and start creating unforgettable parties</string>
     <string name="or">or</string>
-    <string name="join_us_for_unforgetable_parties">Join us for unforgetable parties</string>
+    <string name="join_us_for_unforgetable_parties">Join us for unforgettable parties</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="add_party">Add Party</string>
+    <string name="your_parties">Your Parties</string>
+    <string name="public_parties">Public Parties</string>
+    <string name="logout">Logout</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

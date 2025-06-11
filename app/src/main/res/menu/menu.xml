@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-            <item
-                android:id="@+id/idMenu"
-                android:title="Your Parties" />
-            <item
-                android:id="@+id/idAddProfile"
-                android:title="Add Party" />
-            <item
-                android:id="@+id/idEditProfile"
-                android:title="Edit Profile" />
-            <item
-                android:id="@+id/idPublicParties"
-                android:title="Public Parties" />
-            <item
-                android:id="@+id/idLogout"
-                android:title="Logout" />
+
+    <item
+        android:id="@+id/idMenu"
+        android:icon="@drawable/cake2"
+        android:title="@string/your_parties"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/idAddProfile"
+        android:icon="@drawable/join"
+        android:title="@string/add_party"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/idEditProfile"
+        android:icon="@drawable/edit"
+        android:title="@string/edit_profile"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/idPublicParties"
+        android:icon="@drawable/cake"
+        android:title="@string/public_parties"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/idLogout"
+        android:icon="@drawable/leave"
+        android:title="@string/logout"
+        app:showAsAction="never" />
 </menu>
