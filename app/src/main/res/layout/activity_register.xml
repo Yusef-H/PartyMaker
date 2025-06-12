@@ -14,16 +14,17 @@
         android:layout_height="wrap_content"
         android:padding="24dp">
 
-        <!-- Header Section -->
+        <!-- Header Section with Enhanced glassmorphism -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/headerCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             app:cardBackgroundColor="@android:color/transparent"
-            app:strokeWidth="0dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#30FFFFFF"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -33,29 +34,68 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="32dp">
+                android:padding="40dp"
+                android:background="@drawable/glassmorphism_gradient">
 
-                <ImageView
-                    android:id="@+id/imgRegister"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:contentDescription="@string/register_cake"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/cake3" />
+                <!-- Floating Animation Container -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
+                    <!-- Glow effect behind image -->
+                    <View
+                        android:layout_width="220dp"
+                        android:layout_height="220dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/glow_circle"
+                        android:alpha="0.3" />
+
+                    <!-- Main cake image -->
+                    <ImageView
+                        android:id="@+id/imgRegister"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/register_cake"
+                        android:scaleType="centerCrop"
+                        android:elevation="4dp"
+                        app:srcCompat="@drawable/cake3" />
+
+                    <!-- Sparkle effects -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/sparkle"
+                        android:alpha="0.8" />
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginBottom="30dp"
+                        android:src="@drawable/sparkle"
+                        android:alpha="0.6" />
+
+                </FrameLayout>
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Form Section -->
+        <!-- Enhanced Form Section with Professional Effects -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/formCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             app:cardBackgroundColor="?attr/colorSurface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="16dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/headerCard">
@@ -64,51 +104,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="32dp"
+                android:background="@drawable/form_gradient_background">
 
-                <!-- Email Input -->
+                <!-- Form Header with Progress -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="24dp">
+
+
+                    <!-- Dynamic Progress Indicator (will be created programmatically) -->
+
+                </LinearLayout>
+
+                <!-- Email Input with Enhanced Styling -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilEmail"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_email"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxStrokeWidth="2dp"
+                    app:boxStrokeWidthFocused="3dp"
                     app:startIconDrawable="@drawable/email_logo1"
                     app:startIconTint="?attr/colorPrimary"
-                    app:helperText="A valid email address is required"
-                    app:helperTextTextColor="?attr/colorOnSurfaceVariant">
+                    app:endIconMode="clear_text"
+                    app:helperText="@string/valid_email_required"
+                    app:helperTextTextColor="?attr/colorOnSurfaceVariant"
+                    app:hintTextColor="?attr/colorPrimary"
+                    app:placeholderText="example@email.com"
+                    app:prefixTextColor="?attr/colorOnSurfaceVariant">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEmailR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:paddingVertical="20dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Username Input -->
+                <!-- Username Input with Character Counter -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilUsername"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="20dp"
                     android:hint="@string/username_register"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxStrokeWidth="2dp"
+                    app:boxStrokeWidthFocused="3dp"
                     app:startIconDrawable="@drawable/username_logo2"
                     app:startIconTint="?attr/colorPrimary"
-                    app:helperText="Your username will be visible to everyone"
+                    app:endIconMode="clear_text"
+                    app:helperText="@string/username_visible_to_everyone"
                     app:helperTextTextColor="?attr/colorOnSurfaceVariant"
+                    app:hintTextColor="?attr/colorPrimary"
                     app:counterEnabled="true"
-                    app:counterMaxLength="20">
+                    app:counterMaxLength="20"
+                    app:counterTextColor="?attr/colorPrimary"
+                    app:placeholderText="@string/choose_username">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etUsername"
@@ -116,93 +182,115 @@
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:maxLength="20"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:paddingVertical="20dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Password Input -->
+                <!-- Password Input with Strength Indicator -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPassword"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="20dp"
                     android:hint="@string/password"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxStrokeWidth="2dp"
+                    app:boxStrokeWidthFocused="3dp"
                     app:startIconDrawable="@drawable/password_logo1"
                     app:startIconTint="?attr/colorPrimary"
                     app:endIconMode="password_toggle"
-                    app:helperText="At least 6 characters"
-                    app:helperTextTextColor="?attr/colorOnSurfaceVariant">
+                    app:endIconTint="?attr/colorPrimary"
+                    app:helperText="@string/minimum_6_characters"
+                    app:helperTextTextColor="?attr/colorOnSurfaceVariant"
+                    app:hintTextColor="?attr/colorPrimary"
+                    app:placeholderText="@string/enter_secure_password">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPasswordR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:paddingVertical="20dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Register Button -->
+                <!-- Password Strength Indicator (will be added programmatically) -->
+
+                <!-- Enhanced Register Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRegister"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:paddingVertical="16dp"
+                    android:layout_marginTop="40dp"
+                    android:paddingVertical="20dp"
                     android:text="@string/register"
                     android:textAppearance="?attr/textAppearanceLabelLarge"
                     android:textStyle="bold"
-                    app:cornerRadius="12dp"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
                     app:icon="@drawable/cake"
                     app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:iconTint="?attr/colorOnPrimary" />
+                    app:iconPadding="12dp"
+                    app:iconSize="24dp"
+                    app:iconTint="?attr/colorOnPrimary"
+                    app:rippleColor="?attr/colorOnPrimary"
+                    app:backgroundTint="?attr/colorPrimary"
+                    android:elevation="8dp"
+                    android:stateListAnimator="@drawable/button_elevation" />
 
-                <!-- Divider -->
+                <!-- Enhanced Divider with Animation -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="24dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <View
                         android:layout_width="0dp"
-                        android:layout_height="1dp"
+                        android:layout_height="2dp"
                         android:layout_weight="1"
-                        android:background="?attr/colorOutline"
-                        android:alpha="0.5" />
+                        android:background="@drawable/gradient_divider"
+                        android:alpha="0.6" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginHorizontal="20dp"
                         android:text="@string/or"
-                        android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:background="@drawable/or_text_background"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp" />
 
                     <View
                         android:layout_width="0dp"
-                        android:layout_height="1dp"
+                        android:layout_height="2dp"
                         android:layout_weight="1"
-                        android:background="?attr/colorOutline"
-                        android:alpha="0.5" />
+                        android:background="@drawable/gradient_divider"
+                        android:alpha="0.6" />
 
                 </LinearLayout>
 
-                <!-- Login Link -->
+                <!-- Enhanced Login Link -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:background="@drawable/login_link_background"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="12dp">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
@@ -216,11 +304,15 @@
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="8dp"
                         android:text="@string/press_here"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textStyle="bold"
-                        app:rippleColor="?attr/colorPrimary" />
+                        android:textColor="?attr/colorPrimary"
+                        app:rippleColor="?attr/colorPrimary"
+                        app:cornerRadius="12dp"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp" />
 
                 </LinearLayout>
 
@@ -228,21 +320,114 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Footer -->
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
+        <!-- Enhanced Footer with Legal Text -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="32dp"
-            android:gravity="center"
-            android:text="@string/by_signing_up_you_agree_to_our_terms_of_service_and_privacy_policy"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:alpha="0.7"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/formCard" />
+            app:layout_constraintTop_toBottomOf="@id/formCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <!-- Security Icons -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_security"
+                        app:tint="?attr/colorPrimary"
+                        android:alpha="0.7" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="8dp"
+                        android:src="@drawable/ic_privacy"
+                        android:alpha="0.7"
+                        app:tint="?attr/colorPrimary" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="8dp"
+                        android:src="@drawable/ic_verified"
+                        app:tint="?attr/colorPrimary"
+                        android:alpha="0.7" />
+
+                </LinearLayout>
+
+                <!-- Legal Text -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/by_signing_up_you_agree_to_our_terms_of_service_and_privacy_policy"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:alpha="0.8"
+                    android:lineSpacingExtra="2dp" />
+
+                <!-- Trust Indicators -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Secure 🔒"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="?attr/colorPrimary"
+                        android:background="@drawable/trust_badge_background"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Fast ⚡"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="?attr/colorPrimary"
+                        android:background="@drawable/trust_badge_background"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Fun 🎉"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="?attr/colorPrimary"
+                        android:background="@drawable/trust_badge_background"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -134,6 +134,24 @@
     <string name="public_parties">Public Parties</string>
     <string name="logout">Logout</string>
 
+    <!-- Header Section -->
+    <string name="welcome_to_party_maker">Welcome to Party Maker</string>
+    <string name="create_unforgettable_moments">Create unforgettable moments</string>
+
+    <!-- Form Section -->
+    <string name="join_the_party">Join the party</string>
+
+    <!-- Email Input -->
+    <string name="valid_email_required">Valid email required</string>
+
+    <!-- Username Input -->
+    <string name="username_visible_to_everyone">Username will be visible to everyone</string>
+    <string name="choose_username">Choose username</string>
+
+    <!-- Password Input -->
+    <string name="minimum_6_characters">Minimum 6 characters</string>
+    <string name="enter_secure_password">Enter secure password</string>
+
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
         <item>01</item>
