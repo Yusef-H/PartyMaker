@@ -1,5 +1,6 @@
 package com.example.partymaker.data;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,8 +13,11 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.example.partymaker.R;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatAdpter extends ArrayAdapter<ChatMessage> {
   Context context;
@@ -29,13 +33,14 @@ public class ChatAdpter extends ArrayAdapter<ChatMessage> {
     this.MessageList = MessageList;
   }
 
+  @NonNull
   @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
+  public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.chat_message_item, parent, false);
+    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.chat_message_item, parent, false);
     ChatMessage temp = MessageList.get(position);
 
-    String currentUser = DBref.Auth.getCurrentUser().getEmail();
+    String currentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
     boolean isMine = temp.getMessageUser().equals(currentUser);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
@@ -49,30 +54,30 @@ public class ChatAdpter extends ArrayAdapter<ChatMessage> {
     tvTime.setText(temp.getMessageTime().substring(11, 16)); // show only HH:mm
 
     if (isMine) {
-      // הודעות שלי: יישור לימין, בועה ירוקה, בלי שם
+      // My messages: right alignment, green bubble, no name
       bubbleLayout.setBackgroundResource(R.drawable.bg_message_bubble_mine);
       tvSender.setVisibility(View.GONE);
       spaceLeft.setVisibility(View.VISIBLE);
       spaceRight.setVisibility(View.GONE);
-      tvMessage.setTextColor(context.getResources().getColor(R.color.black));
+      tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
     } else {
-      // הודעות של אחרים: יישור לשמאל, בועה אפורה, עם שם
+      // Messages from others: left alignment, gray bubble, with name
       bubbleLayout.setBackgroundResource(R.drawable.bg_message_bubble);
       tvSender.setText(temp.getMessageUser());
       tvSender.setVisibility(View.VISIBLE);
       spaceLeft.setVisibility(View.GONE);
       spaceRight.setVisibility(View.VISIBLE);
-      tvMessage.setTextColor(context.getResources().getColor(R.color.black));
+      tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
     }
 
-    // הוסף מרווח בין הודעות
+    // Add spaces between messages
     if (position > 0) {
       ChatMessage prevMessage = MessageList.get(position - 1);
       if (prevMessage.getMessageUser().equals(temp.getMessageUser())) {
-        // אם זו אותה משתמש, הקטן את המרווח
+        // If it's the same user, reduce the interval.
         view.setPadding(0, 2, 0, 0);
       } else {
-        // אם זה משתמש אחר, הגדל את המרווח
+        // If it's a different user, increase the interval.
         view.setPadding(0, 8, 0, 0);
       }
     }
