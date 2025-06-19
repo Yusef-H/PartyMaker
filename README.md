@@ -34,6 +34,8 @@ PartyMaker is a comprehensive social event planning Android application that ena
 
 ## 📱 Application Architecture
 
+For detailed architecture documentation, see [ARCHITECTURE.docx](./ARCHITECTURE.docx)
+
 ### Core Data Models
 - **User Management**: User profiles, authentication, and preferences
 - **Group System**: Group creation, membership, and administration
