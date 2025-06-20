@@ -104,7 +104,7 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
     tvAdminEmail.setText(AdminKey.replace(' ', '.'));
 
     // start AdminOptions
-    AdminOptions(MyGrid);
+    wireAdminOptions(MyGrid);
 
     eventHandler();
   }
@@ -188,7 +188,7 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
         });
   }
 
-  private void AdminOptions(GridLayout MyGrid) {
+  private void wireAdminOptions(GridLayout MyGrid) {
     // Loop all child item of Main Grid
     for (int i = 0; i < MyGrid.getChildCount(); i++) {
       // You can see , all child item is CardView , so we just cast object to CardView
@@ -198,111 +198,54 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
           new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+              Intent intent = new Intent(getBaseContext(), AdminOptions.class);
               if (finalI == 0) // open 1,1 (1) Change Location
               {
               } else if (finalI == 1) // open 1,2 (2) Change Date
               {
                 // intent from AdminOptions to ChangeDate
-                Intent intent = new Intent(getBaseContext(), ChangeDate.class);
-                ExtrasMetadata extras =
-                    new ExtrasMetadata(
-                        GroupName,
-                        GroupKey,
-                        GroupDay,
-                        GroupMonth,
-                        GroupYear,
-                        GroupHour,
-                        GroupLocation,
-                        AdminKey,
-                        CreatedAt,
-                        GroupPrice,
-                        GroupType,
-                        CanAdd,
-                        FriendKeys,
-                        ComingKeys,
-                        MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
-
+                intent = new Intent(getBaseContext(), ChangeDate.class);
               } else if (finalI == 2) // open 2,1 (3) Delete People
               {
-                Intent intent = new Intent(getBaseContext(), DeletePeople.class);
-                ExtrasMetadata extras =
-                    new ExtrasMetadata(
-                        GroupName,
-                        GroupKey,
-                        GroupDay,
-                        GroupMonth,
-                        GroupYear,
-                        GroupHour,
-                        GroupLocation,
-                        AdminKey,
-                        CreatedAt,
-                        GroupPrice,
-                        GroupType,
-                        CanAdd,
-                        FriendKeys,
-                        ComingKeys,
-                        MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
+                intent = new Intent(getBaseContext(), DeletePeople.class);
               } else if (finalI == 3) // open 2,2 (4) Change Entry Price
               {
               } else if (finalI == 4) // open 3,1 (5) Group Options
               {
                 // intent to GroupOptions Activity with Values
-                Intent intent = new Intent(getBaseContext(), GroupOptions.class);
-                ExtrasMetadata extras =
-                    new ExtrasMetadata(
-                        GroupName,
-                        GroupKey,
-                        GroupDay,
-                        GroupMonth,
-                        GroupYear,
-                        GroupHour,
-                        GroupLocation,
-                        AdminKey,
-                        CreatedAt,
-                        GroupPrice,
-                        GroupType,
-                        CanAdd,
-                        FriendKeys,
-                        ComingKeys,
-                        MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
+                intent = new Intent(getBaseContext(), GroupOptions.class);
 
               } else if (finalI == 5) // open 3,2 (6) Back
               {
                 // intent back to GroupScreen Activity with Values
-                Intent intent = new Intent(getBaseContext(), GroupScreen.class);
-                ExtrasMetadata extras =
-                    new ExtrasMetadata(
-                        GroupName,
-                        GroupKey,
-                        GroupDay,
-                        GroupMonth,
-                        GroupYear,
-                        GroupHour,
-                        GroupLocation,
-                        AdminKey,
-                        CreatedAt,
-                        GroupPrice,
-                        GroupType,
-                        CanAdd,
-                        FriendKeys,
-                        ComingKeys,
-                        MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
+                intent = new Intent(getBaseContext(), GroupScreen.class);
               }
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      GroupName,
+                      GroupKey,
+                      GroupDay,
+                      GroupMonth,
+                      GroupYear,
+                      GroupHour,
+                      GroupLocation,
+                      AdminKey,
+                      CreatedAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              startActivity(intent);
             }
           });
     }
   }
 
   @Override
-  public void onMapReady(GoogleMap googleMap) {
+  public void onMapReady(@NonNull GoogleMap googleMap) {
     this.map = googleMap;
     // Wherever the user clicks gets stored in chosenLatLng
     map.setOnMapClickListener(
