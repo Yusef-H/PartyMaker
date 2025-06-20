@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -41,7 +39,8 @@ public class PublicGroups extends AppCompatActivity {
 
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar).setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
+    Objects.requireNonNull(actionBar)
+        .setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
 
     // set actionbar background
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -58,46 +57,45 @@ public class PublicGroups extends AppCompatActivity {
 
   private void EventHandler() {
     lv1.setOnItemClickListener(
-            (parent, view, position, id) -> {
-              // intent Value
-              String groupName = group.get(position).getGroupName();
-              String groupKey = group.get(position).getGroupKey();
-              String groupDays = group.get(position).getGroupDays();
-              String groupMonths = group.get(position).getGroupMonths();
-              String groupYears = group.get(position).getGroupYears();
-              String groupHours = group.get(position).getGroupHours();
-              String groupLocation = group.get(position).getGroupLocation();
-              String adminKey = group.get(position).getAdminKey();
-              String createdAt = group.get(position).getCreatedAt();
-              String GroupPrice = group.get(position).getGroupPrice();
-              int GroupType = group.get(position).getGroupType();
-              boolean CanAdd = group.get(position).isCanAdd();
-              HashMap<String, Object> FriendKeys = group.get(position).getFriendKeys();
-              HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
-              HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
-              Intent intent = new Intent(getBaseContext(), GroupJoin.class);
-              ExtrasMetadata extras =
-                  new ExtrasMetadata(
-                      groupName,
-                      groupKey,
-                      groupDays,
-                      groupMonths,
-                      groupYears,
-                      groupHours,
-                      groupLocation,
-                      adminKey,
-                      createdAt,
-                      GroupPrice,
-                      GroupType,
-                      CanAdd,
-                      FriendKeys,
-                      ComingKeys,
-                      MessageKeys);
-              Common.addExtrasToIntent(intent, extras);
-              startActivity(intent);
-            });
-    lv1.setOnItemLongClickListener(
-            (parent, view, position, id) -> false);
+        (parent, view, position, id) -> {
+          // intent Value
+          String groupName = group.get(position).getGroupName();
+          String groupKey = group.get(position).getGroupKey();
+          String groupDays = group.get(position).getGroupDays();
+          String groupMonths = group.get(position).getGroupMonths();
+          String groupYears = group.get(position).getGroupYears();
+          String groupHours = group.get(position).getGroupHours();
+          String groupLocation = group.get(position).getGroupLocation();
+          String adminKey = group.get(position).getAdminKey();
+          String createdAt = group.get(position).getCreatedAt();
+          String GroupPrice = group.get(position).getGroupPrice();
+          int GroupType = group.get(position).getGroupType();
+          boolean CanAdd = group.get(position).isCanAdd();
+          HashMap<String, Object> FriendKeys = group.get(position).getFriendKeys();
+          HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
+          HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
+          Intent intent = new Intent(getBaseContext(), GroupJoin.class);
+          ExtrasMetadata extras =
+              new ExtrasMetadata(
+                  groupName,
+                  groupKey,
+                  groupDays,
+                  groupMonths,
+                  groupYears,
+                  groupHours,
+                  groupLocation,
+                  adminKey,
+                  createdAt,
+                  GroupPrice,
+                  GroupType,
+                  CanAdd,
+                  FriendKeys,
+                  ComingKeys,
+                  MessageKeys);
+          Common.addExtrasToIntent(intent, extras);
+          startActivity(intent);
+        });
+    lv1.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
   public void retriveData() {

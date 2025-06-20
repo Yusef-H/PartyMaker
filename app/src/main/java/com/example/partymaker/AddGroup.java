@@ -123,8 +123,8 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
     autocompleteFragment =
         (AutocompleteSupportFragment)
             getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-    Objects.requireNonNull(autocompleteFragment).setPlaceFields(
-        Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+    Objects.requireNonNull(autocompleteFragment)
+        .setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
     locationClient = LocationServices.getFusedLocationProviderClient(this);
 
     autocompleteFragment.setOnPlaceSelectedListener(
@@ -331,10 +331,10 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
         });
 
     fabChat.setOnClickListener(
-            view -> {
-              Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
-              startActivity(intent);
-            });
+        view -> {
+          Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
+          startActivity(intent);
+        });
     fabChat.setOnTouchListener(
         new View.OnTouchListener() {
           @SuppressLint("ClickableViewAccessibility")

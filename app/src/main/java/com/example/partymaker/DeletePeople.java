@@ -56,7 +56,8 @@ public class DeletePeople extends AppCompatActivity {
 
     // Get Values from MainActivity By intent + connection between intent and
     // current activity objects
-    GroupName = Objects.requireNonNull(getIntent().getExtras()).getString("GroupName", "defaultKey");
+    GroupName =
+        Objects.requireNonNull(getIntent().getExtras()).getString("GroupName", "defaultKey");
     GroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
     GroupDay = getIntent().getExtras().getString("groupDays", "defaultKey");
     GroupMonth = getIntent().getExtras().getString("groupMonths", "defaultKey");
@@ -91,85 +92,84 @@ public class DeletePeople extends AppCompatActivity {
 
   private void EventHandler() {
     btnHelp.setOnClickListener(
-            v -> {
-              tvInstructions1.setVisibility(View.VISIBLE);
-              btnHelp.setVisibility(View.INVISIBLE);
-              tvHelp.setVisibility(View.INVISIBLE);
-              btnHide.setVisibility(View.VISIBLE);
-              tvHide.setVisibility(View.VISIBLE);
-            });
+        v -> {
+          tvInstructions1.setVisibility(View.VISIBLE);
+          btnHelp.setVisibility(View.INVISIBLE);
+          tvHelp.setVisibility(View.INVISIBLE);
+          btnHide.setVisibility(View.VISIBLE);
+          tvHide.setVisibility(View.VISIBLE);
+        });
 
     btnHide.setOnClickListener(
-            v -> {
-              tvInstructions1.setVisibility(View.INVISIBLE);
-              btnHide.setVisibility(View.INVISIBLE);
-              tvHide.setVisibility(View.INVISIBLE);
-              btnHelp.setVisibility(View.VISIBLE);
-              tvHelp.setVisibility(View.VISIBLE);
-            });
+        v -> {
+          tvInstructions1.setVisibility(View.INVISIBLE);
+          btnHide.setVisibility(View.INVISIBLE);
+          tvHide.setVisibility(View.INVISIBLE);
+          btnHelp.setVisibility(View.VISIBLE);
+          tvHelp.setVisibility(View.VISIBLE);
+        });
     btnDeleteFriend.setOnClickListener(
-            v -> {
-              // This if - checks if EditText is not Empty
-              if (etFriendEmail.getText().toString().trim().length() != 0) {
-                CurrentFriend = etFriendEmail.getText().toString().replace('.', ' ');
-                database.addValueEventListener(
-                    new ValueEventListener() {
-                      @Override
-                      public void onDataChange(DataSnapshot dataSnapshot) {
-                        boolean flag = false;
-                        boolean flag1 = false;
-                        HashMap<String, Object> GroupFriends = new HashMap<>();
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                          String UserEmail = data.getValue(User.class).getEmail().replace('.', ' ');
-                          String CurrentUserEmail =
-                              etFriendEmail.getText().toString().replace('.', ' ');
-                          GroupFriends = FriendKeys;
-                          if (CurrentUserEmail.equals(UserEmail)) {
-                            for (String GroupFriend : GroupFriends.keySet()) {
-                              if (CurrentUserEmail.equals(GroupFriend)) {
-                                flag1 = true;
-                                break;
-                              }
-                            }
-                            if (flag1) {
-                              FriendKeys.remove(CurrentFriend);
-                              DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
-                              DBref.refGroups
-                                  .child(GroupKey)
-                                  .child("FriendKeys")
-                                  .updateChildren(FriendKeys);
-                              ComingKeys.remove(CurrentFriend);
-                              DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
-                              DBref.refGroups
-                                  .child(GroupKey)
-                                  .child("ComingKeys")
-                                  .updateChildren(ComingKeys);
-                              Toast.makeText(
-                                      DeletePeople.this,
-                                      "Friend successfully deleted",
-                                      Toast.LENGTH_SHORT)
-                                  .show();
-                            } else {
-                              Toast.makeText(
-                                      DeletePeople.this, "User not in group", Toast.LENGTH_SHORT)
-                                  .show();
-                            }
-                            flag = true;
+        v -> {
+          // This if - checks if EditText is not Empty
+          if (etFriendEmail.getText().toString().trim().length() != 0) {
+            CurrentFriend = etFriendEmail.getText().toString().replace('.', ' ');
+            database.addValueEventListener(
+                new ValueEventListener() {
+                  @Override
+                  public void onDataChange(DataSnapshot dataSnapshot) {
+                    boolean flag = false;
+                    boolean flag1 = false;
+                    HashMap<String, Object> GroupFriends = new HashMap<>();
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                      String UserEmail = data.getValue(User.class).getEmail().replace('.', ' ');
+                      String CurrentUserEmail =
+                          etFriendEmail.getText().toString().replace('.', ' ');
+                      GroupFriends = FriendKeys;
+                      if (CurrentUserEmail.equals(UserEmail)) {
+                        for (String GroupFriend : GroupFriends.keySet()) {
+                          if (CurrentUserEmail.equals(GroupFriend)) {
+                            flag1 = true;
+                            break;
                           }
                         }
-                        if (!flag) {
-                          Toast.makeText(DeletePeople.this, "Email not Exist", Toast.LENGTH_SHORT)
+                        if (flag1) {
+                          FriendKeys.remove(CurrentFriend);
+                          DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
+                          DBref.refGroups
+                              .child(GroupKey)
+                              .child("FriendKeys")
+                              .updateChildren(FriendKeys);
+                          ComingKeys.remove(CurrentFriend);
+                          DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
+                          DBref.refGroups
+                              .child(GroupKey)
+                              .child("ComingKeys")
+                              .updateChildren(ComingKeys);
+                          Toast.makeText(
+                                  DeletePeople.this,
+                                  "Friend successfully deleted",
+                                  Toast.LENGTH_SHORT)
+                              .show();
+                        } else {
+                          Toast.makeText(DeletePeople.this, "User not in group", Toast.LENGTH_SHORT)
                               .show();
                         }
+                        flag = true;
                       }
+                    }
+                    if (!flag) {
+                      Toast.makeText(DeletePeople.this, "Email not Exist", Toast.LENGTH_SHORT)
+                          .show();
+                    }
+                  }
 
-                      @Override
-                      public void onCancelled(@NonNull DatabaseError databaseError) {}
-                    });
-              } else {
-                Toast.makeText(DeletePeople.this, "Input email please", Toast.LENGTH_SHORT).show();
-              }
-            });
+                  @Override
+                  public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+          } else {
+            Toast.makeText(DeletePeople.this, "Input email please", Toast.LENGTH_SHORT).show();
+          }
+        });
     btnBack.setOnClickListener(
         v -> {
           Intent intent = new Intent(getBaseContext(), AdminOptions.class);

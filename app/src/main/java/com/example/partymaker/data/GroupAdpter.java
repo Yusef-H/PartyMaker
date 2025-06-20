@@ -2,7 +2,6 @@ package com.example.partymaker.data;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +13,6 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import com.example.partymaker.FriendList;
 import com.example.partymaker.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -59,15 +56,16 @@ public class GroupAdpter extends ArrayAdapter<Group> {
         .child("Groups/" + GroupKey)
         .getDownloadUrl()
         .addOnSuccessListener(
-                uri -> Picasso.get()
-                        .load(uri) // image url goes here
-                        .fit()
-                        .centerCrop()
-                        .into(imageView))
+            uri ->
+                Picasso.get()
+                    .load(uri) // image url goes here
+                    .fit()
+                    .centerCrop()
+                    .into(imageView))
         .addOnFailureListener(
-                exception -> {
-                  // Handle any errors
-                });
+            exception -> {
+              // Handle any errors
+            });
 
     return view;
   }

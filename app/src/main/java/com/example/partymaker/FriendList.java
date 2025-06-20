@@ -2,10 +2,7 @@ package com.example.partymaker;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.data.DBref;
@@ -32,10 +29,8 @@ public class FriendList extends AppCompatActivity {
   }
 
   private void eventHandler() {
-    lv.setOnItemClickListener(
-            (parent, view, position, id) -> {});
-    lv.setOnItemLongClickListener(
-            (parent, view, position, id) -> false);
+    lv.setOnItemClickListener((parent, view, position, id) -> {});
+    lv.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
   private void ShowData() {

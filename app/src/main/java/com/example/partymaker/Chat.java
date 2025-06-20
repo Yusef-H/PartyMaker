@@ -7,11 +7,9 @@ import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -52,7 +50,8 @@ public class Chat extends AppCompatActivity {
     HashMap<String, Object> hashMessageKeys =
         (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
     MessageKeys = hashMessageKeys;
-    String strGroupKey = Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
+    String strGroupKey =
+        Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
     GroupKey = strGroupKey;
 
     // connection
@@ -67,10 +66,8 @@ public class Chat extends AppCompatActivity {
   }
 
   private void eventHandler() {
-    lv4.setOnItemClickListener(
-            (parent, view, position, id) -> {});
-    lv4.setOnItemLongClickListener(
-            (parent, view, position, id) -> false);
+    lv4.setOnItemClickListener((parent, view, position, id) -> {});
+    lv4.setOnItemLongClickListener((parent, view, position, id) -> false);
     btnSend.setOnClickListener(
         new View.OnClickListener() {
           @RequiresApi(api = Build.VERSION_CODES.N)
@@ -116,37 +113,36 @@ public class Chat extends AppCompatActivity {
 
   private void setupGptButton() {
     btnGpt.setOnClickListener(
-            v -> {
-              android.app.AlertDialog.Builder builder =
-                  new android.app.AlertDialog.Builder(Chat.this);
-              builder.setTitle("שאל את GPT");
-              final EditText input = new EditText(Chat.this);
-              input.setHint("כתוב כאן את השאלה שלך...");
-              builder.setView(input);
-              builder.setPositiveButton(
-                  "שלח",
-                  (dialog, which) -> {
-                    String gptQuestion = input.getText().toString();
-                    if (!gptQuestion.isEmpty()) {
-                      new Thread(
-                              () -> {
-                                try {
-                                  String prompt =
-                                      "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
-                                          + getGroupDetails();
-                                  OpenAiApi openAiApi = new OpenAiApi(getApiKey());
-                                  String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
-                                  runOnUiThread(() -> sendBotMessage(gptAnswer));
-                                } catch (Exception e) {
-                                  e.printStackTrace();
-                                }
-                              })
-                          .start();
-                    }
-                  });
-              builder.setNegativeButton("ביטול", (dialog, which) -> dialog.cancel());
-              builder.show();
-            });
+        v -> {
+          android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Chat.this);
+          builder.setTitle("שאל את GPT");
+          final EditText input = new EditText(Chat.this);
+          input.setHint("כתוב כאן את השאלה שלך...");
+          builder.setView(input);
+          builder.setPositiveButton(
+              "שלח",
+              (dialog, which) -> {
+                String gptQuestion = input.getText().toString();
+                if (!gptQuestion.isEmpty()) {
+                  new Thread(
+                          () -> {
+                            try {
+                              String prompt =
+                                  "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
+                                      + getGroupDetails();
+                              OpenAiApi openAiApi = new OpenAiApi(getApiKey());
+                              String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
+                              runOnUiThread(() -> sendBotMessage(gptAnswer));
+                            } catch (Exception e) {
+                              e.printStackTrace();
+                            }
+                          })
+                      .start();
+                }
+              });
+          builder.setNegativeButton("ביטול", (dialog, which) -> dialog.cancel());
+          builder.show();
+        });
   }
 
   private void sendBotMessage(String answer) {
@@ -183,7 +179,8 @@ public class Chat extends AppCompatActivity {
             ArrayList<ChatMessage> ArrMessages = new ArrayList<>();
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               ChatMessage GroupMessage = data.getValue(ChatMessage.class);
-              String GroupMessageKey = Objects.requireNonNull(data.getValue(ChatMessage.class)).getMessageKey();
+              String GroupMessageKey =
+                  Objects.requireNonNull(data.getValue(ChatMessage.class)).getMessageKey();
               for (String MessageKey : MessageKeys.keySet()) {
                 if (MessageKey.equals(GroupMessageKey)) ArrMessages.add(GroupMessage);
               }

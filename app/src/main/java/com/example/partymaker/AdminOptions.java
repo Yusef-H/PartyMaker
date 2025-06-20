@@ -1,6 +1,5 @@
 package com.example.partymaker;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -73,7 +72,8 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
 
     // Get Values from GroupScreen By intent + connection between intent and current
     // activity objects
-    GroupName = Objects.requireNonNull(getIntent().getExtras()).getString("GroupName", "defaultKey");
+    GroupName =
+        Objects.requireNonNull(getIntent().getExtras()).getString("GroupName", "defaultKey");
     GroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
     GroupDay = getIntent().getExtras().getString("groupDays", "defaultKey");
     GroupMonth = getIntent().getExtras().getString("groupMonths", "defaultKey");
@@ -112,67 +112,63 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
 
   private void eventHandler() {
     CardPrice.setOnClickListener(
-            v -> {
-              final EditText edittext = new EditText(AdminOptions.this);
-              edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
-              edittext.setText(GroupPrice);
-              AlertDialog.Builder alert = new AlertDialog.Builder(AdminOptions.this);
-              alert.setMessage("Input new price below");
-              alert.setTitle("Change party's entry price");
+        v -> {
+          final EditText edittext = new EditText(AdminOptions.this);
+          edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
+          edittext.setText(GroupPrice);
+          AlertDialog.Builder alert = new AlertDialog.Builder(AdminOptions.this);
+          alert.setMessage("Input new price below");
+          alert.setTitle("Change party's entry price");
 
-              alert.setView(edittext);
+          alert.setView(edittext);
 
-              alert.setPositiveButton(
-                  "Change price",
-                      (dialog, whichButton) -> {
-                        // if pressed changed name
-                        GroupPrice = edittext.getText().toString();
-                        DBref.refGroups.child(GroupKey).child("groupPrice").setValue(GroupPrice);
-                        Toast.makeText(AdminOptions.this, "Name Changed", Toast.LENGTH_SHORT).show();
-                      });
+          alert.setPositiveButton(
+              "Change price",
+              (dialog, whichButton) -> {
+                // if pressed changed name
+                GroupPrice = edittext.getText().toString();
+                DBref.refGroups.child(GroupKey).child("groupPrice").setValue(GroupPrice);
+                Toast.makeText(AdminOptions.this, "Name Changed", Toast.LENGTH_SHORT).show();
+              });
 
-              alert.setNegativeButton(
-                  "Back",
-                      (dialog, whichButton) -> {
-                        // what ever you want to do with Back.
-                      });
+          alert.setNegativeButton(
+              "Back",
+              (dialog, whichButton) -> {
+                // what ever you want to do with Back.
+              });
 
-              alert.show();
-            });
+          alert.show();
+        });
 
     CardLocation.setOnClickListener(
-            v -> {
-              mainContent.setVisibility(View.INVISIBLE);
-              MapUtilities.centerMapOnChosenPlace(
-                  map,
-                  Place.builder()
-                      .setLatLng(MapUtilities.decodeStringLocationToCoordinates(GroupLocation))
-                      .build());
-              mapContainer.setVisibility(View.VISIBLE);
+        v -> {
+          mainContent.setVisibility(View.INVISIBLE);
+          MapUtilities.centerMapOnChosenPlace(
+              map,
+              Place.builder()
+                  .setLatLng(MapUtilities.decodeStringLocationToCoordinates(GroupLocation))
+                  .build());
+          mapContainer.setVisibility(View.VISIBLE);
 
-              saveLocationButton.setOnClickListener(
-                      v1 -> {
-                        if (chosenLatLng != null) {
-                          String locationValue =
-                              MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
-                          DBref.refGroups
-                              .child(GroupKey)
-                              .child("groupLocation")
-                              .setValue(locationValue);
-                          GroupLocation = locationValue;
-                          Toast.makeText(AdminOptions.this, "Location Changed", Toast.LENGTH_SHORT)
-                              .show();
-                        } else {
-                          Toast.makeText(
-                                  AdminOptions.this,
-                                  "Warning: You have not set an address for your party.",
-                                  Toast.LENGTH_LONG)
-                              .show();
-                        }
-                        mainContent.setVisibility(View.VISIBLE);
-                        mapContainer.setVisibility(View.INVISIBLE);
-                      });
-            });
+          saveLocationButton.setOnClickListener(
+              v1 -> {
+                if (chosenLatLng != null) {
+                  String locationValue =
+                      MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+                  DBref.refGroups.child(GroupKey).child("groupLocation").setValue(locationValue);
+                  GroupLocation = locationValue;
+                  Toast.makeText(AdminOptions.this, "Location Changed", Toast.LENGTH_SHORT).show();
+                } else {
+                  Toast.makeText(
+                          AdminOptions.this,
+                          "Warning: You have not set an address for your party.",
+                          Toast.LENGTH_LONG)
+                      .show();
+                }
+                mainContent.setVisibility(View.VISIBLE);
+                mapContainer.setVisibility(View.INVISIBLE);
+              });
+        });
   }
 
   private void wireAdminOptions(GridLayout MyGrid) {
@@ -182,49 +178,49 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
       final CardView cardView = (CardView) MyGrid.getChildAt(i);
       final int finalI = i;
       cardView.setOnClickListener(
-              view -> {
-                Intent intent = new Intent(getBaseContext(), AdminOptions.class);
-                if (finalI == 0) // open 1,1 (1) Change Location
-                {
-                } else if (finalI == 1) // open 1,2 (2) Change Date
-                {
-                  // intent from AdminOptions to ChangeDate
-                  intent = new Intent(getBaseContext(), ChangeDate.class);
-                } else if (finalI == 2) // open 2,1 (3) Delete People
-                {
-                  intent = new Intent(getBaseContext(), DeletePeople.class);
-                } else if (finalI == 3) // open 2,2 (4) Change Entry Price
-                {
-                } else if (finalI == 4) // open 3,1 (5) Group Options
-                {
-                  // intent to GroupOptions Activity with Values
-                  intent = new Intent(getBaseContext(), GroupOptions.class);
+          view -> {
+            Intent intent = new Intent(getBaseContext(), AdminOptions.class);
+            if (finalI == 0) // open 1,1 (1) Change Location
+            {
+            } else if (finalI == 1) // open 1,2 (2) Change Date
+            {
+              // intent from AdminOptions to ChangeDate
+              intent = new Intent(getBaseContext(), ChangeDate.class);
+            } else if (finalI == 2) // open 2,1 (3) Delete People
+            {
+              intent = new Intent(getBaseContext(), DeletePeople.class);
+            } else if (finalI == 3) // open 2,2 (4) Change Entry Price
+            {
+            } else if (finalI == 4) // open 3,1 (5) Group Options
+            {
+              // intent to GroupOptions Activity with Values
+              intent = new Intent(getBaseContext(), GroupOptions.class);
 
-                } else if (finalI == 5) // open 3,2 (6) Back
-                {
-                  // intent back to GroupScreen Activity with Values
-                  intent = new Intent(getBaseContext(), GroupScreen.class);
-                }
-                ExtrasMetadata extras =
-                    new ExtrasMetadata(
-                        GroupName,
-                        GroupKey,
-                        GroupDay,
-                        GroupMonth,
-                        GroupYear,
-                        GroupHour,
-                        GroupLocation,
-                        AdminKey,
-                        CreatedAt,
-                        GroupPrice,
-                        GroupType,
-                        CanAdd,
-                        FriendKeys,
-                        ComingKeys,
-                        MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
-                startActivity(intent);
-              });
+            } else if (finalI == 5) // open 3,2 (6) Back
+            {
+              // intent back to GroupScreen Activity with Values
+              intent = new Intent(getBaseContext(), GroupScreen.class);
+            }
+            ExtrasMetadata extras =
+                new ExtrasMetadata(
+                    GroupName,
+                    GroupKey,
+                    GroupDay,
+                    GroupMonth,
+                    GroupYear,
+                    GroupHour,
+                    GroupLocation,
+                    AdminKey,
+                    CreatedAt,
+                    GroupPrice,
+                    GroupType,
+                    CanAdd,
+                    FriendKeys,
+                    ComingKeys,
+                    MessageKeys);
+            Common.addExtrasToIntent(intent, extras);
+            startActivity(intent);
+          });
     }
   }
 

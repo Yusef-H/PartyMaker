@@ -8,18 +8,13 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.data.DBref;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
@@ -32,7 +27,8 @@ public class EditProfile extends AppCompatActivity {
 
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar).setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
+    Objects.requireNonNull(actionBar)
+        .setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
 
     // set actionbar background
     Drawable d = getResources().getDrawable(R.drawable.background4);
@@ -47,10 +43,8 @@ public class EditProfile extends AppCompatActivity {
     DBref.refStorage
         .child("Users/" + email)
         .getDownloadUrl()
-        .addOnSuccessListener(
-                uri -> Picasso.get().load(uri).into(imgProfile))
-        .addOnFailureListener(
-                exception -> {});
+        .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgProfile))
+        .addOnFailureListener(exception -> {});
 
     evantHandler();
   }
@@ -58,12 +52,12 @@ public class EditProfile extends AppCompatActivity {
   private void evantHandler() {
     // imgProfile on click
     imgProfile.setOnClickListener(
-            v -> {
-              Intent i = new Intent();
-              i.setType("image/*");
-              i.setAction(Intent.ACTION_GET_CONTENT);
-              startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
-            });
+        v -> {
+          Intent i = new Intent();
+          i.setType("image/*");
+          i.setAction(Intent.ACTION_GET_CONTENT);
+          startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
+        });
   }
 
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -80,9 +74,11 @@ public class EditProfile extends AppCompatActivity {
               .child("Users/" + email)
               .putFile(uri)
               .addOnSuccessListener(
-                      taskSnapshot -> Toast.makeText(EditProfile.this, "saved", Toast.LENGTH_SHORT).show())
+                  taskSnapshot ->
+                      Toast.makeText(EditProfile.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
-                      exception -> Toast.makeText(EditProfile.this, "error while saving ", Toast.LENGTH_SHORT)
+                  exception ->
+                      Toast.makeText(EditProfile.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }

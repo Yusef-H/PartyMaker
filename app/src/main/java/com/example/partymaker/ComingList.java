@@ -3,10 +3,7 @@ package com.example.partymaker;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,10 +47,8 @@ public class ComingList extends AppCompatActivity {
   }
 
   private void EventHandler() {
-    lv3.setOnItemClickListener(
-            (parent, view, position, id) -> {});
-    lv3.setOnItemLongClickListener(
-            (parent, view, position, id) -> false);
+    lv3.setOnItemClickListener((parent, view, position, id) -> {});
+    lv3.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
   private void ShowData() {

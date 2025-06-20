@@ -18,7 +18,6 @@ import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
 import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -205,37 +203,37 @@ public class GroupScreen extends AppCompatActivity {
 
   private void EventHandler() {
     btnEditName.setOnClickListener(
-            v -> {
-              final EditText edittext = new EditText(GroupScreen.this);
-              AlertDialog.Builder alert = new AlertDialog.Builder(GroupScreen.this);
-              alert.setMessage("Input new name below");
-              alert.setTitle("Change party's name");
+        v -> {
+          final EditText edittext = new EditText(GroupScreen.this);
+          AlertDialog.Builder alert = new AlertDialog.Builder(GroupScreen.this);
+          alert.setMessage("Input new name below");
+          alert.setTitle("Change party's name");
 
-              alert.setView(edittext);
+          alert.setView(edittext);
 
-              alert.setPositiveButton(
-                  "Change name",
-                      (dialog, whichButton) -> {
-                        // if pressed changed name
-                        GroupName = edittext.getText().toString();
-                        DBref.refGroups.child(GroupKey).child("groupName").setValue(GroupName);
-                        tvGroupName.setText(GroupName);
-                        Toast.makeText(GroupScreen.this, "Name Changed", Toast.LENGTH_SHORT).show();
-                      });
+          alert.setPositiveButton(
+              "Change name",
+              (dialog, whichButton) -> {
+                // if pressed changed name
+                GroupName = edittext.getText().toString();
+                DBref.refGroups.child(GroupKey).child("groupName").setValue(GroupName);
+                tvGroupName.setText(GroupName);
+                Toast.makeText(GroupScreen.this, "Name Changed", Toast.LENGTH_SHORT).show();
+              });
 
-              alert.setNegativeButton(
-                  "Back",
-                      (dialog, whichButton) -> {
-                        // what ever you want to do with Back.
-                      });
+          alert.setNegativeButton(
+              "Back",
+              (dialog, whichButton) -> {
+                // what ever you want to do with Back.
+              });
 
-              alert.show();
-            });
+          alert.show();
+        });
     back5.setOnClickListener(
-            v -> {
-              Intent i = new Intent(getBaseContext(), MainActivity.class);
-              startActivity(i);
-            });
+        v -> {
+          Intent i = new Intent(getBaseContext(), MainActivity.class);
+          startActivity(i);
+        });
   }
 
   private void AdminEvent(GridLayout mainGrid) {
@@ -245,150 +243,148 @@ public class GroupScreen extends AppCompatActivity {
       final CardView cardView = (CardView) mainGrid.getChildAt(i);
       final int finalI = i;
       cardView.setOnClickListener(
-              view -> {
-                if (finalI == 0) // open 1,1 (1) Location
-                {
-                  MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupScreen.this);
-                } else if (finalI == 1) // open 1,2 (2) Date
-                {
-                  IsClicked = isClicked(IsClicked);
-                } else if (finalI == 2) // open 2,1 (3) People Invited
-                {
-                  Intent i3 = new Intent(getBaseContext(), invitedList.class);
-                  i3.putExtra("FriendKeys", FriendKeys);
-                  startActivity(i3);
-                } else if (finalI == 3) // open 2,2 (4) People Coming
-                {
-                  Intent i3 = new Intent(getBaseContext(), ComingList.class);
-                  i3.putExtra("ComingKeys", ComingKeys);
-                  startActivity(i3);
-                } else if (finalI == 4) // open 3,1 (5) Admin Options
-                {
-                  // intent from GroupScreen to AdminOptions
-                  Intent intent = new Intent(getBaseContext(), AdminOptions.class);
-                  ExtrasMetadata extras =
-                      new ExtrasMetadata(
-                          GroupName,
-                          GroupKey,
-                          GroupDay,
-                          GroupMonth,
-                          GroupYear,
-                          GroupHour,
-                          GroupLocation,
-                          AdminKey,
-                          CreatedAt,
-                          GroupPrice,
-                          GroupType,
-                          CanAdd,
-                          FriendKeys,
-                          ComingKeys,
-                          MessageKeys);
-                  Common.addExtrasToIntent(intent, extras);
-                  startActivity(intent);
+          view -> {
+            if (finalI == 0) // open 1,1 (1) Location
+            {
+              MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupScreen.this);
+            } else if (finalI == 1) // open 1,2 (2) Date
+            {
+              IsClicked = isClicked(IsClicked);
+            } else if (finalI == 2) // open 2,1 (3) People Invited
+            {
+              Intent i3 = new Intent(getBaseContext(), invitedList.class);
+              i3.putExtra("FriendKeys", FriendKeys);
+              startActivity(i3);
+            } else if (finalI == 3) // open 2,2 (4) People Coming
+            {
+              Intent i3 = new Intent(getBaseContext(), ComingList.class);
+              i3.putExtra("ComingKeys", ComingKeys);
+              startActivity(i3);
+            } else if (finalI == 4) // open 3,1 (5) Admin Options
+            {
+              // intent from GroupScreen to AdminOptions
+              Intent intent = new Intent(getBaseContext(), AdminOptions.class);
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      GroupName,
+                      GroupKey,
+                      GroupDay,
+                      GroupMonth,
+                      GroupYear,
+                      GroupHour,
+                      GroupLocation,
+                      AdminKey,
+                      CreatedAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              startActivity(intent);
 
-                } else if (finalI == 5) // open 3,2 (6) Chat
-                {
+            } else if (finalI == 5) // open 3,2 (6) Chat
+            {
 
-                  Intent i3 = new Intent(getBaseContext(), Chat.class);
-                  i3.putExtra("MessageKeys", MessageKeys);
-                  i3.putExtra("groupKey", GroupKey);
-                  startActivity(i3);
+              Intent i3 = new Intent(getBaseContext(), Chat.class);
+              i3.putExtra("MessageKeys", MessageKeys);
+              i3.putExtra("groupKey", GroupKey);
+              startActivity(i3);
 
-                } else if (finalI == 6) // open 4,1 (7) Add Friends
-                {
-                  Intent intent = new Intent(getBaseContext(), AddFriends.class);
-                  ExtrasMetadata extras =
-                      new ExtrasMetadata(
-                          GroupName,
-                          GroupKey,
-                          GroupDay,
-                          GroupMonth,
-                          GroupYear,
-                          GroupHour,
-                          GroupLocation,
-                          AdminKey,
-                          CreatedAt,
-                          GroupPrice,
-                          GroupType,
-                          CanAdd,
-                          FriendKeys,
-                          ComingKeys,
-                          MessageKeys);
-                  Common.addExtrasToIntent(intent, extras);
-                  startActivity(intent);
-                } else if (finalI == 7) // open 4,2 (8) Leave
-                {
+            } else if (finalI == 6) // open 4,1 (7) Add Friends
+            {
+              Intent intent = new Intent(getBaseContext(), AddFriends.class);
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      GroupName,
+                      GroupKey,
+                      GroupDay,
+                      GroupMonth,
+                      GroupYear,
+                      GroupHour,
+                      GroupLocation,
+                      AdminKey,
+                      CreatedAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              startActivity(intent);
+            } else if (finalI == 7) // open 4,2 (8) Leave
+            {
 
-                  AlertDialog.Builder builder = new AlertDialog.Builder(GroupScreen.this);
-                  builder.setTitle("Leave Party");
-                  builder.setMessage("Are you sure you want to leave this party?");
-                  builder.setPositiveButton(
-                      "Yes",
-                          (dialogInterface, i2) -> {
+              AlertDialog.Builder builder = new AlertDialog.Builder(GroupScreen.this);
+              builder.setTitle("Leave Party");
+              builder.setMessage("Are you sure you want to leave this party?");
+              builder.setPositiveButton(
+                  "Yes",
+                  (dialogInterface, i2) -> {
 
-                            // if pressed Yes
-                            // if group have no friends so delete friends
-                            if (FriendKeys.size() == 1) {
-                              // delete all messages writen by current group
-                              deleteMessages();
+                    // if pressed Yes
+                    // if group have no friends so delete friends
+                    if (FriendKeys.size() == 1) {
+                      // delete all messages writen by current group
+                      deleteMessages();
 
-                              // delete group from database
-                              DBref.refGroups.child(GroupKey).removeValue();
+                      // delete group from database
+                      DBref.refGroups.child(GroupKey).removeValue();
 
-                              // delete group's picture
-                              DBref.refStorage.child("Groups/" + GroupKey).delete();
+                      // delete group's picture
+                      DBref.refStorage.child("Groups/" + GroupKey).delete();
 
-                              // if it went successfully so toast write it
-                              Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
-                                  .show();
+                      // if it went successfully so toast write it
+                      Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
+                          .show();
 
-                              // intent from GroupScreen to MainMenu
-                              Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                              startActivity(intent);
+                      // intent from GroupScreen to MainMenu
+                      Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                      startActivity(intent);
 
-                            }
-                            // only admin leave group and set admin key to another user
-                            else {
-                              // remove CurrentUser from FriendList and ComingList
-                              FriendKeys.remove(CurrentUser);
-                              ComingKeys.remove(CurrentUser);
+                    }
+                    // only admin leave group and set admin key to another user
+                    else {
+                      // remove CurrentUser from FriendList and ComingList
+                      FriendKeys.remove(CurrentUser);
+                      ComingKeys.remove(CurrentUser);
 
-                              // set new admin from users in FriendList
-                              Map.Entry<String, Object> entry = FriendKeys.entrySet().iterator().next();
-                              AdminKey = entry.getKey();
-                              DBref.refGroups.child(GroupKey).child("adminKey").setValue(AdminKey);
+                      // set new admin from users in FriendList
+                      Map.Entry<String, Object> entry = FriendKeys.entrySet().iterator().next();
+                      AdminKey = entry.getKey();
+                      DBref.refGroups.child(GroupKey).child("adminKey").setValue(AdminKey);
 
-                              // removes friend list from firebase and set new one without Current user
-                              // (Because cant update Hashmap with value deleting)
-                              DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
-                              DBref.refGroups
-                                  .child(GroupKey)
-                                  .child("FriendKeys")
-                                  .updateChildren(FriendKeys);
+                      // removes friend list from firebase and set new one without Current user
+                      // (Because cant update Hashmap with value deleting)
+                      DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
+                      DBref.refGroups
+                          .child(GroupKey)
+                          .child("FriendKeys")
+                          .updateChildren(FriendKeys);
 
-                              // removes coming list from firebase and set new one without Current user
-                              // (Because cant update Hashmap with value deleting)
-                              DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
-                              DBref.refGroups
-                                  .child(GroupKey)
-                                  .child("ComingKeys")
-                                  .updateChildren(ComingKeys);
+                      // removes coming list from firebase and set new one without Current user
+                      // (Because cant update Hashmap with value deleting)
+                      DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
+                      DBref.refGroups
+                          .child(GroupKey)
+                          .child("ComingKeys")
+                          .updateChildren(ComingKeys);
 
-                              // if it went successfully so toast write it
-                              Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
-                                  .show();
+                      // if it went successfully so toast write it
+                      Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
+                          .show();
 
-                              // intent from GroupScreen to MainMenu
-                              Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                              startActivity(intent);
-                            }
-                          });
-                  builder.setNegativeButton(
-                      "No",
-                          (dialogInterface, i1) -> {});
-                  builder.show();
-                }
-              });
+                      // intent from GroupScreen to MainMenu
+                      Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                      startActivity(intent);
+                    }
+                  });
+              builder.setNegativeButton("No", (dialogInterface, i1) -> {});
+              builder.show();
+            }
+          });
     }
   }
 
@@ -399,137 +395,136 @@ public class GroupScreen extends AppCompatActivity {
       final CardView cardView = (CardView) mainGrid.getChildAt(i);
       final int finalI = i;
       cardView.setOnClickListener(
-              view -> {
-                if (finalI == 0) // open 1,1 (1) Location
-                {
-                  MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupScreen.this);
-                } else if (finalI == 1) // open 1,2 (2) Date
-                {
-                  IsClicked = isClicked(IsClicked);
-                } else if (finalI == 2) // open 2,1 (3) People Invited
-                {
-                  Intent i3 = new Intent(getBaseContext(), invitedList.class);
-                  i3.putExtra("FriendKeys", FriendKeys);
-                  startActivity(i3);
-                } else if (finalI == 3) // open 2,2 (4) People Coming
-                {
-                  Intent i3 = new Intent(getBaseContext(), ComingList.class);
-                  i3.putExtra("ComingKeys", ComingKeys);
-                  startActivity(i3);
-                } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
-                {
-                  if (!isComing) {
-                    String CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
-                    ComingKeys.put(CurrentUser, "true");
-                    DBref.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
-                    Toast.makeText(GroupScreen.this, "You're Coming", Toast.LENGTH_SHORT).show();
-                    tvNotComing.setVisibility(View.INVISIBLE);
-                    imgThumbDown.setVisibility(View.INVISIBLE);
-                    tvComing.setVisibility(View.VISIBLE);
-                    imgThumbUp.setVisibility(View.VISIBLE);
-                    card5.setCardBackgroundColor(Color.parseColor("#1986ed"));
-                  }
-                } else if (finalI == 5) // open 3,2 (6) Chat
-                {
+          view -> {
+            if (finalI == 0) // open 1,1 (1) Location
+            {
+              MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupScreen.this);
+            } else if (finalI == 1) // open 1,2 (2) Date
+            {
+              IsClicked = isClicked(IsClicked);
+            } else if (finalI == 2) // open 2,1 (3) People Invited
+            {
+              Intent i3 = new Intent(getBaseContext(), invitedList.class);
+              i3.putExtra("FriendKeys", FriendKeys);
+              startActivity(i3);
+            } else if (finalI == 3) // open 2,2 (4) People Coming
+            {
+              Intent i3 = new Intent(getBaseContext(), ComingList.class);
+              i3.putExtra("ComingKeys", ComingKeys);
+              startActivity(i3);
+            } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
+            {
+              if (!isComing) {
+                String CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
+                ComingKeys.put(CurrentUser, "true");
+                DBref.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
+                Toast.makeText(GroupScreen.this, "You're Coming", Toast.LENGTH_SHORT).show();
+                tvNotComing.setVisibility(View.INVISIBLE);
+                imgThumbDown.setVisibility(View.INVISIBLE);
+                tvComing.setVisibility(View.VISIBLE);
+                imgThumbUp.setVisibility(View.VISIBLE);
+                card5.setCardBackgroundColor(Color.parseColor("#1986ed"));
+              }
+            } else if (finalI == 5) // open 3,2 (6) Chat
+            {
 
-                  Intent i3 = new Intent(getBaseContext(), Chat.class);
-                  i3.putExtra("MessageKeys", MessageKeys);
-                  i3.putExtra("groupKey", GroupKey);
-                  startActivity(i3);
+              Intent i3 = new Intent(getBaseContext(), Chat.class);
+              i3.putExtra("MessageKeys", MessageKeys);
+              i3.putExtra("groupKey", GroupKey);
+              startActivity(i3);
 
-                } else if (finalI == 6) // open 4,1 (7) Add Friends
-                {
-                  // if its a public group/got admin set to add
-                  if (CanAdd) {
-                    Intent intent = new Intent(getBaseContext(), AddFriends.class);
-                    intent.putExtra("GroupName", GroupName);
-                    intent.putExtra("groupKey", GroupKey);
-                    intent.putExtra("groupDays", GroupDay);
-                    intent.putExtra("groupMonths", GroupMonth);
-                    intent.putExtra("groupYears", GroupYear);
-                    intent.putExtra("groupHours", GroupHour);
-                    intent.putExtra("groupLocation", GroupLocation);
-                    intent.putExtra("adminKey", AdminKey);
-                    intent.putExtra("createdAt", CreatedAt);
-                    intent.putExtra("GroupType", GroupType);
-                    intent.putExtra("GroupPrice", GroupPrice);
-                    intent.putExtra("CanAdd", CanAdd);
-                    intent.putExtra("FriendKeys", FriendKeys);
-                    intent.putExtra("ComingKeys", ComingKeys);
-                    intent.putExtra("MessageKeys", MessageKeys);
-                    startActivity(intent);
-                  }
-                } else if (finalI == 7) // open 4,2 (8) Leave
-                {
+            } else if (finalI == 6) // open 4,1 (7) Add Friends
+            {
+              // if its a public group/got admin set to add
+              if (CanAdd) {
+                Intent intent = new Intent(getBaseContext(), AddFriends.class);
+                intent.putExtra("GroupName", GroupName);
+                intent.putExtra("groupKey", GroupKey);
+                intent.putExtra("groupDays", GroupDay);
+                intent.putExtra("groupMonths", GroupMonth);
+                intent.putExtra("groupYears", GroupYear);
+                intent.putExtra("groupHours", GroupHour);
+                intent.putExtra("groupLocation", GroupLocation);
+                intent.putExtra("adminKey", AdminKey);
+                intent.putExtra("createdAt", CreatedAt);
+                intent.putExtra("GroupType", GroupType);
+                intent.putExtra("GroupPrice", GroupPrice);
+                intent.putExtra("CanAdd", CanAdd);
+                intent.putExtra("FriendKeys", FriendKeys);
+                intent.putExtra("ComingKeys", ComingKeys);
+                intent.putExtra("MessageKeys", MessageKeys);
+                startActivity(intent);
+              }
+            } else if (finalI == 7) // open 4,2 (8) Leave
+            {
 
-                  AlertDialog.Builder builder = new AlertDialog.Builder(GroupScreen.this);
-                  builder.setTitle("Leave Party");
-                  builder.setMessage("Are you sure you want to leave this party?");
-                  builder.setPositiveButton(
-                      "Yes",
-                          (dialogInterface, i2) -> {
-                            // if pressed Yes
-                            // if group have no friends so delete friends
-                            if (FriendKeys.size() == 1) {
-                              // delete all messages writen by current group
-                              deleteMessages();
+              AlertDialog.Builder builder = new AlertDialog.Builder(GroupScreen.this);
+              builder.setTitle("Leave Party");
+              builder.setMessage("Are you sure you want to leave this party?");
+              builder.setPositiveButton(
+                  "Yes",
+                  (dialogInterface, i2) -> {
+                    // if pressed Yes
+                    // if group have no friends so delete friends
+                    if (FriendKeys.size() == 1) {
+                      // delete all messages writen by current group
+                      deleteMessages();
 
-                              // delete group screen from database
-                              DBref.refGroups.child(GroupKey).removeValue();
+                      // delete group screen from database
+                      DBref.refGroups.child(GroupKey).removeValue();
 
-                              // delete group's picture
-                              DBref.refStorage.child("Groups/" + GroupKey).delete();
+                      // delete group's picture
+                      DBref.refStorage.child("Groups/" + GroupKey).delete();
 
-                              // if it went successfully so toast write it
-                              Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
-                                  .show();
+                      // if it went successfully so toast write it
+                      Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
+                          .show();
 
-                              // intent from GroupScreen to MainMenu
-                              Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                              startActivity(intent);
-                            }
-                            // only current user leave group
-                            else {
-                              // remove CurrentUser from FriendList and ComingList
-                              FriendKeys.remove(CurrentUser);
-                              ComingKeys.remove(CurrentUser);
+                      // intent from GroupScreen to MainMenu
+                      Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                      startActivity(intent);
+                    }
+                    // only current user leave group
+                    else {
+                      // remove CurrentUser from FriendList and ComingList
+                      FriendKeys.remove(CurrentUser);
+                      ComingKeys.remove(CurrentUser);
 
-                              // removes friend list from firebase and set new one without Current user
-                              // (Because cant update Hashmap with value deleting)
-                              DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
-                              DBref.refGroups
-                                  .child(GroupKey)
-                                  .child("FriendKeys")
-                                  .updateChildren(FriendKeys);
+                      // removes friend list from firebase and set new one without Current user
+                      // (Because cant update Hashmap with value deleting)
+                      DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
+                      DBref.refGroups
+                          .child(GroupKey)
+                          .child("FriendKeys")
+                          .updateChildren(FriendKeys);
 
-                              // removes coming list from firebase and set new one without Current user
-                              // (Because cant update Hashmap with value deleting)
-                              DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
-                              DBref.refGroups
-                                  .child(GroupKey)
-                                  .child("ComingKeys")
-                                  .updateChildren(ComingKeys);
+                      // removes coming list from firebase and set new one without Current user
+                      // (Because cant update Hashmap with value deleting)
+                      DBref.refGroups.child(GroupKey).child("ComingKeys").removeValue();
+                      DBref.refGroups
+                          .child(GroupKey)
+                          .child("ComingKeys")
+                          .updateChildren(ComingKeys);
 
-                              // if it went successfully so toast write it
-                              Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
-                                  .show();
+                      // if it went successfully so toast write it
+                      Toast.makeText(GroupScreen.this, "successfully left", Toast.LENGTH_SHORT)
+                          .show();
 
-                              // intent from GroupScreen to MainMenu
-                              Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                              startActivity(intent);
-                            }
-                          });
-                  builder.setNegativeButton(
-                      "No",
-                          (dialogInterface, i1) -> {});
-                  builder.show();
-                }
-              });
+                      // intent from GroupScreen to MainMenu
+                      Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                      startActivity(intent);
+                    }
+                  });
+              builder.setNegativeButton("No", (dialogInterface, i1) -> {});
+              builder.show();
+            }
+          });
     }
   }
 
   private void isComing() {
-    String CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
+    String CurrentUser =
+        Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
     boolean flag = false;
     for (String ComingFriend : ComingKeys.keySet()) {
       if (ComingFriend.equals(CurrentUser)) {
@@ -606,7 +601,8 @@ public class GroupScreen extends AppCompatActivity {
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             for (DataSnapshot data : dataSnapshot.getChildren()) {
-              String msgKey = Objects.requireNonNull(data.getValue(ChatMessage.class)).getMessageKey();
+              String msgKey =
+                  Objects.requireNonNull(data.getValue(ChatMessage.class)).getMessageKey();
               for (String chatMsgKey : MessageKeys.keySet()) {
                 if (chatMsgKey.equals(msgKey)) {
                   DBref.refMessages.child(chatMsgKey).removeValue();
