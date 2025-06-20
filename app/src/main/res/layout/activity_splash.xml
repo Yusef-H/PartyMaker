@@ -28,7 +28,6 @@
 
         <!-- App name text -->
         <TextView
-            android:id="@+id/txtAppName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/partymaker"
@@ -44,7 +43,6 @@
 
         <!-- Subtitle -->
         <TextView
-            android:id="@+id/txtSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -58,7 +56,6 @@
 
     <!-- Animated dots for loading indication -->
     <LinearLayout
-        android:id="@+id/loadingContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -95,7 +92,6 @@
 
     <!-- Version info at bottom -->
     <TextView
-        android:id="@+id/txtVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

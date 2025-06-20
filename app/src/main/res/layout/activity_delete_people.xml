@@ -23,7 +23,6 @@
             android:src="@drawable/back"/>
 
         <ImageView
-            android:id="@+id/imgDeletePeople"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"

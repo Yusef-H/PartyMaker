@@ -4,59 +4,26 @@
     <string name="app_name">PartyMaker</string>
 
     <!-- Content Descriptions -->
-    <string name="desc_app_logo">Party Maker app logo</string>
-    <string name="desc_about_button">About information</string>
 
     <!-- Login Screen -->
-    <string name="email">E-Mail</string>
     <string name="password">Password</string>
     <string name="stay_connected">Stay connected!</string>
-    <string name="login">Login</string>
-    <string name="forgot_password">Forgot you password?</string>
-    <string name="dont_have_account">Dont have an account?</string>
-    <string name="register_now">Register now!</string>
-    <string name="app_logo">Logo</string>
-    <string name="about_info">About Us</string>
 
     <!-- Google Auth -->
     <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
 
     <!-- These can be safely kept empty since they're defined above with different names -->
     <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
-    <string name="label_stay_connected">Stay connected</string>
-    <string name="action_login">Login</string>
-    <string name="label_forgot_password">Forgot Password?</string>
-    <string name="label_no_account">No account?</string>
-    <string name="action_register" translatable="false">Register!</string>
 
     <!-- Registration Screen -->
-    <string name="title_register">Create Account</string>
-    <string name="hint_name">Full Name</string>
-    <string name="hint_confirm_password">Confirm Password</string>
-    <string name="action_register_submit">REGISTER</string>
-    <string name="label_have_account">Already have an account?</string>
-    <string name="action_login_now">Login now!</string>
 
     <!-- Password Reset -->
-    <string name="title_password_reset">Reset Password</string>
-    <string name="message_password_reset">Enter your email address and we\'ll send you a link to reset your password</string>
-    <string name="action_send_reset_link">SEND RESET LINK</string>
 
     <!-- Validation Messages -->
-    <string name="error_required_field">This field is required</string>
-    <string name="error_invalid_email">Please enter a valid email address</string>
-    <string name="error_password_length">Password must be at least 8 characters</string>
-    <string name="error_passwords_dont_match">Passwords don\'t match</string>
 
     <!-- Success Messages -->
-    <string name="success_registration">Account created successfully!</string>
-    <string name="success_password_reset">Password reset link sent to your email</string>
 
     <!-- Error Messages -->
-    <string name="error_authentication">Invalid email or password</string>
-    <string name="error_network">Network error. Please check your connection and try again</string>
-    <string name="error_general">Something went wrong. Please try again later</string>
 
     <!-- Welcome Slider -->
     <string name="next">Next</string>
@@ -71,17 +38,9 @@
     <string name="group_s_picture">Group\'s Picture</string>
     <string name="your_party_s_name">Your Party\'s Name</string>
     <string name="private_party">Private Party</string>
-    <string name="your_party_s_location">Your Party\'s Location</string>
-    <string name="your_party_s_date">Your Party\'s Date</string>
     <string name="name">Name</string>
-    <string name="adress">Address</string>
-    <string name="day">Day</string>
-    <string name="month">Month</string>
-    <string name="year">Year</string>
     <string name="create_party">Create Party</string>
     <string name="back">Back</string>
-    <string name="pick_an_hour">Pick an hour:</string>
-    <string name="hours">Hours</string>
     <string name="done">Done</string>
     <string name="todo">TODO</string>
     <string name="username">username</string>
@@ -89,13 +48,8 @@
     <string name="press_here">Press Here</string>
     <string name="cake">CAKE</string>
     <string name="about_us">About Us</string>
-    <string name="login_page">Login Page</string>
     <string name="Login">Login</string>
     <string name="dont_have_an_account">dont have an account?</string>
-    <string name="Press_Here">Press Here</string>
-    <string name="reset">Reset</string>
-    <string name="your_password">your password</string>
-    <string name="reset_you_password">Reset you password</string>
     <string name="reset_your_password">Reset your password</string>
     <string name="version_1_0">Version 1.0</string>
     <string name="make_every_party_unforgettable">Make Every Party Unforgettable</string>
@@ -119,15 +73,12 @@
     <string name="input_your_friend_s_email">Input your friend\'s email</string>
     <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend\'s email above and press delete Friend to delete him from current group</string>
     <string name="register_cake">Register Cake</string>
-    <string name="register_page">Register Page</string>
     <string name="register">Register</string>
     <string name="have_an_account">Have an account?</string>
     <string name="username_register">Username</string>
     <string name="chat_with_ai_assistant">Chat with AI Assistant</string>
     <string name="by_signing_up_you_agree_to_our_terms_of_service_and_privacy_policy">By signing up, you agree to our Terms of Service and Privacy Policy</string>
-    <string name="join_us_and_start_creating_unforgettable_parties">Join us and start creating unforgettable parties</string>
     <string name="or">or</string>
-    <string name="join_us_for_unforgetable_parties">Join us for unforgettable parties</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="add_party">Add Party</string>
     <string name="your_parties">Your Parties</string>
@@ -135,11 +86,8 @@
     <string name="logout">Logout</string>
 
     <!-- Header Section -->
-    <string name="welcome_to_party_maker">Welcome to Party Maker</string>
-    <string name="create_unforgettable_moments">Create unforgettable moments</string>
 
     <!-- Form Section -->
-    <string name="join_the_party">Join the party</string>
 
     <!-- Email Input -->
     <string name="valid_email_required">Valid email required</string>

@@ -7,7 +7,6 @@
     tools:context="com.example.partymaker.MainActivity">
 
     <LinearLayout
-        android:id="@+id/rltMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"

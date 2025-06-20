@@ -81,7 +81,6 @@
 
                 <!-- Email -->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilEmailL"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -103,7 +102,6 @@
 
                 <!-- Password -->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPasswordL"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -208,7 +206,6 @@
 
         <!-- Second Card - Additional Options -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/optionsCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

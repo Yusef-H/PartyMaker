@@ -26,7 +26,6 @@
 
 
         <TextView
-            android:id="@+id/textview9"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="Created by"
@@ -73,7 +72,6 @@
         android:rowCount="4">
         <!-- 1,1 -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/LocationCard"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
@@ -125,7 +123,6 @@
         </androidx.cardview.widget.CardView>
         <!-- 1,2 -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/DateCard"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
@@ -194,7 +191,6 @@
                     android:visibility="invisible" />
 
                 <RelativeLayout
-                    android:id="@+id/relativeLayout"
                     android:layout_width="100dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="50dp">
@@ -270,7 +266,6 @@
         </androidx.cardview.widget.CardView>
         <!-- 2,1 -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/JoinCard"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
