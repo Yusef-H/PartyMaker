@@ -41,6 +41,7 @@
             android:layout_alignBottom="@+id/tvNameGroup"
             android:layout_toEndOf="@+id/tvNameGroup"
             android:background="#00000000"
+            android:contentDescription="TODO"
             android:src="@drawable/edit" />
 
     </RelativeLayout>
@@ -80,6 +81,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:contentDescription="TODO"
                     android:src="@drawable/everyone" />
 
                 <TextView
@@ -119,6 +121,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:contentDescription="TODO"
                     android:src="@drawable/one" />
 
                 <TextView
@@ -157,6 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:contentDescription="TODO"
                     android:src="@drawable/delete" />
 
                 <TextView
@@ -195,6 +199,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:contentDescription="TODO"
                     android:src="@drawable/leave" />
 
                 <TextView

@@ -36,6 +36,7 @@
                 android:layout_alignBottom="@+id/tvGroupName"
                 android:layout_toEndOf="@+id/tvGroupName"
                 android:background="#00000000"
+                android:contentDescription="TODO"
                 android:src="@drawable/edit" />
 
             <TextView
@@ -120,6 +121,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
+                        android:contentDescription="TODO"
                         android:src="@drawable/location" />
 
                     <TextView
@@ -174,6 +176,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginRight="7dp"
                         android:layout_marginTop="5dp"
+                        android:contentDescription="TODO"
                         android:src="@drawable/calendar" />
 
                     <TextView
@@ -263,6 +266,7 @@
                     android:layout_height="15dp"
                     android:layout_marginLeft="140dp"
                     android:layout_marginTop="242dp"
+                    android:contentDescription="TODO"
                     android:src="@drawable/arrow"
                     android:visibility="invisible" />
 
@@ -312,6 +316,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:contentDescription="TODO"
                         android:src="@drawable/invited" />
 
                     <TextView
@@ -349,6 +354,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:contentDescription="TODO"
                         android:src="@drawable/thumpup" />
 
                     <TextView
@@ -388,6 +394,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
+                        android:contentDescription="TODO"
                         android:src="@drawable/thumbdown"
                         android:visibility="invisible" />
 
@@ -409,6 +416,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
+                        android:contentDescription="TODO"
                         android:src="@drawable/thumbup"
                         android:visibility="invisible" />
 
@@ -430,6 +438,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
+                        android:contentDescription="TODO"
                         android:src="@drawable/options" />
 
                     <TextView
@@ -469,6 +478,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:contentDescription="TODO"
                         android:src="@drawable/chat" />
 
                     <TextView
@@ -509,6 +519,7 @@
                         android:layout_alignBottom="@+id/textView5"
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center_horizontal"
+                        android:contentDescription="TODO"
                         android:src="@drawable/plus" />
 
                     <TextView
@@ -548,6 +559,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
+                        android:contentDescription="TODO"
                         android:src="@drawable/leave" />
 
                     <TextView

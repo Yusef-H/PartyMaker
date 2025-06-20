@@ -15,6 +15,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
+            android:contentDescription="TODO"
             app:srcCompat="@drawable/cake00" />
 
     <RelativeLayout

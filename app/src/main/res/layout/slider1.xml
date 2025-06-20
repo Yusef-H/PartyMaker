@@ -15,6 +15,7 @@ android:background="@color/bg_screen1">
     <ImageView
         android:layout_width="@dimen/img_width"
         android:layout_height="@dimen/img_height"
+        android:contentDescription="TODO"
         android:src="@drawable/icon1" />
 
     <TextView
