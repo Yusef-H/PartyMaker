@@ -28,6 +28,7 @@
             android:id="@+id/etMessage"
             android:layout_width="300dp"
             android:layout_height="40dp"
+            android:autofillHints=""
             android:backgroundTint="#1986ed"
             android:hint="הקלד הודעה"
             android:inputType="textMultiLine|textImeMultiLine"

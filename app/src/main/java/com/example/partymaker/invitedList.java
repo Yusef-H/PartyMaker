@@ -52,7 +52,7 @@ public class invitedList extends AppCompatActivity {
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             ArrayList<User> ArrUsers = new ArrayList<>();
-            HashMap<String, Object> GroupFriends = new HashMap<>();
+            HashMap<String, Object> GroupFriends;
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               User p = data.getValue(User.class);
               String UserMail = Objects.requireNonNull(p).getEmail().replace('.', ' ');

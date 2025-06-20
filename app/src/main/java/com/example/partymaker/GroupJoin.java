@@ -98,7 +98,7 @@ public class GroupJoin extends AppCompatActivity {
         TextView tvYourEntry = findViewById(R.id.tvYourEntry1);
 
     // get current account's email
-    CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
+    CurrentUser = Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' ');
 
     // setting of GroupScreen for all users(not in buttons)
     tvGroupName.setText(groupName);
@@ -106,7 +106,7 @@ public class GroupJoin extends AppCompatActivity {
 
     // if GroupPrice=0 so it write that the party is free to enter if its not so it
     // writes the entry price
-    if (groupPrice.equals("0")) {
+    if (Objects.requireNonNull(groupPrice).equals("0")) {
       tvEntryPrice.setVisibility(View.INVISIBLE);
       tvYourEntry.setText("Free Party");
     } else {
@@ -186,9 +186,7 @@ public class GroupJoin extends AppCompatActivity {
       tvSeeDate.setVisibility(View.INVISIBLE);
       tvAt.setVisibility(View.INVISIBLE);
       tvDateHours.setVisibility(View.INVISIBLE);
-      return 2;
-    } else {
-      return 2;
     }
+      return 2;
   }
 }

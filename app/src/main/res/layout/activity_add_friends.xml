@@ -45,6 +45,7 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:autofillHints=""
         android:drawableStart="@drawable/email_logo1"
         android:background="@drawable/edittext_background"
         android:drawablePadding="10dp"

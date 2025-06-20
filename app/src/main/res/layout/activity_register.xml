@@ -110,16 +110,6 @@
                 android:background="@drawable/form_gradient_background">
 
                 <!-- Form Header with Progress -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="24dp">
-
-
-                    <!-- Dynamic Progress Indicator (will be created programmatically) -->
-
-                </LinearLayout>
 
                 <!-- Email Input with Enhanced Styling -->
                 <com.google.android.material.textfield.TextInputLayout

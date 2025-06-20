@@ -35,9 +35,7 @@ public class ComingList extends AppCompatActivity {
     // connection between intent from GroupScreen and InvitedList
     HashMap<String, Object> hashFriendKeys =
         (HashMap<String, Object>) getIntent().getSerializableExtra("FriendKeys");
-      HashMap<String, Object> hashComingKeys =
-        (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
-    ComingKeys = hashComingKeys;
+      ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
 
     lv3 = findViewById(R.id.lv3);
 
@@ -56,7 +54,7 @@ public class ComingList extends AppCompatActivity {
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             ArrayList<User> ArrUsers = new ArrayList<>();
-            HashMap<String, Object> ComingFriends = new HashMap<>();
+            HashMap<String, Object> ComingFriends;
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               User p = data.getValue(User.class);
               String UserMail = Objects.requireNonNull(p).getEmail().replace('.', ' ');

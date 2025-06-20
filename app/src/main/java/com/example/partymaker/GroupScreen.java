@@ -152,7 +152,7 @@ public class GroupScreen extends AppCompatActivity {
       CardView card8 = findViewById(R.id.Card8);
 
     // get current account's email
-    CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
+    CurrentUser = Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' ');
 
     // setting of GroupScreen for all users(not in buttons)
     tvGroupName.setText(GroupName);
@@ -175,19 +175,14 @@ public class GroupScreen extends AppCompatActivity {
     // if current account is not admin
     if (!CurrentUser.equals(AdminKey)) {
       // if group is public
-      if (GroupType == 0) {
-        isComing();
-        FriendEvent(mainGrid);
-      }
-      // if group is private
-      else {
-        // settings if group is private
-        imgAddFriend.setVisibility(View.INVISIBLE);
-        tvAddFriend.setVisibility(View.INVISIBLE);
+        if (GroupType != 0) {
+            // settings if group is private
+            imgAddFriend.setVisibility(View.INVISIBLE);
+            tvAddFriend.setVisibility(View.INVISIBLE);
 
+        }
         isComing();
         FriendEvent(mainGrid);
-      }
     }
     EventHandler();
   }
@@ -406,7 +401,7 @@ public class GroupScreen extends AppCompatActivity {
             } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
             {
               if (!isComing) {
-                String CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
+                String CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
                 ComingKeys.put(CurrentUser, "true");
                 DBref.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
                 Toast.makeText(GroupScreen.this, "You're Coming", Toast.LENGTH_SHORT).show();
@@ -515,7 +510,7 @@ public class GroupScreen extends AppCompatActivity {
 
   private void isComing() {
     String CurrentUser =
-        Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
+        Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' ');
     boolean flag = false;
     for (String ComingFriend : ComingKeys.keySet()) {
       if (ComingFriend.equals(CurrentUser)) {
@@ -580,10 +575,8 @@ public class GroupScreen extends AppCompatActivity {
       tvSeeDate.setVisibility(View.INVISIBLE);
       tvAt.setVisibility(View.INVISIBLE);
       tvDateHours.setVisibility(View.INVISIBLE);
-      return 2;
-    } else {
-      return 2;
     }
+      return 2;
   }
 
   private void deleteMessages() {

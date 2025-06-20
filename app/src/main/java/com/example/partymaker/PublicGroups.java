@@ -49,7 +49,7 @@ public class PublicGroups extends AppCompatActivity {
 
     // connection
     lv1 = findViewById(R.id.lv5);
-    UserKey = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
+    UserKey = Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' ');
     database = FirebaseDatabase.getInstance().getReference("Groups");
     retriveData();
     EventHandler();
@@ -104,7 +104,7 @@ public class PublicGroups extends AppCompatActivity {
           @SuppressLint("SuspiciousIndentation")
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            HashMap<String, Object> UserKeys = new HashMap<>();
+            HashMap<String, Object> UserKeys;
             group = new ArrayList<>();
 
             for (DataSnapshot data : dataSnapshot.getChildren()) { // scan all group in data

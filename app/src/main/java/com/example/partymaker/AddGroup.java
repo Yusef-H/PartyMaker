@@ -252,14 +252,9 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
           p.setGroupYears(YearsSelected);
           // Get hour and minute from TimePicker
           int hour, minute;
-          if (android.os.Build.VERSION.SDK_INT >= 23) {
             hour = timePicker.getHour();
             minute = timePicker.getMinute();
-          } else {
-            hour = timePicker.getCurrentHour();
-            minute = timePicker.getCurrentMinute();
-          }
-          HoursSelected = String.format("%02d:%02d", hour, minute);
+            HoursSelected = String.format("%02d:%02d", hour, minute);
           p.setGroupHours(HoursSelected);
 
           // create unique key for Group

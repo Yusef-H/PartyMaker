@@ -111,7 +111,7 @@ public class DeletePeople extends AppCompatActivity {
     btnDeleteFriend.setOnClickListener(
         v -> {
           // This if - checks if EditText is not Empty
-          if (etFriendEmail.getText().toString().trim().length() != 0) {
+          if (!etFriendEmail.getText().toString().trim().isEmpty()) {
             CurrentFriend = etFriendEmail.getText().toString().replace('.', ' ');
             database.addValueEventListener(
                 new ValueEventListener() {
@@ -119,9 +119,9 @@ public class DeletePeople extends AppCompatActivity {
                   public void onDataChange(DataSnapshot dataSnapshot) {
                     boolean flag = false;
                     boolean flag1 = false;
-                    HashMap<String, Object> GroupFriends = new HashMap<>();
+                    HashMap<String, Object> GroupFriends;
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                      String UserEmail = data.getValue(User.class).getEmail().replace('.', ' ');
+                      String UserEmail = Objects.requireNonNull(data.getValue(User.class)).getEmail().replace('.', ' ');
                       String CurrentUserEmail =
                           etFriendEmail.getText().toString().replace('.', ' ');
                       GroupFriends = FriendKeys;

@@ -47,12 +47,8 @@ public class Chat extends AppCompatActivity {
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
     // connection between values from intent
-    HashMap<String, Object> hashMessageKeys =
-        (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
-    MessageKeys = hashMessageKeys;
-    String strGroupKey =
-        Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
-    GroupKey = strGroupKey;
+      MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
+      GroupKey = Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
 
     // connection
     lv4 = findViewById(R.id.lv4);
@@ -70,7 +66,6 @@ public class Chat extends AppCompatActivity {
     lv4.setOnItemLongClickListener((parent, view, position, id) -> false);
     btnSend.setOnClickListener(
         new View.OnClickListener() {
-          @RequiresApi(api = Build.VERSION_CODES.N)
           @Override
           public void onClick(View v) {
             ChatMessage msg = new ChatMessage();
