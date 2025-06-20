@@ -12,7 +12,6 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -32,13 +31,11 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class AdminOptions extends AppCompatActivity implements OnMapReadyCallback {
-    private LinearLayout mainContent;
+  private LinearLayout mainContent;
   private GridLayout MyGrid;
   private String AdminKey,
       GroupKey,
@@ -56,8 +53,8 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
   private boolean CanAdd;
   private CardView CardPrice, CardLocation;
   private GoogleMap map;
-    private LatLng chosenLatLng;
-    private Button saveLocationButton;
+  private LatLng chosenLatLng;
+  private Button saveLocationButton;
   private FrameLayout mapContainer;
 
   @Override
@@ -65,9 +62,9 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_admin_options);
 
-      if (!Places.isInitialized()) {
-          Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
-      }
+    if (!Places.isInitialized()) {
+      Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
+    }
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
@@ -93,17 +90,15 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
 
     // connection between XML and AdminOptions
-      mainContent = findViewById(R.id.mainContent);
+    mainContent = findViewById(R.id.mainContent);
     MyGrid = findViewById(R.id.MyGrid);
     tvAdminEmail = findViewById(R.id.tvAdminEmail);
     CardPrice = findViewById(R.id.CardPrice);
     CardLocation = findViewById(R.id.CardLocation);
-      saveLocationButton = findViewById(R.id.saveLocation);
-      mapContainer = findViewById(R.id.mapContainer);
+    saveLocationButton = findViewById(R.id.saveLocation);
+    mapContainer = findViewById(R.id.mapContainer);
 
-
-
-      wireMapComponents();
+    wireMapComponents();
 
     // settings + things to see when activity starts
     tvAdminEmail.setText(AdminKey.replace(' ', '.'));
@@ -156,34 +151,39 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
           @Override
           public void onClick(View v) {
             mainContent.setVisibility(View.INVISIBLE);
-            MapUtilities.centerMapOnChosenPlace(map, Place.builder().setLatLng(MapUtilities.decodeStringLocationToCoordinates(GroupLocation)).build());
+            MapUtilities.centerMapOnChosenPlace(
+                map,
+                Place.builder()
+                    .setLatLng(MapUtilities.decodeStringLocationToCoordinates(GroupLocation))
+                    .build());
             mapContainer.setVisibility(View.VISIBLE);
 
+            saveLocationButton.setOnClickListener(
+                new View.OnClickListener() {
 
-
-              saveLocationButton.setOnClickListener(
-                      new View.OnClickListener() {
-
-                          @Override
-                          public void onClick(View v) {
-                              if(chosenLatLng != null) {
-                                  String locationValue = MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
-                                  DBref.refGroups.child(GroupKey).child("groupLocation").setValue(locationValue);
-                                  GroupLocation = locationValue;
-                                  Toast.makeText(AdminOptions.this, "Location Changed", Toast.LENGTH_SHORT)
-                                          .show();
-                              } else {
-                                  Toast.makeText(
-                                          AdminOptions.this,
-                                                  "Warning: You have not set an address for your party.",
-                                                  Toast.LENGTH_LONG)
-                                          .show();
-                              }
-                              mainContent.setVisibility(View.VISIBLE);
-                              mapContainer.setVisibility(View.INVISIBLE);
-                          }
-                      }
-                );
+                  @Override
+                  public void onClick(View v) {
+                    if (chosenLatLng != null) {
+                      String locationValue =
+                          MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+                      DBref.refGroups
+                          .child(GroupKey)
+                          .child("groupLocation")
+                          .setValue(locationValue);
+                      GroupLocation = locationValue;
+                      Toast.makeText(AdminOptions.this, "Location Changed", Toast.LENGTH_SHORT)
+                          .show();
+                    } else {
+                      Toast.makeText(
+                              AdminOptions.this,
+                              "Warning: You have not set an address for your party.",
+                              Toast.LENGTH_LONG)
+                          .show();
+                    }
+                    mainContent.setVisibility(View.VISIBLE);
+                    mapContainer.setVisibility(View.INVISIBLE);
+                  }
+                });
           }
         });
   }
@@ -306,37 +306,40 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
     this.map = googleMap;
     // Wherever the user clicks gets stored in chosenLatLng
     map.setOnMapClickListener(
-            latlng -> {
-              chosenLatLng = latlng;
-              map.clear();
-              map.addMarker(new MarkerOptions().position(latlng).title("Party here"));
-            });
+        latlng -> {
+          chosenLatLng = latlng;
+          map.clear();
+          map.addMarker(new MarkerOptions().position(latlng).title("Party here"));
+        });
   }
 
   private void wireMapComponents() {
-      SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-      assert mapFrag != null;
-      mapFrag.getMapAsync(this);
-      AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-              getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-      assert autocompleteFragment != null;
-      autocompleteFragment.setPlaceFields(
-              Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+    SupportMapFragment mapFrag =
+        (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+    assert mapFrag != null;
+    mapFrag.getMapAsync(this);
+    AutocompleteSupportFragment autocompleteFragment =
+        (AutocompleteSupportFragment)
+            getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+    assert autocompleteFragment != null;
+    autocompleteFragment.setPlaceFields(
+        Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
+    autocompleteFragment.setOnPlaceSelectedListener(
+        new PlaceSelectionListener() {
+          @Override
+          public void onPlaceSelected(@NonNull Place place) {
+            chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
+          }
 
-      autocompleteFragment.setOnPlaceSelectedListener(
-              new PlaceSelectionListener() {
-                  @Override
-                  public void onPlaceSelected(@NonNull Place place) {
-                      chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
-                  }
-
-                  @Override
-                  public void onError(@NonNull Status status) {
-                      Toast.makeText(
-                                      AdminOptions.this, "Search error: " + status.getStatusMessage(), Toast.LENGTH_SHORT)
-                              .show();
-                  }
-              });
+          @Override
+          public void onError(@NonNull Status status) {
+            Toast.makeText(
+                    AdminOptions.this,
+                    "Search error: " + status.getStatusMessage(),
+                    Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 }
