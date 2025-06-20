@@ -36,8 +36,7 @@ import java.util.Objects;
 
 public class AdminOptions extends AppCompatActivity implements OnMapReadyCallback {
   private LinearLayout mainContent;
-  private GridLayout MyGrid;
-  private String AdminKey,
+    private String AdminKey,
       GroupKey,
       GroupName,
       GroupDay,
@@ -47,8 +46,7 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
       GroupLocation,
       CreatedAt,
       GroupPrice;
-  private TextView tvAdminEmail;
-  private int GroupType;
+    private int GroupType;
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
   private boolean CanAdd;
   private CardView CardPrice, CardLocation;
@@ -92,8 +90,8 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
 
     // connection between XML and AdminOptions
     mainContent = findViewById(R.id.mainContent);
-    MyGrid = findViewById(R.id.MyGrid);
-    tvAdminEmail = findViewById(R.id.tvAdminEmail);
+      GridLayout myGrid = findViewById(R.id.MyGrid);
+      TextView tvAdminEmail = findViewById(R.id.tvAdminEmail);
     CardPrice = findViewById(R.id.CardPrice);
     CardLocation = findViewById(R.id.CardLocation);
     saveLocationButton = findViewById(R.id.saveLocation);
@@ -105,7 +103,7 @@ public class AdminOptions extends AppCompatActivity implements OnMapReadyCallbac
     tvAdminEmail.setText(AdminKey.replace(' ', '.'));
 
     // start AdminOptions
-    wireAdminOptions(MyGrid);
+    wireAdminOptions(myGrid);
 
     eventHandler();
   }

@@ -47,36 +47,27 @@ import java.util.Map;
 import java.util.Objects;
 
 public class GroupScreen extends AppCompatActivity {
-  private GridLayout mainGrid;
-  private ImageView imgCalender,
-      imgThumbUp,
-      imgThumbDown,
-      imgLocation,
-      imgSeeHours,
-      imgAddFriend,
-      imgOptions;
+    private ImageView imgCalender;
+    private ImageView imgThumbUp;
+    private ImageView imgThumbDown;
+    private ImageView imgSeeHours;
+    private ImageView imgOptions;
   private ImageButton btnEditName;
   private Button back5;
-  private TextView tvDateText,
-      tvDateDays,
-      tvDateMonths,
-      tvDateYears,
-      tvDateHours,
-      tvComing,
-      tvNotComing,
-      tvGroupName,
-      tvCreatedBy,
-      tvLocation,
-      tvGroupLocation,
-      tvSeeHours,
-      tvSeeDate,
-      tvAt,
-      tvAddFriend,
-      tvOptions,
-      tvEntryPrice,
-      tvYourEntry;
-  private CardView card1, card2, card3, card4, card5, card6, card7, card8;
-  private String GroupName,
+  private TextView tvDateText;
+    private TextView tvDateDays;
+    private TextView tvDateMonths;
+    private TextView tvDateYears;
+    private TextView tvDateHours;
+    private TextView tvComing;
+    private TextView tvNotComing;
+    private TextView tvGroupName;
+    private TextView tvSeeHours;
+    private TextView tvSeeDate;
+    private TextView tvAt;
+    private TextView tvOptions;
+    private CardView card5;
+    private String GroupName,
       GroupKey,
       GroupLocation,
       AdminKey,
@@ -123,14 +114,14 @@ public class GroupScreen extends AppCompatActivity {
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
 
     // connection
-    mainGrid = findViewById(R.id.MainGrid);
+      GridLayout mainGrid = findViewById(R.id.MainGrid);
     back5 = findViewById(R.id.back5);
     imgCalender = findViewById(R.id.imgCalender);
     imgThumbUp = findViewById(R.id.imgThumbUp);
     imgThumbDown = findViewById(R.id.imgThumbDown);
-    imgLocation = findViewById(R.id.imgLocation);
+      ImageView imgLocation = findViewById(R.id.imgLocation);
     imgSeeHours = findViewById(R.id.imgSeeHours);
-    imgAddFriend = findViewById(R.id.imgAddFriend);
+      ImageView imgAddFriend = findViewById(R.id.imgAddFriend);
     imgOptions = findViewById(R.id.imgOptions);
     btnEditName = findViewById(R.id.btnEditName);
     tvDateText = findViewById(R.id.tvDateText);
@@ -141,24 +132,24 @@ public class GroupScreen extends AppCompatActivity {
     tvComing = findViewById(R.id.tvComing);
     tvNotComing = findViewById(R.id.tvNotComing);
     tvGroupName = findViewById(R.id.tvGroupName);
-    tvCreatedBy = findViewById(R.id.tvCreatedBy);
-    tvLocation = findViewById(R.id.tvLocation);
-    tvGroupLocation = findViewById(R.id.tvGroupLocation);
+      TextView tvCreatedBy = findViewById(R.id.tvCreatedBy);
+      TextView tvLocation = findViewById(R.id.tvLocation);
+      TextView tvGroupLocation = findViewById(R.id.tvGroupLocation);
     tvSeeHours = findViewById(R.id.tvSeeHours);
     tvSeeDate = findViewById(R.id.tvSeeDate);
-    tvAddFriend = findViewById(R.id.tvAddFriend);
+      TextView tvAddFriend = findViewById(R.id.tvAddFriend);
     tvOptions = findViewById(R.id.tvOptions);
     tvAt = findViewById(R.id.tvAt);
-    tvEntryPrice = findViewById(R.id.tvEntryPrice);
-    tvYourEntry = findViewById(R.id.tvYourEntry);
-    card1 = findViewById(R.id.Card1);
-    card2 = findViewById(R.id.Card2);
-    card3 = findViewById(R.id.Card3);
-    card4 = findViewById(R.id.Card4);
+      TextView tvEntryPrice = findViewById(R.id.tvEntryPrice);
+      TextView tvYourEntry = findViewById(R.id.tvYourEntry);
+      CardView card1 = findViewById(R.id.Card1);
+      CardView card2 = findViewById(R.id.Card2);
+      CardView card3 = findViewById(R.id.Card3);
+      CardView card4 = findViewById(R.id.Card4);
     card5 = findViewById(R.id.Card5);
-    card6 = findViewById(R.id.Card6);
-    card7 = findViewById(R.id.Card7);
-    card8 = findViewById(R.id.Card8);
+      CardView card6 = findViewById(R.id.Card6);
+      CardView card7 = findViewById(R.id.Card7);
+      CardView card8 = findViewById(R.id.Card8);
 
     // get current account's email
     CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
