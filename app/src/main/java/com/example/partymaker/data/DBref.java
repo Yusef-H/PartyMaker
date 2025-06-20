@@ -11,8 +11,6 @@ public class DBref {
   public static FirebaseDatabase DataBase = FirebaseDatabase.getInstance();
   public static FirebaseStorage Storage = FirebaseStorage.getInstance();
 
-  // public static String
-  // CurrentUser=Auth.getCurrentUser().getEmail().replace('.',' ');
   public static String CurrentUser;
   public static String CurrentGroup;
 

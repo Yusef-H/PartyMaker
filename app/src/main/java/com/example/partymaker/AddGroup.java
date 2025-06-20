@@ -119,11 +119,11 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
     timePicker = findViewById(R.id.timePicker);
     fabChat = findViewById(R.id.fabChat);
     mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-    mapFrag.getMapAsync(this);
+    Objects.requireNonNull(mapFrag).getMapAsync(this);
     autocompleteFragment =
         (AutocompleteSupportFragment)
             getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-    autocompleteFragment.setPlaceFields(
+    Objects.requireNonNull(autocompleteFragment).setPlaceFields(
         Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
     locationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -331,13 +331,10 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
         });
 
     fabChat.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
-            startActivity(intent);
-          }
-        });
+            view -> {
+              Intent intent = new Intent(AddGroup.this, GptChatActivity.class);
+              startActivity(intent);
+            });
     fabChat.setOnTouchListener(
         new View.OnTouchListener() {
           @SuppressLint("ClickableViewAccessibility")
@@ -441,7 +438,7 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
   }
 
   @Override
-  public void onMapReady(GoogleMap googleMap) {
+  public void onMapReady(@NonNull GoogleMap googleMap) {
     this.map = googleMap;
     // Wherever the user clicks gets stored in chosenLatLng
     map.setOnMapClickListener(

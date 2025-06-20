@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class PublicGroups extends AppCompatActivity {
   private ListView lv1;
@@ -40,7 +41,7 @@ public class PublicGroups extends AppCompatActivity {
 
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();
-    actionBar.setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
+    Objects.requireNonNull(actionBar).setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
 
     // set actionbar background
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -49,7 +50,7 @@ public class PublicGroups extends AppCompatActivity {
 
     // connection
     lv1 = findViewById(R.id.lv5);
-    UserKey = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
+    UserKey = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
     database = FirebaseDatabase.getInstance().getReference("Groups");
     retriveData();
     EventHandler();
@@ -57,54 +58,46 @@ public class PublicGroups extends AppCompatActivity {
 
   private void EventHandler() {
     lv1.setOnItemClickListener(
-        new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // intent Value
-            String groupName = group.get(position).getGroupName();
-            String groupKey = group.get(position).getGroupKey();
-            String groupDays = group.get(position).getGroupDays();
-            String groupMonths = group.get(position).getGroupMonths();
-            String groupYears = group.get(position).getGroupYears();
-            String groupHours = group.get(position).getGroupHours();
-            String groupLocation = group.get(position).getGroupLocation();
-            String adminKey = group.get(position).getAdminKey();
-            String createdAt = group.get(position).getCreatedAt();
-            String GroupPrice = group.get(position).getGroupPrice();
-            int GroupType = group.get(position).getGroupType();
-            boolean CanAdd = group.get(position).isCanAdd();
-            HashMap<String, Object> FriendKeys = group.get(position).getFriendKeys();
-            HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
-            HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
-            Intent intent = new Intent(getBaseContext(), GroupJoin.class);
-            ExtrasMetadata extras =
-                new ExtrasMetadata(
-                    groupName,
-                    groupKey,
-                    groupDays,
-                    groupMonths,
-                    groupYears,
-                    groupHours,
-                    groupLocation,
-                    adminKey,
-                    createdAt,
-                    GroupPrice,
-                    GroupType,
-                    CanAdd,
-                    FriendKeys,
-                    ComingKeys,
-                    MessageKeys);
-            Common.addExtrasToIntent(intent, extras);
-            startActivity(intent);
-          }
-        });
+            (parent, view, position, id) -> {
+              // intent Value
+              String groupName = group.get(position).getGroupName();
+              String groupKey = group.get(position).getGroupKey();
+              String groupDays = group.get(position).getGroupDays();
+              String groupMonths = group.get(position).getGroupMonths();
+              String groupYears = group.get(position).getGroupYears();
+              String groupHours = group.get(position).getGroupHours();
+              String groupLocation = group.get(position).getGroupLocation();
+              String adminKey = group.get(position).getAdminKey();
+              String createdAt = group.get(position).getCreatedAt();
+              String GroupPrice = group.get(position).getGroupPrice();
+              int GroupType = group.get(position).getGroupType();
+              boolean CanAdd = group.get(position).isCanAdd();
+              HashMap<String, Object> FriendKeys = group.get(position).getFriendKeys();
+              HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
+              HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
+              Intent intent = new Intent(getBaseContext(), GroupJoin.class);
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      groupName,
+                      groupKey,
+                      groupDays,
+                      groupMonths,
+                      groupYears,
+                      groupHours,
+                      groupLocation,
+                      adminKey,
+                      createdAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              startActivity(intent);
+            });
     lv1.setOnItemLongClickListener(
-        new AdapterView.OnItemLongClickListener() {
-          @Override
-          public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return false;
-          }
-        });
+            (parent, view, position, id) -> false);
   }
 
   public void retriveData() {
@@ -112,15 +105,15 @@ public class PublicGroups extends AppCompatActivity {
         new ValueEventListener() {
           @SuppressLint("SuspiciousIndentation")
           @Override
-          public void onDataChange(DataSnapshot dataSnapshot) {
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             HashMap<String, Object> UserKeys = new HashMap<>();
-            group = new ArrayList<Group>();
+            group = new ArrayList<>();
 
             for (DataSnapshot data : dataSnapshot.getChildren()) { // scan all group in data
               Group p = data.getValue(Group.class);
-              UserKeys = data.getValue(Group.class).getFriendKeys();
+              UserKeys = Objects.requireNonNull(data.getValue(Group.class)).getFriendKeys();
 
-              if (p.getGroupType() == 0) { // if group is public
+              if (Objects.requireNonNull(p).getGroupType() == 0) { // if group is public
                 boolean flag = false;
                 for (String userKey : UserKeys.keySet()) { // scan all group friends
                   if (UserKey.equals(

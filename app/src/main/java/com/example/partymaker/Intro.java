@@ -13,6 +13,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -124,8 +126,9 @@ public class Intro extends Activity {
 
     public ViewPagerAdapter() {}
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
       layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
       View view = layoutInflater.inflate(layouts[position], container, false);
@@ -140,12 +143,12 @@ public class Intro extends Activity {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object obj) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object obj) {
       return view == obj;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(ViewGroup container, int position, @NonNull Object object) {
       View view = (View) object;
       container.removeView(view);
     }

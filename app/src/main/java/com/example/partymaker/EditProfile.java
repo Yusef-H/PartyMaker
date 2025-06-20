@@ -20,6 +20,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
 public class EditProfile extends AppCompatActivity {
   private ImageView imgProfile;
 
@@ -30,7 +32,7 @@ public class EditProfile extends AppCompatActivity {
 
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();
-    actionBar.setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
+    Objects.requireNonNull(actionBar).setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
 
     // set actionbar background
     Drawable d = getResources().getDrawable(R.drawable.background4);
@@ -39,24 +41,16 @@ public class EditProfile extends AppCompatActivity {
     // connectionU
     imgProfile = findViewById(R.id.imgProfile);
 
-    String User = DBref.Auth.getCurrentUser().getEmail();
-    String email = User.replace('.', ' ');
+    String User = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
+    String email = Objects.requireNonNull(User).replace('.', ' ');
 
     DBref.refStorage
         .child("Users/" + email)
         .getDownloadUrl()
         .addOnSuccessListener(
-            new OnSuccessListener<Uri>() {
-              @Override
-              public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(imgProfile);
-              }
-            })
+                uri -> Picasso.get().load(uri).into(imgProfile))
         .addOnFailureListener(
-            new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception exception) {}
-            });
+                exception -> {});
 
     evantHandler();
   }
@@ -64,15 +58,12 @@ public class EditProfile extends AppCompatActivity {
   private void evantHandler() {
     // imgProfile on click
     imgProfile.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
-          }
-        });
+            v -> {
+              Intent i = new Intent();
+              i.setType("image/*");
+              i.setAction(Intent.ACTION_GET_CONTENT);
+              startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
+            });
   }
 
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -82,27 +73,17 @@ public class EditProfile extends AppCompatActivity {
         Uri uri = data.getData();
         if (null != uri) {
           ((ImageView) findViewById(R.id.imgProfile)).setImageURI(uri);
-          String UserImageProfile = DBref.Auth.getCurrentUser().getEmail();
-          String email = UserImageProfile.replace('.', ' ');
+          String UserImageProfile = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
+          String email = Objects.requireNonNull(UserImageProfile).replace('.', ' ');
 
           DBref.refStorage
               .child("Users/" + email)
               .putFile(uri)
               .addOnSuccessListener(
-                  new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                      Toast.makeText(EditProfile.this, "saved", Toast.LENGTH_SHORT).show();
-                    }
-                  })
+                      taskSnapshot -> Toast.makeText(EditProfile.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
-                  new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                      Toast.makeText(EditProfile.this, "error while saving ", Toast.LENGTH_SHORT)
-                          .show();
-                    }
-                  });
+                      exception -> Toast.makeText(EditProfile.this, "error while saving ", Toast.LENGTH_SHORT)
+                          .show());
         }
       }
     }

@@ -62,7 +62,7 @@
         android:gravity="center"
         android:text="Is he coming to the party?"
         android:textColor="#0081d1"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:visibility="invisible" />
 
     <RelativeLayout
@@ -105,7 +105,7 @@
         android:text="Add Friend"
         android:textAllCaps="false"
         android:textColor="#0081d1"
-        android:textSize="15dp" />
+        android:textSize="15sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"

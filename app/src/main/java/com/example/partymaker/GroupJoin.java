@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.utilities.MapUtilities;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class GroupJoin extends AppCompatActivity {
   private GridLayout joinGrid;
@@ -70,11 +71,11 @@ public class GroupJoin extends AppCompatActivity {
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
-    actionBar.hide();
+    Objects.requireNonNull(actionBar).hide();
 
     // Get Values from PublicGroups By intent + connection between intent and
     // current activity objects
-    GroupName = getIntent().getExtras().getString("GroupName", "defaultKey");
+    GroupName = Objects.requireNonNull(getIntent().getExtras()).getString("GroupName", "defaultKey");
     GroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
     GroupDay = getIntent().getExtras().getString("groupDays", "defaultKey");
     GroupMonth = getIntent().getExtras().getString("groupMonths", "defaultKey");
@@ -112,7 +113,7 @@ public class GroupJoin extends AppCompatActivity {
     tvYourEntry = findViewById(R.id.tvYourEntry1);
 
     // get current account's email
-    CurrentUser = DBref.Auth.getCurrentUser().getEmail().replace('.', ' ');
+    CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
 
     // setting of GroupScreen for all users(not in buttons)
     tvGroupName.setText(GroupName);
@@ -137,30 +138,27 @@ public class GroupJoin extends AppCompatActivity {
       final CardView cardView = (CardView) mainGrid.getChildAt(i);
       final int finalI = i;
       cardView.setOnClickListener(
-          new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              if (finalI == 0) // open 1,1 (1) Location
-              {
-                MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupJoin.this);
-              } else if (finalI == 1) // open 1,2 (2) Date
-              {
-                IsClicked = isClicked(IsClicked);
-              } else if (finalI == 2) // open 2,1 (3) Join
-              {
-                FriendKeys.put(CurrentUser, "true");
-                DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
-                DBref.refGroups.child(GroupKey).child("FriendKeys").updateChildren(FriendKeys);
-                Toast.makeText(GroupJoin.this, "Successfully joined ", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getBaseContext(), PublicGroups.class);
-                startActivity(i);
-              } else if (finalI == 3) // open 2,2 (4) Back
-              {
-                Intent i = new Intent(getBaseContext(), PublicGroups.class);
-                startActivity(i);
-              }
-            }
-          });
+              view -> {
+                if (finalI == 0) // open 1,1 (1) Location
+                {
+                  MapUtilities.showGroupLocationOnGoogleMaps(GroupLocation, GroupJoin.this);
+                } else if (finalI == 1) // open 1,2 (2) Date
+                {
+                  IsClicked = isClicked(IsClicked);
+                } else if (finalI == 2) // open 2,1 (3) Join
+                {
+                  FriendKeys.put(CurrentUser, "true");
+                  DBref.refGroups.child(GroupKey).child("FriendKeys").removeValue();
+                  DBref.refGroups.child(GroupKey).child("FriendKeys").updateChildren(FriendKeys);
+                  Toast.makeText(GroupJoin.this, "Successfully joined ", Toast.LENGTH_SHORT).show();
+                  Intent i1 = new Intent(getBaseContext(), PublicGroups.class);
+                  startActivity(i1);
+                } else if (finalI == 3) // open 2,2 (4) Back
+                {
+                  Intent i1 = new Intent(getBaseContext(), PublicGroups.class);
+                  startActivity(i1);
+                }
+              });
     }
   }
 

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.data.User;
@@ -31,25 +33,17 @@ public class FriendList extends AppCompatActivity {
 
   private void eventHandler() {
     lv.setOnItemClickListener(
-        new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {}
-        });
+            (parent, view, position, id) -> {});
     lv.setOnItemLongClickListener(
-        new AdapterView.OnItemLongClickListener() {
-          @Override
-          public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return false;
-          }
-        });
+            (parent, view, position, id) -> false);
   }
 
   private void ShowData() {
     DBref.refUsers.addValueEventListener(
         new ValueEventListener() {
           @Override
-          public void onDataChange(DataSnapshot dataSnapshot) {
-            ArrayList<User> ArrUsers = new ArrayList<User>();
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            ArrayList<User> ArrUsers = new ArrayList<>();
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               User p = data.getValue(User.class);
               ArrUsers.add(p);
@@ -59,7 +53,7 @@ public class FriendList extends AppCompatActivity {
           }
 
           @Override
-          public void onCancelled(DatabaseError databaseError) {}
+          public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
   }
 

@@ -32,8 +32,9 @@ public class UserAdpter extends ArrayAdapter<User> {
     this.UserList = UserList;
   }
 
+  @NonNull
   @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
+  public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
     View view = layoutInflater.inflate(R.layout.user_list, parent, false);
@@ -54,23 +55,15 @@ public class UserAdpter extends ArrayAdapter<User> {
         .child("Users/" + email)
         .getDownloadUrl()
         .addOnSuccessListener(
-            new OnSuccessListener<Uri>() {
-              @Override
-              public void onSuccess(Uri uri) {
-                Picasso.get()
-                    .load(uri) // image url goes here
-                    .fit()
-                    .centerCrop()
-                    .into(imageView);
-              }
-            })
+                uri -> Picasso.get()
+                        .load(uri) // image url goes here
+                        .fit()
+                        .centerCrop()
+                        .into(imageView))
         .addOnFailureListener(
-            new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-              }
-            });
+                exception -> {
+                  // Handle any errors
+                });
 
     return view;
   }

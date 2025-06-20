@@ -250,7 +250,7 @@
                 android:layout_marginTop="180dp"
                 android:text="press to see time"
                 android:textColor="#1986ed"
-                android:textSize="10dp"
+                android:textSize="10sp"
                 android:visibility="invisible" />
 
             <TextView
@@ -261,7 +261,7 @@
                 android:layout_marginTop="180dp"
                 android:text="press to see date"
                 android:textColor="#1986ed"
-                android:textSize="10dp"
+                android:textSize="10sp"
                 android:visibility="invisible" />
         </androidx.cardview.widget.CardView>
         <!-- 2,1 -->

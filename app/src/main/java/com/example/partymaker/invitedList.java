@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.data.DBref;
@@ -16,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class invitedList extends AppCompatActivity {
 
@@ -29,7 +32,7 @@ public class invitedList extends AppCompatActivity {
 
     // this 2 lines changes title's name
     ActionBar actionBar = getSupportActionBar();
-    actionBar.setTitle("Invited to party");
+    Objects.requireNonNull(actionBar).setTitle("Invited to party");
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
     // connection between intent from GroupScreen and InvitedList
@@ -43,29 +46,21 @@ public class invitedList extends AppCompatActivity {
 
   private void EventHandler() {
     lv2.setOnItemClickListener(
-        new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {}
-        });
+            (parent, view, position, id) -> {});
     lv2.setOnItemLongClickListener(
-        new AdapterView.OnItemLongClickListener() {
-          @Override
-          public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return false;
-          }
-        });
+            (parent, view, position, id) -> false);
   }
 
   private void ShowData() {
     DBref.refUsers.addValueEventListener(
         new ValueEventListener() {
           @Override
-          public void onDataChange(DataSnapshot dataSnapshot) {
-            ArrayList<User> ArrUsers = new ArrayList<User>();
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            ArrayList<User> ArrUsers = new ArrayList<>();
             HashMap<String, Object> GroupFriends = new HashMap<>();
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               User p = data.getValue(User.class);
-              String UserMail = p.getEmail().replace('.', ' ');
+              String UserMail = Objects.requireNonNull(p).getEmail().replace('.', ' ');
               GroupFriends = FriendKeys;
               for (String GroupFriend : GroupFriends.keySet()) {
                 if (GroupFriend.equals(UserMail)) {
@@ -78,7 +73,7 @@ public class invitedList extends AppCompatActivity {
           }
 
           @Override
-          public void onCancelled(DatabaseError databaseError) {}
+          public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
   }
 }

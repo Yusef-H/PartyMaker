@@ -31,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
+
 public class Login extends AppCompatActivity {
   private TextInputEditText etEmail, etPassword;
   private ImageButton btnAbout;
@@ -92,8 +94,8 @@ public class Login extends AppCompatActivity {
 
           // connection between firebase and login button
           private void SignIn() {
-            String email = etEmail.getText().toString();
-            String password = etPassword.getText().toString();
+            String email = Objects.requireNonNull(etEmail.getText()).toString();
+            String password = Objects.requireNonNull(etPassword.getText()).toString();
             if (email.matches("") || password.matches("")) {
               Toast.makeText(Login.this, "input both to login", Toast.LENGTH_SHORT).show();
             } else {

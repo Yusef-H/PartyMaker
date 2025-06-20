@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Chat extends AppCompatActivity {
 
@@ -49,7 +52,7 @@ public class Chat extends AppCompatActivity {
     HashMap<String, Object> hashMessageKeys =
         (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
     MessageKeys = hashMessageKeys;
-    String strGroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
+    String strGroupKey = Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
     GroupKey = strGroupKey;
 
     // connection
@@ -65,17 +68,9 @@ public class Chat extends AppCompatActivity {
 
   private void eventHandler() {
     lv4.setOnItemClickListener(
-        new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {}
-        });
+            (parent, view, position, id) -> {});
     lv4.setOnItemLongClickListener(
-        new AdapterView.OnItemLongClickListener() {
-          @Override
-          public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return false;
-          }
-        });
+            (parent, view, position, id) -> false);
     btnSend.setOnClickListener(
         new View.OnClickListener() {
           @RequiresApi(api = Build.VERSION_CODES.N)
@@ -83,7 +78,7 @@ public class Chat extends AppCompatActivity {
           public void onClick(View v) {
             ChatMessage msg = new ChatMessage();
             String Text = etMessage.getText().toString();
-            String User = DBref.Auth.getCurrentUser().getEmail();
+            String User = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
             Calendar c = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String strDate = sdf.format(c.getTime());
@@ -92,7 +87,7 @@ public class Chat extends AppCompatActivity {
             msg.setMessageTime(strDate);
             msg.setMessageText(Text);
             msg.setMessageKey(MessageKey);
-            DBref.refMessages.child(MessageKey).setValue(msg);
+            DBref.refMessages.child(Objects.requireNonNull(MessageKey)).setValue(msg);
             MessageKeys.put(MessageKey, "true");
             DBref.refGroups.child(GroupKey).child("MessageKeys").updateChildren(MessageKeys);
             // GPT detection
@@ -121,40 +116,37 @@ public class Chat extends AppCompatActivity {
 
   private void setupGptButton() {
     btnGpt.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            android.app.AlertDialog.Builder builder =
-                new android.app.AlertDialog.Builder(Chat.this);
-            builder.setTitle("שאל את GPT");
-            final EditText input = new EditText(Chat.this);
-            input.setHint("כתוב כאן את השאלה שלך...");
-            builder.setView(input);
-            builder.setPositiveButton(
-                "שלח",
-                (dialog, which) -> {
-                  String gptQuestion = input.getText().toString();
-                  if (!gptQuestion.isEmpty()) {
-                    new Thread(
-                            () -> {
-                              try {
-                                String prompt =
-                                    "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
-                                        + getGroupDetails();
-                                OpenAiApi openAiApi = new OpenAiApi(getApiKey());
-                                String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
-                                runOnUiThread(() -> sendBotMessage(gptAnswer));
-                              } catch (Exception e) {
-                                e.printStackTrace();
-                              }
-                            })
-                        .start();
-                  }
-                });
-            builder.setNegativeButton("ביטול", (dialog, which) -> dialog.cancel());
-            builder.show();
-          }
-        });
+            v -> {
+              android.app.AlertDialog.Builder builder =
+                  new android.app.AlertDialog.Builder(Chat.this);
+              builder.setTitle("שאל את GPT");
+              final EditText input = new EditText(Chat.this);
+              input.setHint("כתוב כאן את השאלה שלך...");
+              builder.setView(input);
+              builder.setPositiveButton(
+                  "שלח",
+                  (dialog, which) -> {
+                    String gptQuestion = input.getText().toString();
+                    if (!gptQuestion.isEmpty()) {
+                      new Thread(
+                              () -> {
+                                try {
+                                  String prompt =
+                                      "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
+                                          + getGroupDetails();
+                                  OpenAiApi openAiApi = new OpenAiApi(getApiKey());
+                                  String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
+                                  runOnUiThread(() -> sendBotMessage(gptAnswer));
+                                } catch (Exception e) {
+                                  e.printStackTrace();
+                                }
+                              })
+                          .start();
+                    }
+                  });
+              builder.setNegativeButton("ביטול", (dialog, which) -> dialog.cancel());
+              builder.show();
+            });
   }
 
   private void sendBotMessage(String answer) {
@@ -167,7 +159,7 @@ public class Chat extends AppCompatActivity {
     botMsg.setMessageTime(strDate);
     botMsg.setMessageText(answer);
     botMsg.setMessageKey(MessageKey);
-    DBref.refMessages.child(MessageKey).setValue(botMsg);
+    DBref.refMessages.child(Objects.requireNonNull(MessageKey)).setValue(botMsg);
     MessageKeys.put(MessageKey, "true");
     DBref.refGroups.child(GroupKey).child("MessageKeys").updateChildren(MessageKeys);
   }
@@ -187,11 +179,11 @@ public class Chat extends AppCompatActivity {
     DBref.refMessages.addValueEventListener(
         new ValueEventListener() {
           @Override
-          public void onDataChange(DataSnapshot dataSnapshot) {
-            ArrayList<ChatMessage> ArrMessages = new ArrayList<ChatMessage>();
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            ArrayList<ChatMessage> ArrMessages = new ArrayList<>();
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               ChatMessage GroupMessage = data.getValue(ChatMessage.class);
-              String GroupMessageKey = data.getValue(ChatMessage.class).getMessageKey();
+              String GroupMessageKey = Objects.requireNonNull(data.getValue(ChatMessage.class)).getMessageKey();
               for (String MessageKey : MessageKeys.keySet()) {
                 if (MessageKey.equals(GroupMessageKey)) ArrMessages.add(GroupMessage);
               }
@@ -201,7 +193,7 @@ public class Chat extends AppCompatActivity {
           }
 
           @Override
-          public void onCancelled(DatabaseError databaseError) {}
+          public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
   }
 
@@ -215,7 +207,7 @@ public class Chat extends AppCompatActivity {
         .addListenerForSingleValueEvent(
             new ValueEventListener() {
               @Override
-              public void onDataChange(DataSnapshot dataSnapshot) {
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                   Group group = dataSnapshot.getValue(Group.class);
                   if (group != null) {
@@ -241,7 +233,7 @@ public class Chat extends AppCompatActivity {
               }
 
               @Override
-              public void onCancelled(DatabaseError databaseError) {
+              public void onCancelled(@NonNull DatabaseError databaseError) {
                 details.append("שגיאה בטעינת פרטי הקבוצה");
               }
             });

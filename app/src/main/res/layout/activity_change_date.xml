@@ -124,7 +124,7 @@
         android:text="Change Date"
         android:textAllCaps="false"
         android:textColor="#0081d1"
-        android:textSize="15dp" />
+        android:textSize="15sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
