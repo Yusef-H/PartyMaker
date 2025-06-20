@@ -39,7 +39,6 @@
             android:layout_marginLeft="70dp"
             android:text="UserName + Date"
             android:textColor="@android:color/white" />
-        />
 
         <TextView
             android:id="@+id/tvYourEntry1"
@@ -50,7 +49,6 @@
             android:layout_centerHorizontal="true"
             android:text="Entry price: "
             android:textColor="@android:color/white" />
-        />
 
         <TextView
             android:id="@+id/tvEntryPrice1"
@@ -60,7 +58,6 @@
             android:layout_toRightOf="@id/tvYourEntry1"
             android:text="free"
             android:textColor="@android:color/white" />
-        />
 
     </RelativeLayout>
 
