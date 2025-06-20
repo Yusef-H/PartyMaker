@@ -94,7 +94,7 @@ public class MapUtilities {
     if (ll != null && map != null) {
       map.animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15f));
       map.clear();
-      map.addMarker(new MarkerOptions().position(ll).title(place.getName()));
+      map.addMarker(new MarkerOptions().position(ll).title(place.getName() != null ? place.getName() : "Selcted Place"));
       return ll;
     }
     return null;

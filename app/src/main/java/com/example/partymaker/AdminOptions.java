@@ -5,10 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +21,24 @@ import androidx.cardview.widget.CardView;
 import com.example.partymaker.data.DBref;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.MapUtilities;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Arrays;
 import java.util.HashMap;
 
-public class AdminOptions extends AppCompatActivity {
+public class AdminOptions extends AppCompatActivity implements OnMapReadyCallback {
+    private LinearLayout mainContent;
   private GridLayout MyGrid;
   private String AdminKey,
       GroupKey,
@@ -35,11 +55,19 @@ public class AdminOptions extends AppCompatActivity {
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
   private boolean CanAdd;
   private CardView CardPrice, CardLocation;
+  private GoogleMap map;
+    private LatLng chosenLatLng;
+    private Button saveLocationButton;
+  private FrameLayout mapContainer;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_admin_options);
+
+      if (!Places.isInitialized()) {
+          Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
+      }
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
@@ -65,10 +93,17 @@ public class AdminOptions extends AppCompatActivity {
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
 
     // connection between XML and AdminOptions
+      mainContent = findViewById(R.id.mainContent);
     MyGrid = findViewById(R.id.MyGrid);
     tvAdminEmail = findViewById(R.id.tvAdminEmail);
     CardPrice = findViewById(R.id.CardPrice);
     CardLocation = findViewById(R.id.CardLocation);
+      saveLocationButton = findViewById(R.id.saveLocation);
+      mapContainer = findViewById(R.id.mapContainer);
+
+
+
+      wireMapComponents();
 
     // settings + things to see when activity starts
     tvAdminEmail.setText(AdminKey.replace(' ', '.'));
@@ -120,35 +155,35 @@ public class AdminOptions extends AppCompatActivity {
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            final EditText edittext = new EditText(AdminOptions.this);
-            edittext.setText(GroupLocation);
-            AlertDialog.Builder alert = new AlertDialog.Builder(AdminOptions.this);
-            alert.setMessage("Input new location below");
-            alert.setTitle("Change party's location");
+            mainContent.setVisibility(View.INVISIBLE);
+            MapUtilities.centerMapOnChosenPlace(map, Place.builder().setLatLng(MapUtilities.decodeStringLocationToCoordinates(GroupLocation)).build());
+            mapContainer.setVisibility(View.VISIBLE);
 
-            alert.setView(edittext);
 
-            alert.setPositiveButton(
-                "Change location",
-                new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int whichButton) {
-                    // if pressed changed name
-                    GroupLocation = edittext.getText().toString();
-                    DBref.refGroups.child(GroupKey).child("groupLocation").setValue(GroupLocation);
-                    Toast.makeText(AdminOptions.this, "Location Changed", Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                });
 
-            alert.setNegativeButton(
-                "Back",
-                new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int whichButton) {
-                    // what ever you want to do with Back.
-                  }
-                });
+              saveLocationButton.setOnClickListener(
+                      new View.OnClickListener() {
 
-            alert.show();
+                          @Override
+                          public void onClick(View v) {
+                              if(chosenLatLng != null) {
+                                  String locationValue = MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+                                  DBref.refGroups.child(GroupKey).child("groupLocation").setValue(locationValue);
+                                  GroupLocation = locationValue;
+                                  Toast.makeText(AdminOptions.this, "Location Changed", Toast.LENGTH_SHORT)
+                                          .show();
+                              } else {
+                                  Toast.makeText(
+                                          AdminOptions.this,
+                                                  "Warning: You have not set an address for your party.",
+                                                  Toast.LENGTH_LONG)
+                                          .show();
+                              }
+                              mainContent.setVisibility(View.VISIBLE);
+                              mapContainer.setVisibility(View.INVISIBLE);
+                          }
+                      }
+                );
           }
         });
   }
@@ -264,5 +299,44 @@ public class AdminOptions extends AppCompatActivity {
             }
           });
     }
+  }
+
+  @Override
+  public void onMapReady(GoogleMap googleMap) {
+    this.map = googleMap;
+    // Wherever the user clicks gets stored in chosenLatLng
+    map.setOnMapClickListener(
+            latlng -> {
+              chosenLatLng = latlng;
+              map.clear();
+              map.addMarker(new MarkerOptions().position(latlng).title("Party here"));
+            });
+  }
+
+  private void wireMapComponents() {
+      SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+      assert mapFrag != null;
+      mapFrag.getMapAsync(this);
+      AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+              getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+      assert autocompleteFragment != null;
+      autocompleteFragment.setPlaceFields(
+              Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+
+      autocompleteFragment.setOnPlaceSelectedListener(
+              new PlaceSelectionListener() {
+                  @Override
+                  public void onPlaceSelected(@NonNull Place place) {
+                      chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
+                  }
+
+                  @Override
+                  public void onError(@NonNull Status status) {
+                      Toast.makeText(
+                                      AdminOptions.this, "Search error: " + status.getStatusMessage(), Toast.LENGTH_SHORT)
+                              .show();
+                  }
+              });
   }
 }
