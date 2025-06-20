@@ -14,7 +14,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-
 import com.example.partymaker.R;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,8 @@ public class ChatAdpter extends ArrayAdapter<ChatMessage> {
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.chat_message_item, parent, false);
+    @SuppressLint("ViewHolder")
+    View view = layoutInflater.inflate(R.layout.chat_message_item, parent, false);
     ChatMessage temp = MessageList.get(position);
 
     String currentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
