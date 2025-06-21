@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
-
 import java.util.List;
 import java.util.Objects;
 

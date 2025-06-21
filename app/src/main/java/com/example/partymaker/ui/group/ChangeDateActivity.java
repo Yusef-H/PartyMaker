@@ -28,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.utilities.Common;
@@ -150,7 +149,8 @@ public class ChangeDateActivity extends AppCompatActivity {
           DBRef.refGroups.child(GroupKey).child("groupHours").setValue(GroupHour);
 
           // Type Successfully Changes
-          Toast.makeText(ChangeDateActivity.this, "Successfully Changed", Toast.LENGTH_SHORT).show();
+          Toast.makeText(ChangeDateActivity.this, "Successfully Changed", Toast.LENGTH_SHORT)
+              .show();
 
           // intent from ChangeDate to AdminOptions
           Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);

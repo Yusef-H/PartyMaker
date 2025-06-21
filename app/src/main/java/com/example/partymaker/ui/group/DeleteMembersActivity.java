@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
@@ -156,14 +155,18 @@ public class DeleteMembersActivity extends AppCompatActivity {
                                   Toast.LENGTH_SHORT)
                               .show();
                         } else {
-                          Toast.makeText(DeleteMembersActivity.this, "User not in group", Toast.LENGTH_SHORT)
+                          Toast.makeText(
+                                  DeleteMembersActivity.this,
+                                  "User not in group",
+                                  Toast.LENGTH_SHORT)
                               .show();
                         }
                         flag = true;
                       }
                     }
                     if (!flag) {
-                      Toast.makeText(DeleteMembersActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              DeleteMembersActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
                           .show();
                     }
                   }
@@ -172,7 +175,8 @@ public class DeleteMembersActivity extends AppCompatActivity {
                   public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
           } else {
-            Toast.makeText(DeleteMembersActivity.this, "Input email please", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DeleteMembersActivity.this, "Input email please", Toast.LENGTH_SHORT)
+                .show();
           }
         });
     btnBack.setOnClickListener(

@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
@@ -116,13 +115,16 @@ public class LoginActivity extends AppCompatActivity {
                           editor.apply();
 
                           Intent intent = new Intent();
-                          Toast.makeText(LoginActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+                          Toast.makeText(LoginActivity.this, "Connected", Toast.LENGTH_SHORT)
+                              .show();
                           intent.setClass(getBaseContext(), MainActivity.class);
                           btnAbout.clearAnimation();
                           startActivity(intent);
                         } else {
                           Toast.makeText(
-                                  LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT)
+                                  LoginActivity.this,
+                                  "Invalid Email or Password",
+                                  Toast.LENGTH_SHORT)
                               .show();
                           pd.dismiss();
                           btnResetPass.setVisibility(View.VISIBLE);
@@ -171,7 +173,8 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInAccount account = task.getResult(ApiException.class);
         firebaseAuthWithGoogle(account.getIdToken());
       } catch (ApiException e) {
-        Toast.makeText(LoginActivity.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT)
+        Toast.makeText(
+                LoginActivity.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT)
             .show();
       }
     }

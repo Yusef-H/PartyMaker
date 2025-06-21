@@ -30,14 +30,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.profile.EditProfile;
-import com.example.partymaker.ui.chat.GptChatActivity;
 import com.example.partymaker.ui.auth.LoginActivity;
+import com.example.partymaker.ui.chat.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
+import com.example.partymaker.ui.profile.EditProfile;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.MapUtilities;
 import com.google.android.gms.common.api.Status;
@@ -142,7 +141,9 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
           @Override
           public void onError(@NonNull Status status) {
             Toast.makeText(
-                    AddGroupActivity.this, "Search error: " + status.getStatusMessage(), Toast.LENGTH_SHORT)
+                    AddGroupActivity.this,
+                    "Search error: " + status.getStatusMessage(),
+                    Toast.LENGTH_SHORT)
                 .show();
           }
         });
@@ -289,7 +290,8 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
           DBRef.refGroups.child(p.getGroupKey()).child("MessageKeys").updateChildren(result3);
 
           // write Group created successfully
-          Toast.makeText(AddGroupActivity.this, "Group successfully created", Toast.LENGTH_SHORT).show();
+          Toast.makeText(AddGroupActivity.this, "Group successfully created", Toast.LENGTH_SHORT)
+              .show();
 
           // Design
           imgLogin.setVisibility(View.INVISIBLE);
@@ -358,10 +360,12 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
               .child("Groups/" + GroupKey1)
               .putFile(uri)
               .addOnSuccessListener(
-                  taskSnapshot -> Toast.makeText(AddGroupActivity.this, "saved", Toast.LENGTH_SHORT).show())
+                  taskSnapshot ->
+                      Toast.makeText(AddGroupActivity.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
                   exception ->
-                      Toast.makeText(AddGroupActivity.this, "error while saving ", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              AddGroupActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }

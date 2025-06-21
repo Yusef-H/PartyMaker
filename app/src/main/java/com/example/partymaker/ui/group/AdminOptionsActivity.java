@@ -16,7 +16,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.utilities.Common;
@@ -128,7 +127,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                 // if pressed changed name
                 GroupPrice = edittext.getText().toString();
                 DBRef.refGroups.child(GroupKey).child("groupPrice").setValue(GroupPrice);
-                Toast.makeText(AdminOptionsActivity.this, "Name Changed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminOptionsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
+                    .show();
               });
 
           alert.setNegativeButton(
@@ -157,7 +157,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                       MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
                   DBRef.refGroups.child(GroupKey).child("groupLocation").setValue(locationValue);
                   GroupLocation = locationValue;
-                  Toast.makeText(AdminOptionsActivity.this, "Location Changed", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(AdminOptionsActivity.this, "Location Changed", Toast.LENGTH_SHORT)
+                      .show();
                 } else {
                   Toast.makeText(
                           AdminOptionsActivity.this,

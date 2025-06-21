@@ -34,10 +34,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import com.example.partymaker.R;
-import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
@@ -208,7 +207,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 GroupName = edittext.getText().toString();
                 DBRef.refGroups.child(GroupKey).child("groupName").setValue(GroupName);
                 tvGroupName.setText(GroupName);
-                Toast.makeText(GroupDetailsActivity.this, "Name Changed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupDetailsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
+                    .show();
               });
 
           alert.setNegativeButton(
@@ -327,7 +327,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                       DBRef.refStorage.child("Groups/" + GroupKey).delete();
 
                       // if it went successfully so toast write it
-                      Toast.makeText(GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
                           .show();
 
                       // intent from GroupScreen to MainMenu
@@ -363,7 +364,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                           .updateChildren(ComingKeys);
 
                       // if it went successfully so toast write it
-                      Toast.makeText(GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
                           .show();
 
                       // intent from GroupScreen to MainMenu
@@ -410,7 +412,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         .replace('.', ' ');
                 ComingKeys.put(CurrentUser, "true");
                 DBRef.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
-                Toast.makeText(GroupDetailsActivity.this, "You're Coming", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupDetailsActivity.this, "You're Coming", Toast.LENGTH_SHORT)
+                    .show();
                 tvNotComing.setVisibility(View.INVISIBLE);
                 imgThumbDown.setVisibility(View.INVISIBLE);
                 tvComing.setVisibility(View.VISIBLE);
@@ -469,7 +472,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                       DBRef.refStorage.child("Groups/" + GroupKey).delete();
 
                       // if it went successfully so toast write it
-                      Toast.makeText(GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
                           .show();
 
                       // intent from GroupScreen to MainMenu
@@ -499,7 +503,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                           .updateChildren(ComingKeys);
 
                       // if it went successfully so toast write it
-                      Toast.makeText(GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              GroupDetailsActivity.this, "successfully left", Toast.LENGTH_SHORT)
                           .show();
 
                       // intent from GroupScreen to MainMenu

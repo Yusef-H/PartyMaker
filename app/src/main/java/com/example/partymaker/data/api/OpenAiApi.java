@@ -1,7 +1,6 @@
 package com.example.partymaker.data.api;
 
 import com.example.partymaker.data.model.ChatMessageGpt;
-
 import java.util.List;
 import okhttp3.*;
 import org.json.JSONArray;

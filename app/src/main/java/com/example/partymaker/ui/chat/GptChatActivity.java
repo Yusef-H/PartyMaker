@@ -10,11 +10,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.partymaker.R;
-import com.example.partymaker.ui.adapters.ChatAdapter2;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessageGpt;
+import com.example.partymaker.ui.adapters.ChatAdapter2;
 import com.google.android.material.appbar.MaterialToolbar;
 import java.io.IOException;
 import java.io.InputStream;

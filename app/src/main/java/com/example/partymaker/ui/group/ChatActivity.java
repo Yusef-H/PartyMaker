@@ -11,13 +11,12 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
-import com.example.partymaker.ui.adapters.ChatAdapter;
-import com.example.partymaker.data.model.ChatMessage;
-import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.api.OpenAiApi;
+import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.model.ChatMessage;
+import com.example.partymaker.data.model.Group;
+import com.example.partymaker.ui.adapters.ChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -105,7 +104,8 @@ public class ChatActivity extends AppCompatActivity {
   private void setupGptButton() {
     btnGpt.setOnClickListener(
         v -> {
-          android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ChatActivity.this);
+          android.app.AlertDialog.Builder builder =
+              new android.app.AlertDialog.Builder(ChatActivity.this);
           builder.setTitle("שאל את GPT");
           final EditText input = new EditText(ChatActivity.this);
           input.setHint("כתוב כאן את השאלה שלך...");

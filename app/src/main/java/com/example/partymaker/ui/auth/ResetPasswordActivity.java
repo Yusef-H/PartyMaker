@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -61,10 +60,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
           .addOnCompleteListener(
               task -> {
                 if (task.isSuccessful()) {
-                  Toast.makeText(ResetPasswordActivity.this, "Email successfully sent", Toast.LENGTH_SHORT)
+                  Toast.makeText(
+                          ResetPasswordActivity.this, "Email successfully sent", Toast.LENGTH_SHORT)
                       .show();
                 } else {
-                  Toast.makeText(ResetPasswordActivity.this, "Email Error sending", Toast.LENGTH_SHORT)
+                  Toast.makeText(
+                          ResetPasswordActivity.this, "Email Error sending", Toast.LENGTH_SHORT)
                       .show();
                 }
               });

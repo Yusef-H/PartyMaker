@@ -11,10 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import com.example.partymaker.ui.group.MembersActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.ui.group.MembersActivity;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 

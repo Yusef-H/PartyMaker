@@ -33,10 +33,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import com.example.partymaker.R;
-import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
@@ -166,7 +165,8 @@ public class GroupSettingsActivity extends AppCompatActivity {
                 GroupName = edittext.getText().toString();
                 DBRef.refGroups.child(GroupKey).child(GROUP_NAME).setValue(GroupName);
                 tvNameGroup.setText(GroupName);
-                Toast.makeText(GroupSettingsActivity.this, "Name Changed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupSettingsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
+                    .show();
               });
 
           alert.setNegativeButton(
@@ -192,10 +192,12 @@ public class GroupSettingsActivity extends AppCompatActivity {
               .putFile(uri)
               .addOnSuccessListener(
                   taskSnapshot ->
-                      Toast.makeText(GroupSettingsActivity.this, "saved", Toast.LENGTH_SHORT).show())
+                      Toast.makeText(GroupSettingsActivity.this, "saved", Toast.LENGTH_SHORT)
+                          .show())
               .addOnFailureListener(
                   exception ->
-                      Toast.makeText(GroupSettingsActivity.this, "error while saving ", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              GroupSettingsActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }
@@ -251,7 +253,8 @@ public class GroupSettingsActivity extends AppCompatActivity {
               DBRef.refStorage.child("Groups/" + GroupKey).delete();
 
               // if it went successfully so toast write it
-              Toast.makeText(GroupSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT).show();
+              Toast.makeText(GroupSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT)
+                  .show();
 
               // intent from GroupScreen to MainMenu
               Intent intent = new Intent(getBaseContext(), MainActivity.class);

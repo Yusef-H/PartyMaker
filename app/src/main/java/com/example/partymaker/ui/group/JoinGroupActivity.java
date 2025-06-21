@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.utilities.MapUtilities;
@@ -143,7 +142,8 @@ public class JoinGroupActivity extends AppCompatActivity {
               FriendKeys.put(CurrentUser, "true");
               DBRef.refGroups.child(GroupKey).child("FriendKeys").removeValue();
               DBRef.refGroups.child(GroupKey).child("FriendKeys").updateChildren(FriendKeys);
-              Toast.makeText(JoinGroupActivity.this, "Successfully joined ", Toast.LENGTH_SHORT).show();
+              Toast.makeText(JoinGroupActivity.this, "Successfully joined ", Toast.LENGTH_SHORT)
+                  .show();
               Intent i1 = new Intent(getBaseContext(), PublicGroupsActivity.class);
               startActivity(i1);
             } else if (finalI == 3) // open 2,2 (4) Back

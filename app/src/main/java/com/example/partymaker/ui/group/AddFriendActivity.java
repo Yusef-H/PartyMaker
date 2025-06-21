@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
@@ -147,18 +146,23 @@ public class AddFriendActivity extends AppCompatActivity {
                               .child("FriendKeys")
                               .updateChildren(FriendKeys);
                           Toast.makeText(
-                                  AddFriendActivity.this, "Friend successfully added", Toast.LENGTH_SHORT)
+                                  AddFriendActivity.this,
+                                  "Friend successfully added",
+                                  Toast.LENGTH_SHORT)
                               .show();
                         } else {
                           Toast.makeText(
-                                  AddFriendActivity.this, "User already in group", Toast.LENGTH_SHORT)
+                                  AddFriendActivity.this,
+                                  "User already in group",
+                                  Toast.LENGTH_SHORT)
                               .show();
                         }
                         flag = true;
                       }
                     }
                     if (!flag) {
-                      Toast.makeText(AddFriendActivity.this, "Email not Exist", Toast.LENGTH_SHORT).show();
+                      Toast.makeText(AddFriendActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
+                          .show();
                     }
                     if (!flag1 && flag) {
                       etFriendEmail.setVisibility(View.INVISIBLE);

@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.auth.LoginActivity;
@@ -98,7 +97,8 @@ public class SplashActivity extends AppCompatActivity {
     SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     boolean isChecked = settings.getBoolean(IS_CHECKED, false);
 
-    Class<?> targetActivity = shouldNavigateToMain(isChecked) ? MainActivity.class : LoginActivity.class;
+    Class<?> targetActivity =
+        shouldNavigateToMain(isChecked) ? MainActivity.class : LoginActivity.class;
 
     Intent intent = new Intent(this, targetActivity);
     startActivity(intent);
