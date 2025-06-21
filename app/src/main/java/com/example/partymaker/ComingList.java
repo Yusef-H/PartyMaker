@@ -20,7 +20,7 @@ import java.util.Objects;
 public class ComingList extends AppCompatActivity {
 
   private ListView lv3;
-    private HashMap<String, Object> ComingKeys;
+  private HashMap<String, Object> ComingKeys;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class ComingList extends AppCompatActivity {
     // connection between intent from GroupScreen and InvitedList
     HashMap<String, Object> hashFriendKeys =
         (HashMap<String, Object>) getIntent().getSerializableExtra("FriendKeys");
-      ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
+    ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
 
     lv3 = findViewById(R.id.lv3);
 

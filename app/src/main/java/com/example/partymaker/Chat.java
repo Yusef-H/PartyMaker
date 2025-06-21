@@ -44,8 +44,8 @@ public class Chat extends AppCompatActivity {
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
     // connection between values from intent
-      MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
-      GroupKey = Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
+    MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
+    GroupKey = Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
 
     // connection
     lv4 = findViewById(R.id.lv4);
@@ -62,42 +62,42 @@ public class Chat extends AppCompatActivity {
     lv4.setOnItemClickListener((parent, view, position, id) -> {});
     lv4.setOnItemLongClickListener((parent, view, position, id) -> false);
     btnSend.setOnClickListener(
-            v -> {
-              ChatMessage msg = new ChatMessage();
-              String Text = etMessage.getText().toString();
-              String User = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
-              Calendar c = Calendar.getInstance();
-              SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-              String strDate = sdf.format(c.getTime());
-              String MessageKey = DBref.refMessages.push().getKey();
-              msg.setMessageUser(User);
-              msg.setMessageTime(strDate);
-              msg.setMessageText(Text);
-              msg.setMessageKey(MessageKey);
-              DBref.refMessages.child(Objects.requireNonNull(MessageKey)).setValue(msg);
-              MessageKeys.put(MessageKey, "true");
-              DBref.refGroups.child(GroupKey).child("MessageKeys").updateChildren(MessageKeys);
-              // GPT detection
-              if (Text.trim().toLowerCase().startsWith("@gpt")
-                  || Text.trim().toLowerCase().startsWith("gpt,")
-                  || Text.trim().toLowerCase().startsWith("gpt:")) {
-                new Thread(
-                        () -> {
-                          try {
-                            String prompt =
-                                "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
-                                    + getGroupDetails();
-                            OpenAiApi openAiApi = new OpenAiApi(getApiKey());
-                            String gptAnswer = openAiApi.sendMessage(prompt + Text);
-                            runOnUiThread(() -> sendBotMessage(gptAnswer));
-                          } catch (Exception e) {
-                            e.printStackTrace();
-                          }
-                        })
-                    .start();
-              }
-              etMessage.setText(null);
-            });
+        v -> {
+          ChatMessage msg = new ChatMessage();
+          String Text = etMessage.getText().toString();
+          String User = Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail();
+          Calendar c = Calendar.getInstance();
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          String strDate = sdf.format(c.getTime());
+          String MessageKey = DBref.refMessages.push().getKey();
+          msg.setMessageUser(User);
+          msg.setMessageTime(strDate);
+          msg.setMessageText(Text);
+          msg.setMessageKey(MessageKey);
+          DBref.refMessages.child(Objects.requireNonNull(MessageKey)).setValue(msg);
+          MessageKeys.put(MessageKey, "true");
+          DBref.refGroups.child(GroupKey).child("MessageKeys").updateChildren(MessageKeys);
+          // GPT detection
+          if (Text.trim().toLowerCase().startsWith("@gpt")
+              || Text.trim().toLowerCase().startsWith("gpt,")
+              || Text.trim().toLowerCase().startsWith("gpt:")) {
+            new Thread(
+                    () -> {
+                      try {
+                        String prompt =
+                            "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
+                                + getGroupDetails();
+                        OpenAiApi openAiApi = new OpenAiApi(getApiKey());
+                        String gptAnswer = openAiApi.sendMessage(prompt + Text);
+                        runOnUiThread(() -> sendBotMessage(gptAnswer));
+                      } catch (Exception e) {
+                        e.printStackTrace();
+                      }
+                    })
+                .start();
+          }
+          etMessage.setText(null);
+        });
   }
 
   private void setupGptButton() {

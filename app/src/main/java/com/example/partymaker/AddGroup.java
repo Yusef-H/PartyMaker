@@ -63,8 +63,8 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
   private TimePicker timePicker;
   private FloatingActionButton fabChat;
   private GoogleMap map;
-    private LatLng chosenLatLng;
-    private FusedLocationProviderClient locationClient;
+  private LatLng chosenLatLng;
+  private FusedLocationProviderClient locationClient;
   private final int FINE_PERMISSION_CODE = 1;
 
   @Override
@@ -116,10 +116,12 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
     selectedDate = Calendar.getInstance();
     timePicker = findViewById(R.id.timePicker);
     fabChat = findViewById(R.id.fabChat);
-      SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+    SupportMapFragment mapFrag =
+        (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
     Objects.requireNonNull(mapFrag).getMapAsync(this);
-      AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-              getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+    AutocompleteSupportFragment autocompleteFragment =
+        (AutocompleteSupportFragment)
+            getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     Objects.requireNonNull(autocompleteFragment)
         .setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
     locationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -252,9 +254,9 @@ public class AddGroup extends AppCompatActivity implements OnMapReadyCallback {
           p.setGroupYears(YearsSelected);
           // Get hour and minute from TimePicker
           int hour, minute;
-            hour = timePicker.getHour();
-            minute = timePicker.getMinute();
-            HoursSelected = String.format("%02d:%02d", hour, minute);
+          hour = timePicker.getHour();
+          minute = timePicker.getMinute();
+          HoursSelected = String.format("%02d:%02d", hour, minute);
           p.setGroupHours(HoursSelected);
 
           // create unique key for Group

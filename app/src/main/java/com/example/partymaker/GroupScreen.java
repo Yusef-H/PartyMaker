@@ -47,27 +47,27 @@ import java.util.Map;
 import java.util.Objects;
 
 public class GroupScreen extends AppCompatActivity {
-    private ImageView imgCalender;
-    private ImageView imgThumbUp;
-    private ImageView imgThumbDown;
-    private ImageView imgSeeHours;
-    private ImageView imgOptions;
+  private ImageView imgCalender;
+  private ImageView imgThumbUp;
+  private ImageView imgThumbDown;
+  private ImageView imgSeeHours;
+  private ImageView imgOptions;
   private ImageButton btnEditName;
   private Button back5;
   private TextView tvDateText;
-    private TextView tvDateDays;
-    private TextView tvDateMonths;
-    private TextView tvDateYears;
-    private TextView tvDateHours;
-    private TextView tvComing;
-    private TextView tvNotComing;
-    private TextView tvGroupName;
-    private TextView tvSeeHours;
-    private TextView tvSeeDate;
-    private TextView tvAt;
-    private TextView tvOptions;
-    private CardView card5;
-    private String GroupName,
+  private TextView tvDateDays;
+  private TextView tvDateMonths;
+  private TextView tvDateYears;
+  private TextView tvDateHours;
+  private TextView tvComing;
+  private TextView tvNotComing;
+  private TextView tvGroupName;
+  private TextView tvSeeHours;
+  private TextView tvSeeDate;
+  private TextView tvAt;
+  private TextView tvOptions;
+  private CardView card5;
+  private String GroupName,
       GroupKey,
       GroupLocation,
       AdminKey,
@@ -114,14 +114,14 @@ public class GroupScreen extends AppCompatActivity {
     MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
 
     // connection
-      GridLayout mainGrid = findViewById(R.id.MainGrid);
+    GridLayout mainGrid = findViewById(R.id.MainGrid);
     back5 = findViewById(R.id.back5);
     imgCalender = findViewById(R.id.imgCalender);
     imgThumbUp = findViewById(R.id.imgThumbUp);
     imgThumbDown = findViewById(R.id.imgThumbDown);
-      ImageView imgLocation = findViewById(R.id.imgLocation);
+    ImageView imgLocation = findViewById(R.id.imgLocation);
     imgSeeHours = findViewById(R.id.imgSeeHours);
-      ImageView imgAddFriend = findViewById(R.id.imgAddFriend);
+    ImageView imgAddFriend = findViewById(R.id.imgAddFriend);
     imgOptions = findViewById(R.id.imgOptions);
     btnEditName = findViewById(R.id.btnEditName);
     tvDateText = findViewById(R.id.tvDateText);
@@ -132,27 +132,29 @@ public class GroupScreen extends AppCompatActivity {
     tvComing = findViewById(R.id.tvComing);
     tvNotComing = findViewById(R.id.tvNotComing);
     tvGroupName = findViewById(R.id.tvGroupName);
-      TextView tvCreatedBy = findViewById(R.id.tvCreatedBy);
-      TextView tvLocation = findViewById(R.id.tvLocation);
-      TextView tvGroupLocation = findViewById(R.id.tvGroupLocation);
+    TextView tvCreatedBy = findViewById(R.id.tvCreatedBy);
+    TextView tvLocation = findViewById(R.id.tvLocation);
+    TextView tvGroupLocation = findViewById(R.id.tvGroupLocation);
     tvSeeHours = findViewById(R.id.tvSeeHours);
     tvSeeDate = findViewById(R.id.tvSeeDate);
-      TextView tvAddFriend = findViewById(R.id.tvAddFriend);
+    TextView tvAddFriend = findViewById(R.id.tvAddFriend);
     tvOptions = findViewById(R.id.tvOptions);
     tvAt = findViewById(R.id.tvAt);
-      TextView tvEntryPrice = findViewById(R.id.tvEntryPrice);
-      TextView tvYourEntry = findViewById(R.id.tvYourEntry);
-      CardView card1 = findViewById(R.id.Card1);
-      CardView card2 = findViewById(R.id.Card2);
-      CardView card3 = findViewById(R.id.Card3);
-      CardView card4 = findViewById(R.id.Card4);
+    TextView tvEntryPrice = findViewById(R.id.tvEntryPrice);
+    TextView tvYourEntry = findViewById(R.id.tvYourEntry);
+    CardView card1 = findViewById(R.id.Card1);
+    CardView card2 = findViewById(R.id.Card2);
+    CardView card3 = findViewById(R.id.Card3);
+    CardView card4 = findViewById(R.id.Card4);
     card5 = findViewById(R.id.Card5);
-      CardView card6 = findViewById(R.id.Card6);
-      CardView card7 = findViewById(R.id.Card7);
-      CardView card8 = findViewById(R.id.Card8);
+    CardView card6 = findViewById(R.id.Card6);
+    CardView card7 = findViewById(R.id.Card7);
+    CardView card8 = findViewById(R.id.Card8);
 
     // get current account's email
-    CurrentUser = Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' ');
+    CurrentUser =
+        Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail())
+            .replace('.', ' ');
 
     // setting of GroupScreen for all users(not in buttons)
     tvGroupName.setText(GroupName);
@@ -175,14 +177,13 @@ public class GroupScreen extends AppCompatActivity {
     // if current account is not admin
     if (!CurrentUser.equals(AdminKey)) {
       // if group is public
-        if (GroupType != 0) {
-            // settings if group is private
-            imgAddFriend.setVisibility(View.INVISIBLE);
-            tvAddFriend.setVisibility(View.INVISIBLE);
-
-        }
-        isComing();
-        FriendEvent(mainGrid);
+      if (GroupType != 0) {
+        // settings if group is private
+        imgAddFriend.setVisibility(View.INVISIBLE);
+        tvAddFriend.setVisibility(View.INVISIBLE);
+      }
+      isComing();
+      FriendEvent(mainGrid);
     }
     EventHandler();
   }
@@ -401,7 +402,9 @@ public class GroupScreen extends AppCompatActivity {
             } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
             {
               if (!isComing) {
-                String CurrentUser = Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail()).replace('.', ' ');
+                String CurrentUser =
+                    Objects.requireNonNull(DBref.Auth.getCurrentUser().getEmail())
+                        .replace('.', ' ');
                 ComingKeys.put(CurrentUser, "true");
                 DBref.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);
                 Toast.makeText(GroupScreen.this, "You're Coming", Toast.LENGTH_SHORT).show();
@@ -510,7 +513,8 @@ public class GroupScreen extends AppCompatActivity {
 
   private void isComing() {
     String CurrentUser =
-        Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail()).replace('.', ' ');
+        Objects.requireNonNull(Objects.requireNonNull(DBref.Auth.getCurrentUser()).getEmail())
+            .replace('.', ' ');
     boolean flag = false;
     for (String ComingFriend : ComingKeys.keySet()) {
       if (ComingFriend.equals(CurrentUser)) {
@@ -576,7 +580,7 @@ public class GroupScreen extends AppCompatActivity {
       tvAt.setVisibility(View.INVISIBLE);
       tvDateHours.setVisibility(View.INVISIBLE);
     }
-      return 2;
+    return 2;
   }
 
   private void deleteMessages() {

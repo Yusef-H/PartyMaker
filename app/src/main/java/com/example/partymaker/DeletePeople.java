@@ -121,7 +121,10 @@ public class DeletePeople extends AppCompatActivity {
                     boolean flag1 = false;
                     HashMap<String, Object> GroupFriends;
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                      String UserEmail = Objects.requireNonNull(data.getValue(User.class)).getEmail().replace('.', ' ');
+                      String UserEmail =
+                          Objects.requireNonNull(data.getValue(User.class))
+                              .getEmail()
+                              .replace('.', ' ');
                       String CurrentUserEmail =
                           etFriendEmail.getText().toString().replace('.', ' ');
                       GroupFriends = FriendKeys;

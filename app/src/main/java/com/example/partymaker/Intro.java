@@ -20,8 +20,8 @@ import androidx.viewpager.widget.ViewPager;
 public class Intro extends Activity {
 
   private ViewPager viewPager;
-    private LinearLayout dotsLayout;
-    private int[] layouts;
+  private LinearLayout dotsLayout;
+  private int[] layouts;
   private Button btnSkip, btnNext;
 
   @Override
@@ -46,7 +46,7 @@ public class Intro extends Activity {
     // adding bottom dots
     addBottomDots(0);
 
-      ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter();
+    ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter();
     viewPager.setAdapter(viewPagerAdapter);
     viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
   }
@@ -94,7 +94,7 @@ public class Intro extends Activity {
       };
 
   private void addBottomDots(int currentPage) {
-      TextView[] dots = new TextView[layouts.length];
+    TextView[] dots = new TextView[layouts.length];
 
     dotsLayout.removeAllViews();
     for (int i = 0; i < dots.length; i++) {
@@ -120,12 +120,13 @@ public class Intro extends Activity {
 
   public class ViewPagerAdapter extends PagerAdapter {
 
-      public ViewPagerAdapter() {}
+    public ViewPagerAdapter() {}
 
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      LayoutInflater layoutInflater =
+          (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
       View view = layoutInflater.inflate(layouts[position], container, false);
       container.addView(view);
