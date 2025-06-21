@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.ui.auth.Login;
+import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.group.AddGroupActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
@@ -109,7 +109,7 @@ public class EditProfile extends AppCompatActivity {
     } else if (item.getItemId() == R.id.idLogout) {
       DBRef.Auth.signOut();
       DBRef.CurrentUser = null;
-      goToNextActivity = new Intent(getApplicationContext(), Login.class);
+      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
       startActivity(goToNextActivity);
     }
 

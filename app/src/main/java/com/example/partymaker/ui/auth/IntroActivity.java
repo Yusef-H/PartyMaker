@@ -19,7 +19,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.partymaker.R;
 
-public class Intro extends Activity {
+public class IntroActivity extends Activity {
 
   private ViewPager viewPager;
   private LinearLayout dotsLayout;
@@ -116,7 +116,7 @@ public class Intro extends Activity {
   }
 
   private void launchHomeScreen() {
-    startActivity(new Intent(getBaseContext(), Login.class));
+    startActivity(new Intent(getBaseContext(), LoginActivity.class));
     finish();
   }
 

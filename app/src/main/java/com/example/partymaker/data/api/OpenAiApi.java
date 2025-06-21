@@ -1,6 +1,6 @@
 package com.example.partymaker.data.api;
 
-import com.example.partymaker.data.model.SimpleChatMessage;
+import com.example.partymaker.data.model.ChatMessageGpt;
 
 import java.util.List;
 import okhttp3.*;
@@ -50,9 +50,9 @@ public class OpenAiApi {
     }
   }
 
-  public String sendMessageWithHistory(List<SimpleChatMessage> history) throws Exception {
+  public String sendMessageWithHistory(List<ChatMessageGpt> history) throws Exception {
     JSONArray messages = new JSONArray();
-    for (SimpleChatMessage msg : history) {
+    for (ChatMessageGpt msg : history) {
       JSONObject message = new JSONObject();
       message.put("role", msg.role);
       message.put("content", msg.content);

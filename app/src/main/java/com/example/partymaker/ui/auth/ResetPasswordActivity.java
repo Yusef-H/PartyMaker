@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ResetPassword extends AppCompatActivity {
+public class ResetPasswordActivity extends AppCompatActivity {
   private Button btnWhite, btnBlack, btnReset, btnHelp, btnHide;
   private RelativeLayout rltReset;
   private TextView tvForgotPass, tvHelp, tvInstructions, tvHide;
@@ -54,17 +54,17 @@ public class ResetPassword extends AppCompatActivity {
   private void ResetPass() {
     final String email = etInputEmail.getText().toString(); // the user email
     if (email.matches("")) {
-      Toast.makeText(ResetPassword.this, "input email", Toast.LENGTH_SHORT).show();
+      Toast.makeText(ResetPasswordActivity.this, "input email", Toast.LENGTH_SHORT).show();
     } else {
       FirebaseAuth.getInstance()
           .sendPasswordResetEmail(email)
           .addOnCompleteListener(
               task -> {
                 if (task.isSuccessful()) {
-                  Toast.makeText(ResetPassword.this, "Email successfully sent", Toast.LENGTH_SHORT)
+                  Toast.makeText(ResetPasswordActivity.this, "Email successfully sent", Toast.LENGTH_SHORT)
                       .show();
                 } else {
-                  Toast.makeText(ResetPassword.this, "Email Error sending", Toast.LENGTH_SHORT)
+                  Toast.makeText(ResetPasswordActivity.this, "Email Error sending", Toast.LENGTH_SHORT)
                       .show();
                 }
               });

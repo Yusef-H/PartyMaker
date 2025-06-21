@@ -48,7 +48,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Register extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
   private TextInputLayout tilEmail, tilUsername, tilPassword;
   private TextInputEditText etEmail, etUsername, etPassword;
   private MaterialButton btnRegister, btnPress;
@@ -303,7 +303,7 @@ public class Register extends AppCompatActivity {
             animateButtonClick(
                 btnPress,
                 () -> {
-                  Intent intent = new Intent(Register.this, Login.class);
+                  Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                   startActivity(intent);
                   finish();
                 });
@@ -598,7 +598,7 @@ public class Register extends AppCompatActivity {
 
     DBRef.Auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener(
-            Register.this,
+            RegisterActivity.this,
             task -> {
               // Re-enable button
               btnRegister.setEnabled(true);
@@ -619,7 +619,7 @@ public class Register extends AppCompatActivity {
                 new Handler(Looper.getMainLooper())
                     .postDelayed(
                         () -> {
-                          Intent intent = new Intent(Register.this, Login.class);
+                          Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                           startActivity(intent);
                           finish();
                         },
@@ -738,7 +738,7 @@ public class Register extends AppCompatActivity {
       errorMessage = "Unknown registration error.";
     }
 
-    Toast.makeText(Register.this, errorMessage, Toast.LENGTH_LONG).show();
+    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_LONG).show();
   }
 
   private void sendSuccessNotification(String username) {

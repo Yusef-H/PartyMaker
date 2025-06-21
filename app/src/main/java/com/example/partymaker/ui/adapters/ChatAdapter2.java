@@ -7,14 +7,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
-import com.example.partymaker.data.model.SimpleChatMessage;
+import com.example.partymaker.data.model.ChatMessageGpt;
 
 import java.util.List;
 
 public class ChatAdapter2 extends RecyclerView.Adapter<ChatAdapter2.MessageViewHolder> {
-  private final List<SimpleChatMessage> messages;
+  private final List<ChatMessageGpt> messages;
 
-  public ChatAdapter2(List<SimpleChatMessage> messages) {
+  public ChatAdapter2(List<ChatMessageGpt> messages) {
     this.messages = messages;
   }
 
@@ -28,7 +28,7 @@ public class ChatAdapter2 extends RecyclerView.Adapter<ChatAdapter2.MessageViewH
 
   @Override
   public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-    SimpleChatMessage message = messages.get(position);
+    ChatMessageGpt message = messages.get(position);
     holder.messageText.setText(message.content);
 
     if ("user".equals(message.role)) {

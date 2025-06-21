@@ -17,7 +17,7 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.profile.EditProfile;
 import com.example.partymaker.ui.adapters.GroupAdpter;
-import com.example.partymaker.ui.auth.Login;
+import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
@@ -161,7 +161,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
     } else if (item.getItemId() == R.id.idLogout) {
       DBRef.Auth.signOut();
       DBRef.CurrentUser = null;
-      goToNextActivity = new Intent(getApplicationContext(), Login.class);
+      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
       startActivity(goToNextActivity);
     }
 

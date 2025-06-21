@@ -22,7 +22,7 @@ import com.example.partymaker.ui.profile.EditProfile;
 import com.example.partymaker.ui.chat.GptChatActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.example.partymaker.ui.adapters.GroupAdpter;
-import com.example.partymaker.ui.auth.Login;
+import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.group.AddGroupActivity;
 import com.example.partymaker.ui.group.GroupDetailsActivity;
 import com.example.partymaker.utilities.Common;
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
 
   // Navigates to the login activity and finishes current activity.
   private void navigateToLogin() {
-    Intent intent = new Intent(getApplicationContext(), Login.class);
+    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
     startActivity(intent);
     finish();
   }

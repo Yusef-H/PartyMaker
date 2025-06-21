@@ -35,7 +35,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Objects;
 
-public class Login extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
   private TextInputEditText etEmail, etPassword;
   private ImageButton btnAbout;
   private MaterialButton btnLogin, btnPress, btnResetPass;
@@ -79,7 +79,7 @@ public class Login extends AppCompatActivity {
     btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
 
     // start animation on ImageButton btnAbout
-    Animation myFadeInAnimation = AnimationUtils.loadAnimation(Login.this, R.anim.fadein);
+    Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fadein);
     btnAbout.startAnimation(myFadeInAnimation);
 
     evantHandler();
@@ -99,14 +99,14 @@ public class Login extends AppCompatActivity {
             String email = Objects.requireNonNull(etEmail.getText()).toString();
             String password = Objects.requireNonNull(etPassword.getText()).toString();
             if (email.matches("") || password.matches("")) {
-              Toast.makeText(Login.this, "input both to login", Toast.LENGTH_SHORT).show();
+              Toast.makeText(LoginActivity.this, "input both to login", Toast.LENGTH_SHORT).show();
             } else {
               final ProgressDialog pd =
-                  ProgressDialog.show(Login.this, "connecting", "please wait... ", true);
+                  ProgressDialog.show(LoginActivity.this, "connecting", "please wait... ", true);
               pd.show();
               DBRef.Auth.signInWithEmailAndPassword(email, password)
                   .addOnCompleteListener(
-                      Login.this,
+                      LoginActivity.this,
                       task -> {
                         if (task.isSuccessful()) {
                           // Saves IsChecked - True/False in app's cache
@@ -116,13 +116,13 @@ public class Login extends AppCompatActivity {
                           editor.apply();
 
                           Intent intent = new Intent();
-                          Toast.makeText(Login.this, "Connected", Toast.LENGTH_SHORT).show();
+                          Toast.makeText(LoginActivity.this, "Connected", Toast.LENGTH_SHORT).show();
                           intent.setClass(getBaseContext(), MainActivity.class);
                           btnAbout.clearAnimation();
                           startActivity(intent);
                         } else {
                           Toast.makeText(
-                                  Login.this, "Invalid Email or Password", Toast.LENGTH_SHORT)
+                                  LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT)
                               .show();
                           pd.dismiss();
                           btnResetPass.setVisibility(View.VISIBLE);
@@ -139,19 +139,19 @@ public class Login extends AppCompatActivity {
     btnPress.setOnClickListener(
         view -> {
           // when click on "press here" it takes you to RegisterActivity
-          Intent i = new Intent(Login.this, Register.class);
+          Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
           btnAbout.clearAnimation();
           startActivity(i);
         });
     btnResetPass.setOnClickListener(
         v -> {
-          Intent i = new Intent(Login.this, ResetPassword.class);
+          Intent i = new Intent(LoginActivity.this, ResetPasswordActivity.class);
           btnAbout.clearAnimation();
           startActivity(i);
         });
     btnAbout.setOnClickListener(
         v -> {
-          Intent i = new Intent(Login.this, Intro.class);
+          Intent i = new Intent(LoginActivity.this, IntroActivity.class);
           startActivity(i);
         });
   }
@@ -171,7 +171,7 @@ public class Login extends AppCompatActivity {
         GoogleSignInAccount account = task.getResult(ApiException.class);
         firebaseAuthWithGoogle(account.getIdToken());
       } catch (ApiException e) {
-        Toast.makeText(Login.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT)
+        Toast.makeText(LoginActivity.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT)
             .show();
       }
     }
@@ -198,12 +198,12 @@ public class Login extends AppCompatActivity {
                   DBRef.refUsers.child(email.replace('.', ' ')).setValue(u);
                 }
 
-                Intent intent = new Intent(Login.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
               } else {
                 // If sign in fails, display a message to the user.
-                Toast.makeText(Login.this, task.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, task.toString(), Toast.LENGTH_LONG).show();
               }
             });
   }

@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.ui.auth.Login;
+import com.example.partymaker.ui.auth.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -98,7 +98,7 @@ public class SplashActivity extends AppCompatActivity {
     SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     boolean isChecked = settings.getBoolean(IS_CHECKED, false);
 
-    Class<?> targetActivity = shouldNavigateToMain(isChecked) ? MainActivity.class : Login.class;
+    Class<?> targetActivity = shouldNavigateToMain(isChecked) ? MainActivity.class : LoginActivity.class;
 
     Intent intent = new Intent(this, targetActivity);
     startActivity(intent);

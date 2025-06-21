@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.adapters.ChatAdapter2;
 import com.example.partymaker.data.api.OpenAiApi;
-import com.example.partymaker.data.model.SimpleChatMessage;
+import com.example.partymaker.data.model.ChatMessageGpt;
 import com.google.android.material.appbar.MaterialToolbar;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,17 +33,17 @@ public class GptChatActivity extends AppCompatActivity {
 
   // ---------- Lists ----------
   // רק מה שמוצג למשתמש
-  private final List<SimpleChatMessage> visibleMessages = new ArrayList<>(); // NEW
+  private final List<ChatMessageGpt> visibleMessages = new ArrayList<>(); // NEW
   // כל ההיסטוריה שנשלחת ל-API (כולל system)
-  private final List<SimpleChatMessage> history = new ArrayList<>(); // NEW
+  private final List<ChatMessageGpt> history = new ArrayList<>(); // NEW
 
   private ChatAdapter2 chatAdapter;
   private OpenAiApi openAiApi;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   // ---------- System prompt ----------
-  private static final SimpleChatMessage SYSTEM_PROMPT = // NEW
-      new SimpleChatMessage("system", "ענה תמיד בעברית, גם אם השאלה באנגלית.");
+  private static final ChatMessageGpt SYSTEM_PROMPT = // NEW
+      new ChatMessageGpt("system", "ענה תמיד בעברית, גם אם השאלה באנגלית.");
 
   // ------------------------------------------------------------------------
   // onCreate
@@ -80,8 +80,8 @@ public class GptChatActivity extends AppCompatActivity {
     history.add(SYSTEM_PROMPT); // NEW
 
     // ---------- Assistant welcome (כן מוצג) ----------
-    SimpleChatMessage welcome =
-        new SimpleChatMessage(
+    ChatMessageGpt welcome =
+        new ChatMessageGpt(
             "assistant",
             "🎉 ברוכים הבאים לעזרה באפליקציית PartyMaker – האפליקציה המושלמת לתכנון מסיבות!\n\n"
                 + "אני כאן כדי לעזור לך בכל שאלה או בעיה. שאל/י אותי איך מוסיפים חברים, יוצרים קבוצה, מנהלים אירוע, או כל דבר אחר – ואסביר לך שלב-אחר-שלב בעברית.\n\n"
@@ -124,7 +124,7 @@ public class GptChatActivity extends AppCompatActivity {
   @SuppressLint("NotifyDataSetChanged")
   private void sendMessage(String userText) {
     // ---------- User message ----------
-    SimpleChatMessage userMsg = new SimpleChatMessage("user", userText);
+    ChatMessageGpt userMsg = new ChatMessageGpt("user", userText);
     visibleMessages.add(userMsg); // מציג
     history.add(userMsg); // להיסטוריה
     chatAdapter.notifyDataSetChanged();
@@ -136,7 +136,7 @@ public class GptChatActivity extends AppCompatActivity {
           try {
             String answer = openAiApi.sendMessageWithHistory(history);
 
-            SimpleChatMessage assistantMsg = new SimpleChatMessage("assistant", answer);
+            ChatMessageGpt assistantMsg = new ChatMessageGpt("assistant", answer);
 
             runOnUiThread(
                 () -> {
