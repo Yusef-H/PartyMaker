@@ -7,7 +7,7 @@
     android:background="@drawable/bg"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context="com.example.partymaker.DeletePeople">
+    tools:context="com.example.partymaker.ui.group.DeleteMembersActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

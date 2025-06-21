@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:weightSum="10"
     android:fitsSystemWindows="true"
-    tools:context="com.example.partymaker.GroupOptions">
+    tools:context="com.example.partymaker.ui.group.GroupSettingsActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:weightSum="1"
     android:fitsSystemWindows="true"
-    tools:context="com.example.partymaker.AddGroup">
+    tools:context="com.example.partymaker.ui.group.AddGroupActivity">
 
     <ImageView
         android:id="@+id/imgLogin"

@@ -7,7 +7,7 @@
     android:fillViewport="true"
     android:background="@drawable/background3"
     android:theme="@style/Theme.Material3.Register"
-    tools:context="com.example.partymaker.Register">
+    tools:context="com.example.partymaker.ui.auth.Register">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

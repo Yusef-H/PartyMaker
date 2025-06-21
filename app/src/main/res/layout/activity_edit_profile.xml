@@ -8,7 +8,7 @@
     android:background="@drawable/background4"
     android:weightSum="1"
     android:fitsSystemWindows="true"
-    tools:context="com.example.partymaker.EditProfile">
+    tools:context="com.example.partymaker.ui.profile.EditProfile">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgProfile"

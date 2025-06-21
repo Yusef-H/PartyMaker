@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context="com.example.partymaker.PublicGroups">
+    tools:context="com.example.partymaker.ui.group.PublicGroupsActivity">
 
     <ListView
         android:id="@+id/lv5"

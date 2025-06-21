@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#6cd7efff"
-    tools:context="com.example.partymaker.ComingList"
+    tools:context="com.example.partymaker.ui.group.ComingMembersActivity"
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
