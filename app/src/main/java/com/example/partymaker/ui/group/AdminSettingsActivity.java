@@ -46,7 +46,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class GroupSettingsActivity extends AppCompatActivity {
+public class AdminSettingsActivity extends AppCompatActivity {
   private ImageView imgCanAdd, imgType, imgEditGroup;
   private ImageButton btnEditName;
   private String AdminKey,
@@ -68,7 +68,7 @@ public class GroupSettingsActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_group_options);
+    setContentView(R.layout.activity_admin_settings);
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
@@ -151,8 +151,8 @@ public class GroupSettingsActivity extends AppCompatActivity {
         });
     btnEditName.setOnClickListener(
         v -> {
-          final EditText edittext = new EditText(GroupSettingsActivity.this);
-          AlertDialog.Builder alert = new AlertDialog.Builder(GroupSettingsActivity.this);
+          final EditText edittext = new EditText(AdminSettingsActivity.this);
+          AlertDialog.Builder alert = new AlertDialog.Builder(AdminSettingsActivity.this);
           alert.setMessage("Input new name below");
           alert.setTitle("Change party's name");
 
@@ -165,7 +165,7 @@ public class GroupSettingsActivity extends AppCompatActivity {
                 GroupName = edittext.getText().toString();
                 DBRef.refGroups.child(GroupKey).child(GROUP_NAME).setValue(GroupName);
                 tvNameGroup.setText(GroupName);
-                Toast.makeText(GroupSettingsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
+                Toast.makeText(AdminSettingsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
                     .show();
               });
 
@@ -192,12 +192,12 @@ public class GroupSettingsActivity extends AppCompatActivity {
               .putFile(uri)
               .addOnSuccessListener(
                   taskSnapshot ->
-                      Toast.makeText(GroupSettingsActivity.this, "saved", Toast.LENGTH_SHORT)
+                      Toast.makeText(AdminSettingsActivity.this, "saved", Toast.LENGTH_SHORT)
                           .show())
               .addOnFailureListener(
                   exception ->
                       Toast.makeText(
-                              GroupSettingsActivity.this, "error while saving ", Toast.LENGTH_SHORT)
+                              AdminSettingsActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }
@@ -253,7 +253,7 @@ public class GroupSettingsActivity extends AppCompatActivity {
               DBRef.refStorage.child("Groups/" + GroupKey).delete();
 
               // if it went successfully so toast write it
-              Toast.makeText(GroupSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT)
+              Toast.makeText(AdminSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT)
                   .show();
 
               // intent from GroupScreen to MainMenu

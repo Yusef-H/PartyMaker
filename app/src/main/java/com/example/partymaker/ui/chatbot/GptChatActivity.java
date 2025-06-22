@@ -51,7 +51,7 @@ public class GptChatActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.chat_dialog);
+    setContentView(R.layout.activity_chatbot);
 
     // ---------- Init OpenAI helper ----------
     String apiKey = getApiKey();

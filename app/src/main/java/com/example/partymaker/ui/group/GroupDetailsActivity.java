@@ -242,12 +242,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
               IsClicked = isClicked(IsClicked);
             } else if (finalI == 2) // open 2,1 (3) People Invited
             {
-              Intent i3 = new Intent(getBaseContext(), InvitedUsersActivity.class);
+              Intent i3 = new Intent(getBaseContext(), MembersInvitedActivity.class);
               i3.putExtra("FriendKeys", FriendKeys);
               startActivity(i3);
             } else if (finalI == 3) // open 2,2 (4) People Coming
             {
-              Intent i3 = new Intent(getBaseContext(), ComingMembersActivity.class);
+              Intent i3 = new Intent(getBaseContext(), MembersComingActivity.class);
               i3.putExtra("ComingKeys", ComingKeys);
               startActivity(i3);
             } else if (finalI == 4) // open 3,1 (5) Admin Options
@@ -284,7 +284,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
             } else if (finalI == 6) // open 4,1 (7) Add Friends
             {
-              Intent intent = new Intent(getBaseContext(), AddFriendActivity.class);
+              Intent intent = new Intent(getBaseContext(), FriendsAddActivity.class);
               ExtrasMetadata extras =
                   new ExtrasMetadata(
                       GroupName,
@@ -396,12 +396,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
               IsClicked = isClicked(IsClicked);
             } else if (finalI == 2) // open 2,1 (3) People Invited
             {
-              Intent i3 = new Intent(getBaseContext(), InvitedUsersActivity.class);
+              Intent i3 = new Intent(getBaseContext(), MembersInvitedActivity.class);
               i3.putExtra("FriendKeys", FriendKeys);
               startActivity(i3);
             } else if (finalI == 3) // open 2,2 (4) People Coming
             {
-              Intent i3 = new Intent(getBaseContext(), ComingMembersActivity.class);
+              Intent i3 = new Intent(getBaseContext(), MembersComingActivity.class);
               i3.putExtra("ComingKeys", ComingKeys);
               startActivity(i3);
             } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
@@ -432,7 +432,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             {
               // if its a public group/got admin set to add
               if (CanAdd) {
-                Intent intent = new Intent(getBaseContext(), AddFriendActivity.class);
+                Intent intent = new Intent(getBaseContext(), FriendsAddActivity.class);
                 intent.putExtra("GroupName", GroupName);
                 intent.putExtra("groupKey", GroupKey);
                 intent.putExtra("groupDays", GroupDay);

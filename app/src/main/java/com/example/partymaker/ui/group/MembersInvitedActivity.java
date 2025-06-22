@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class InvitedUsersActivity extends AppCompatActivity {
+public class MembersInvitedActivity extends AppCompatActivity {
 
   private ListView lv2;
   private HashMap<String, Object> FriendKeys;
@@ -64,7 +64,7 @@ public class InvitedUsersActivity extends AppCompatActivity {
                 }
               }
             }
-            InvitedAdapter adpt = new InvitedAdapter(InvitedUsersActivity.this, 0, 0, ArrUsers);
+            InvitedAdapter adpt = new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers);
             lv2.setAdapter(adpt);
           }
 

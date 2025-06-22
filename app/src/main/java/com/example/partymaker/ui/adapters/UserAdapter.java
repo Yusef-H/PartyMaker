@@ -36,7 +36,7 @@ public class UserAdapter extends ArrayAdapter<User> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.user_list, parent, false);
+    View view = layoutInflater.inflate(R.layout.item_user, parent, false);
     User temp = UserList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvULusername);

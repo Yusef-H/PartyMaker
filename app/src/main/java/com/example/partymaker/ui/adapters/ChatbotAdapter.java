@@ -21,7 +21,7 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
   @Override
   public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_item, parent, false);
+        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_message, parent, false);
     return new MessageViewHolder(view);
   }
 

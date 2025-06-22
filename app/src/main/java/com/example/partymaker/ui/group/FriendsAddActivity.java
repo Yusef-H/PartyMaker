@@ -24,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class AddFriendActivity extends AppCompatActivity {
+public class FriendsAddActivity extends AppCompatActivity {
   private Button btnHide, btnHelp, btnAddFriend, btnYes, btnNo;
   private TextView tvHide, tvHelp, tvInstructions1, tvAddMore;
   private EditText etFriendEmail;
@@ -146,13 +146,13 @@ public class AddFriendActivity extends AppCompatActivity {
                               .child("FriendKeys")
                               .updateChildren(FriendKeys);
                           Toast.makeText(
-                                  AddFriendActivity.this,
+                                  FriendsAddActivity.this,
                                   "Friend successfully added",
                                   Toast.LENGTH_SHORT)
                               .show();
                         } else {
                           Toast.makeText(
-                                  AddFriendActivity.this,
+                                  FriendsAddActivity.this,
                                   "User already in group",
                                   Toast.LENGTH_SHORT)
                               .show();
@@ -161,7 +161,7 @@ public class AddFriendActivity extends AppCompatActivity {
                       }
                     }
                     if (!flag) {
-                      Toast.makeText(AddFriendActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
+                      Toast.makeText(FriendsAddActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
                           .show();
                     }
                     if (!flag1 && flag) {
@@ -182,7 +182,7 @@ public class AddFriendActivity extends AppCompatActivity {
                   public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
           } else {
-            Toast.makeText(AddFriendActivity.this, "Input email please", Toast.LENGTH_SHORT).show();
+            Toast.makeText(FriendsAddActivity.this, "Input email please", Toast.LENGTH_SHORT).show();
           }
         });
     btnYes.setOnClickListener(
@@ -191,7 +191,7 @@ public class AddFriendActivity extends AppCompatActivity {
           // add Friend to coming list
           ComingKeys.put(CurrentFriend, "true");
           DBRef.refGroups.child(GroupKey).child("ComingKeys").updateChildren(FriendKeys);
-          Toast.makeText(AddFriendActivity.this, "Added to Coming List", Toast.LENGTH_SHORT).show();
+          Toast.makeText(FriendsAddActivity.this, "Added to Coming List", Toast.LENGTH_SHORT).show();
 
           etFriendEmail.setVisibility(View.VISIBLE);
           btnAddFriend.setVisibility(View.VISIBLE);

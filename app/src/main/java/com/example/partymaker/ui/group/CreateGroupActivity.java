@@ -57,7 +57,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class CreateGroupActivity extends AppCompatActivity implements OnMapReadyCallback {
   private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
   private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
   private EditText etPartyName;
@@ -75,7 +75,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_add_group);
+    setContentView(R.layout.activity_create_group);
 
     if (!Places.isInitialized()) {
       Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
@@ -141,7 +141,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
           @Override
           public void onError(@NonNull Status status) {
             Toast.makeText(
-                    AddGroupActivity.this,
+                    CreateGroupActivity.this,
                     "Search error: " + status.getStatusMessage(),
                     Toast.LENGTH_SHORT)
                 .show();
@@ -170,7 +170,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
 
           findViewById(R.id.mapFragment).setVisibility(View.VISIBLE);
           MapUtilities.requestLocationPermission(
-              AddGroupActivity.this, map, locationClient, FINE_PERMISSION_CODE);
+              CreateGroupActivity.this, map, locationClient, FINE_PERMISSION_CODE);
           findViewById(R.id.autocomplete_fragment).setVisibility(View.VISIBLE);
         });
     btnNext2.setOnClickListener(
@@ -249,7 +249,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
             p.setGroupLocation(locationValue);
           } else {
             Toast.makeText(
-                    AddGroupActivity.this,
+                    CreateGroupActivity.this,
                     "Warning: You have not set an address for your party.",
                     Toast.LENGTH_LONG)
                 .show();
@@ -290,7 +290,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
           DBRef.refGroups.child(p.getGroupKey()).child("MessageKeys").updateChildren(result3);
 
           // write Group created successfully
-          Toast.makeText(AddGroupActivity.this, "Group successfully created", Toast.LENGTH_SHORT)
+          Toast.makeText(CreateGroupActivity.this, "Group successfully created", Toast.LENGTH_SHORT)
               .show();
 
           // Design
@@ -334,7 +334,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
 
     fabChat.setOnClickListener(
         view -> {
-          Intent intent = new Intent(AddGroupActivity.this, GptChatActivity.class);
+          Intent intent = new Intent(CreateGroupActivity.this, GptChatActivity.class);
           startActivity(intent);
         });
     fabChat.setOnTouchListener(
@@ -361,11 +361,11 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
               .putFile(uri)
               .addOnSuccessListener(
                   taskSnapshot ->
-                      Toast.makeText(AddGroupActivity.this, "saved", Toast.LENGTH_SHORT).show())
+                      Toast.makeText(CreateGroupActivity.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
                   exception ->
                       Toast.makeText(
-                              AddGroupActivity.this, "error while saving ", Toast.LENGTH_SHORT)
+                              CreateGroupActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }
@@ -380,7 +380,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
       goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idAddProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), AddGroupActivity.class);
+      goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idEditProfile) {
       goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);

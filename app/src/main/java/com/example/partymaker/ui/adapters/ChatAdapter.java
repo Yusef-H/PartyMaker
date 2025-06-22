@@ -39,7 +39,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
     @SuppressLint("ViewHolder")
-    View view = layoutInflater.inflate(R.layout.chat_message_item, parent, false);
+    View view = layoutInflater.inflate(R.layout.item_chat_message, parent, false);
     ChatMessage temp = MessageList.get(position);
 
     String currentUser = Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail();

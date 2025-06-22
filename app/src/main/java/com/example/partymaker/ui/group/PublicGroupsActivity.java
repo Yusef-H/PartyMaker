@@ -149,7 +149,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
       goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idAddProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), AddGroupActivity.class);
+      goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idEditProfile) {
       goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);

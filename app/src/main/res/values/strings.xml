@@ -90,6 +90,7 @@
     <string name="minimum_6_characters">Minimum 6 characters</string>
     <string name="enter_secure_password">Enter secure password</string>
     <string name="save_location">Save Location</string>
+    <string name="users_list">Users List</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

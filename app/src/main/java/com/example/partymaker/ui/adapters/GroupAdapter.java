@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.group.MembersActivity;
+import com.example.partymaker.ui.group.UsersListActivity;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
     super(context, resource, textViewResourceId, GroupList);
     this.context = context;
     this.GroupList = GroupList;
-    this.applicationContext = MembersActivity.getContextOfApplication();
+    this.applicationContext = UsersListActivity.getContextOfApplication();
   }
 
   @NonNull
@@ -39,7 +39,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.group_list, parent, false);
+    View view = layoutInflater.inflate(R.layout.item_group, parent, false);
     Group temp = GroupList.get(position);
 
     TextView tvpGroupName = view.findViewById(R.id.tvGLgroupname);

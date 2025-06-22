@@ -24,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class DeleteMembersActivity extends AppCompatActivity {
+public class FriendsRemoveActivity extends AppCompatActivity {
   private Button btnHide, btnHelp, btnDeleteFriend;
   private TextView tvHide, tvHelp, tvInstructions1;
   private EditText etFriendEmail;
@@ -48,7 +48,7 @@ public class DeleteMembersActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_delete_people);
+    setContentView(R.layout.activity_remove_friends);
 
     // this 3 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
@@ -150,13 +150,13 @@ public class DeleteMembersActivity extends AppCompatActivity {
                               .child("ComingKeys")
                               .updateChildren(ComingKeys);
                           Toast.makeText(
-                                  DeleteMembersActivity.this,
+                                  FriendsRemoveActivity.this,
                                   "Friend successfully deleted",
                                   Toast.LENGTH_SHORT)
                               .show();
                         } else {
                           Toast.makeText(
-                                  DeleteMembersActivity.this,
+                                  FriendsRemoveActivity.this,
                                   "User not in group",
                                   Toast.LENGTH_SHORT)
                               .show();
@@ -166,7 +166,7 @@ public class DeleteMembersActivity extends AppCompatActivity {
                     }
                     if (!flag) {
                       Toast.makeText(
-                              DeleteMembersActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
+                              FriendsRemoveActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
                           .show();
                     }
                   }
@@ -175,7 +175,7 @@ public class DeleteMembersActivity extends AppCompatActivity {
                   public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
           } else {
-            Toast.makeText(DeleteMembersActivity.this, "Input email please", Toast.LENGTH_SHORT)
+            Toast.makeText(FriendsRemoveActivity.this, "Input email please", Toast.LENGTH_SHORT)
                 .show();
           }
         });

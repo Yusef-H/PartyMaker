@@ -6,7 +6,7 @@
     android:background="#6cd7efff"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context="com.example.partymaker.ui.group.InvitedUsersActivity">
+    tools:context="com.example.partymaker.ui.group.MembersInvitedActivity">
 
     <ListView
         android:id="@+id/lv2"

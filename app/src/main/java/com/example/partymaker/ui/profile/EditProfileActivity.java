@@ -17,7 +17,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.ui.group.AddGroupActivity;
+import com.example.partymaker.ui.group.CreateGroupActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.squareup.picasso.Picasso;
 import java.util.Objects;
@@ -97,7 +97,7 @@ public class EditProfileActivity extends AppCompatActivity {
       goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idAddProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), AddGroupActivity.class);
+      goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idEditProfile) {
       goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);

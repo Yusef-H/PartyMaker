@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.partymaker.ui.group.MembersActivity"
+    tools:context="com.example.partymaker.ui.group.UsersListActivity"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Friend List"
+        android:text="@string/users_list"
         android:textColor="#000000"
         android:textSize="30sp"
         android:gravity="center"/>

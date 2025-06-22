@@ -50,20 +50,20 @@
             android:theme="@style/Theme.Material3.Register" />
 
         <activity android:name=".ui.common.MainActivity" />
-        <activity android:name=".ui.group.AddFriendActivity" />
-        <activity android:name=".ui.group.AddGroupActivity" />
+        <activity android:name=".ui.group.FriendsAddActivity" />
+        <activity android:name=".ui.group.CreateGroupActivity" />
         <activity android:name=".ui.group.AdminOptionsActivity" />
         <activity android:name=".ui.group.ChangeDateActivity" />
         <activity android:name=".ui.group.ChatActivity" />
-        <activity android:name=".ui.group.ComingMembersActivity" />
-        <activity android:name=".ui.group.DeleteMembersActivity" />
+        <activity android:name=".ui.group.MembersComingActivity" />
+        <activity android:name=".ui.group.FriendsRemoveActivity" />
         <activity android:name=".ui.profile.EditProfileActivity" />
-        <activity android:name=".ui.group.MembersActivity" />
+        <activity android:name=".ui.group.UsersListActivity" />
         <activity android:name=".ui.group.JoinGroupActivity" />
-        <activity android:name=".ui.group.GroupSettingsActivity" />
+        <activity android:name=".ui.group.AdminSettingsActivity" />
         <activity android:name=".ui.group.GroupDetailsActivity" />
         <activity android:name=".ui.auth.IntroActivity" />
-        <activity android:name=".ui.group.InvitedUsersActivity" />
+        <activity android:name=".ui.group.MembersInvitedActivity" />
         <activity android:name=".ui.group.PublicGroupsActivity" />
         <activity android:name=".ui.auth.ResetPasswordActivity" />
         <activity android:name=".ui.chatbot.GptChatActivity" />

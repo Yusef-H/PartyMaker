@@ -14,7 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
-public class MembersActivity extends AppCompatActivity {
+public class UsersListActivity extends AppCompatActivity {
   private ListView lv;
   public static Context contextOfApplication;
 
@@ -44,8 +44,8 @@ public class MembersActivity extends AppCompatActivity {
               User p = data.getValue(User.class);
               ArrUsers.add(p);
             }
-            UserAdapter adpt = new UserAdapter(MembersActivity.this, 0, 0, ArrUsers);
-            lv.setAdapter(adpt);
+            UserAdapter adapter = new UserAdapter(UsersListActivity.this, 0, 0, ArrUsers);
+            lv.setAdapter(adapter);
           }
 
           @Override

@@ -189,13 +189,13 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
               intent = new Intent(getBaseContext(), ChangeDateActivity.class);
             } else if (finalI == 2) // open 2,1 (3) Delete People
             {
-              intent = new Intent(getBaseContext(), DeleteMembersActivity.class);
+              intent = new Intent(getBaseContext(), FriendsRemoveActivity.class);
             } else if (finalI == 3) // open 2,2 (4) Change Entry Price
             {
             } else if (finalI == 4) // open 3,1 (5) Group Options
             {
               // intent to GroupOptions Activity with Values
-              intent = new Intent(getBaseContext(), GroupSettingsActivity.class);
+              intent = new Intent(getBaseContext(), AdminSettingsActivity.class);
 
             } else if (finalI == 5) // open 3,2 (6) Back
             {

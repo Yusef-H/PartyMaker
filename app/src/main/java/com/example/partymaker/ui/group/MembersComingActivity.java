@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ComingMembersActivity extends AppCompatActivity {
+public class MembersComingActivity extends AppCompatActivity {
 
   private ListView lv3;
   private HashMap<String, Object> ComingKeys;
@@ -28,7 +28,7 @@ public class ComingMembersActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_coming_list);
 
-    // this 2 lines changes title's name
+    // this 3 lines changes title's name
     ActionBar actionBar = getSupportActionBar();
     Objects.requireNonNull(actionBar).setTitle("Coming to party");
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
@@ -66,7 +66,7 @@ public class ComingMembersActivity extends AppCompatActivity {
                 }
               }
             }
-            InvitedAdapter adpt = new InvitedAdapter(ComingMembersActivity.this, 0, 0, ArrUsers);
+            InvitedAdapter adpt = new InvitedAdapter(MembersComingActivity.this, 0, 0, ArrUsers);
             lv3.setAdapter(adpt);
           }
 
