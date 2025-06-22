@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -36,7 +37,7 @@ public class EditProfileActivity extends AppCompatActivity {
         .setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
 
     // set actionbar background
-    Drawable d = getResources().getDrawable(R.drawable.bg_gray);
+    @SuppressLint("UseCompatLoadingForDrawables") Drawable d = getResources().getDrawable(R.drawable.bg_gray);
     actionBar.setBackgroundDrawable(d);
 
     // connectionU

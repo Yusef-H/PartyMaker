@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import java.io.Serializable;
 import java.util.HashMap;
 
 /** Utility methods for working with Intents and ExtrasMetadata. */
