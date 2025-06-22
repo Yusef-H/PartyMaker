@@ -1,4 +1,4 @@
-package com.example.partymaker.ui.chat;
+package com.example.partymaker.ui.chatbot;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

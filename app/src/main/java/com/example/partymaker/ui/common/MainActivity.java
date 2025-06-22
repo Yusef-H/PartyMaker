@@ -19,7 +19,7 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
-import com.example.partymaker.ui.chat.GptChatActivity;
+import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.group.AddGroupActivity;
 import com.example.partymaker.ui.group.GroupDetailsActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;

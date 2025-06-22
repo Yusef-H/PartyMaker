@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
 
         // start animation on ImageButton btnAbout
-        Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fadein);
+        Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fade_in);
         btnAbout.startAnimation(myFadeInAnimation);
 
         evantHandler();
