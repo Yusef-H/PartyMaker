@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,8 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.ChatAdapter;
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -45,8 +49,14 @@ public class ChatActivity extends AppCompatActivity {
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
     // connection between values from intent
-    MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
-    GroupKey = Objects.requireNonNull(getIntent().getExtras()).getString("groupKey", "defaultKey");
+      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+      if (extras == null) {
+          Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+          finish();
+          return;
+      }
+    MessageKeys = extras.getMessageKeys();
+    GroupKey = extras.getGroupKey();
 
     // connection
     lv4 = findViewById(R.id.lv4);

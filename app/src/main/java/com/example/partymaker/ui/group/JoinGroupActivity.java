@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.group;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,32 +15,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.example.partymaker.utilities.MapUtilities;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class JoinGroupActivity extends AppCompatActivity {
   private ImageView imgCalender;
-  private ImageView imgThumbUp;
-  private ImageView imgThumbDown;
   private ImageView imgSeeHours;
-  private ImageView imgAddFriend;
-  private ImageView imgOptions;
-  private ImageButton btnEditName;
-  private Button back5;
   private TextView tvDateText;
   private TextView tvDateDays;
   private TextView tvDateMonths;
   private TextView tvDateYears;
   private TextView tvDateHours;
-  private TextView tvComing;
-  private TextView tvNotComing;
   private TextView tvSeeHours;
   private TextView tvSeeDate;
   private TextView tvAt;
-  private TextView tvAddFriend;
-  private TextView tvOptions;
-  private CardView card1, card2, card3, card4, card5, card6, card7, card8;
   private String GroupKey;
   private String GroupLocation;
   private String GroupDay;
@@ -49,8 +41,8 @@ public class JoinGroupActivity extends AppCompatActivity {
   private String CurrentUser;
   private int IsClicked = 1;
   private HashMap<String, Object> FriendKeys;
-  private final boolean isComing = true;
 
+  @SuppressLint("SetTextI18n")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -62,30 +54,28 @@ public class JoinGroupActivity extends AppCompatActivity {
 
     // Get Values from PublicGroups By intent + connection between intent and
     // current activity objects
-    String groupName =
-        Objects.requireNonNull(getIntent().getExtras()).getString("GroupName", "defaultKey");
-    GroupKey = getIntent().getExtras().getString("groupKey", "defaultKey");
-    GroupDay = getIntent().getExtras().getString("groupDays", "defaultKey");
-    GroupMonth = getIntent().getExtras().getString("groupMonths", "defaultKey");
-    GroupYear = getIntent().getExtras().getString("groupYears", "defaultKey");
-    GroupHour = getIntent().getExtras().getString("groupHours", "defaultKey");
-    GroupLocation = getIntent().getExtras().getString("groupLocation", "defaultKey");
-    String adminKey = getIntent().getExtras().getString("adminKey", "defaultKey");
-    String createdAt = getIntent().getExtras().getString("createdAt", "defaultKey");
-    int groupType =
-        getIntent().getExtras().getInt("GroupType"); // if 0 so Public group if 1 so Private group
-    String groupPrice = getIntent().getExtras().getString("GroupPrice");
-    boolean canAdd = getIntent().getExtras().getBoolean("CanAdd");
-    FriendKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("FriendKeys");
-    HashMap<String, Object> comingKeys =
-        (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
-    HashMap<String, Object> messageKeys =
-        (HashMap<String, Object>) getIntent().getSerializableExtra("MessageKeys");
+    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return;
+    }
+    String groupName = extras.getGroupName();
+    GroupKey = extras.getGroupKey();
+    GroupDay = extras.getGroupDays();
+    GroupMonth = extras.getGroupMonths();
+    GroupYear = extras.getGroupYears();
+    GroupHour = extras.getGroupHours();
+    GroupLocation = extras.getGroupLocation();
+    String adminKey = extras.getAdminKey();
+    String createdAt = extras.getCreatedAt();
+    String groupPrice = extras.getGroupPrice();;
+    FriendKeys = extras.getFriendKeys();
+
 
     // connection
     GridLayout joinGrid = findViewById(R.id.joinGrid);
     imgCalender = findViewById(R.id.imgGroupDate);
-    ImageView imgLocation = findViewById(R.id.imgLocation1);
     imgSeeHours = findViewById(R.id.imgSeeHours1);
     tvDateText = findViewById(R.id.tvGroupDateText);
     tvDateDays = findViewById(R.id.tvGroupDateDays);
@@ -94,8 +84,6 @@ public class JoinGroupActivity extends AppCompatActivity {
     tvDateHours = findViewById(R.id.tvGroupDateHours);
     TextView tvGroupName = findViewById(R.id.tvGroupName1);
     TextView tvCreatedBy = findViewById(R.id.tvCreatedBy1);
-    TextView tvLocation = findViewById(R.id.tvLocation1);
-    TextView tvGroupLocation = findViewById(R.id.tvGroupLocation1);
     tvSeeHours = findViewById(R.id.tvSeeHours1);
     tvSeeDate = findViewById(R.id.tvSeeDate1);
     tvAt = findViewById(R.id.tvGroupAt);
