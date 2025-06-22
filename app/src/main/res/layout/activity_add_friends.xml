@@ -183,5 +183,5 @@
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_dialog_email"
         app:fabSize="normal"
-        android:contentDescription="צ'אט עם עוזר בינה מלאכותית"/>
+        android:contentDescription= "@string/chat_with_ai_assistant"/>
 </LinearLayout>

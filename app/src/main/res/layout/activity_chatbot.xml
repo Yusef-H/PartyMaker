@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#E8E8E8"
-        android:title="צ'אט עם עוזר בינה מלאכותית"
+        android:title="@string/chat_with_ai_assistant"
         android:titleTextColor="@android:color/white"
         app:navigationIcon="@android:drawable/ic_media_previous"/>
 

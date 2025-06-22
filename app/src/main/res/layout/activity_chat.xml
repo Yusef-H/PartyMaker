@@ -30,7 +30,7 @@
             android:layout_height="40dp"
             android:autofillHints=""
             android:backgroundTint="#1986ed"
-            android:hint="הקלד הודעה"
+            android:hint="@string/type_message"
             android:inputType="textMultiLine|textImeMultiLine"
             android:imeOptions="actionSend"
             android:maxLines="4"
