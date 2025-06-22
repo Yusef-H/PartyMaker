@@ -69,7 +69,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
   private boolean isComing = true;
   private boolean CanAdd;
 
-  @SuppressLint("SuspiciousIndentation")
+  @SuppressLint({"SuspiciousIndentation", "SetTextI18n"})
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -109,7 +109,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     imgCalender = findViewById(R.id.imgCalender);
     imgThumbUp = findViewById(R.id.imgThumbUp);
     imgThumbDown = findViewById(R.id.imgThumbDown);
-    ImageView imgLocation = findViewById(R.id.imgLocation);
     imgSeeHours = findViewById(R.id.imgSeeHours);
     ImageView imgAddFriend = findViewById(R.id.imgAddFriend);
     imgOptions = findViewById(R.id.imgOptions);
@@ -123,8 +122,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     tvNotComing = findViewById(R.id.tvNotComing);
     tvGroupName = findViewById(R.id.tvGroupName);
     TextView tvCreatedBy = findViewById(R.id.tvCreatedBy);
-    TextView tvLocation = findViewById(R.id.tvLocation);
-    TextView tvGroupLocation = findViewById(R.id.tvGroupLocation);
     tvSeeHours = findViewById(R.id.tvSeeHours);
     tvSeeDate = findViewById(R.id.tvSeeDate);
     TextView tvAddFriend = findViewById(R.id.tvAddFriend);
@@ -132,14 +129,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     tvAt = findViewById(R.id.tvAt);
     TextView tvEntryPrice = findViewById(R.id.tvEntryPrice);
     TextView tvYourEntry = findViewById(R.id.tvYourEntry);
-    CardView card1 = findViewById(R.id.Card1);
-    CardView card2 = findViewById(R.id.Card2);
-    CardView card3 = findViewById(R.id.Card3);
-    CardView card4 = findViewById(R.id.Card4);
     card5 = findViewById(R.id.Card5);
-    CardView card6 = findViewById(R.id.Card6);
-    CardView card7 = findViewById(R.id.Card7);
-    CardView card8 = findViewById(R.id.Card8);
 
     // get current account's email
     CurrentUser =
@@ -396,7 +386,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             {
               if (!isComing) {
                 String CurrentUser =
-                    Objects.requireNonNull(DBRef.Auth.getCurrentUser().getEmail())
+                    Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
                         .replace('.', ' ');
                 ComingKeys.put(CurrentUser, "true");
                 DBRef.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);

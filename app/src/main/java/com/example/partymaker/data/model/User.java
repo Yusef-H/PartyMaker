@@ -3,18 +3,6 @@ package com.example.partymaker.data.model;
 public class User {
   private String Email, UserName;
 
-  /*
-   * / private HashMap<String, Object> GroupKey = new HashMap<>();
-   *
-   * public HashMap<String, Object> getGroupKey() { return GroupKey; }
-   *
-   * public void setGroupKey(HashMap<String, Object> groupKey) { GroupKey =
-   * groupKey; }
-   *
-   * public void addGroupKey(String GroupKey) { this.GroupKey.put(GroupKey, true);
-   * } /
-   */
-
   public String getEmail() {
     return Email;
   }
@@ -25,10 +13,6 @@ public class User {
 
   public String getUserName() {
     return UserName;
-  }
-
-  public void setUserName(String userName) {
-    UserName = userName;
   }
 
   public User() {}

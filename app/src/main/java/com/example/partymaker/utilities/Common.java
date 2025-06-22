@@ -4,6 +4,7 @@ import static com.example.partymaker.utilities.Constants.ADMIN_KEY;
 import static com.example.partymaker.utilities.Constants.CAN_ADD;
 import static com.example.partymaker.utilities.Constants.COMING_KEYS;
 import static com.example.partymaker.utilities.Constants.CREATED_AT;
+import static com.example.partymaker.utilities.Constants.DEFAULT_KEY;
 import static com.example.partymaker.utilities.Constants.FRIEND_KEYS;
 import static com.example.partymaker.utilities.Constants.GROUP_DAYS;
 import static com.example.partymaker.utilities.Constants.GROUP_HOURS;
@@ -54,15 +55,15 @@ public class Common {
     if (extras == null) return null;
 
     return new ExtrasMetadata(
-        extras.getString(GROUP_NAME, "defaultKey"),
-        extras.getString(GROUP_KEY, "defaultKey"),
-        extras.getString(GROUP_DAYS, "defaultKey"),
-        extras.getString(GROUP_MONTHS, "defaultKey"),
-        extras.getString(GROUP_YEARS, "defaultKey"),
-        extras.getString(GROUP_HOURS, "defaultKey"),
-        extras.getString(GROUP_LOCATION, "defaultKey"),
-        extras.getString(ADMIN_KEY, "defaultKey"),
-        extras.getString(CREATED_AT, "defaultKey"),
+        extras.getString(GROUP_NAME, DEFAULT_KEY),
+        extras.getString(GROUP_KEY, DEFAULT_KEY),
+        extras.getString(GROUP_DAYS, DEFAULT_KEY),
+        extras.getString(GROUP_MONTHS, DEFAULT_KEY),
+        extras.getString(GROUP_YEARS, DEFAULT_KEY),
+        extras.getString(GROUP_HOURS, DEFAULT_KEY),
+        extras.getString(GROUP_LOCATION, DEFAULT_KEY),
+        extras.getString(ADMIN_KEY, DEFAULT_KEY),
+        extras.getString(CREATED_AT, DEFAULT_KEY),
         extras.getString(GROUP_PRICE, "0"),
         extras.getInt(GROUP_TYPE, 0),
         extras.getBoolean(CAN_ADD, false),
