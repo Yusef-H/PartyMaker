@@ -10,10 +10,7 @@ public class DBRef {
   public static FirebaseAuth Auth = FirebaseAuth.getInstance();
   public static FirebaseDatabase DataBase = FirebaseDatabase.getInstance();
   public static FirebaseStorage Storage = FirebaseStorage.getInstance();
-
   public static String CurrentUser;
-  public static String CurrentGroup;
-
   public static DatabaseReference refGroups = DataBase.getReference("Groups");
   public static DatabaseReference refUsers = DataBase.getReference("Users");
   public static DatabaseReference refMessages = DataBase.getReference("GroupsMessages");

@@ -1,22 +1,5 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Constants.ADMIN_KEY;
-import static com.example.partymaker.utilities.Constants.CAN_ADD;
-import static com.example.partymaker.utilities.Constants.COMING_KEYS;
-import static com.example.partymaker.utilities.Constants.CREATED_AT;
-import static com.example.partymaker.utilities.Constants.DEFAULT_KEY;
-import static com.example.partymaker.utilities.Constants.FRIEND_KEYS;
-import static com.example.partymaker.utilities.Constants.GROUP_DAYS;
-import static com.example.partymaker.utilities.Constants.GROUP_HOURS;
-import static com.example.partymaker.utilities.Constants.GROUP_KEY;
-import static com.example.partymaker.utilities.Constants.GROUP_LOCATION;
-import static com.example.partymaker.utilities.Constants.GROUP_MONTHS;
-import static com.example.partymaker.utilities.Constants.GROUP_NAME;
-import static com.example.partymaker.utilities.Constants.GROUP_PRICE;
-import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
-import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
-import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
@@ -86,7 +69,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
   private boolean isComing = true;
   private boolean CanAdd;
 
-  @SuppressLint("SuspiciousIndentation")
+  @SuppressLint({"SuspiciousIndentation", "SetTextI18n"})
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -98,22 +81,27 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     // Get Values from MainActivity By intent + connection between intent and
     // current activity objects
-    GroupName = Objects.requireNonNull(getIntent().getExtras()).getString(GROUP_NAME, DEFAULT_KEY);
-    GroupKey = getIntent().getExtras().getString(GROUP_KEY, DEFAULT_KEY);
-    GroupDay = getIntent().getExtras().getString(GROUP_DAYS, DEFAULT_KEY);
-    GroupMonth = getIntent().getExtras().getString(GROUP_MONTHS, DEFAULT_KEY);
-    GroupYear = getIntent().getExtras().getString(GROUP_YEARS, DEFAULT_KEY);
-    GroupHour = getIntent().getExtras().getString(GROUP_HOURS, DEFAULT_KEY);
-    GroupLocation = getIntent().getExtras().getString(GROUP_LOCATION, DEFAULT_KEY);
-    AdminKey = getIntent().getExtras().getString(ADMIN_KEY, DEFAULT_KEY);
-    CreatedAt = getIntent().getExtras().getString(CREATED_AT, DEFAULT_KEY);
-    GroupType =
-        getIntent().getExtras().getInt(GROUP_TYPE); // if 0 so Public group if 1 so Private group
-    GroupPrice = getIntent().getExtras().getString(GROUP_PRICE);
-    CanAdd = getIntent().getExtras().getBoolean(CAN_ADD);
-    FriendKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(FRIEND_KEYS);
-    ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(COMING_KEYS);
-    MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
+    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return;
+    }
+    GroupName = extras.getGroupName();
+    GroupKey = extras.getGroupKey();
+    GroupDay = extras.getGroupDays();
+    GroupMonth = extras.getGroupMonths();
+    GroupYear = extras.getGroupYears();
+    GroupHour = extras.getGroupHours();
+    GroupLocation = extras.getGroupLocation();
+    AdminKey = extras.getAdminKey();
+    CreatedAt = extras.getCreatedAt();
+    GroupPrice = extras.getGroupPrice();
+    GroupType = extras.getGroupType();
+    CanAdd = extras.isCanAdd();
+    FriendKeys = extras.getFriendKeys();
+    ComingKeys = extras.getComingKeys();
+    MessageKeys = extras.getMessageKeys();
 
     // connection
     GridLayout mainGrid = findViewById(R.id.MainGrid);
@@ -121,7 +109,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     imgCalender = findViewById(R.id.imgCalender);
     imgThumbUp = findViewById(R.id.imgThumbUp);
     imgThumbDown = findViewById(R.id.imgThumbDown);
-    ImageView imgLocation = findViewById(R.id.imgLocation);
     imgSeeHours = findViewById(R.id.imgSeeHours);
     ImageView imgAddFriend = findViewById(R.id.imgAddFriend);
     imgOptions = findViewById(R.id.imgOptions);
@@ -135,8 +122,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     tvNotComing = findViewById(R.id.tvNotComing);
     tvGroupName = findViewById(R.id.tvGroupName);
     TextView tvCreatedBy = findViewById(R.id.tvCreatedBy);
-    TextView tvLocation = findViewById(R.id.tvLocation);
-    TextView tvGroupLocation = findViewById(R.id.tvGroupLocation);
     tvSeeHours = findViewById(R.id.tvSeeHours);
     tvSeeDate = findViewById(R.id.tvSeeDate);
     TextView tvAddFriend = findViewById(R.id.tvAddFriend);
@@ -144,14 +129,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     tvAt = findViewById(R.id.tvAt);
     TextView tvEntryPrice = findViewById(R.id.tvEntryPrice);
     TextView tvYourEntry = findViewById(R.id.tvYourEntry);
-    CardView card1 = findViewById(R.id.Card1);
-    CardView card2 = findViewById(R.id.Card2);
-    CardView card3 = findViewById(R.id.Card3);
-    CardView card4 = findViewById(R.id.Card4);
     card5 = findViewById(R.id.Card5);
-    CardView card6 = findViewById(R.id.Card6);
-    CardView card7 = findViewById(R.id.Card7);
-    CardView card8 = findViewById(R.id.Card8);
 
     // get current account's email
     CurrentUser =
@@ -408,7 +386,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             {
               if (!isComing) {
                 String CurrentUser =
-                    Objects.requireNonNull(DBRef.Auth.getCurrentUser().getEmail())
+                    Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
                         .replace('.', ' ');
                 ComingKeys.put(CurrentUser, "true");
                 DBRef.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);

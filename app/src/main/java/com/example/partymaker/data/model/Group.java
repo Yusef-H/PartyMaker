@@ -6,8 +6,6 @@ public class Group {
   private String groupName;
   private String groupKey;
   private String groupLocation;
-  private double groupLatitude;
-  private double groupLongitude;
   private String adminKey;
   private String createdAt;
   private String groupDays;
@@ -33,32 +31,12 @@ public class Group {
     return MessageKeys;
   }
 
-  public void setMessageKeys(HashMap<String, Object> messageKeys) {
-    MessageKeys = messageKeys;
-  }
-
   public HashMap<String, Object> getFriendKeys() {
     return FriendKeys;
   }
 
-  public void setFriendKeys(HashMap<String, Object> friendKeys) {
-    this.FriendKeys = friendKeys;
-  }
-
-  public void addFriendKeys(String FriendKeys) {
-    this.FriendKeys.put(FriendKeys, true);
-  }
-
   public HashMap<String, Object> getComingKeys() {
     return ComingKeys;
-  }
-
-  public void setComingKeys(HashMap<String, Object> ComingKeys) {
-    this.ComingKeys = ComingKeys;
-  }
-
-  public void addComingKeys(String ComingKeys) {
-    this.ComingKeys.put(ComingKeys, true);
   }
 
   public Group() {}
@@ -78,9 +56,7 @@ public class Group {
       boolean canAdd,
       HashMap<String, Object> friendKeys,
       HashMap<String, Object> comingKeys,
-      HashMap<String, Object> messageKeys,
-      double groupLatitude,
-      double groupLongitude) {
+      HashMap<String, Object> messageKeys) {
     this.groupName = groupName;
     this.groupKey = groupKey;
     this.groupLocation = groupLocation;
@@ -96,8 +72,6 @@ public class Group {
     FriendKeys = friendKeys;
     ComingKeys = comingKeys;
     MessageKeys = messageKeys;
-    this.groupLatitude = groupLatitude;
-    this.groupLongitude = groupLongitude;
   }
 
   public String getGroupPrice() {
@@ -186,21 +160,5 @@ public class Group {
 
   public void setGroupHours(String groupHours) {
     this.groupHours = groupHours;
-  }
-
-  public double getGroupLatitude() {
-    return groupLatitude;
-  }
-
-  public void setGroupLatitude(double groupLatitude) {
-    this.groupLatitude = groupLatitude;
-  }
-
-  public double getGroupLongitude() {
-    return groupLongitude;
-  }
-
-  public void setGroupLongitude(double groupLongitude) {
-    this.groupLongitude = groupLongitude;
   }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -39,7 +40,7 @@ public class MapUtilities {
       double lng = Double.parseDouble(parts[1]);
       return new LatLng(lat, lng);
     } catch (NumberFormatException e) {
-      e.printStackTrace();
+      Log.e("MapUtilities", "Failed to parse coordinates: " + locationString, e);
       return null;
     }
   }

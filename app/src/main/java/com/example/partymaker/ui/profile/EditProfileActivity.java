@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -36,6 +37,7 @@ public class EditProfileActivity extends AppCompatActivity {
         .setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
 
     // set actionbar background
+    @SuppressLint("UseCompatLoadingForDrawables")
     Drawable d = getResources().getDrawable(R.drawable.bg_gray);
     actionBar.setBackgroundDrawable(d);
 
@@ -83,7 +85,8 @@ public class EditProfileActivity extends AppCompatActivity {
                       Toast.makeText(EditProfileActivity.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
                   exception ->
-                      Toast.makeText(EditProfileActivity.this, "error while saving ", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              EditProfileActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }

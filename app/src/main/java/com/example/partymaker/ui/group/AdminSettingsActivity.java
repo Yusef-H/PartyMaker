@@ -1,21 +1,6 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Constants.ADMIN_KEY;
-import static com.example.partymaker.utilities.Constants.CAN_ADD;
-import static com.example.partymaker.utilities.Constants.COMING_KEYS;
-import static com.example.partymaker.utilities.Constants.CREATED_AT;
-import static com.example.partymaker.utilities.Constants.DEFAULT_KEY;
-import static com.example.partymaker.utilities.Constants.FRIEND_KEYS;
-import static com.example.partymaker.utilities.Constants.GROUP_DAYS;
-import static com.example.partymaker.utilities.Constants.GROUP_HOURS;
-import static com.example.partymaker.utilities.Constants.GROUP_KEY;
-import static com.example.partymaker.utilities.Constants.GROUP_LOCATION;
-import static com.example.partymaker.utilities.Constants.GROUP_MONTHS;
 import static com.example.partymaker.utilities.Constants.GROUP_NAME;
-import static com.example.partymaker.utilities.Constants.GROUP_PRICE;
-import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
-import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
-import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -77,23 +62,27 @@ public class AdminSettingsActivity extends AppCompatActivity {
 
     // Get Values from GroupScreen By intent + connection between intent and current
     // activity objects
-    GroupName = Objects.requireNonNull(getIntent().getExtras()).getString(GROUP_NAME, DEFAULT_KEY);
-    GroupKey = getIntent().getExtras().getString(GROUP_KEY, DEFAULT_KEY);
-    GroupDay = getIntent().getExtras().getString(GROUP_DAYS, DEFAULT_KEY);
-    GroupMonth = getIntent().getExtras().getString(GROUP_MONTHS, DEFAULT_KEY);
-    GroupYear = getIntent().getExtras().getString(GROUP_YEARS, DEFAULT_KEY);
-    GroupHour = getIntent().getExtras().getString(GROUP_HOURS, DEFAULT_KEY);
-    GroupLocation = getIntent().getExtras().getString(GROUP_LOCATION, DEFAULT_KEY);
-    AdminKey = getIntent().getExtras().getString(ADMIN_KEY, DEFAULT_KEY);
-    CreatedAt = getIntent().getExtras().getString(CREATED_AT, DEFAULT_KEY);
-
-    // if 0 so Public group if 1 so Private group
-    GroupType = getIntent().getExtras().getInt(GROUP_TYPE);
-    GroupPrice = getIntent().getExtras().getString(GROUP_PRICE);
-    CanAdd = getIntent().getExtras().getBoolean(CAN_ADD);
-    FriendKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(FRIEND_KEYS);
-    ComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(COMING_KEYS);
-    MessageKeys = (HashMap<String, Object>) getIntent().getSerializableExtra(MESSAGE_KEYS);
+    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return;
+    }
+    GroupName = extras.getGroupName();
+    GroupKey = extras.getGroupKey();
+    GroupDay = extras.getGroupDays();
+    GroupMonth = extras.getGroupMonths();
+    GroupYear = extras.getGroupYears();
+    GroupHour = extras.getGroupHours();
+    GroupLocation = extras.getGroupLocation();
+    AdminKey = extras.getAdminKey();
+    CreatedAt = extras.getCreatedAt();
+    GroupPrice = extras.getGroupPrice();
+    GroupType = extras.getGroupType();
+    CanAdd = extras.isCanAdd();
+    FriendKeys = extras.getFriendKeys();
+    ComingKeys = extras.getComingKeys();
+    MessageKeys = extras.getMessageKeys();
 
     // connection
     GridLayout groupGrid = findViewById(R.id.GroupGrid);
