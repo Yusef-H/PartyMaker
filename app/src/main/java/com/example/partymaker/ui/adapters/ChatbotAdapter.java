@@ -10,10 +10,10 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.model.ChatMessageGpt;
 import java.util.List;
 
-public class ChatAdapter2 extends RecyclerView.Adapter<ChatAdapter2.MessageViewHolder> {
+public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageViewHolder> {
   private final List<ChatMessageGpt> messages;
 
-  public ChatAdapter2(List<ChatMessageGpt> messages) {
+  public ChatbotAdapter(List<ChatMessageGpt> messages) {
     this.messages = messages;
   }
 

@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.adapters.GroupAdpter;
+import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfile;
@@ -33,7 +33,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private ListView lv1;
   private DatabaseReference database;
   ArrayList<Group> group;
-  GroupAdpter allGroupsAdapter;
+  GroupAdapter allGroupsAdapter;
   String UserKey;
 
   @Override
@@ -133,7 +133,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
                 }
               }
             }
-            allGroupsAdapter = new GroupAdpter(PublicGroupsActivity.this, 0, 0, group);
+            allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
             lv1.setAdapter(allGroupsAdapter);
           }
 

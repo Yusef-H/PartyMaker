@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.adapters.GroupAdpter;
+import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chat.GptChatActivity;
 import com.example.partymaker.ui.group.AddGroupActivity;
@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
   private void sortAndDisplayGroups() {
     if (groupList != null) {
       groupList.sort(Comparator.comparing(Group::getCreatedAt));
-      GroupAdpter allGroupsAdapter = new GroupAdpter(MainActivity.this, 0, 0, groupList);
+      GroupAdapter allGroupsAdapter = new GroupAdapter(MainActivity.this, 0, 0, groupList);
       lv1.setAdapter(allGroupsAdapter);
     }
   }

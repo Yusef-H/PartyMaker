@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.ui.adapters.InvitedAdpter;
+import com.example.partymaker.ui.adapters.InvitedAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -64,7 +64,7 @@ public class InvitedUsersActivity extends AppCompatActivity {
                 }
               }
             }
-            InvitedAdpter adpt = new InvitedAdpter(InvitedUsersActivity.this, 0, 0, ArrUsers);
+            InvitedAdapter adpt = new InvitedAdapter(InvitedUsersActivity.this, 0, 0, ArrUsers);
             lv2.setAdapter(adpt);
           }
 

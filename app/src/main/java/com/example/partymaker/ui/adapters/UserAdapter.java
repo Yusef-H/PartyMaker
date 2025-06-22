@@ -17,11 +17,11 @@ import com.example.partymaker.data.model.User;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
-public class UserAdpter extends ArrayAdapter<User> {
+public class UserAdapter extends ArrayAdapter<User> {
   Context context;
   List<User> UserList;
 
-  public UserAdpter(
+  public UserAdapter(
       @NonNull Context context,
       @LayoutRes int resource,
       @IdRes int textViewResourceId,

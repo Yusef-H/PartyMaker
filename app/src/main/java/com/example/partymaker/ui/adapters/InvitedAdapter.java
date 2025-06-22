@@ -13,25 +13,22 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.group.MembersActivity;
+import com.example.partymaker.data.model.User;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
-public class GroupAdpter extends ArrayAdapter<Group> {
+public class InvitedAdapter extends ArrayAdapter<User> {
   Context context;
-  List<Group> GroupList;
-  Context applicationContext;
+  List<User> InvitedList;
 
-  public GroupAdpter(
+  public InvitedAdapter(
       @NonNull Context context,
       @LayoutRes int resource,
       @IdRes int textViewResourceId,
-      @NonNull List<Group> GroupList) {
-    super(context, resource, textViewResourceId, GroupList);
+      @NonNull List<User> InvitedList) {
+    super(context, resource, textViewResourceId, InvitedList);
     this.context = context;
-    this.GroupList = GroupList;
-    this.applicationContext = MembersActivity.getContextOfApplication();
+    this.InvitedList = InvitedList;
   }
 
   @NonNull
@@ -39,23 +36,22 @@ public class GroupAdpter extends ArrayAdapter<Group> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.group_list, parent, false);
-    Group temp = GroupList.get(position);
+    View view = layoutInflater.inflate(R.layout.invited_list, parent, false);
+    User temp = InvitedList.get(position);
 
-    TextView tvpGroupName = view.findViewById(R.id.tvGLgroupname);
-    tvpGroupName.setText(temp.getGroupName());
+    TextView tvpUserName = view.findViewById(R.id.tvILusername);
+    tvpUserName.setText(temp.getUserName());
 
-    TextView tvpGroupDate = view.findViewById(R.id.tvGLgroupdate);
-    String GroupDate =
-        (temp.getGroupDays() + " " + temp.getGroupMonths() + " " + temp.getGroupYears());
-    tvpGroupDate.setText(GroupDate);
+    TextView tvpEmail = view.findViewById(R.id.tvILemail);
+    tvpEmail.setText(temp.getEmail());
 
-    final ImageView imageView = view.findViewById(R.id.imgGLpicture);
+    final ImageView imageView = view.findViewById(R.id.imgILprofile);
 
-    String GroupKey = temp.getGroupKey();
+    String UserImageProfile = temp.getEmail();
+    String email = UserImageProfile.replace('.', ' ');
 
     DBRef.refStorage
-        .child("Groups/" + GroupKey)
+        .child("Users/" + email)
         .getDownloadUrl()
         .addOnSuccessListener(
             uri ->

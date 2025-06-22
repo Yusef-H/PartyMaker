@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessageGpt;
-import com.example.partymaker.ui.adapters.ChatAdapter2;
+import com.example.partymaker.ui.adapters.ChatbotAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ public class GptChatActivity extends AppCompatActivity {
   // כל ההיסטוריה שנשלחת ל-API (כולל system)
   private final List<ChatMessageGpt> history = new ArrayList<>(); // NEW
 
-  private ChatAdapter2 chatAdapter;
+  private ChatbotAdapter chatAdapter;
   private OpenAiApi openAiApi;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -71,7 +71,7 @@ public class GptChatActivity extends AppCompatActivity {
     toolbar.setNavigationOnClickListener(v -> finish());
 
     // ---------- RecyclerView ----------
-    chatAdapter = new ChatAdapter2(visibleMessages); // CHANGED
+    chatAdapter = new ChatbotAdapter(visibleMessages); // CHANGED
     chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     chatRecyclerView.setAdapter(chatAdapter);
 
