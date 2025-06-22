@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Group Name"
+            android:text="@string/group_name"
             android:textColor="@android:color/white"
             android:textSize="34sp" />
 
@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:text="Created by"
+            android:text="@string/created_by"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="70dp"
-            android:text="UserName + Date"
+            android:text="@string/username_date"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_centerHorizontal="true"
-            android:text="Entry price: "
+            android:text="@string/entry_price"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvGroupName1"
             android:layout_toRightOf="@id/tvYourEntry1"
-            android:text="free"
+            android:text="@string/free"
             android:textColor="@android:color/white" />
 
     </RelativeLayout>
@@ -102,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="45dp"
-                    android:text="Location"
+                    android:text="@string/location"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Hello"
+                android:text="@string/hello"
                 android:textColor="#1986ed"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -158,7 +158,7 @@
                     android:layout_alignEnd="@+id/tvGroupDateDays"
                     android:layout_below="@+id/imgGroupDate"
                     android:layout_marginRight="7dp"
-                    android:text="Date"
+                    android:text="@string/date"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="30dp"
-                    android:text="31"
+                    android:text="@string/_31"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="40sp"
@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="30dp"
-                    android:text="At"
+                    android:text="@string/at"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="40sp"
@@ -200,7 +200,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="25dp"
                         android:layout_marginLeft="10dp"
-                        android:text="Feb"
+                        android:text="@string/feb"
                         android:textColor="#1986ed"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -211,7 +211,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="50dp"
-                        android:text="2018"
+                        android:text="@string/_2018"
                         android:textColor="#1986ed"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -222,7 +222,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="00:00"
+                        android:text="@string/_00_00"
                         android:textColor="#1986ed"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -248,10 +248,11 @@
                 android:layout_height="15dp"
                 android:layout_marginLeft="67dp"
                 android:layout_marginTop="180dp"
-                android:text="press to see time"
+                android:text="@string/press_to_see_time"
                 android:textColor="#1986ed"
                 android:textSize="10sp"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/tvSeeDate1"
@@ -259,10 +260,11 @@
                 android:layout_height="15dp"
                 android:layout_marginLeft="67dp"
                 android:layout_marginTop="180dp"
-                android:text="press to see date"
+                android:text="@string/press_to_see_date"
                 android:textColor="#1986ed"
                 android:textSize="10sp"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                tools:ignore="SmallSp" />
         </androidx.cardview.widget.CardView>
         <!-- 2,1 -->
         <androidx.cardview.widget.CardView
@@ -293,7 +295,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Join Group"
+                    android:text="@string/join_group"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
@@ -332,7 +334,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Back"
+                    android:text="@string/back"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"

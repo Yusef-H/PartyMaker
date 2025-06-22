@@ -93,7 +93,7 @@
             android:id="@+id/tvPartyDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pick a date:"
+            android:text="@string/pick_a_date"
             android:textColor="#000000"
             android:textSize="18sp"
             android:layout_marginTop="8dp"
@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:padding="8dp"
-            android:text="Tap to select date"
+            android:text="@string/tap_to_select_date"
             android:textColor="#039694"
             android:textSize="18sp"
             android:layout_marginBottom="16dp"
@@ -118,7 +118,7 @@
             android:id="@+id/tvHours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pick an hour:"
+            android:text="@string/pick_an_hour"
             android:textColor="#000000"
             android:textSize="18sp"
             android:layout_marginBottom="4dp"
@@ -225,5 +225,5 @@
         android:layout_margin="48dp"
         android:src="@android:drawable/ic_dialog_email"
         app:fabSize="normal"
-        android:contentDescription="צ'אט עם עוזר בינה מלאכותית"/>
+        android:contentDescription="@string/Chat" />
 </RelativeLayout>

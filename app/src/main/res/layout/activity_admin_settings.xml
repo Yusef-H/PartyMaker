@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/imgEditGroup"
-            android:text="GroupName"
+            android:text="@string/groupname"
             android:textColor="@android:color/white"
             android:textSize="34sp" />
 
@@ -88,7 +88,7 @@
                     android:id="@+id/tvType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Public Group"
+                    android:text="@string/public_group"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
@@ -128,7 +128,7 @@
                     android:id="@+id/tvCanAdd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Admin Add"
+                    android:text="@string/admin_add"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
@@ -166,7 +166,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Delete Group"
+                    android:text="@string/delete_group"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
@@ -205,7 +205,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Back"
+                    android:text="@string/back"
                     android:textAlignment="center"
                     android:textColor="#1986ed"
                     android:textSize="18sp"
