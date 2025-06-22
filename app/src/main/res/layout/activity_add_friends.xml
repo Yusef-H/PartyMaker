@@ -92,22 +92,44 @@
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btnAddFriend"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
-        android:background="#106e6e6e"
-        android:shadowColor="#e4e9ef"
-        android:shadowDx="-0"
-        android:shadowDy="-0"
-        android:shadowRadius="25"
-        android:text="Add Friend"
-        android:textAllCaps="false"
-        android:textColor="#0081d1"
-        android:textSize="15sp" />
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/btnAddFriend"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="10dp"
+            android:background="#10d15000"
+            android:shadowColor="#e4e9ef"
+            android:shadowDx="-0"
+            android:shadowDy="-0"
+            android:shadowRadius="25"
+            android:text="Add Friend"
+            android:textAllCaps="false"
+            android:textColor="#d15000"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btnFriendsList"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:background="#106e6e6e"
+            android:shadowColor="#e4e9ef"
+            android:shadowDx="-0"
+            android:shadowDy="-0"
+            android:shadowRadius="25"
+            android:text="Friends List"
+            android:textAllCaps="false"
+            android:textColor="#0081d1"
+            android:textSize="15sp" />
+
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">

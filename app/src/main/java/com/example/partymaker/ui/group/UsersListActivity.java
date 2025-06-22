@@ -1,9 +1,12 @@
 package com.example.partymaker.ui.group;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.widget.ListView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
@@ -23,6 +26,12 @@ public class UsersListActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_friend_list);
     contextOfApplication = getApplicationContext();
+
+    // Actionbar settings
+    ActionBar actionBar = getSupportActionBar();
+    assert actionBar != null;
+    actionBar.setTitle("All users");
+    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
     lv = findViewById(R.id.lv);
     ShowData();
