@@ -1,21 +1,6 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Constants.ADMIN_KEY;
-import static com.example.partymaker.utilities.Constants.CAN_ADD;
-import static com.example.partymaker.utilities.Constants.COMING_KEYS;
-import static com.example.partymaker.utilities.Constants.CREATED_AT;
-import static com.example.partymaker.utilities.Constants.DEFAULT_KEY;
-import static com.example.partymaker.utilities.Constants.FRIEND_KEYS;
-import static com.example.partymaker.utilities.Constants.GROUP_DAYS;
-import static com.example.partymaker.utilities.Constants.GROUP_HOURS;
-import static com.example.partymaker.utilities.Constants.GROUP_KEY;
-import static com.example.partymaker.utilities.Constants.GROUP_LOCATION;
-import static com.example.partymaker.utilities.Constants.GROUP_MONTHS;
 import static com.example.partymaker.utilities.Constants.GROUP_NAME;
-import static com.example.partymaker.utilities.Constants.GROUP_PRICE;
-import static com.example.partymaker.utilities.Constants.GROUP_TYPE;
-import static com.example.partymaker.utilities.Constants.GROUP_YEARS;
-import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

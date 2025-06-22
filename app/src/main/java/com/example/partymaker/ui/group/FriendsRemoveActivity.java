@@ -121,7 +121,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
             database.addValueEventListener(
                 new ValueEventListener() {
                   @Override
-                  public void onDataChange(DataSnapshot dataSnapshot) {
+                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     boolean flag = false;
                     boolean flag1 = false;
                     HashMap<String, Object> GroupFriends;

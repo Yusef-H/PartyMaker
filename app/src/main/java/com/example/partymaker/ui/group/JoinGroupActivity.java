@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,7 +67,7 @@ public class JoinGroupActivity extends AppCompatActivity {
     GroupLocation = extras.getGroupLocation();
     String adminKey = extras.getAdminKey();
     String createdAt = extras.getCreatedAt();
-    String groupPrice = extras.getGroupPrice();;
+    String groupPrice = extras.getGroupPrice();
     FriendKeys = extras.getFriendKeys();
 
 
