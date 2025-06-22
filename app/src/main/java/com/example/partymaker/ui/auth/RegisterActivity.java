@@ -304,8 +304,8 @@ public class RegisterActivity extends AppCompatActivity {
                 () -> {
                   Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                   startActivity(intent);
-                  finish();
                   overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+                  finish();
                 });
           }
         });
