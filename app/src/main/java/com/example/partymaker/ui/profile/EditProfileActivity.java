@@ -37,7 +37,8 @@ public class EditProfileActivity extends AppCompatActivity {
         .setTitle(Html.fromHtml("<font color='#505050'>Edit Profile</font>"));
 
     // set actionbar background
-    @SuppressLint("UseCompatLoadingForDrawables") Drawable d = getResources().getDrawable(R.drawable.bg_gray);
+    @SuppressLint("UseCompatLoadingForDrawables")
+    Drawable d = getResources().getDrawable(R.drawable.bg_gray);
     actionBar.setBackgroundDrawable(d);
 
     // connectionU

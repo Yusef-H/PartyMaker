@@ -186,18 +186,17 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
       cardView.setOnClickListener(
           view -> {
             Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);
-            if (finalI == 0) // open 1,1 (1) Change Location
-            {
-            } else if (finalI == 1) // open 1,2 (2) Change Date
+            // if (finalI == 0)  open 1,1 (1) Change Location
+            if (finalI == 1) // open 1,2 (2) Change Date
             {
               // intent from AdminOptions to ChangeDate
               intent = new Intent(getBaseContext(), ChangeDateActivity.class);
             } else if (finalI == 2) // open 2,1 (3) Delete People
             {
               intent = new Intent(getBaseContext(), FriendsRemoveActivity.class);
-            } else if (finalI == 3) // open 2,2 (4) Change Entry Price
-            {
-            } else if (finalI == 4) // open 3,1 (5) Group Options
+            }
+            // else if (finalI == 3) // open 2,2 (4) Change Entry Price
+            else if (finalI == 4) // open 3,1 (5) Group Options
             {
               // intent to GroupOptions Activity with Values
               intent = new Intent(getBaseContext(), AdminSettingsActivity.class);

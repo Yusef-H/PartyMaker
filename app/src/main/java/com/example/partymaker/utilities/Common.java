@@ -66,9 +66,9 @@ public class Common {
         extras.getString(GROUP_PRICE, "0"),
         extras.getInt(GROUP_TYPE, 0),
         extras.getBoolean(CAN_ADD, false),
-            getHashMapExtra(extras, FRIEND_KEYS),
-            getHashMapExtra(extras, COMING_KEYS),
-            getHashMapExtra(extras, MESSAGE_KEYS));
+        getHashMapExtra(extras, FRIEND_KEYS),
+        getHashMapExtra(extras, COMING_KEYS),
+        getHashMapExtra(extras, MESSAGE_KEYS));
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -127,5 +127,4 @@ public class Common {
   public static HashMap<String, Object> getHashMapExtra(Bundle extras, String key) {
     return (HashMap<String, Object>) extras.getSerializable(key);
   }
-
 }

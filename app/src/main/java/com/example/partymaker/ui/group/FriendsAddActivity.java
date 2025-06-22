@@ -57,27 +57,27 @@ public class FriendsAddActivity extends AppCompatActivity {
 
     // Get Values from MainActivity By intent + connection between intent and
     // current activity objects
-      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
-      if (extras == null) {
-          Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
-          finish();
-          return;
-      }
-      GroupName = extras.getGroupName();
-      GroupKey = extras.getGroupKey();
-      GroupDay = extras.getGroupDays();
-      GroupMonth = extras.getGroupMonths();
-      GroupYear = extras.getGroupYears();
-      GroupHour = extras.getGroupHours();
-      GroupLocation = extras.getGroupLocation();
-      AdminKey = extras.getAdminKey();
-      CreatedAt = extras.getCreatedAt();
-      GroupPrice = extras.getGroupPrice();
-      GroupType = extras.getGroupType();
-      CanAdd = extras.isCanAdd();
-      FriendKeys = extras.getFriendKeys();
-      ComingKeys = extras.getComingKeys();
-      MessageKeys = extras.getMessageKeys();
+    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return;
+    }
+    GroupName = extras.getGroupName();
+    GroupKey = extras.getGroupKey();
+    GroupDay = extras.getGroupDays();
+    GroupMonth = extras.getGroupMonths();
+    GroupYear = extras.getGroupYears();
+    GroupHour = extras.getGroupHours();
+    GroupLocation = extras.getGroupLocation();
+    AdminKey = extras.getAdminKey();
+    CreatedAt = extras.getCreatedAt();
+    GroupPrice = extras.getGroupPrice();
+    GroupType = extras.getGroupType();
+    CanAdd = extras.isCanAdd();
+    FriendKeys = extras.getFriendKeys();
+    ComingKeys = extras.getComingKeys();
+    MessageKeys = extras.getMessageKeys();
 
     // database set
     database = FirebaseDatabase.getInstance().getReference("Users");

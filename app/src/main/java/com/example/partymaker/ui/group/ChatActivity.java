@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,12 +48,12 @@ public class ChatActivity extends AppCompatActivity {
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
 
     // connection between values from intent
-      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
-      if (extras == null) {
-          Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
-          finish();
-          return;
-      }
+    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return;
+    }
     MessageKeys = extras.getMessageKeys();
     GroupKey = extras.getGroupKey();
 

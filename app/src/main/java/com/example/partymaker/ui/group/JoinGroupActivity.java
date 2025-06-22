@@ -70,7 +70,6 @@ public class JoinGroupActivity extends AppCompatActivity {
     String groupPrice = extras.getGroupPrice();
     FriendKeys = extras.getFriendKeys();
 
-
     // connection
     GridLayout joinGrid = findViewById(R.id.joinGrid);
     imgCalender = findViewById(R.id.imgGroupDate);
