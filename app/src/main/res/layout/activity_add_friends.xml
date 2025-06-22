@@ -93,6 +93,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
@@ -101,6 +102,7 @@
 
         <Button
             android:id="@+id/btnAddFriend"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_marginEnd="10dp"
@@ -116,6 +118,7 @@
 
         <Button
             android:id="@+id/btnFriendsList"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
