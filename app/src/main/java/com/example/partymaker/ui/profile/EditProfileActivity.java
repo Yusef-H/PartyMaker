@@ -83,7 +83,8 @@ public class EditProfileActivity extends AppCompatActivity {
                       Toast.makeText(EditProfileActivity.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
                   exception ->
-                      Toast.makeText(EditProfileActivity.this, "error while saving ", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              EditProfileActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }

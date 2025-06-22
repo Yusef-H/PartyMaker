@@ -19,9 +19,12 @@ import static com.example.partymaker.utilities.Constants.MESSAGE_KEYS;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import java.io.Serializable;
+import java.util.HashMap;
 
 /** Utility methods for working with Intents and ExtrasMetadata. */
 public class Common {
@@ -45,6 +48,28 @@ public class Common {
     intent.putExtra(FRIEND_KEYS, extras.getFriendKeys());
     intent.putExtra(COMING_KEYS, extras.getComingKeys());
     intent.putExtra(MESSAGE_KEYS, extras.getMessageKeys());
+  }
+
+  public static ExtrasMetadata getExtrasMetadataFromIntent(Intent intent) {
+    Bundle extras = intent.getExtras();
+    if (extras == null) return null;
+
+    return new ExtrasMetadata(
+        extras.getString(GROUP_NAME, "defaultKey"),
+        extras.getString(GROUP_KEY, "defaultKey"),
+        extras.getString(GROUP_DAYS, "defaultKey"),
+        extras.getString(GROUP_MONTHS, "defaultKey"),
+        extras.getString(GROUP_YEARS, "defaultKey"),
+        extras.getString(GROUP_HOURS, "defaultKey"),
+        extras.getString(GROUP_LOCATION, "defaultKey"),
+        extras.getString(ADMIN_KEY, "defaultKey"),
+        extras.getString(CREATED_AT, "defaultKey"),
+        extras.getString(GROUP_PRICE, "0"),
+        extras.getInt(GROUP_TYPE, 0),
+        extras.getBoolean(CAN_ADD, false),
+            getHashMapExtra(extras, FRIEND_KEYS),
+            getHashMapExtra(extras, COMING_KEYS),
+            getHashMapExtra(extras, MESSAGE_KEYS));
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -98,4 +123,10 @@ public class Common {
       return "";
     }
   }
+
+  @SuppressWarnings("unchecked")
+  public static HashMap<String, Object> getHashMapExtra(Bundle extras, String key) {
+    return (HashMap<String, Object>) extras.getSerializable(key);
+  }
+
 }
