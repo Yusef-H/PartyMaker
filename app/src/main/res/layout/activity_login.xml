@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background3"
+    android:background="@drawable/bg_cyan"
     android:fillViewport="true"
     android:theme="@style/Theme.Material3.Login"
     tools:context="com.example.partymaker.ui.auth.LoginActivity">
@@ -40,7 +40,7 @@
                     android:layout_alignParentEnd="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/about_us"
-                    android:src="@drawable/bubble" />
+                    android:src="@drawable/ic_about_us" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -55,7 +55,7 @@
                         android:layout_height="200dp"
                         android:contentDescription="@string/cake"
                         android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/cake3" />
+                        app:srcCompat="@drawable/ic_cake_cyan" />
                 </LinearLayout>
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -89,7 +89,7 @@
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
-                    app:startIconDrawable="@drawable/email_logo1"
+                    app:startIconDrawable="@drawable/ic_email_red"
                     app:startIconTint="?attr/colorPrimary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -112,7 +112,7 @@
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:endIconMode="password_toggle"
-                    app:startIconDrawable="@drawable/password_logo1"
+                    app:startIconDrawable="@drawable/ic_password_red"
                     app:startIconTint="?attr/colorPrimary">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -157,7 +157,7 @@
                         android:textAppearance="?attr/textAppearanceLabelLarge"
                         android:textStyle="bold"
                         app:cornerRadius="12dp"
-                        app:icon="@drawable/cake"
+                        app:icon="@drawable/ic_cake"
                         app:iconGravity="textStart"
                         app:iconPadding="8dp"
                         app:iconTint="?attr/colorOnPrimary" />
@@ -237,7 +237,7 @@
                         android:layout_height="20dp"
                         android:layout_marginEnd="10dp"
                         android:contentDescription="@string/register"
-                        android:src="@drawable/cake2"
+                        android:src="@drawable/ic_cake_purple"
                         app:tint="?attr/colorPrimary" />
 
                     <com.google.android.material.textview.MaterialTextView
@@ -286,7 +286,7 @@
                         android:layout_height="20dp"
                         android:layout_marginEnd="10dp"
                         android:contentDescription="@string/reset_your_password"
-                        android:src="@drawable/password_logo1"
+                        android:src="@drawable/ic_password_red"
                         app:tint="?attr/colorSecondary" />
 
                     <com.google.android.material.textview.MaterialTextView

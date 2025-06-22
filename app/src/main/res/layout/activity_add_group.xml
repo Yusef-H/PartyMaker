@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background3"
+    android:background="@drawable/bg_cyan"
     android:orientation="vertical"
     android:weightSum="1"
     android:fitsSystemWindows="true"
@@ -18,7 +18,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="21dp"
         android:contentDescription="@string/todo"
-        app:srcCompat="@drawable/cake3"
+        app:srcCompat="@drawable/ic_cake_cyan"
          />
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -27,7 +27,7 @@
         android:layout_height="200dp"
         android:layout_marginStart="115dp"
         android:layout_marginTop="50dp"
-        android:background="@drawable/addpicture"
+        android:background="@drawable/btn_add_picture"
         android:clickable="true"
         android:visibility="invisible"
         app:civ_border_width="3dp"

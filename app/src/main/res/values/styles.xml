@@ -14,17 +14,4 @@
         <!-- Other theme attributes -->
         <item name="android:windowBackground">@color/colorBackground</item>
     </style>
-
-    <!-- Material theme for login page -->
-
-    <!-- Button Style -->
-
-    <!-- Text Button Style -->
-
-    <!-- Input Field Style -->
-
-    <!-- Checkbox Style -->
-
-    <!-- Text Styles -->
-
 </resources>

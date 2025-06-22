@@ -15,16 +15,6 @@
     <!-- These can be safely kept empty since they're defined above with different names -->
     <string name="hint_email">Email</string>
 
-    <!-- Registration Screen -->
-
-    <!-- Password Reset -->
-
-    <!-- Validation Messages -->
-
-    <!-- Success Messages -->
-
-    <!-- Error Messages -->
-
     <!-- Welcome Slider -->
     <string name="next">Next</string>
     <string name="skip">Skip</string>

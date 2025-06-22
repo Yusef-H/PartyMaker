@@ -48,7 +48,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     // set actionbar background
     @SuppressLint("UseCompatLoadingForDrawables")
-    Drawable d = getResources().getDrawable(R.drawable.background5);
+    Drawable d = getResources().getDrawable(R.drawable.bg_purple_dark);
     actionBar.setBackgroundDrawable(d);
 
     // connection

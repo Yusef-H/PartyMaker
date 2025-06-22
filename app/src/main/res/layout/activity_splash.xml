@@ -24,7 +24,7 @@
             android:contentDescription="@string/logo"
             android:elevation="8dp"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/cake00" />
+            app:srcCompat="@drawable/ic_cake_white" />
 
         <!-- App name text -->
         <TextView

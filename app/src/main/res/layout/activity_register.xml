@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@drawable/background3"
+    android:background="@drawable/bg_cyan"
     android:theme="@style/Theme.Material3.Register"
     tools:context="com.example.partymaker.ui.auth.RegisterActivity">
 
@@ -59,7 +59,7 @@
                         android:contentDescription="@string/register_cake"
                         android:scaleType="centerCrop"
                         android:elevation="4dp"
-                        app:srcCompat="@drawable/cake3" />
+                        app:srcCompat="@drawable/ic_cake_cyan" />
 
                     <!-- Sparkle effects -->
                     <ImageView
@@ -124,7 +124,7 @@
                     app:boxCornerRadiusTopStart="16dp"
                     app:boxStrokeWidth="2dp"
                     app:boxStrokeWidthFocused="3dp"
-                    app:startIconDrawable="@drawable/email_logo1"
+                    app:startIconDrawable="@drawable/ic_email_red"
                     app:startIconTint="?attr/colorPrimary"
                     app:endIconMode="clear_text"
                     app:helperText="@string/valid_email_required"
@@ -157,7 +157,7 @@
                     app:boxCornerRadiusTopStart="16dp"
                     app:boxStrokeWidth="2dp"
                     app:boxStrokeWidthFocused="3dp"
-                    app:startIconDrawable="@drawable/username_logo2"
+                    app:startIconDrawable="@drawable/ic_username_red"
                     app:startIconTint="?attr/colorPrimary"
                     app:endIconMode="clear_text"
                     app:helperText="@string/username_visible_to_everyone"
@@ -193,7 +193,7 @@
                     app:boxCornerRadiusTopStart="16dp"
                     app:boxStrokeWidth="2dp"
                     app:boxStrokeWidthFocused="3dp"
-                    app:startIconDrawable="@drawable/password_logo1"
+                    app:startIconDrawable="@drawable/ic_password_red"
                     app:startIconTint="?attr/colorPrimary"
                     app:endIconMode="password_toggle"
                     app:endIconTint="?attr/colorPrimary"
@@ -226,7 +226,7 @@
                     android:textStyle="bold"
                     android:textSize="16sp"
                     app:cornerRadius="16dp"
-                    app:icon="@drawable/cake"
+                    app:icon="@drawable/ic_cake"
                     app:iconGravity="textStart"
                     app:iconPadding="12dp"
                     app:iconSize="24dp"

@@ -99,7 +99,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     // set actionbar background
-    Drawable d = ContextCompat.getDrawable(this, R.drawable.background3);
+    Drawable d = ContextCompat.getDrawable(this, R.drawable.bg_cyan);
     assert actionBar != null;
     actionBar.setBackgroundDrawable(d);
 

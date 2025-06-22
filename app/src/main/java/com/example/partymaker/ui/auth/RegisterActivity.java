@@ -744,7 +744,7 @@ public class RegisterActivity extends AppCompatActivity {
   private void sendSuccessNotification(String username) {
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.cake)
+            .setSmallIcon(R.drawable.ic_cake)
             .setContentTitle("Registration completed successfully!")
             .setContentText("Welcome " + username + "! Start creating amazing parties")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

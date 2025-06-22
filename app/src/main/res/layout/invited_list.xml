@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="5dp"
-        android:src="@drawable/profileicon" />
+        android:src="@drawable/ic_profile" />
     <TextView
         android:id="@+id/tvILusername"
         android:layout_width="250dp"
@@ -39,7 +39,7 @@
         android:layout_marginLeft="30dp"
         android:layout_toEndOf="@+id/tvILusername"
         android:contentDescription="TODO"
-        app:srcCompat="@drawable/admin"
+        app:srcCompat="@drawable/ic_admin"
         android:visibility="invisible"/>
 
 </RelativeLayout>

@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Login Screen -->
-
-    <!-- Register Screen -->
-
     <!-- Primary Colors -->
     <color name="pink_100">#FFFFEEF4</color>
-
-    <!-- Neutral Colors -->
-
-    <!-- Semantic Colors -->
 
     <!-- Standard Colors -->
     <color name="white">#FFFFFFFF</color>

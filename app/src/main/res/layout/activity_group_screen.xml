@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg"
+        android:background="@drawable/bg_party_screen"
         android:orientation="vertical"
         android:weightSum="10">
 
@@ -36,7 +36,7 @@
                 android:layout_toEndOf="@+id/tvGroupName"
                 android:background="#00000000"
                 android:contentDescription="TODO"
-                android:src="@drawable/edit" />
+                android:src="@drawable/ic_party_pencil" />
 
             <TextView
                 android:layout_width="70dp"
@@ -120,7 +120,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:contentDescription="TODO"
-                        android:src="@drawable/location" />
+                        android:src="@drawable/ic_party_location" />
 
                     <TextView
                         android:id="@+id/tvLocation"
@@ -175,7 +175,7 @@
                         android:layout_marginRight="7dp"
                         android:layout_marginTop="5dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/calendar" />
+                        android:src="@drawable/ic_party_calendar" />
 
                     <TextView
                         android:id="@+id/tvDateText"
@@ -265,7 +265,7 @@
                     android:layout_marginLeft="140dp"
                     android:layout_marginTop="242dp"
                     android:contentDescription="TODO"
-                    android:src="@drawable/arrow"
+                    android:src="@drawable/ic_menu_arrow"
                     android:visibility="invisible" />
 
                 <TextView
@@ -315,7 +315,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/invited" />
+                        android:src="@drawable/ic_party_invited" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -353,7 +353,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/thumpup" />
+                        android:src="@drawable/ic_thumbup_blue" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -393,7 +393,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/thumbdown"
+                        android:src="@drawable/ic_thumbdown"
                         android:visibility="invisible" />
 
                     <TextView
@@ -415,7 +415,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/thumbup"
+                        android:src="@drawable/ic_thumbup_white"
                         android:visibility="invisible" />
 
                     <TextView
@@ -437,7 +437,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/options" />
+                        android:src="@drawable/ic_party_options" />
 
                     <TextView
                         android:id="@+id/tvOptions"
@@ -477,7 +477,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/chat" />
+                        android:src="@drawable/ic_party_chat" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -518,7 +518,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/plus" />
+                        android:src="@drawable/ic_plus" />
 
                     <TextView
                         android:id="@+id/tvAddFriend"
@@ -557,7 +557,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/leave" />
+                        android:src="@drawable/ic_party_leave" />
 
                     <TextView
                         android:layout_width="wrap_content"

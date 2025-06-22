@@ -117,20 +117,20 @@ public class GroupSettingsActivity extends AppCompatActivity {
 
     // set 1st button if group is private or if group is public
     if (GroupType == 0) { // if group is public
-      imgType.setImageResource(R.drawable.everyone);
+      imgType.setImageResource(R.drawable.ic_party_everyone);
       tvType.setText("Public Group");
     } else { // if group is private
-      imgType.setImageResource(R.drawable.lock);
+      imgType.setImageResource(R.drawable.ic_party_lock);
       tvType.setText("Private Group");
     }
 
     // set 3rd button if all can add it shows that all can if if only admin can add
     // it shows that only admin can add
     if (CanAdd) {
-      imgCanAdd.setImageResource(R.drawable.everyone);
+      imgCanAdd.setImageResource(R.drawable.ic_party_everyone);
       tvCanAdd.setText("Everyone Add");
     } else {
-      imgCanAdd.setImageResource(R.drawable.one);
+      imgCanAdd.setImageResource(R.drawable.ic_party_private);
       tvCanAdd.setText("Admin Add");
     }
 
@@ -216,12 +216,12 @@ public class GroupSettingsActivity extends AppCompatActivity {
             if (finalI == 0) // open 1,1 (1) Change GroupType to Public/Private
             {
               if (GroupType == 0) {
-                imgType.setImageResource(R.drawable.lock);
+                imgType.setImageResource(R.drawable.ic_party_lock);
                 tvType.setText("Private Group");
                 GroupType = 1;
                 DBRef.refGroups.child(GroupKey).child("groupType").setValue(1);
               } else {
-                imgType.setImageResource(R.drawable.everyone);
+                imgType.setImageResource(R.drawable.ic_party_everyone);
                 tvType.setText("Public Group");
                 GroupType = 0;
                 DBRef.refGroups.child(GroupKey).child("groupType").setValue(0);
@@ -230,12 +230,12 @@ public class GroupSettingsActivity extends AppCompatActivity {
             {
 
               if (CanAdd) {
-                imgCanAdd.setImageResource(R.drawable.one);
+                imgCanAdd.setImageResource(R.drawable.ic_party_private);
                 tvCanAdd.setText("Only Admin");
                 CanAdd = false;
                 DBRef.refGroups.child(GroupKey).child("canAdd").setValue(false);
               } else {
-                imgCanAdd.setImageResource(R.drawable.everyone);
+                imgCanAdd.setImageResource(R.drawable.ic_party_everyone);
                 tvCanAdd.setText("Everyone Add");
                 CanAdd = true;
                 DBRef.refGroups.child(GroupKey).child("canAdd").setValue(true);
