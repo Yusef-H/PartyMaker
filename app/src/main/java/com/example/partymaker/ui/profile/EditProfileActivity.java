@@ -22,7 +22,7 @@ import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
   private ImageView imgProfile;
 
   @Override
@@ -80,10 +80,10 @@ public class EditProfile extends AppCompatActivity {
               .putFile(uri)
               .addOnSuccessListener(
                   taskSnapshot ->
-                      Toast.makeText(EditProfile.this, "saved", Toast.LENGTH_SHORT).show())
+                      Toast.makeText(EditProfileActivity.this, "saved", Toast.LENGTH_SHORT).show())
               .addOnFailureListener(
                   exception ->
-                      Toast.makeText(EditProfile.this, "error while saving ", Toast.LENGTH_SHORT)
+                      Toast.makeText(EditProfileActivity.this, "error while saving ", Toast.LENGTH_SHORT)
                           .show());
         }
       }
@@ -100,7 +100,7 @@ public class EditProfile extends AppCompatActivity {
       goToNextActivity = new Intent(getApplicationContext(), AddGroupActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idEditProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), EditProfile.class);
+      goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idPublicParties) {
       goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);

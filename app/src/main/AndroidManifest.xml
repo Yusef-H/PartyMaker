@@ -41,7 +41,7 @@
         <activity android:name=".ui.group.ChatActivity" />
         <activity android:name=".ui.group.ComingMembersActivity" />
         <activity android:name=".ui.group.DeleteMembersActivity" />
-        <activity android:name=".ui.profile.EditProfile" />
+        <activity android:name=".ui.profile.EditProfileActivity" />
         <activity android:name=".ui.group.MembersActivity" />
         <activity android:name=".ui.group.JoinGroupActivity" />
         <activity android:name=".ui.group.GroupSettingsActivity" />

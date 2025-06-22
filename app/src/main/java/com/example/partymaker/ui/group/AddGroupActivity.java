@@ -36,7 +36,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chat.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.ui.profile.EditProfile;
+import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.MapUtilities;
 import com.google.android.gms.common.api.Status;
@@ -383,7 +383,7 @@ public class AddGroupActivity extends AppCompatActivity implements OnMapReadyCal
       goToNextActivity = new Intent(getApplicationContext(), AddGroupActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idEditProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), EditProfile.class);
+      goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idPublicParties) {
       goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);

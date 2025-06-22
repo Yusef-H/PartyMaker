@@ -23,7 +23,7 @@ import com.example.partymaker.ui.chat.GptChatActivity;
 import com.example.partymaker.ui.group.AddGroupActivity;
 import com.example.partymaker.ui.group.GroupDetailsActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
-import com.example.partymaker.ui.profile.EditProfile;
+import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
       } else if (itemId == R.id.idAddProfile) {
         navigateToActivity(AddGroupActivity.class);
       } else if (itemId == R.id.idEditProfile) {
-        navigateToActivity(EditProfile.class);
+        navigateToActivity(EditProfileActivity.class);
       } else if (itemId == R.id.idPublicParties) {
         navigateToActivity(PublicGroupsActivity.class);
       } else if (itemId == R.id.idLogout) {

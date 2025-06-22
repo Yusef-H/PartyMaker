@@ -17,7 +17,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.ui.profile.EditProfile;
+import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
@@ -152,7 +152,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
       goToNextActivity = new Intent(getApplicationContext(), AddGroupActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idEditProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), EditProfile.class);
+      goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idPublicParties) {
       goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);
