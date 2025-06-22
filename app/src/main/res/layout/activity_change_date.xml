@@ -15,7 +15,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:contentDescription="TODO"
-            app:srcCompat="@drawable/ic_cake_white" />
+            app:srcCompat="@drawable/ic_cake_black" />
 
     <RelativeLayout
         android:layout_marginTop="20dp"

@@ -31,9 +31,9 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
     holder.messageText.setText(message.content);
 
     if ("user".equals(message.role)) {
-      holder.messageText.setBackgroundResource(R.drawable.user_message_background);
+      holder.messageText.setBackgroundResource(R.drawable.msg_user_bg);
     } else {
-      holder.messageText.setBackgroundResource(R.drawable.bg_message_assistant);
+      holder.messageText.setBackgroundResource(R.drawable.msg_bg_assistant);
     }
   }
 

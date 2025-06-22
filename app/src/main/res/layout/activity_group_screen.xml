@@ -353,7 +353,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/ic_thumbup_blue" />
+                        android:src="@drawable/ic_party_thumb_up_blue" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -393,7 +393,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/ic_thumbdown"
+                        android:src="@drawable/ic_party_thumb_down"
                         android:visibility="invisible" />
 
                     <TextView
@@ -415,7 +415,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/ic_thumbup_white"
+                        android:src="@drawable/ic_party_thumb_up_white"
                         android:visibility="invisible" />
 
                     <TextView
@@ -518,7 +518,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="TODO"
-                        android:src="@drawable/ic_plus" />
+                        android:src="@drawable/ic_party_add" />
 
                     <TextView
                         android:id="@+id/tvAddFriend"

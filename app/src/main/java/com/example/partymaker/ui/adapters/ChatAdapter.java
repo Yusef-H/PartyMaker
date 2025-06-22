@@ -57,14 +57,14 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 
     if (isMine) {
       // My messages: right alignment, green bubble, no name
-      bubbleLayout.setBackgroundResource(R.drawable.bg_message_bubble_mine);
+      bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble_mine);
       tvSender.setVisibility(View.GONE);
       spaceLeft.setVisibility(View.VISIBLE);
       spaceRight.setVisibility(View.GONE);
       tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
     } else {
       // Messages from others: left alignment, gray bubble, with name
-      bubbleLayout.setBackgroundResource(R.drawable.bg_message_bubble);
+      bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble);
       tvSender.setText(temp.getMessageUser());
       tvSender.setVisibility(View.VISIBLE);
       spaceLeft.setVisibility(View.GONE);

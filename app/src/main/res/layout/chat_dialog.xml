@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="8dp"
-            android:background="@drawable/bg_message_send_bubble">
+            android:background="@drawable/msg_bg_send_bubble">
 
             <EditText
                 android:id="@+id/messageInput"
@@ -44,7 +44,7 @@
                 android:hint="הקלד כאן את ההודעה שלך..."
                 android:inputType="textMultiLine"
                 android:maxLines="4"
-                android:background="@drawable/edittext_background"
+                android:background="@drawable/et_background"
                 android:padding="12dp"
                 android:textDirection="rtl"
                 android:gravity="right|center_vertical"/>
@@ -55,7 +55,7 @@
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="5dp"
-                android:background="@drawable/bg_message_send_button"
+                android:background="@drawable/msg_bg_send_btn"
                 android:src="@android:drawable/ic_menu_send"
                 android:contentDescription="שלח הודעה"/>
         </LinearLayout>

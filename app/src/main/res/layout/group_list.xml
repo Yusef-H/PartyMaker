@@ -7,7 +7,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="5dp"
-        android:src="@drawable/groupicon" />
+        android:src="@drawable/ic_party_icon" />
     <TextView
         android:id="@+id/tvGLgroupname"
         android:layout_width="match_parent"

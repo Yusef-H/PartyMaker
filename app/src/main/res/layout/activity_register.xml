@@ -35,7 +35,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="40dp"
-                android:background="@drawable/glassmorphism_gradient">
+                android:background="@drawable/shape_glassmorphism_bg">
 
                 <!-- Floating Animation Container -->
                 <FrameLayout
@@ -47,7 +47,7 @@
                         android:layout_width="220dp"
                         android:layout_height="220dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/glow_circle"
+                        android:background="@drawable/shape_glow_circle"
                         android:alpha="0.3" />
 
                     <!-- Main cake image -->
@@ -69,7 +69,7 @@
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="20dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/sparkle"
+                        android:src="@drawable/shape_sparkle"
                         android:alpha="0.8" />
 
                     <ImageView
@@ -79,7 +79,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="30dp"
                         android:contentDescription="TODO"
-                        android:src="@drawable/sparkle"
+                        android:src="@drawable/shape_sparkle"
                         android:alpha="0.6" />
 
                 </FrameLayout>
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="32dp"
-                android:background="@drawable/form_gradient_background">
+                android:background="@drawable/bg_form_gradient">
 
                 <!-- Form Header with Progress -->
 
@@ -234,7 +234,7 @@
                     app:rippleColor="?attr/colorOnPrimary"
                     app:backgroundTint="?attr/colorPrimary"
                     android:elevation="8dp"
-                    android:stateListAnimator="@drawable/button_elevation" />
+                    android:stateListAnimator="@drawable/btn_elevation" />
 
                 <!-- Enhanced Divider with Animation -->
                 <LinearLayout
@@ -249,7 +249,7 @@
                         android:layout_width="0dp"
                         android:layout_height="2dp"
                         android:layout_weight="1"
-                        android:background="@drawable/gradient_divider"
+                        android:background="@drawable/shape_gradient_divider"
                         android:alpha="0.6" />
 
                     <com.google.android.material.textview.MaterialTextView
@@ -260,7 +260,7 @@
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:background="@drawable/or_text_background"
+                        android:background="@drawable/text_or_bg"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="8dp" />
 
@@ -268,7 +268,7 @@
                         android:layout_width="0dp"
                         android:layout_height="2dp"
                         android:layout_weight="1"
-                        android:background="@drawable/gradient_divider"
+                        android:background="@drawable/shape_gradient_divider"
                         android:alpha="0.6" />
 
                 </LinearLayout>
@@ -280,7 +280,7 @@
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:background="@drawable/login_link_background"
+                    android:background="@drawable/link_login_background"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="12dp">
 
@@ -392,7 +392,7 @@
                         android:text="Secure 🔒"
                         android:textAppearance="?attr/textAppearanceLabelSmall"
                         android:textColor="?attr/colorPrimary"
-                        android:background="@drawable/trust_badge_background"
+                        android:background="@drawable/shape_trust_badge_bg"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="4dp" />
 
@@ -403,7 +403,7 @@
                         android:text="Fast ⚡"
                         android:textAppearance="?attr/textAppearanceLabelSmall"
                         android:textColor="?attr/colorPrimary"
-                        android:background="@drawable/trust_badge_background"
+                        android:background="@drawable/shape_trust_badge_bg"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="4dp" />
 
@@ -414,7 +414,7 @@
                         android:text="Fun 🎉"
                         android:textAppearance="?attr/textAppearanceLabelSmall"
                         android:textColor="?attr/colorPrimary"
-                        android:background="@drawable/trust_badge_background"
+                        android:background="@drawable/shape_trust_badge_bg"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="4dp" />
 
