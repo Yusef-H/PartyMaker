@@ -66,7 +66,7 @@
         android:shadowDx="-0"
         android:shadowDy="-0"
         android:shadowRadius="25"
-        android:text="Delete Friend"
+        android:text="@string/delete_friend"
         android:textAllCaps="false"
         android:textColor="#0081d1"
         android:textSize="15sp" />
@@ -81,7 +81,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="210dp"
             android:background="#0000ffff"
-            android:text="Press Here"
+            android:text="@string/press_here"
             android:textAllCaps="false"
             android:textColor="#0081d1" />
 
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="130dp"
             android:layout_marginTop="5dp"
-            android:text="Need Help?"
+            android:text="@string/need_help"
             android:textColor="#0081d1" />
 
         <Button
@@ -100,7 +100,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="200dp"
             android:background="#0000ffff"
-            android:text="Hide it"
+            android:text="@string/hide_it"
             android:textAllCaps="false"
             android:textColor="#0081d1"
             android:visibility="invisible" />
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="150dp"
             android:layout_marginTop="5dp"
-            android:text="Got Help?"
+            android:text="@string/got_help"
             android:textColor="#0081d1"
             android:visibility="invisible" />
     </RelativeLayout>

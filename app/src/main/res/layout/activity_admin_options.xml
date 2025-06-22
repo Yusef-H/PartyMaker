@@ -335,7 +335,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             android:layout_margin="16dp"
-            android:contentDescription="צ'אט עם עוזר בינה מלאכותית"
+            android:contentDescription="@string/chat_with_ai_assistant"
             android:src="@android:drawable/ic_dialog_email"
             app:fabSize="normal" />
     </LinearLayout>
