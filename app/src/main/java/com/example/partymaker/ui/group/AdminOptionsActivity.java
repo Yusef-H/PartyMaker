@@ -59,7 +59,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_admin_options);
+    setContentView(R.layout.activity_party_options);
 
     if (!Places.isInitialized()) {
       Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));

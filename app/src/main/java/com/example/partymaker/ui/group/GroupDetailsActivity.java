@@ -73,7 +73,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_group_screen);
+    setContentView(R.layout.activity_party_main);
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();

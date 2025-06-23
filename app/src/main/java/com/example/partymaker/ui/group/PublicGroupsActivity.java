@@ -39,7 +39,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_public_groups);
+    setContentView(R.layout.activity_public_parties);
 
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();

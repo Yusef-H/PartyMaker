@@ -48,7 +48,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_remove_friends);
+    setContentView(R.layout.activity_party_friends_remove);
 
     // this 3 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();

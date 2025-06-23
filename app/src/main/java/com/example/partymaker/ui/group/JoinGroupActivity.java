@@ -44,7 +44,7 @@ public class JoinGroupActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_group_join);
+    setContentView(R.layout.activity_party_join);
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();

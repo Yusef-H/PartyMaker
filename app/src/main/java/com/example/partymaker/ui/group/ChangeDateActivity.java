@@ -38,7 +38,7 @@ public class ChangeDateActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_change_date);
+    setContentView(R.layout.activity_party_change_date);
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();

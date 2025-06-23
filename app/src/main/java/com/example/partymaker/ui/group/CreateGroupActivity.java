@@ -75,7 +75,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_create_group);
+    setContentView(R.layout.activity_party_create);
 
     if (!Places.isInitialized()) {
       Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));

@@ -29,7 +29,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_invited_list);
+    setContentView(R.layout.activity_party_invited);
 
     // this 2 lines changes title's name
     ActionBar actionBar = getSupportActionBar();
