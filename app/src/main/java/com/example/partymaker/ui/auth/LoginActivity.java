@@ -81,11 +81,11 @@ public class LoginActivity extends AppCompatActivity {
     Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fade_in);
     btnAbout.startAnimation(myFadeInAnimation);
 
-    evantHandler();
+    eventHandler();
   }
 
   // Login Button Onclick
-  private void evantHandler() {
+  private void eventHandler() {
     btnLogin.setOnClickListener(
         new View.OnClickListener() {
           @Override

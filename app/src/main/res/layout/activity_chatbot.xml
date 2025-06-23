@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints=""
-                android:hint="הקלד כאן את ההודעה שלך..."
+                android:hint="Type your message here..."
                 android:inputType="textMultiLine"
                 android:maxLines="4"
                 android:background="@drawable/et_background"
@@ -57,7 +57,7 @@
                 android:layout_marginStart="5dp"
                 android:background="@drawable/msg_bg_send_btn"
                 android:src="@android:drawable/ic_menu_send"
-                android:contentDescription="שלח הודעה"/>
+                android:contentDescription="Send message"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

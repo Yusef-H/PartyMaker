@@ -106,10 +106,10 @@ public class ChangeDateActivity extends AppCompatActivity {
     spnYears.setAdapter(yearsAdapter);
     spnHours.setAdapter(hoursAdapter);
 
-    evantHandler();
+    eventHandler();
   }
 
-  private void evantHandler() {
+  private void eventHandler() {
     btnHelp.setOnClickListener(
         v -> {
           tvInstructions1.setVisibility(View.VISIBLE);

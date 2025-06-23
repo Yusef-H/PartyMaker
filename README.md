@@ -117,7 +117,7 @@ For detailed architecture documentation, see [ARCHITECTURE.docx](./ARCHITECTURE.
 ## 🛠️ Technical Stack
 
 - **Platform**: Android (Kotlin/Java)
-- **Backend**: Firebase (Authentication, Firestore, Cloud Messaging)
+- **Backend**: Firebase (Authentication, FireStore, Cloud Messaging)
 - **Architecture**: MVVM with Repository pattern
 - **UI Framework**: Android Views with Material Design
 - **Real-time Features**: Firebase Realtime Database

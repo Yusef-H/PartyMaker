@@ -80,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
     createNotificationChannel();
 
     // Set up glassmorphism effects
-    setupGlassmorphismEffects();
+    setUpGlassmorphismEffects();
 
     // Set up animations
     setupInitialAnimations();
@@ -206,7 +206,7 @@ public class RegisterActivity extends AppCompatActivity {
     rootLayout.addView(celebrationLayout, params);
   }
 
-  private void setupGlassmorphismEffects() {
+  private void setUpGlassmorphismEffects() {
     // Apply glassmorphism to cards
     applyGlassmorphism(headerCard);
     applyGlassmorphism(formCard);

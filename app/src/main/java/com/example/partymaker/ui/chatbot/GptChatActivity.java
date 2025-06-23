@@ -31,9 +31,9 @@ public class GptChatActivity extends AppCompatActivity {
   private EditText messageInput;
 
   // ---------- Lists ----------
-  // רק מה שמוצג למשתמש
+  // Only what is displayed to the user
   private final List<ChatMessageGpt> visibleMessages = new ArrayList<>(); // NEW
-  // כל ההיסטוריה שנשלחת ל-API (כולל system)
+  // All history sent to API (including system)
   private final List<ChatMessageGpt> history = new ArrayList<>(); // NEW
 
   private ChatbotAdapter chatAdapter;
@@ -42,7 +42,7 @@ public class GptChatActivity extends AppCompatActivity {
 
   // ---------- System prompt ----------
   private static final ChatMessageGpt SYSTEM_PROMPT = // NEW
-      new ChatMessageGpt("system", "ענה תמיד בעברית, גם אם השאלה באנגלית.");
+      new ChatMessageGpt("system", "Always answer in English, even if the question is in another language.");
 
   // ------------------------------------------------------------------------
   // onCreate
@@ -75,22 +75,22 @@ public class GptChatActivity extends AppCompatActivity {
     chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     chatRecyclerView.setAdapter(chatAdapter);
 
-    // ---------- Add system prompt (לא מוצג) ----------
+    // ---------- Add system prompt (not displayed) ----------
     history.add(SYSTEM_PROMPT); // NEW
 
-    // ---------- Assistant welcome (כן מוצג) ----------
+    // ---------- Assistant welcome (displayed) ----------
     ChatMessageGpt welcome =
         new ChatMessageGpt(
             "assistant",
-            "🎉 ברוכים הבאים לעזרה באפליקציית PartyMaker – האפליקציה המושלמת לתכנון מסיבות!\n\n"
-                + "אני כאן כדי לעזור לך בכל שאלה או בעיה. שאל/י אותי איך מוסיפים חברים, יוצרים קבוצה, מנהלים אירוע, או כל דבר אחר – ואסביר לך שלב-אחר-שלב בעברית.\n\n"
-                + "איך אפשר לעזור?");
+            "🎉 Welcome to PartyMaker app help – the perfect app for planning parties!\n\n"
+                + "I'm here to help you with any question or issue. Ask me how to add friends, create a group, manage an event, or anything else – and I'll explain it to you step-by-step in English.\n\n"
+                + "How can I help?");
     history.add(welcome);
     visibleMessages.add(welcome); // NEW
     chatAdapter.notifyDataSetChanged();
 
-    // ---------- Keyboard hint to Hebrew ----------
-    messageInput.setImeHintLocales(new LocaleList(new Locale("he")));
+    // ---------- Keyboard hint to English ----------
+    messageInput.setImeHintLocales(new LocaleList(new Locale("en")));
 
     // ---------- Send button ----------
     sendButton.setOnClickListener(
@@ -124,8 +124,8 @@ public class GptChatActivity extends AppCompatActivity {
   private void sendMessage(String userText) {
     // ---------- User message ----------
     ChatMessageGpt userMsg = new ChatMessageGpt("user", userText);
-    visibleMessages.add(userMsg); // מציג
-    history.add(userMsg); // להיסטוריה
+    visibleMessages.add(userMsg); // display
+    history.add(userMsg); // for history
     chatAdapter.notifyDataSetChanged();
     chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
 
@@ -139,8 +139,8 @@ public class GptChatActivity extends AppCompatActivity {
 
             runOnUiThread(
                 () -> {
-                  history.add(assistantMsg); // להמשך קונטקסט
-                  visibleMessages.add(assistantMsg); // להצגה
+                  history.add(assistantMsg); // for continued context
+                  visibleMessages.add(assistantMsg); // for display
                   chatAdapter.notifyDataSetChanged();
                   chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
                 });
