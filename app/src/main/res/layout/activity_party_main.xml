@@ -54,7 +54,7 @@
 
             <TextView
                 android:id="@+id/tvYourEntry"
-                android:layout_width="70dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
@@ -74,11 +74,12 @@
 
             <TextView
                 android:id="@+id/tvEntryPrice"
-                android:layout_width="220dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@id/tvYourEntry"
                 android:text="@string/free"
+                android:layout_marginStart="5sp"
                 android:textColor="@android:color/white" />
 
 
