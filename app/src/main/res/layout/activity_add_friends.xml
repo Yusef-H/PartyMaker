@@ -144,7 +144,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="210dp"
             android:background="#0000ffff"
-            android:text="Press Here"
+            android:text="@string/press_here"
             android:textAllCaps="false"
             android:textColor="#0081d1" />
 
@@ -179,13 +179,4 @@
             android:visibility="invisible" />
     </RelativeLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/chat_with_ai_assistant"
-        android:src="@android:drawable/ic_dialog_email"
-        app:fabSize="normal" />
 </LinearLayout>
