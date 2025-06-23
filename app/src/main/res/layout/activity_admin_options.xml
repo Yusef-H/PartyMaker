@@ -5,42 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.partymaker.ui.group.AdminOptionsActivity">
+
     <LinearLayout
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_party_screen"
+        android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:weightSum="10"
-        android:fitsSystemWindows="true"
         tools:context="com.example.partymaker.ui.group.AdminOptionsActivity">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
 
-                <TextView
-                    android:id="@+id/tvAdminOptions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="@string/admin_options"
-                    android:textColor="@android:color/white"
-                    android:textSize="34sp" />
+            <TextView
+                android:id="@+id/tvAdminOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/admin_options"
+                android:textColor="@android:color/white"
+                android:textSize="34sp" />
 
-                <TextView
-                    android:id="@+id/tvAdminEmail"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvAdminOptions"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/admin_email"
-                    android:textAlignment="center"
-                    android:textColor="#000000"
-                    tools:ignore="TextSizeCheck" />
+            <TextView
+                android:id="@+id/tvAdminEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvAdminOptions"
+                android:layout_centerHorizontal="true"
+                android:text="@string/admin_email"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                tools:ignore="TextSizeCheck" />
 
-            </RelativeLayout>
+        </RelativeLayout>
 
         <GridLayout
             android:id="@+id/MyGrid"
@@ -57,11 +58,11 @@
                 android:id="@+id/CardLocation"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_rowWeight="1"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
 
@@ -97,11 +98,11 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_rowWeight="1"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
 
@@ -173,11 +174,11 @@
                 android:id="@+id/Card3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_rowWeight="1"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
 
@@ -212,11 +213,11 @@
                 android:id="@+id/CardPrice"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_rowWeight="1"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
 
@@ -251,11 +252,11 @@
                 android:id="@+id/Card5"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_rowWeight="1"
+                android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="#1986ed"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -293,11 +294,11 @@
                 android:id="@+id/Card6"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_rowWeight="1"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
 
@@ -328,44 +329,45 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </GridLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabChat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/chat_with_ai_assistant"
-            android:src="@android:drawable/ic_dialog_email"
-            app:fabSize="normal" />
     </LinearLayout>
-    <FrameLayout
-    android:id="@+id/mapContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:visibility="gone">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/mapFragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/autocomplete_fragment"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/saveLocation"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:background="#00000000"
-        android:text="@string/save_location"
-        android:textAllCaps="false"
-        android:visibility="visible" />
+        android:contentDescription="@string/chat_with_ai_assistant"
+        android:src="@android:drawable/ic_dialog_email"
+        app:fabSize="normal" />
+
+    <FrameLayout
+        android:id="@+id/mapContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/mapFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/autocomplete_fragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/saveLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:background="#00000000"
+            android:text="@string/save_location"
+            android:textAllCaps="false"
+            android:visibility="visible" />
     </FrameLayout>
 </FrameLayout>
