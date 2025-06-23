@@ -19,14 +19,14 @@
             android:layout_height="40dp"
             android:background="#00000000"
             android:layout_alignParentRight="true"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/todo"
             android:src="@drawable/ic_menu_back"/>
 
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/todo"
             app:srcCompat="@drawable/ic_cake_black" />
     </RelativeLayout>
 

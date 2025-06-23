@@ -154,11 +154,11 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
             this, R.array.array_hours, android.R.layout.simple_spinner_item);
     hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-    evantHandler();
+    eventHandler();
   }
 
   @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
-  private void evantHandler() {
+  private void eventHandler() {
     btnNext1.setOnClickListener(
         v -> {
           tvPartyName.setVisibility(View.INVISIBLE);

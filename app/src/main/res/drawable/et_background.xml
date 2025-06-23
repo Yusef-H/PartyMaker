@@ -1,19 +1,18 @@
-
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <!-- רקע בהיר -->
+    <!-- Light background -->
     <solid android:color="#FFFFFF" />
 
-    <!-- גבול עדין -->
+    <!-- Subtle border -->
     <stroke
         android:width="1dp"
         android:color="#CCCCCC" />
 
-    <!-- פינות מעוגלות -->
+    <!-- Rounded corners -->
     <corners android:radius="12dp" />
 
-    <!-- מעט רווח פנימי -->
+    <!-- Some inner spacing -->
     <padding
         android:left="10dp"
         android:top="10dp"

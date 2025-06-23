@@ -98,7 +98,7 @@ public class MapUtilities {
       map.addMarker(
           new MarkerOptions()
               .position(ll)
-              .title(place.getName() != null ? place.getName() : "Selcted Place"));
+              .title(place.getName() != null ? place.getName() : "Selected Place"));
       return ll;
     }
     return null;

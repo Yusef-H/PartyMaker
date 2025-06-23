@@ -14,7 +14,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/todo"
             app:srcCompat="@drawable/ic_cake_black" />
 
     <RelativeLayout
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="40dp"
-            android:hint="Day"
+            android:hint="@string/day"
             android:textAlignment="center" />
         <TextView
             android:textColor="#000000"
@@ -121,7 +121,7 @@
         android:shadowDx="-0"
         android:shadowDy="-0"
         android:shadowRadius="25"
-        android:text="Change Date"
+        android:text="@string/change_date"
         android:textAllCaps="false"
         android:textColor="#0081d1"
         android:textSize="15sp" />
@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="130dp"
             android:layout_marginTop="5dp"
-            android:text="Need Help?"
+            android:text="@string/need_help"
             android:textColor="#0081d1" />
 
         <Button
@@ -155,7 +155,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="200dp"
             android:background="#0000ffff"
-            android:text="Hide it"
+            android:text="@string/hide_it"
             android:textAllCaps="false"
             android:textColor="#0081d1"
             android:visibility="invisible" />
@@ -166,7 +166,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="150dp"
             android:layout_marginTop="5dp"
-            android:text="Got Help?"
+            android:text="@string/got_help"
             android:textColor="#0081d1"
             android:visibility="invisible" />
     </RelativeLayout>

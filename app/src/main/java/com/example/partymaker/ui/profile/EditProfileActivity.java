@@ -53,10 +53,10 @@ public class EditProfileActivity extends AppCompatActivity {
         .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgProfile))
         .addOnFailureListener(exception -> {});
 
-    evantHandler();
+    eventHandler();
   }
 
-  private void evantHandler() {
+  private void eventHandler() {
     // imgProfile on click
     imgProfile.setOnClickListener(
         v -> {

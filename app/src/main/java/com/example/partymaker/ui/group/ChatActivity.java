@@ -95,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
                     () -> {
                       try {
                         String prompt =
-                            "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
+                            "You are a party assistant. Your role is to provide details and help with whatever you can for this party. Here are the party details: "
                                 + getGroupDetails();
                         OpenAiApi openAiApi = new OpenAiApi(getApiKey());
                         String gptAnswer = openAiApi.sendMessage(prompt + Text);
@@ -115,12 +115,12 @@ public class ChatActivity extends AppCompatActivity {
         v -> {
           android.app.AlertDialog.Builder builder =
               new android.app.AlertDialog.Builder(ChatActivity.this);
-          builder.setTitle("שאל את GPT");
+          builder.setTitle("Ask GPT");
           final EditText input = new EditText(ChatActivity.this);
-          input.setHint("כתוב כאן את השאלה שלך...");
+          input.setHint("Write your question here...");
           builder.setView(input);
           builder.setPositiveButton(
-              "שלח",
+              "Send",
               (dialog, which) -> {
                 String gptQuestion = input.getText().toString();
                 if (!gptQuestion.isEmpty()) {
@@ -128,7 +128,7 @@ public class ChatActivity extends AppCompatActivity {
                           () -> {
                             try {
                               String prompt =
-                                  "אתה עוזר במסיבה הזו, תפקידך הוא לתת פרטים ולעזור במה שאתה יכול במסיבה הזו ואלו פרטיה"
+                                  "You are a party assistant. Your role is to provide details and help with whatever you can for this party. Here are the party details: "
                                       + getGroupDetails();
                               OpenAiApi openAiApi = new OpenAiApi(getApiKey());
                               String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
@@ -140,7 +140,7 @@ public class ChatActivity extends AppCompatActivity {
                       .start();
                 }
               });
-          builder.setNegativeButton("ביטול", (dialog, which) -> dialog.cancel());
+          builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
           builder.show();
         });
   }
@@ -185,8 +185,8 @@ public class ChatActivity extends AppCompatActivity {
                 if (MessageKey.equals(GroupMessageKey)) ArrMessages.add(GroupMessage);
               }
             }
-            ChatAdapter adpt = new ChatAdapter(ChatActivity.this, 0, 0, ArrMessages);
-            lv4.setAdapter(adpt);
+            ChatAdapter adapt = new ChatAdapter(ChatActivity.this, 0, 0, ArrMessages);
+            lv4.setAdapter(adapt);
           }
 
           @Override
@@ -196,8 +196,8 @@ public class ChatActivity extends AppCompatActivity {
 
   public String getGroupDetails() {
     StringBuilder details = new StringBuilder();
-    details.append("פרטי המסיבה:\n");
-    details.append("שם המסיבה: ").append(GroupKey).append("\n");
+    details.append("Party Details:\n");
+    details.append("Party Name: ").append(GroupKey).append("\n");
 
     DBRef.refGroups
         .child(GroupKey)
@@ -208,30 +208,30 @@ public class ChatActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                   Group group = dataSnapshot.getValue(Group.class);
                   if (group != null) {
-                    details.append("מנהל: ").append(group.getAdminKey()).append("\n");
+                    details.append("Admin: ").append(group.getAdminKey()).append("\n");
                     details
-                        .append("תאריך: ")
+                        .append("Date: ")
                         .append(group.getGroupDays())
                         .append("/")
                         .append(group.getGroupMonths())
                         .append("/")
                         .append(group.getGroupYears())
                         .append("\n");
-                    details.append("שעה: ").append(group.getGroupHours()).append("\n");
-                    details.append("מחיר: ").append(group.getGroupPrice()).append(" ₪\n");
+                    details.append("Time: ").append(group.getGroupHours()).append("\n");
+                    details.append("Price: ").append(group.getGroupPrice()).append(" ₪\n");
                     if (group.getGroupLocation() != null) {
-                      details.append("מיקום: ").append(group.getGroupLocation()).append("\n");
+                      details.append("Location: ").append(group.getGroupLocation()).append("\n");
                     }
                     details
-                        .append("סוג קבוצה: ")
-                        .append(group.getGroupType() == 0 ? "ציבורי" : "פרטי");
+                        .append("Group Type: ")
+                        .append(group.getGroupType() == 0 ? "Public" : "Private");
                   }
                 }
               }
 
               @Override
               public void onCancelled(@NonNull DatabaseError databaseError) {
-                details.append("שגיאה בטעינת פרטי הקבוצה");
+                details.append("Error loading group details");
               }
             });
 

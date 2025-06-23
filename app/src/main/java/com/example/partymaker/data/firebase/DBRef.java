@@ -14,7 +14,7 @@ public class DBRef {
   public static DatabaseReference refGroups = DataBase.getReference("Groups");
   public static DatabaseReference refUsers = DataBase.getReference("Users");
   public static DatabaseReference refMessages = DataBase.getReference("GroupsMessages");
-  public static StorageReference refStorage = Storage.getReference("UsersImagProfile");
+  public static StorageReference refStorage = Storage.getReference("UsersImageProfile");
 
   public static void checkImageExists(String path, OnImageExistsListener listener) {
     StorageReference imageRef = refStorage.child(path);

@@ -59,7 +59,7 @@
 # =================================
 # YOUR APP MODELS & DATA
 # =================================
-# Keep all your data classes (חשוב מאוד!)
+# Keep all your data classes (very important!)
 -keep class com.example.partymaker.models.** { *; }
 -keep class com.example.partymaker.data.** { *; }
 -keep class com.example.partymaker.entities.** { *; }

@@ -57,7 +57,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
         Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
             .replace('.', ' ');
     database = FirebaseDatabase.getInstance().getReference("Groups");
-    retriveData();
+    retrieveData();
     EventHandler();
   }
 
@@ -104,7 +104,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
     lv1.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
-  public void retriveData() {
+  public void retrieveData() {
     database.addValueEventListener(
         new ValueEventListener() {
           @SuppressLint("SuspiciousIndentation")

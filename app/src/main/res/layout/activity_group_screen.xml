@@ -35,7 +35,7 @@
                 android:layout_alignBottom="@+id/tvGroupName"
                 android:layout_toEndOf="@+id/tvGroupName"
                 android:background="#00000000"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/todo"
                 android:src="@drawable/ic_party_pencil" />
 
             <TextView
@@ -119,7 +119,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_location" />
 
                     <TextView
@@ -174,7 +174,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginRight="7dp"
                         android:layout_marginTop="5dp"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_calendar" />
 
                     <TextView
@@ -264,7 +264,7 @@
                     android:layout_height="15dp"
                     android:layout_marginLeft="140dp"
                     android:layout_marginTop="242dp"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/todo"
                     android:src="@drawable/ic_menu_arrow"
                     android:visibility="invisible" />
 
@@ -274,7 +274,7 @@
                     android:layout_height="15dp"
                     android:layout_marginLeft="67dp"
                     android:layout_marginTop="240dp"
-                    android:text="press to see time"
+                    android:text="@string/press_to_see_time"
                     android:textColor="#1986ed"
                     android:textSize="10sp"
                     android:visibility="invisible"
@@ -315,7 +315,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_invited" />
 
                     <TextView
@@ -353,7 +353,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_thumb_up_blue" />
 
                     <TextView
@@ -393,7 +393,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_thumb_down"
                         android:visibility="invisible" />
 
@@ -415,7 +415,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_thumb_up_white"
                         android:visibility="invisible" />
 
@@ -437,7 +437,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_options" />
 
                     <TextView
@@ -477,7 +477,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_chat" />
 
                     <TextView
@@ -518,7 +518,7 @@
                         android:layout_alignBottom="@+id/textView5"
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center_horizontal"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_add" />
 
                     <TextView
@@ -557,7 +557,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_leave" />
 
                     <TextView
