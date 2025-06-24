@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
   // Constants
   private static final String TAG = "MainActivity";
-  private static final String ACTION_BAR_START_COLOR = "#006099";
-  private static final String ACTION_BAR_END_COLOR = "#DBE3EF";
+  private static final String ACTION_BAR_START_COLOR = "#0E81D1";
+  private static final String ACTION_BAR_END_COLOR = "#0E81D1";
   private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
   private static final float ACTION_BAR_ELEVATION = 15f;
   private static final String GROUPS_DB_PATH = "Groups";

@@ -14,7 +14,7 @@
         android:layout_height="31dp"
         android:textSize="25sp"
         android:text="@string/group_name"
-        android:textColor="@color/md_theme_primary"
+        android:textColor="#0E81D1"
         android:layout_marginLeft="75dp"
         android:layout_alignParentTop="true" />
 
@@ -24,6 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvGLgroupname"
         android:layout_marginLeft="75dp"
-        android:textColor="#039694"
+        android:textColor="#000000"
         android:text="@string/date" />
 </RelativeLayout>
