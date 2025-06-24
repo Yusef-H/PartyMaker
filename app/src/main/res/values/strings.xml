@@ -151,6 +151,7 @@
     <string name="day">Day</string>
     <string name="change_date">Change Date</string>
     <string name="secure">Secure 🔒</string>
+    <string name="remove_friend">Remove Friend</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

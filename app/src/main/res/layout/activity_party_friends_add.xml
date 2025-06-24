@@ -47,7 +47,7 @@
         android:layout_gravity="center"
         android:autofillHints=""
         android:background="@drawable/et_background"
-        android:drawableStart="@drawable/ic_email_red"
+        android:drawableStart="@drawable/ic_email"
         android:drawablePadding="10dp"
         android:hint="@string/input_your_friend_s_email"
         android:inputType="textEmailAddress"

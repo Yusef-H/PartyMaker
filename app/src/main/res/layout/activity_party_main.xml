@@ -266,7 +266,7 @@
                     android:layout_marginLeft="140dp"
                     android:layout_marginTop="242dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/ic_menu_arrow"
+                    android:src="@drawable/ic_party_arrow"
                     android:visibility="invisible" />
 
                 <TextView

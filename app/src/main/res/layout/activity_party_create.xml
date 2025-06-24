@@ -27,7 +27,7 @@
         android:layout_height="200dp"
         android:layout_marginStart="115dp"
         android:layout_marginTop="50dp"
-        android:background="@drawable/btn_add_picture"
+        android:background="@drawable/ic_party_set_picture"
         android:clickable="true"
         android:visibility="invisible"
         app:civ_border_width="3dp"

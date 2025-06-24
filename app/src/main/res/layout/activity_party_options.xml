@@ -142,7 +142,7 @@
                     android:layout_marginStart="140dp"
                     android:layout_marginTop="242dp"
                     android:contentDescription="@string/arrow"
-                    android:src="@drawable/ic_menu_arrow"
+                    android:src="@drawable/ic_party_arrow"
                     android:visibility="invisible" />
 
                 <TextView
@@ -194,13 +194,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:contentDescription="@string/invited"
-                        android:src="@drawable/ic_party_invited" />
+                        android:contentDescription="@string/remove_friend"
+                        android:src="@drawable/ic_party_remove" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/delete_people"
+                        android:text="@string/remove_friend"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
                         android:textSize="18sp"
