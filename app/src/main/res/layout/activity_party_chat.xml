@@ -15,21 +15,21 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#B8D1FF"
+        android:background="@drawable/bg_chat"
         android:divider="@android:color/transparent"
         android:dividerHeight="3dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#98bad5">
+        android:background="#1986ED">
 
         <EditText
             android:id="@+id/etMessage"
-            android:layout_width="300dp"
+            android:layout_width="340dp"
             android:layout_height="40dp"
             android:autofillHints=""
-            android:backgroundTint="#1986ed"
+            android:backgroundTint="#FFFFFF"
             android:hint="@string/type_message"
             android:inputType="textMultiLine|textImeMultiLine"
             android:imeOptions="actionSend"
@@ -43,11 +43,9 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="#00000000"
-            android:contentDescription="TODO"
-            android:src="@android:drawable/ic_dialog_info"
-
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="30dp"/>
+            android:contentDescription="@string/info_button"
+            android:src="@drawable/btn_chat_info"
+            android:layout_alignParentEnd="true" />
 
         <ImageButton
             android:id="@+id/btnSend"
