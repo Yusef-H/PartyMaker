@@ -15,6 +15,10 @@ public class User {
     return UserName;
   }
 
+  public void setUserName(String userName) {
+    UserName = userName;
+  }
+
   public User() {}
 
   public User(String Email, String UserName) {
