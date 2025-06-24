@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="32dp"
-                android:background="@drawable/bg_form_gradient">
+                android:background="@drawable/bg_register_form_gradient">
 
                 <!-- Form Header with Progress -->
 
