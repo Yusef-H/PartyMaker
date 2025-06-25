@@ -36,12 +36,13 @@ import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.GroupBuilder;
+import com.example.partymaker.utilities.GroupDateTime;
 import com.example.partymaker.utilities.MapUtilities;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -75,7 +76,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
     private EditText etPartyName;
     private ImageView imgLogin, imgGroupPicture;
-    private String GroupKey1, DaysSelected, MonthsSelected, YearsSelected, HoursSelected;
+    private String GroupKey1, DaysSelected, MonthsSelected, YearsSelected;
     private CheckBox cbGroupType;
     private Calendar selectedDate;
     private TimePicker timePicker;
@@ -551,73 +552,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         public static final int PRIVATE = 1;
     }
 
-    public static class GroupDateTime {
-        private final String day;
-        private final String month;
-        private final String year;
-        private final String time;
 
-        public GroupDateTime(String day, String month, String year, String time) {
-            this.day = day;
-            this.month = month;
-            this.year = year;
-            this.time = time;
-        }
-
-        // Getters
-        public String getDay() { return day; }
-        public String getMonth() { return month; }
-        public String getYear() { return year; }
-        public String getTime() { return time; }
-    }
-
-    // Builder pattern for Group creation
-    public static class GroupBuilder {
-        private final Group group = new Group();
-
-        public GroupBuilder setName(String name) {
-            group.setGroupName(name);
-            return this;
-        }
-
-        public GroupBuilder setAdmin(String adminKey) {
-            group.setAdminKey(adminKey);
-            return this;
-        }
-
-        public GroupBuilder setType(int type) {
-            group.setGroupType(type);
-            group.setCanAdd(type == GroupType.PUBLIC);
-            return this;
-        }
-
-        public GroupBuilder setCreationTime(String timestamp) {
-            group.setCreatedAt(timestamp);
-            return this;
-        }
-
-        public GroupBuilder setPrice(String price) {
-            group.setGroupPrice(price);
-            return this;
-        }
-
-        public GroupBuilder setLocation(String location) {
-            group.setGroupLocation(location);
-            return this;
-        }
-
-        public GroupBuilder setDateTime(GroupDateTime dateTime) {
-            group.setGroupDays(dateTime.getDay());
-            group.setGroupMonths(dateTime.getMonth());
-            group.setGroupYears(dateTime.getYear());
-            group.setGroupHours(dateTime.getTime());
-            return this;
-        }
-
-        public Group build() {
-            return group;
-        }
-    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
