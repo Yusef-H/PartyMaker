@@ -1,5 +1,8 @@
 package com.example.partymaker.ui.group;
 
+import static com.example.partymaker.utilities.Common.hideViews;
+import static com.example.partymaker.utilities.Common.showViews;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -110,23 +113,16 @@ public class ChangeDateActivity extends AppCompatActivity {
   }
 
   private void eventHandler() {
-    btnHelp.setOnClickListener(
-        v -> {
-          tvInstructions1.setVisibility(View.VISIBLE);
-          btnHelp.setVisibility(View.INVISIBLE);
-          tvHelp.setVisibility(View.INVISIBLE);
-          btnHide.setVisibility(View.VISIBLE);
-          tvHide.setVisibility(View.VISIBLE);
-        });
+      btnHelp.setOnClickListener(v -> {
+          showViews(tvInstructions1, btnHide, tvHide);
+          hideViews(btnHelp, tvHelp);
+      });
 
-    btnHide.setOnClickListener(
-        v -> {
-          tvInstructions1.setVisibility(View.INVISIBLE);
-          btnHide.setVisibility(View.INVISIBLE);
-          tvHide.setVisibility(View.INVISIBLE);
-          btnHelp.setVisibility(View.VISIBLE);
-          tvHelp.setVisibility(View.VISIBLE);
-        });
+      btnHide.setOnClickListener(v -> {
+          showViews(btnHelp, tvHelp);
+          hideViews(tvInstructions1, btnHide, tvHide);
+      });
+
     btnChangeDate.setOnClickListener(
         v -> {
           // set new value in firebase
