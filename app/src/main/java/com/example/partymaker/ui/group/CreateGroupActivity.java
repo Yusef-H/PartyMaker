@@ -1,5 +1,8 @@
 package com.example.partymaker.ui.group;
 
+import static com.example.partymaker.utilities.Common.hideViews;
+import static com.example.partymaker.utilities.Common.showViews;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -74,6 +77,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     private static final int IMAGE_PICKER_REQUEST_CODE = 100;
     private static final int INSTRUCTION_DELAY_MS = 3000;
     private static final String TAG = "CreateGroupActivity";
+    private final int FINE_PERMISSION_CODE = 1;
     private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
     private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
     private EditText etPartyName;
@@ -86,7 +90,6 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     private GoogleMap map;
     private LatLng chosenLatLng;
     private FusedLocationProviderClient locationClient;
-    private final int FINE_PERMISSION_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -515,19 +518,6 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     private void initializeGroupChat(Group group) {
         Map<String, Object> emptyChat = new HashMap<>();
         DBRef.refGroups.child(group.getGroupKey()).child("MessageKeys").updateChildren(emptyChat);
-    }
-
-    // UI utility methods
-    private void showViews(View... views) {
-        for (View view : views) {
-            view.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void hideViews(View... views) {
-        for (View view : views) {
-            view.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void showSuccessMessage() {

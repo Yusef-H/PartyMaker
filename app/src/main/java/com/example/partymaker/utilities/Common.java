@@ -128,4 +128,17 @@ public class Common {
   public static HashMap<String, Object> getHashMapExtra(Bundle extras, String key) {
     return (HashMap<String, Object>) extras.getSerializable(key);
   }
+
+  // UI utility methods
+  public static void showViews(View... views) {
+    for (View view : views) {
+      view.setVisibility(View.VISIBLE);
+    }
+  }
+
+  public static void hideViews(View... views) {
+    for (View view : views) {
+      view.setVisibility(View.INVISIBLE);
+    }
+  }
 }
