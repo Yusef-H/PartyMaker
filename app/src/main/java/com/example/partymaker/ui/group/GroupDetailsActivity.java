@@ -386,7 +386,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
             {
               if (!isComing) {
                 String CurrentUser =
-                    Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
+                    Objects.requireNonNull(
+                            Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
                         .replace('.', ' ');
                 ComingKeys.put(CurrentUser, "true");
                 DBRef.refGroups.child(GroupKey).child("ComingKeys").updateChildren(ComingKeys);

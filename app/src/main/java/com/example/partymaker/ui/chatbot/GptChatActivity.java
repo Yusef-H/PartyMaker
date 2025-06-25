@@ -42,7 +42,8 @@ public class GptChatActivity extends AppCompatActivity {
 
   // ---------- System prompt ----------
   private static final ChatMessageGpt SYSTEM_PROMPT = // NEW
-      new ChatMessageGpt("system", "Always answer in English, even if the question is in another language.");
+      new ChatMessageGpt(
+          "system", "Always answer in English, even if the question is in another language.");
 
   // ------------------------------------------------------------------------
   // onCreate

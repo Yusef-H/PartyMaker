@@ -42,7 +42,12 @@ public class IntroActivity extends Activity {
     btnSkip = findViewById(R.id.btn_skip);
     btnNext = findViewById(R.id.btn_next);
 
-    layouts = new int[] {R.layout.activity_intro_slider1, R.layout.activity_intro_slider2, R.layout.activity_intro_slider3};
+    layouts =
+        new int[] {
+          R.layout.activity_intro_slider1,
+          R.layout.activity_intro_slider2,
+          R.layout.activity_intro_slider3
+        };
 
     // adding bottom dots
     addBottomDots(0);

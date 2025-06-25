@@ -17,22 +17,20 @@
         android:layout_height="130dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
-        android:src="@drawable/ic_profile"
         android:backgroundTint="@android:color/white"
-        app:civ_border_color="@color/black"
-        app:civ_border_width="2dp"
-        android:contentDescription="@string/edit_profile" />
+        android:contentDescription="@string/edit_profile"
+        android:src="@drawable/ic_profile"
+        app:civ_border_color="@android:color/darker_gray"
+        app:civ_border_width="4dp" />
 
     <TextView
-        android:layout_below="@id/imgProfile"
-        android:layout_marginTop="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imgProfile"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
         android:text="@string/press_on_your_profile_picture_to_change_it"
         android:textColor="@android:color/darker_gray"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif-medium" />
-
-
+        android:textSize="16sp" />
 </RelativeLayout>
