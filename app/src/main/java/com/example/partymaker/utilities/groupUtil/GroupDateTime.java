@@ -30,4 +30,3 @@ public class GroupDateTime {
         return time;
     }
 }
-

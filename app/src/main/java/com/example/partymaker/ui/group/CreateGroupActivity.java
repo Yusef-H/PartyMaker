@@ -95,11 +95,20 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_party_create);
+        setupUI();
+        setupLogic();
+    }
 
-        initializePlacesAPI();
+    // UI call
+    private void setupUI() {
         setupActionBar();
         initializeViews();
         setupMapAndLocation();
+    }
+
+    // Logical call
+    private void setupLogic() {
+        initializePlacesAPI();
         eventHandler();
         setupValidation();
     }
@@ -361,6 +370,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     private void transitionToNameStep() {
         hideViews(btnNext2, btnBack1);
         showViews(tvPartyName, etPartyName, imgLogin, btnNext1);
+
+        hideMapAndLocationSearch();
     }
 
     private void transitionToImageStep() {
