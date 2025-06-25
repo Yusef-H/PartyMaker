@@ -1,7 +1,4 @@
-package com.example.partymaker.utilities;
-
-import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.group.CreateGroupActivity;
+package com.example.partymaker.utilities.group;
 
 public class GroupDateTime {
     private final String day;

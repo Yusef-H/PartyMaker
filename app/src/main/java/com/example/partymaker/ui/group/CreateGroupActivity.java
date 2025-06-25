@@ -41,8 +41,8 @@ import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.GroupBuilder;
-import com.example.partymaker.utilities.GroupDateTime;
+import com.example.partymaker.utilities.group.GroupBuilder;
+import com.example.partymaker.utilities.group.GroupDateTime;
 import com.example.partymaker.utilities.MapUtilities;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -71,6 +71,8 @@ import android.text.Editable;
 
 public class CreateGroupActivity extends AppCompatActivity implements OnMapReadyCallback {
     // Constants
+    private static final int IMAGE_PICKER_REQUEST_CODE = 100;
+    private static final int INSTRUCTION_DELAY_MS = 3000;
     private static final String TAG = "CreateGroupActivity";
     private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
     private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
@@ -284,6 +286,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         return true;
     }
 
+    // Main event handler
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility", "DefaultLocale"})
     private void eventHandler() {
         setupNavigationButtons();
@@ -542,16 +545,11 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         Log.e(TAG, "Group creation failed", e);
     }
 
-    // Constants
-    private static final int IMAGE_PICKER_REQUEST_CODE = 100;
-    private static final int INSTRUCTION_DELAY_MS = 3000;
-
     // Inner classes for better organization
     public static class GroupType {
         public static final int PUBLIC = 0;
         public static final int PRIVATE = 1;
     }
-
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
