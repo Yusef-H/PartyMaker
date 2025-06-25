@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
@@ -55,10 +56,13 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import android.text.TextWatcher;
@@ -281,195 +285,338 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility", "DefaultLocale"})
     private void eventHandler() {
-        btnNext1.setOnClickListener(v -> {
-            if (!validatePartyName()) {
-                return; // Do not continue if empty
-            }
+        setupNavigationButtons();
+        setupFormButtons();
+        setupImageSelection();
+        setupFloatingActionButton();
+    }
 
-            tvPartyName.setVisibility(View.INVISIBLE);
-            etPartyName.setVisibility(View.INVISIBLE);
-            imgLogin.setVisibility(View.INVISIBLE);
-            btnNext1.setVisibility(View.INVISIBLE);
-            btnNext2.setVisibility(View.VISIBLE);
-            btnBack1.setVisibility(View.VISIBLE);
+    private void setupNavigationButtons() {
+        btnNext1.setOnClickListener(this::handleNextButtonClick);
+        btnNext2.setOnClickListener(this::handleSecondStepNavigation);
+        btnBack1.setOnClickListener(this::handleBackToFirstStep);
+        btnBack2.setOnClickListener(this::handleBackToSecondStep);
+    }
 
-            findViewById(R.id.mapFragment).setVisibility(View.VISIBLE);
-            MapUtilities.requestLocationPermission(
-                    CreateGroupActivity.this, map, locationClient, FINE_PERMISSION_CODE);
-            findViewById(R.id.autocomplete_fragment).setVisibility(View.VISIBLE);
-        });
-        btnNext2.setOnClickListener(
-                v -> {
-                    cbGroupType.setVisibility(View.INVISIBLE);
-                    tvPartyDate.setVisibility(View.VISIBLE);
-                    tvHours.setVisibility(View.VISIBLE);
-                    tvSelectedDate.setVisibility(View.VISIBLE);
-                    timePicker.setVisibility(View.VISIBLE);
-                    btnNext2.setVisibility(View.INVISIBLE);
-                    btnAddGroup.setVisibility(View.VISIBLE);
-                    btnBack1.setVisibility(View.INVISIBLE);
-                    btnBack2.setVisibility(View.VISIBLE);
-                    findViewById(R.id.mapFragment).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.autocomplete_fragment).setVisibility(View.INVISIBLE);
-                    showDatePicker();
-                });
-        btnBack1.setOnClickListener(
-                v -> {
-                    tvPartyName.setVisibility(View.VISIBLE);
-                    etPartyName.setVisibility(View.VISIBLE);
-                    imgLogin.setVisibility(View.VISIBLE);
-                    btnNext1.setVisibility(View.VISIBLE);
-                    btnNext2.setVisibility(View.INVISIBLE);
-                    btnBack1.setVisibility(View.INVISIBLE);
-                });
-        btnBack2.setOnClickListener(
-                v -> {
-                    cbGroupType.setVisibility(View.VISIBLE);
-                    tvPartyDate.setVisibility(View.INVISIBLE);
-                    tvHours.setVisibility(View.INVISIBLE);
-                    tvSelectedDate.setVisibility(View.INVISIBLE);
-                    timePicker.setVisibility(View.INVISIBLE);
-                    btnNext2.setVisibility(View.VISIBLE);
-                    btnAddGroup.setVisibility(View.INVISIBLE);
-                    btnBack1.setVisibility(View.VISIBLE);
-                    btnBack2.setVisibility(View.INVISIBLE);
-                });
-        btnAddGroup.setOnClickListener(
-                v -> {
-                    Group p = new Group();
-                    // Group's name
-                    p.setGroupName(etPartyName.getText().toString());
-                    // admin name
-                    p.setAdminKey(
-                            Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-                                    .replace('.', ' '));
-
-                    // set group's type if 0 so Public group if 1 so Private group
-                    if (cbGroupType.isChecked()) {
-                        p.setGroupType(1);
-                    } else {
-                        p.setGroupType(0);
-                    }
-
-                    // set if people can add their friends
-                    if (p.getGroupType() == 0) // if group is public
-                        p.setCanAdd(true); // so people can add
-                    else if (p.getGroupType() == 1) // if group is private
-                        p.setCanAdd(false); // so people cant add
-
-                    // Time when opened Group
-                    Calendar c = Calendar.getInstance();
-                    @SuppressLint("SimpleDateFormat")
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String strDate = sdf.format(c.getTime());
-                    p.setCreatedAt(strDate);
-
-                    // set Group's entry price to 0 (free)
-                    p.setGroupPrice("0");
-
-                    // Group's Location
-                    String locationValue;
-                    if (chosenLatLng != null) {
-                        locationValue = MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
-                        p.setGroupLocation(locationValue);
-                    } else {
-                        Toast.makeText(
-                                        CreateGroupActivity.this,
-                                        "Warning: You have not set an address for your party.",
-                                        Toast.LENGTH_LONG)
-                                .show();
-                    }
-
-                    // Group's date
-                    p.setGroupDays(DaysSelected);
-                    p.setGroupMonths(MonthsSelected);
-                    p.setGroupYears(YearsSelected);
-                    // Get hour and minute from TimePicker
-                    int hour, minute;
-                    hour = timePicker.getHour();
-                    minute = timePicker.getMinute();
-                    HoursSelected = String.format("%02d:%02d", hour, minute);
-                    p.setGroupHours(HoursSelected);
-
-                    // create unique key for Group
-                    String GroupKey = DBRef.refGroups.push().getKey();
-                    GroupKey1 = GroupKey;
-                    p.setGroupKey(GroupKey);
-
-                    // create unique key for FriendKey
-                    String FriendKey = DBRef.Auth.getCurrentUser().getEmail().replace('.', ' ');
-
-                    // set key in database
-                    assert GroupKey != null;
-                    DBRef.refGroups.child(GroupKey).setValue(p);
-
-                    // adding reference to FriendKeys with the admin email
-                    HashMap<String, Object> result1 = new HashMap<>();
-                    result1.put(FriendKey, "true");
-                    DBRef.refGroups.child(p.getGroupKey()).child("FriendKeys").updateChildren(result1);
-                    // adding reference to ComingKeys with the admin email
-                    DBRef.refGroups.child(p.getGroupKey()).child("ComingKeys").updateChildren(result1);
-
-                    // create empty HashMap for Chat
-                    HashMap<String, Object> result3 = new HashMap<>();
-                    DBRef.refGroups.child(p.getGroupKey()).child("MessageKeys").updateChildren(result3);
-
-                    // write Group created successfully
-                    Toast.makeText(CreateGroupActivity.this, "Group successfully created", Toast.LENGTH_SHORT)
-                            .show();
-
-                    // Design
-                    imgLogin.setVisibility(View.INVISIBLE);
-                    tvPartyDate.setVisibility(View.INVISIBLE);
-                    tvHours.setVisibility(View.INVISIBLE);
-                    tvSelectedDate.setVisibility(View.INVISIBLE);
-                    timePicker.setVisibility(View.INVISIBLE);
-                    btnBack2.setVisibility(View.INVISIBLE);
-                    btnAddGroup.setVisibility(View.INVISIBLE);
-                    cbGroupType.setVisibility(View.INVISIBLE);
-                    imgGroupPicture.setVisibility(View.VISIBLE);
-                    tvGroupPicture.setVisibility(View.VISIBLE);
-                    btnDone.setVisibility(View.VISIBLE);
-
-                    // Set title in action bar - i chose no title
-                    ActionBar actionBar = getSupportActionBar();
-                    assert actionBar != null;
-                    actionBar.setTitle(Html.fromHtml("<font color='#039694'>Set party's picture</font>"));
-
-                    // wait 2 seconds and after it makes text Disappeared
-                    Handler handler = new Handler();
-                    handler.postDelayed(
-                            () -> tvGroupPicture.setText("Tap on the picture above to set a profile picture"),
-                            3000);
-                });
-        imgGroupPicture.setOnClickListener(
-                v -> {
-                    Intent i = new Intent();
-                    i.setType("image/*");
-                    i.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
-                    tvGroupPicture.setVisibility(View.INVISIBLE);
-                });
+    private void setupFormButtons() {
+        btnAddGroup.setOnClickListener(this::handleCreateGroup);
+        btnDone.setOnClickListener(this::handleDoneClick);
         tvSelectedDate.setOnClickListener(v -> showDatePicker());
-        btnDone.setOnClickListener(
-                v -> {
-                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    startActivity(intent);
-                });
+    }
 
-        fabChat.setOnClickListener(
-                view -> {
-                    Intent intent = new Intent(CreateGroupActivity.this, GptChatActivity.class);
-                    startActivity(intent);
-                });
-        fabChat.setOnTouchListener(
-                new View.OnTouchListener() {
-                    @SuppressLint("ClickableViewAccessibility")
-                    @Override
-                    public boolean onTouch(View view, MotionEvent event) {
-                        return Common.dragChatButtonOnTouch(view, event);
-                    }
-                });
+    private void setupImageSelection() {
+        imgGroupPicture.setOnClickListener(this::handleImageSelection);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupFloatingActionButton() {
+        fabChat.setOnClickListener(this::handleChatFabClick);
+        fabChat.setOnTouchListener(this::handleChatFabTouch);
+    }
+
+    // Navigation handlers
+    private void handleNextButtonClick(View v) {
+        if (!validatePartyName()) {
+            return;
+        }
+
+        transitionToLocationStep();
+    }
+
+    private void handleSecondStepNavigation(View v) {
+        transitionToDateTimeStep();
+    }
+
+    private void handleBackToFirstStep(View v) {
+        transitionToNameStep();
+    }
+
+    private void handleBackToSecondStep(View v) {
+        transitionToLocationStep();
+    }
+
+    // Step transition methods
+    private void transitionToLocationStep() {
+        hideViews(tvPartyName, etPartyName, imgLogin, btnNext1);
+        showViews(btnNext2, btnBack1);
+
+        showMapAndLocationSearch();
+    }
+
+    private void transitionToDateTimeStep() {
+        hideViews(cbGroupType, btnNext2, btnBack1);
+        showViews(tvPartyDate, tvHours, tvSelectedDate, timePicker, btnAddGroup, btnBack2);
+
+        hideMapAndLocationSearch();
+        showDatePicker();
+    }
+
+    private void transitionToNameStep() {
+        hideViews(btnNext2, btnBack1);
+        showViews(tvPartyName, etPartyName, imgLogin, btnNext1);
+    }
+
+    private void transitionToImageStep() {
+        hideViews(imgLogin, tvPartyDate, tvHours, tvSelectedDate, timePicker,
+                btnBack2, btnAddGroup, cbGroupType);
+        showViews(imgGroupPicture, tvGroupPicture, btnDone);
+
+        updateActionBarForImageStep();
+        scheduleInstructionTextUpdate();
+    }
+
+    // Form handlers
+    private void handleCreateGroup(View v) {
+        try {
+            Group group = createGroupFromForm();
+            saveGroupToDatabase(group);
+            showSuccessMessage();
+            transitionToImageStep();
+        } catch (Exception e) {
+            handleGroupCreationError(e);
+        }
+    }
+
+    private void handleDoneClick(View v) {
+        navigateToMainActivity();
+    }
+
+    private void handleImageSelection(View v) {
+        openImagePicker();
+        tvGroupPicture.setVisibility(View.INVISIBLE);
+    }
+
+    private void handleChatFabClick(View view) {
+        Intent intent = new Intent(CreateGroupActivity.this, GptChatActivity.class);
+        startActivity(intent);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private boolean handleChatFabTouch(View view, MotionEvent event) {
+        return Common.dragChatButtonOnTouch(view, event);
+    }
+
+    // Group creation logic
+    private Group createGroupFromForm() {
+        GroupBuilder builder = new GroupBuilder()
+                .setName(etPartyName.getText().toString())
+                .setAdmin(getCurrentUserEmail())
+                .setType(determineGroupType())
+                .setCreationTime(getCurrentTimestamp())
+                .setPrice("0")
+                .setLocation(getSelectedLocation())
+                .setDateTime(getSelectedDateTime());
+
+        return builder.build();
+    }
+
+    private void saveGroupToDatabase(Group group) {
+        String groupKey = generateGroupKey();
+        GroupKey1 = groupKey;
+        group.setGroupKey(groupKey);
+
+        // Save group to database
+        DBRef.refGroups.child(groupKey).setValue(group);
+
+        // Add admin to group members
+        addAdminToGroup(group);
+
+        // Initialize group chat
+        initializeGroupChat(group);
+    }
+
+    // Helper methods
+    private void showMapAndLocationSearch() {
+        findViewById(R.id.mapFragment).setVisibility(View.VISIBLE);
+        findViewById(R.id.autocomplete_fragment).setVisibility(View.VISIBLE);
+        MapUtilities.requestLocationPermission(this, map, locationClient, FINE_PERMISSION_CODE);
+    }
+
+    private void hideMapAndLocationSearch() {
+        findViewById(R.id.mapFragment).setVisibility(View.INVISIBLE);
+        findViewById(R.id.autocomplete_fragment).setVisibility(View.INVISIBLE);
+    }
+
+    private void updateActionBarForImageStep() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(Html.fromHtml("<font color='#039694'>Set party's picture</font>"));
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void scheduleInstructionTextUpdate() {
+        new Handler().postDelayed(() ->
+                        tvGroupPicture.setText("Tap on the picture above to set a profile picture"),
+                INSTRUCTION_DELAY_MS);
+    }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMAGE_PICKER_REQUEST_CODE);
+    }
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    // Group configuration methods
+    private int determineGroupType() {
+        return cbGroupType.isChecked() ? GroupType.PRIVATE : GroupType.PUBLIC;
+    }
+
+    private String getCurrentUserEmail() {
+        FirebaseUser currentUser = DBRef.Auth.getCurrentUser();
+        return currentUser != null ? Objects.requireNonNull(currentUser.getEmail()).replace('.', ' ') : "";
+    }
+
+    private String getCurrentTimestamp() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return sdf.format(new Date());
+    }
+
+    private String getSelectedLocation() {
+        if (chosenLatLng != null) {
+            return MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+        } else {
+            showLocationWarning();
+            return null;
+        }
+    }
+
+    private GroupDateTime getSelectedDateTime() {
+        int hour = timePicker.getHour();
+        int minute = timePicker.getMinute();
+        String timeString = String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
+
+        return new GroupDateTime(DaysSelected, MonthsSelected, YearsSelected, timeString);
+    }
+
+    private String generateGroupKey() {
+        return DBRef.refGroups.push().getKey();
+    }
+
+    private void addAdminToGroup(Group group) {
+        String adminKey = getCurrentUserEmail();
+        Map<String, Object> memberData = new HashMap<>();
+        memberData.put(adminKey, "true");
+
+        // Add to both friend keys and coming keys
+        DBRef.refGroups.child(group.getGroupKey()).child("FriendKeys").updateChildren(memberData);
+        DBRef.refGroups.child(group.getGroupKey()).child("ComingKeys").updateChildren(memberData);
+    }
+
+    private void initializeGroupChat(Group group) {
+        Map<String, Object> emptyChat = new HashMap<>();
+        DBRef.refGroups.child(group.getGroupKey()).child("MessageKeys").updateChildren(emptyChat);
+    }
+
+    // UI utility methods
+    private void showViews(View... views) {
+        for (View view : views) {
+            view.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideViews(View... views) {
+        for (View view : views) {
+            view.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void showSuccessMessage() {
+        Toast.makeText(this, "Group successfully created", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showLocationWarning() {
+        Toast.makeText(this, "Warning: You have not set an address for your party.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void handleGroupCreationError(Exception e) {
+        Toast.makeText(this, "Error creating group: " + e.getMessage(),
+                Toast.LENGTH_LONG).show();
+        Log.e(TAG, "Group creation failed", e);
+    }
+
+    // Constants
+    private static final int IMAGE_PICKER_REQUEST_CODE = 100;
+    private static final int INSTRUCTION_DELAY_MS = 3000;
+
+    // Inner classes for better organization
+    public static class GroupType {
+        public static final int PUBLIC = 0;
+        public static final int PRIVATE = 1;
+    }
+
+    public static class GroupDateTime {
+        private final String day;
+        private final String month;
+        private final String year;
+        private final String time;
+
+        public GroupDateTime(String day, String month, String year, String time) {
+            this.day = day;
+            this.month = month;
+            this.year = year;
+            this.time = time;
+        }
+
+        // Getters
+        public String getDay() { return day; }
+        public String getMonth() { return month; }
+        public String getYear() { return year; }
+        public String getTime() { return time; }
+    }
+
+    // Builder pattern for Group creation
+    public static class GroupBuilder {
+        private final Group group = new Group();
+
+        public GroupBuilder setName(String name) {
+            group.setGroupName(name);
+            return this;
+        }
+
+        public GroupBuilder setAdmin(String adminKey) {
+            group.setAdminKey(adminKey);
+            return this;
+        }
+
+        public GroupBuilder setType(int type) {
+            group.setGroupType(type);
+            group.setCanAdd(type == GroupType.PUBLIC);
+            return this;
+        }
+
+        public GroupBuilder setCreationTime(String timestamp) {
+            group.setCreatedAt(timestamp);
+            return this;
+        }
+
+        public GroupBuilder setPrice(String price) {
+            group.setGroupPrice(price);
+            return this;
+        }
+
+        public GroupBuilder setLocation(String location) {
+            group.setGroupLocation(location);
+            return this;
+        }
+
+        public GroupBuilder setDateTime(GroupDateTime dateTime) {
+            group.setGroupDays(dateTime.getDay());
+            group.setGroupMonths(dateTime.getMonth());
+            group.setGroupYears(dateTime.getYear());
+            group.setGroupHours(dateTime.getTime());
+            return this;
+        }
+
+        public Group build() {
+            return group;
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
