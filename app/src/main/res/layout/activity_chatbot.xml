@@ -12,7 +12,8 @@
         android:background="#E8E8E8"
         android:title="@string/chat_with_ai_assistant"
         android:titleTextColor="@android:color/white"
-        app:navigationIcon="@android:drawable/ic_media_previous"/>
+        app:navigationIcon="@android:drawable/ic_media_previous"
+        app:navigationIconTint="#0081d1"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,8 +58,8 @@
                 android:layout_marginStart="5dp"
                 android:background="@drawable/msg_bg_send_btn"
                 android:src="@android:drawable/ic_menu_send"
-                android:contentDescription="@string/send_message"
-                app:tint="#0081d1" />
+                app:tint="#0081d1"
+                android:contentDescription="@string/send_message" />
         </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

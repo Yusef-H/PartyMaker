@@ -157,7 +157,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     eventHandler();
   }
 
-  @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
+  @SuppressLint({"SetTextI18n", "ClickableViewAccessibility", "DefaultLocale"})
   private void eventHandler() {
     btnNext1.setOnClickListener(
         v -> {
@@ -417,15 +417,14 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     datePickerDialog.show();
   }
 
+  @SuppressLint("DefaultLocale")
   private void updateSelectedDate() {
     // Get month name in English
     String monthName = new SimpleDateFormat("MMMM", Locale.ENGLISH).format(selectedDate.getTime());
 
     // Update the selected date text
     tvSelectedDate.setText(
-        String.format(
-            "%d %s %d",
-            selectedDate.get(Calendar.DAY_OF_MONTH), monthName, selectedDate.get(Calendar.YEAR)));
+        String.format("%d %s %d", selectedDate.get(Calendar.DAY_OF_MONTH), monthName, selectedDate.get(Calendar.YEAR)));
 
     // Store the values
     DaysSelected = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
