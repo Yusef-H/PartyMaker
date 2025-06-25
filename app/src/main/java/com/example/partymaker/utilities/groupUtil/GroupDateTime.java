@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities.group;
+package com.example.partymaker.utilities.groupUtil;
 
 public class GroupDateTime {
     private final String day;
