@@ -469,6 +469,12 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         startActivity(intent);
     }
 
+    // Inner classes for better organization
+    public static class GroupType {
+        public static final int PUBLIC = 0;
+        public static final int PRIVATE = 1;
+    }
+
     // Group configuration methods
     private int determineGroupType() {
         return cbGroupType.isChecked() ? GroupType.PRIVATE : GroupType.PUBLIC;
@@ -534,13 +540,6 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
                 Toast.LENGTH_LONG).show();
         Log.e(TAG, "Group creation failed", e);
     }
-
-    // Inner classes for better organization
-    public static class GroupType {
-        public static final int PUBLIC = 0;
-        public static final int PRIVATE = 1;
-    }
-
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
