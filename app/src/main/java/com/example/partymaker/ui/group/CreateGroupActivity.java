@@ -14,6 +14,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -64,6 +65,8 @@ import android.text.TextWatcher;
 import android.text.Editable;
 
 public class CreateGroupActivity extends AppCompatActivity implements OnMapReadyCallback {
+    // Constants
+    private static final String TAG = "CreateGroupActivity";
     private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
     private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
     private EditText etPartyName;
@@ -83,87 +86,157 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_party_create);
 
+        initializePlacesAPI();
+        setupActionBar();
+        initializeViews();
+        setupMapAndLocation();
+        eventHandler();
+        setupValidation();
+    }
+
+    // Initialize Google Places API if not already initialized
+    private void initializePlacesAPI() {
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
+            String apiKey = Common.getApiKey(this, "MAPS_KEY");
+            Places.initialize(getApplicationContext(), apiKey);
         }
+    }
 
-        // Better approach for setting a colored ActionBar title
+    // Configure ActionBar appearance and styling
+    private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Define color using resources for better maintainability
-            int titleColor = ContextCompat.getColor(this, R.color.teal);
+        if (actionBar == null) return;
 
-            // Create a SpannableString for styling the title
-            SpannableString spannableTitle = new SpannableString("New Party");
-            spannableTitle.setSpan(
-                    new ForegroundColorSpan(titleColor),
-                    0,
-                    spannableTitle.length(),
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        // Set styled title with color
+        int titleColor = ContextCompat.getColor(this, R.color.teal);
+        SpannableString spannableTitle = new SpannableString(getString(R.string.new_party_title));
+        spannableTitle.setSpan(
+                new ForegroundColorSpan(titleColor),
+                0,
+                spannableTitle.length(),
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        actionBar.setTitle(spannableTitle);
 
-            actionBar.setTitle(spannableTitle);
+        // Set background drawable
+        Drawable backgroundDrawable = ContextCompat.getDrawable(this, R.drawable.bg_cyan);
+        if (backgroundDrawable != null) {
+            actionBar.setBackgroundDrawable(backgroundDrawable);
         }
+    }
 
-        // set actionbar background
-        Drawable d = ContextCompat.getDrawable(this, R.drawable.bg_cyan);
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(d);
-
+    // Initialize all view references and components
+    private void initializeViews() {
+        // Image views
         imgLogin = findViewById(R.id.imgLogin);
         imgGroupPicture = findViewById(R.id.imgGroupPicture);
+
+        // Buttons
         btnNext1 = findViewById(R.id.btnNext1);
         btnNext2 = findViewById(R.id.btnNext2);
         btnBack1 = findViewById(R.id.btnBack1);
         btnBack2 = findViewById(R.id.btnBack2);
         btnDone = findViewById(R.id.btnDone);
         btnAddGroup = findViewById(R.id.btnAddGroup);
+
+        // Text views
         tvPartyName = findViewById(R.id.tvPartyName);
         tvPartyDate = findViewById(R.id.tvPartyDate);
         tvGroupPicture = findViewById(R.id.tvGroupPicture);
         tvHours = findViewById(R.id.tvHours);
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
+
+        // Input views
         etPartyName = findViewById(R.id.etPartyName);
         cbGroupType = findViewById(R.id.cbGroupType);
-        selectedDate = Calendar.getInstance();
         timePicker = findViewById(R.id.timePicker);
+
+        // Floating action button
         fabChat = findViewById(R.id.fabChat);
-        SupportMapFragment mapFrag =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-        Objects.requireNonNull(mapFrag).getMapAsync(this);
-        AutocompleteSupportFragment autocompleteFragment =
-                (AutocompleteSupportFragment)
-                        getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-        Objects.requireNonNull(autocompleteFragment)
-                .setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-        locationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        autocompleteFragment.setOnPlaceSelectedListener(
-                new PlaceSelectionListener() {
-                    @Override
-                    public void onPlaceSelected(@NonNull Place place) {
-                        chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
-                    }
+        // Initialize calendar
+        selectedDate = Calendar.getInstance();
 
-                    @Override
-                    public void onError(@NonNull Status status) {
-                        Toast.makeText(
-                                        CreateGroupActivity.this,
-                                        "Search error: " + status.getStatusMessage(),
-                                        Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                });
-
-        // spinner adapter for hours
-        ArrayAdapter<CharSequence> hoursAdapter =
-                ArrayAdapter.createFromResource(
-                        this, R.array.array_hours, android.R.layout.simple_spinner_item);
-        hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        eventHandler();
-        setupValidation();
+        // Setup hours spinner
+        setupHoursSpinner();
     }
 
+
+    // Configure hours spinner with adapter
+    private void setupHoursSpinner() {
+        ArrayAdapter<CharSequence> hoursAdapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.array_hours,
+                android.R.layout.simple_spinner_item);
+        hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    }
+
+    // Initialize map fragment and location services
+    private void setupMapAndLocation() {
+        // Initialize map fragment
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
+        // Initialize autocomplete fragment
+        setupAutocompleteFragment();
+
+        // Initialize location client
+        locationClient = LocationServices.getFusedLocationProviderClient(this);
+    }
+
+    // Configure Google Places autocomplete fragment
+    private void setupAutocompleteFragment() {
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        if (autocompleteFragment == null) return;
+
+        // Set required place fields
+        autocompleteFragment.setPlaceFields(Arrays.asList(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.LAT_LNG));
+
+        // Set place selection listener
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                handlePlaceSelection(place);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                handlePlaceSelectionError(status);
+            }
+        });
+    }
+
+    // Handle successful place selection from autocomplete
+    private void handlePlaceSelection(@NonNull Place place) {
+        try {
+            chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
+            Log.d(TAG, "Place selected: " + place.getName());
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling place selection", e);
+            showErrorMessage(getString(R.string.error_place_selection));
+        }
+    }
+
+    // Handle place selection errors
+    private void handlePlaceSelectionError(@NonNull Status status) {
+        String errorMessage = "Search error: " + status.getStatusMessage();
+        Log.w(TAG, "Place selection error: " + status.getStatusMessage());
+        showErrorMessage(errorMessage);
+    }
+
+    // Display error message to user
+    private void showErrorMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // Validate next-button if name is empty
     private void setupValidation() {
         // Check in real-time
         etPartyName.addTextChangedListener(new TextWatcher() {
@@ -195,6 +268,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         btnNext1.setAlpha(0.5f);
     }
 
+    // Validate the name of the party
     private boolean validatePartyName() {
         String text = etPartyName.getText().toString().trim();
         if (text.isEmpty()) {
