@@ -45,6 +45,7 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/gmp_ref_measurement_spacing_20"
         android:autofillHints=""
         android:background="@drawable/et_background"
         android:drawableStart="@drawable/ic_email"
