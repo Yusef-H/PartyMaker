@@ -39,8 +39,8 @@
             android:textSize="16sp"
             android:textColor="#222222"
             android:text="@string/message_content"
-            android:textDirection="rtl"
-            android:gravity="right|center_vertical"/>
+            android:textDirection="ltr"
+            android:gravity="start"/>
 
         <TextView
             android:id="@+id/tvTime"

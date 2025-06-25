@@ -37,6 +37,7 @@
         android:id="@+id/tvGroupPicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/gmp_ref_measurement_spacing_20"
         android:layout_marginTop="250dp"
         android:text="@string/group_s_picture"
         android:textAlignment="center"

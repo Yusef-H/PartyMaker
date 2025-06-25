@@ -29,10 +29,13 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
   public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
     ChatMessageGpt message = messages.get(position);
     holder.messageText.setText(message.content);
+    TextView messageText = holder.messageText;
 
+    messageText.setPadding(32, 32, 32, 32);
     if ("user".equals(message.role)) {
       holder.messageText.setBackgroundResource(R.drawable.msg_user_bg);
     } else {
+
       holder.messageText.setBackgroundResource(R.drawable.msg_bg_assistant);
     }
   }
