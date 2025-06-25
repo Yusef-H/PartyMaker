@@ -113,15 +113,17 @@ public class ChangeDateActivity extends AppCompatActivity {
   }
 
   private void eventHandler() {
-      btnHelp.setOnClickListener(v -> {
+    btnHelp.setOnClickListener(
+        v -> {
           showViews(tvInstructions1, btnHide, tvHide);
           hideViews(btnHelp, tvHelp);
-      });
+        });
 
-      btnHide.setOnClickListener(v -> {
+    btnHide.setOnClickListener(
+        v -> {
           showViews(btnHelp, tvHelp);
           hideViews(tvInstructions1, btnHide, tvHide);
-      });
+        });
 
     btnChangeDate.setOnClickListener(
         v -> {
