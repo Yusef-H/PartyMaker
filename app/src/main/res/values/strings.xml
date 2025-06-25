@@ -153,6 +153,8 @@
     <string name="secure">Secure 🔒</string>
     <string name="remove_friend">Remove Friend</string>
     <string name="info_button">Info button</string>
+    <string name="type_your_message_here">Type your message here...</string>
+    <string name="send_message">Send message</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

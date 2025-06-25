@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints=""
-                android:hint="Type your message here..."
+                android:hint="@string/type_your_message_here"
                 android:inputType="textMultiLine"
                 android:maxLines="4"
                 android:background="@drawable/et_background"
@@ -57,7 +57,8 @@
                 android:layout_marginStart="5dp"
                 android:background="@drawable/msg_bg_send_btn"
                 android:src="@android:drawable/ic_menu_send"
-                android:contentDescription="Send message"/>
+                android:contentDescription="@string/send_message"
+                app:tint="#0081d1" />
         </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
