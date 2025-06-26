@@ -123,7 +123,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     if (actionBar == null) return;
 
     // Set styled title with color
-    int titleColor = ContextCompat.getColor(this, R.color.teal);
+    int titleColor = ContextCompat.getColor(this, R.color.white);
     SpannableString spannableTitle = new SpannableString(getString(R.string.new_party_title));
     spannableTitle.setSpan(
         new ForegroundColorSpan(titleColor),
@@ -133,7 +133,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     actionBar.setTitle(spannableTitle);
 
     // Set background drawable
-    Drawable backgroundDrawable = ContextCompat.getDrawable(this, R.drawable.bg_cyan);
+    Drawable backgroundDrawable = ContextCompat.getDrawable(this, R.color.primaryBlue);
     if (backgroundDrawable != null) {
       actionBar.setBackgroundDrawable(backgroundDrawable);
     }
@@ -341,13 +341,20 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   private void handleBackToSecondStep(View v) {
-    transitionToLocationStep();
+    transitionBackToLocationStep();
   }
 
   // Step transition methods
   private void transitionToLocationStep() {
     hideViews(tvPartyName, etPartyName, imgLogin, btnNext1);
     showViews(btnNext2, btnBack1);
+
+    showMapAndLocationSearch();
+  }
+
+  private void transitionBackToLocationStep() {
+    showViews(cbGroupType, btnNext2, btnBack1);
+    hideViews(tvPartyDate, tvHours, tvSelectedDate, timePicker, btnAddGroup, btnBack2);
 
     showMapAndLocationSearch();
   }
@@ -459,7 +466,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private void updateActionBarForImageStep() {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
-      actionBar.setTitle(Html.fromHtml("<font color='#039694'>Set party's picture</font>"));
+      actionBar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Set picture</font>"));
     }
   }
 

@@ -17,9 +17,46 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="21dp"
-        android:contentDescription="@string/todo"
+        android:contentDescription="@string/create_group_logo"
         app:srcCompat="@drawable/ic_cake_create_party"
          />
+
+    <TextView
+        android:id="@+id/tvPartyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imgLogin"
+        android:gravity="center"
+        android:text="@string/input_party_name"
+        android:textColor="@color/black"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/etPartyName"
+        android:layout_width="300sp"
+        android:layout_height="48sp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvPartyName"
+        android:autofillHints=""
+        android:backgroundTint="@color/black"
+        android:ems="10"
+        android:padding="12dp"
+        android:hint="@string/name"
+        android:inputType="textPersonName" />
+
+    <CheckBox
+        android:id="@+id/cbGroupType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etPartyName"
+        android:layout_alignStart="@+id/etPartyName"
+        android:layout_marginTop="8dp"
+        android:buttonTint="@color/primaryGray"
+        android:text="@string/private_party"
+        android:textColor="#FFFFFF" />
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgGroupPicture"
@@ -39,32 +76,12 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/gmp_ref_measurement_spacing_20"
         android:layout_marginTop="250dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
         android:text="@string/group_s_picture"
-        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="25sp"
         android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/tvPartyName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/imgLogin"
-        android:gravity="center"
-        android:text="@string/your_party_s_name"
-        android:textColor="@color/black"
-        android:textSize="25sp" />
-
-    <CheckBox
-        android:id="@+id/cbGroupType"
-        android:layout_width="188dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/etPartyName"
-        android:buttonTint="@color/primaryGray"
-        android:text="@string/private_party"
-        android:textColor="#FFFFFF" />
 
 
     <androidx.fragment.app.FragmentContainerView
@@ -135,20 +152,6 @@
             android:visibility="invisible" />
 
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/etPartyName"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvPartyName"
-        android:autofillHints=""
-        android:backgroundTint="@color/black"
-        android:ems="10"
-        android:padding="12dp"
-        android:hint="@string/name"
-        android:inputType="textPersonName"
-        android:textAlignment="center" />
 
     <Button
         android:id="@+id/btnAddGroup"
