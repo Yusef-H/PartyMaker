@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_cyan"
+    android:background="@drawable/bg_party_screen_reverse"
     android:orientation="vertical"
     android:weightSum="1"
     android:fitsSystemWindows="true"
@@ -18,14 +18,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="21dp"
         android:contentDescription="@string/todo"
-        app:srcCompat="@drawable/ic_cake_cyan"
+        app:srcCompat="@drawable/ic_cake_create_party"
          />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgGroupPicture"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginStart="115dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:background="@drawable/ic_party_set_picture"
         android:clickable="true"
@@ -62,9 +62,9 @@
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/etPartyName"
-        android:buttonTint="#696969"
+        android:buttonTint="#E4E9EF"
         android:text="@string/private_party"
-        android:textColor="#696969" />
+        android:textColor="#FFFFFF" />
 
 
     <androidx.fragment.app.FragmentContainerView
@@ -130,8 +130,8 @@
             android:id="@+id/timePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:timePickerMode="clock"
             android:layout_marginBottom="16dp"
+            android:timePickerMode="clock"
             android:visibility="invisible" />
 
     </LinearLayout>
@@ -226,5 +226,6 @@
         android:layout_margin="48dp"
         android:src="@android:drawable/ic_dialog_email"
         app:fabSize="normal"
-        android:contentDescription="@string/Chat" />
+        android:contentDescription="@string/Chat"
+        tools:ignore="RelativeOverlap" />
 </RelativeLayout>
