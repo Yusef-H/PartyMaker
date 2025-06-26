@@ -32,7 +32,7 @@
             android:hint="@string/day"
             android:textAlignment="center" />
         <TextView
-            android:textColor="#000000"
+            android:textColor="@color/black"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
@@ -50,7 +50,7 @@
             android:hint="@string/month"
             android:textAlignment="center" />
         <TextView
-            android:textColor="#000000"
+            android:textColor="@color/black"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="140dp"
@@ -68,7 +68,7 @@
             android:hint="@string/year"
             android:textAlignment="center" />
         <TextView
-            android:textColor="#000000"
+            android:textColor="@color/black"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="240dp"
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
             android:text="@string/pick_an_hour"
-            android:textColor="#000000" />
+            android:textColor="@color/black" />
 
         <Spinner
             android:id="@+id/spnHourDate"
@@ -106,7 +106,7 @@
         android:textAlignment="center"
         android:layout_gravity="center"
         android:visibility="invisible"
-        android:textColor="#000000"
+        android:textColor="@color/black"
         android:textStyle="bold"/>
 
 
@@ -117,7 +117,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="200dp"
         android:background="#106e6e6e"
-        android:shadowColor="#e4e9ef"
+        android:shadowColor="@color/primaryGray"
         android:shadowDx="-0"
         android:shadowDy="-0"
         android:shadowRadius="25"

@@ -34,7 +34,7 @@
                 android:layout_height="40dp"
                 android:layout_alignBottom="@+id/tvGroupName"
                 android:layout_toEndOf="@+id/tvGroupName"
-                android:background="#00000000"
+                android:background="@color/transparent"
                 android:contentDescription="@string/todo"
                 android:src="@drawable/ic_party_pencil" />
 
@@ -68,7 +68,7 @@
                 android:layout_height="20dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:background="#00000000"
+                android:background="@color/transparent"
                 android:text="@string/back"
                 android:textColor="#ffffff" />
 
