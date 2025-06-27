@@ -31,10 +31,10 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-         # ✅ Step: Create secrets.properties
+        # ✅ Step: Create secrets.properties
       - name: Create secrets.properties
         run: |
-          echo "MAPS_KEY=${{ secrets.MAPS_KEY }}" > app/secrets.properties
+          echo "MAPS_KEY=${{ secrets.MAPS_KEY }}" > secrets.properties
 
       # Step 5: Cache Gradle – to speed up runs
       - name: Cache Gradle
