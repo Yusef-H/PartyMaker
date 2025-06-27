@@ -27,7 +27,11 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # Step 4: Cache Gradle – to speed up runs
+      # ✅ Step 4: Create local.properties file so build doesn't fail
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      # Step 5: Cache Gradle – to speed up runs
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -36,10 +40,10 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      # Step 5: Grant permissions to the gradlew file
+      # Step 6: Grant permissions to the gradlew file
       - name: Grant permission to execute gradlew
         run: chmod +x ./gradlew
 
-      # Step 6: Running the actual build
+      # Step 7: Running the actual build
       - name: Build with Gradle
         run: ./gradlew assembleDebug
