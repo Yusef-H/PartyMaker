@@ -123,6 +123,8 @@ For detailed architecture documentation, see [ARCHITECTURE.docx](./ARCHITECTURE.
 - **Real-time Features**: Firebase Realtime Database
 - **Location Services**: Google Maps integration
 - **AI Integration**: Custom chatbot implementation
+- **CI/CD**: GitHub Actions with secure secrets management
+
 
 ## 📋 Recent Updates & Improvements
 
