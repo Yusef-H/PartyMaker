@@ -16,7 +16,7 @@
             android:id="@+id/lv1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#E4E9EF"/>
+            android:background="@color/primaryGray"/>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

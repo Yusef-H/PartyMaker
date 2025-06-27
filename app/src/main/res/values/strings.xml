@@ -158,6 +158,10 @@
     <string name="search_error">Search Error</string>
     <string name="new_party_title">New Party</string>
     <string name="error_place_selection">Error Place Selection</string>
+    <string name="new_party">New Party</string>
+    <string name="my_parties">My Parties</string>
+    <string name="create_group_logo">Create Group Logo</string>
+    <string name="input_party_name">Input Party Name</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

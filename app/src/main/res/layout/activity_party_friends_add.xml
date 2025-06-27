@@ -18,7 +18,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:background="#00000000"
+            android:background="@color/transparent"
             android:contentDescription="@string/todo"
             android:src="@drawable/ic_menu_back" />
 
@@ -108,7 +108,7 @@
             android:layout_height="50dp"
             android:layout_marginEnd="10dp"
             android:background="#10d15000"
-            android:shadowColor="#e4e9ef"
+            android:shadowColor="@color/primaryGray"
             android:shadowDx="-0"
             android:shadowDy="-0"
             android:shadowRadius="25"
@@ -124,7 +124,7 @@
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
             android:background="#106e6e6e"
-            android:shadowColor="#e4e9ef"
+            android:shadowColor="@color/primaryGray"
             android:shadowDx="-0"
             android:shadowDy="-0"
             android:shadowRadius="25"

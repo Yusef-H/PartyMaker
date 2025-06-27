@@ -17,7 +17,7 @@
             android:id="@+id/btnBack4"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="#00000000"
+            android:background="@color/transparent"
             android:layout_alignParentRight="true"
             android:contentDescription="@string/todo"
             android:src="@drawable/ic_menu_back"/>
@@ -62,7 +62,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="280dp"
         android:background="#106e6e6e"
-        android:shadowColor="#e4e9ef"
+        android:shadowColor="@color/primaryGray"
         android:shadowDx="-0"
         android:shadowDy="-0"
         android:shadowRadius="25"

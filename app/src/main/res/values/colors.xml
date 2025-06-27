@@ -5,8 +5,13 @@
 
     <!-- Standard Colors -->
     <color name="white">#FFFFFFFF</color>
-    <color name="black">#FF000000</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
     <color name="teal">#039694</color>
+
+    <!-- App's 2 primary colors -->
+    <color name="primaryBlue">#0E81D1</color>
+    <color name="primaryGray">#E4E9EF</color>
 
     <!-- Original color definitions -->
     <color name="colorPrimary">#000000</color>
