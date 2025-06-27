@@ -2,6 +2,17 @@
 
 PartyMaker is a comprehensive social event planning Android application that enables users to organize gatherings, create communities through groups, manage invitations, and communicate seamlessly with attendees. Built with modern Android development practices and Firebase integration.
 
+## 🛠️ Technical Stack
+
+- **Platform**: Android (Kotlin/Java)
+- **Backend**: Firebase (Authentication, FireStore, Cloud Messaging)
+- **Architecture**: MVVM with Repository pattern
+- **UI Framework**: Android Views with Material Design
+- **Real-time Features**: Firebase Realtime Database
+- **Location Services**: Google Maps integration
+- **AI Integration**: Custom chatbot implementation
+- **CI/CD**: GitHub Actions with secure secrets management
+
 ## ✨ Key Features
 
 ### 🔐 User Management
@@ -112,18 +123,7 @@ For detailed architecture documentation, see [ARCHITECTURE.docx](./ARCHITECTURE.
 ### Configuration Files
 ⚠️ **Security Note**: Configuration files containing sensitive data are gitignored:
 - `google-services.json` - Firebase configuration
-- `api_keys.xml` - API keys and secrets
-
-## 🛠️ Technical Stack
-
-- **Platform**: Android (Kotlin/Java)
-- **Backend**: Firebase (Authentication, FireStore, Cloud Messaging)
-- **Architecture**: MVVM with Repository pattern
-- **UI Framework**: Android Views with Material Design
-- **Real-time Features**: Firebase Realtime Database
-- **Location Services**: Google Maps integration
-- **AI Integration**: Custom chatbot implementation
-- **CI/CD**: GitHub Actions with secure secrets management
+- `local.properties` - API keys and secrets
 
 
 ## 📋 Recent Updates & Improvements
