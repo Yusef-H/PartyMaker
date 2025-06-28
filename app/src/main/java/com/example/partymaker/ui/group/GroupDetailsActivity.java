@@ -222,11 +222,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
             {
               Intent i3 = new Intent(getBaseContext(), MembersInvitedActivity.class);
               i3.putExtra("FriendKeys", FriendKeys);
+              i3.putExtra("adminKey", AdminKey);
               startActivity(i3);
             } else if (finalI == 3) // open 2,2 (4) People Coming
             {
               Intent i3 = new Intent(getBaseContext(), MembersComingActivity.class);
               i3.putExtra("ComingKeys", ComingKeys);
+              i3.putExtra("adminKey", AdminKey);
               startActivity(i3);
             } else if (finalI == 4) // open 3,1 (5) Admin Options
             {
@@ -295,7 +297,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     // if pressed Yes
                     // if group have no friends so delete friends
                     if (FriendKeys.size() == 1) {
-                      // delete all messages writen by current group
+                      // delete all messages written by current group
                       deleteMessages();
 
                       // delete group from database
@@ -376,11 +378,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
             {
               Intent i3 = new Intent(getBaseContext(), MembersInvitedActivity.class);
               i3.putExtra("FriendKeys", FriendKeys);
+              i3.putExtra("adminKey", AdminKey);
               startActivity(i3);
             } else if (finalI == 3) // open 2,2 (4) People Coming
             {
               Intent i3 = new Intent(getBaseContext(), MembersComingActivity.class);
               i3.putExtra("ComingKeys", ComingKeys);
+              i3.putExtra("adminKey", AdminKey);
               startActivity(i3);
             } else if (finalI == 4) // open 3,1 (5) Coming/Not Coming
             {
@@ -441,7 +445,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     // if pressed Yes
                     // if group have no friends so delete friends
                     if (FriendKeys.size() == 1) {
-                      // delete all messages writen by current group
+                      // delete all messages written by current group
                       deleteMessages();
 
                       // delete group screen from database
