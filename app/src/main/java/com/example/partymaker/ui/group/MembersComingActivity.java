@@ -76,7 +76,8 @@ public class MembersComingActivity extends AppCompatActivity {
               }
             }
 
-            InvitedAdapter adapt = new InvitedAdapter(MembersComingActivity.this, 0, 0, ArrUsers, adminKey);
+            InvitedAdapter adapt =
+                new InvitedAdapter(MembersComingActivity.this, 0, 0, ArrUsers, adminKey);
             lv3.setAdapter(adapt);
           }
 

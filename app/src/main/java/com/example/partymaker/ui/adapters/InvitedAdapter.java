@@ -1,4 +1,6 @@
 package com.example.partymaker.ui.adapters;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,14 +21,14 @@ import java.util.List;
 public class InvitedAdapter extends ArrayAdapter<User> {
   Context context;
   List<User> InvitedList;
-  String adminKey; // הוספת מפתח האדמין
+  String adminKey;
 
   public InvitedAdapter(
-          @NonNull Context context,
-          @LayoutRes int resource,
-          @IdRes int textViewResourceId,
-          @NonNull List<User> InvitedList,
-          String adminKey) { // הוספת פרמטר למפתח האדמין
+      @NonNull Context context,
+      @LayoutRes int resource,
+      @IdRes int textViewResourceId,
+      @NonNull List<User> InvitedList,
+      String adminKey) {
     super(context, resource, textViewResourceId, InvitedList);
     this.context = context;
     this.InvitedList = InvitedList;
@@ -37,7 +39,7 @@ public class InvitedAdapter extends ArrayAdapter<User> {
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
+    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
     User temp = InvitedList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvInvitedUsername);
@@ -51,19 +53,19 @@ public class InvitedAdapter extends ArrayAdapter<User> {
     String email = UserImageProfile.replace('.', ' ');
 
     DBRef.refStorage
-            .child("Users/" + email)
-            .getDownloadUrl()
-            .addOnSuccessListener(
-                    uri ->
-                            Picasso.get()
-                                    .load(uri) // image url goes here
-                                    .fit()
-                                    .centerCrop()
-                                    .into(imageView))
-            .addOnFailureListener(
-                    exception -> {
-                      // Handle any errors
-                    });
+        .child("Users/" + email)
+        .getDownloadUrl()
+        .addOnSuccessListener(
+            uri ->
+                Picasso.get()
+                    .load(uri) // image url goes here
+                    .fit()
+                    .centerCrop()
+                    .into(imageView))
+        .addOnFailureListener(
+            exception -> {
+              // Handle any errors
+            });
 
     // Show flag for admin
     ImageView adminFlag = view.findViewById(R.id.imgAdminFlag);
