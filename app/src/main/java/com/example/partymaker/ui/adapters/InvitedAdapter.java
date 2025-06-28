@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -20,33 +21,34 @@ import java.util.List;
 public class InvitedAdapter extends ArrayAdapter<User> {
   Context context;
   List<User> InvitedList;
+  String adminKey;
 
   public InvitedAdapter(
       @NonNull Context context,
       @LayoutRes int resource,
       @IdRes int textViewResourceId,
-      @NonNull List<User> InvitedList) {
+      @NonNull List<User> InvitedList,
+      String adminKey) {
     super(context, resource, textViewResourceId, InvitedList);
     this.context = context;
     this.InvitedList = InvitedList;
+    this.adminKey = adminKey;
   }
 
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
+    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
     User temp = InvitedList.get(position);
 
-    TextView tvpUserName = view.findViewById(R.id.tvILusername);
+    TextView tvpUserName = view.findViewById(R.id.tvInvitedUsername);
     tvpUserName.setText(temp.getUserName());
 
-    TextView tvpEmail = view.findViewById(R.id.tvILemail);
+    TextView tvpEmail = view.findViewById(R.id.tvInvitedEmail);
     tvpEmail.setText(temp.getEmail());
 
-    final ImageView imageView = view.findViewById(R.id.imgILprofile);
-
+    final ImageView imageView = view.findViewById(R.id.imgInvitedProfile);
     String UserImageProfile = temp.getEmail();
     String email = UserImageProfile.replace('.', ' ');
 
@@ -64,6 +66,21 @@ public class InvitedAdapter extends ArrayAdapter<User> {
             exception -> {
               // Handle any errors
             });
+
+    // Show flag for admin
+    ImageView adminFlag = view.findViewById(R.id.imgAdminFlag);
+
+    if (adminFlag != null && adminKey != null) {
+      // Remove dot
+      String tempEmailFormatted = temp.getEmail().replace('.', ' ');
+      String adminKeyFormatted = adminKey.replace('.', ' ');
+
+      if (adminKeyFormatted.equals(tempEmailFormatted)) {
+        adminFlag.setVisibility(View.VISIBLE);
+      } else {
+        adminFlag.setVisibility(View.INVISIBLE);
+      }
+    }
 
     return view;
   }

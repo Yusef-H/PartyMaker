@@ -10,7 +10,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
@@ -78,9 +76,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Create notification channel
     createNotificationChannel();
-
-    // Set up glassmorphism effects
-    setUpGlassmorphismEffects();
 
     // Set up animations
     setupInitialAnimations();
@@ -204,28 +199,6 @@ public class RegisterActivity extends AppCompatActivity {
         new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     rootLayout.addView(celebrationLayout, params);
-  }
-
-  private void setUpGlassmorphismEffects() {
-    // Apply glassmorphism to cards
-    applyGlassmorphism(headerCard);
-    applyGlassmorphism(formCard);
-  }
-
-  private void applyGlassmorphism(CardView card) {
-    // Create glass effect with transparency and blur
-    card.setCardBackgroundColor(Color.parseColor("#80FFFFFF"));
-    card.setCardElevation(8);
-    card.setRadius(24);
-
-    // Add subtle border
-    GradientDrawable border = new GradientDrawable();
-    border.setShape(GradientDrawable.RECTANGLE);
-    border.setCornerRadius(24);
-    border.setStroke(2, Color.parseColor("#30FFFFFF"));
-    border.setColor(Color.parseColor("#40FFFFFF"));
-
-    card.setBackground(border);
   }
 
   private void setupInitialAnimations() {

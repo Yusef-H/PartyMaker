@@ -25,6 +25,7 @@ public class MembersComingActivity extends AppCompatActivity {
 
   private ListView lv3;
   private HashMap<String, Object> ComingKeys;
+  private String adminKey;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class MembersComingActivity extends AppCompatActivity {
 
     // connection between intent from GroupScreen and InvitedList
     ComingKeys = extras.getComingKeys();
-
+    adminKey = extras.getAdminKey();
     lv3 = findViewById(R.id.lv3);
 
     ShowData();
@@ -74,7 +75,9 @@ public class MembersComingActivity extends AppCompatActivity {
                 }
               }
             }
-            InvitedAdapter adapt = new InvitedAdapter(MembersComingActivity.this, 0, 0, ArrUsers);
+
+            InvitedAdapter adapt =
+                new InvitedAdapter(MembersComingActivity.this, 0, 0, ArrUsers, adminKey);
             lv3.setAdapter(adapt);
           }
 

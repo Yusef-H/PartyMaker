@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_cyan"
+    android:background="@drawable/bg_party_screen"
     android:fillViewport="true"
     android:theme="@style/Theme.Material3.Login"
     tools:context="com.example.partymaker.ui.auth.LoginActivity">
@@ -19,7 +19,6 @@
             android:id="@+id/headerCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:strokeWidth="0dp"
             app:cardCornerRadius="24dp"
@@ -31,13 +30,16 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp">
+
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <ImageButton
                     android:id="@+id/btnAbout"
                     android:layout_width="130dp"
                     android:layout_height="100dp"
-                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="35dp"
+                    android:layout_marginStart="200dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/about_us"
                     android:src="@drawable/ic_cake_about_us" />
@@ -51,8 +53,8 @@
 
                     <ImageView
                         android:id="@+id/imgLogin"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
                         android:contentDescription="@string/cake"
                         android:scaleType="centerCrop"
                         app:srcCompat="@drawable/ic_cake_cyan" />
@@ -113,7 +115,8 @@
                     app:boxCornerRadiusTopStart="12dp"
                     app:endIconMode="password_toggle"
                     app:startIconDrawable="@drawable/ic_password"
-                    app:startIconTint="?attr/colorPrimary">
+                    app:startIconTint="?attr/colorPrimary"
+                    tools:ignore="PrivateResource">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPasswordL"
@@ -287,7 +290,8 @@
                         android:layout_marginEnd="10dp"
                         android:contentDescription="@string/reset_your_password"
                         android:src="@drawable/ic_password"
-                        app:tint="?attr/colorSecondary" />
+                        app:tint="?attr/colorSecondary"
+                        tools:ignore="PrivateResource" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
@@ -315,4 +319,4 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</RelativeLayout>

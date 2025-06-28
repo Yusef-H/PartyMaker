@@ -25,6 +25,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
 
   private ListView lv2;
   private HashMap<String, Object> FriendKeys;
+  private String adminKey;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
 
     // connection between intent from GroupScreen and InvitedList
     FriendKeys = extras.getFriendKeys();
-
+    adminKey = extras.getAdminKey();
     lv2 = findViewById(R.id.lv2);
 
     ShowData();
@@ -74,7 +75,8 @@ public class MembersInvitedActivity extends AppCompatActivity {
                 }
               }
             }
-            InvitedAdapter adapt = new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers);
+            InvitedAdapter adapt =
+                new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers, adminKey);
             lv2.setAdapter(adapt);
           }
 
