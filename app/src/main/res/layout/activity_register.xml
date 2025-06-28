@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@drawable/bg_cyan"
+    android:background="@drawable/bg_party_screen_reverse"
     android:theme="@style/Theme.Material3.Register"
     tools:context="com.example.partymaker.ui.auth.RegisterActivity">
 
@@ -21,10 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             app:cardBackgroundColor="@android:color/transparent"
-            app:strokeWidth="1dp"
-            app:strokeColor="#30FFFFFF"
-            app:cardCornerRadius="32dp"
-            app:cardElevation="12dp"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -34,8 +33,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="40dp"
-                android:background="@drawable/shape_glassmorphism_bg">
+                android:padding="24dp">
 
                 <!-- Floating Animation Container -->
                 <FrameLayout
@@ -94,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             app:cardBackgroundColor="?attr/colorSurface"
-            app:cardCornerRadius="28dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="16dp"
             app:strokeWidth="1dp"
             app:strokeColor="?attr/colorOutlineVariant"
