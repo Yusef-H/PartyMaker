@@ -13,10 +13,17 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# Secret configuration files
 local.properties
+secrets.properties
+*.secret.properties
+*.keystore
+*.jks
+*.pem
+*.key
 
 # API Keys and sensitive configuration
-# GoT API key files
 api_keys.xml
 secrets.xml
 config.properties
@@ -27,16 +34,13 @@ app/src/main/res/values/secrets.xml
 google-services.json
 app/google-services.json
 
-# Firebase configuration (if using Firebase)
+# Firebase configuration
 app/src/main/res/values/firebase_config.xml
-
-# Any other sensitive files
-*.key
-*.pem
-keystore.jks
-app/release/
-credentials/
 
 # Environment files
 .env
 .env.local
+
+# Signed builds
+app/release/
+credentials/
