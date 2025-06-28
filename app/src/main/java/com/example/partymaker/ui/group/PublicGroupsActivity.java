@@ -44,11 +44,11 @@ public class PublicGroupsActivity extends AppCompatActivity {
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();
     Objects.requireNonNull(actionBar)
-        .setTitle(Html.fromHtml("<font color='#1986ed'>Public Parties</font>"));
+        .setTitle(Html.fromHtml("<font color='#E4E9EF'>Public Parties</font>"));
 
     // set actionbar background
     @SuppressLint("UseCompatLoadingForDrawables")
-    Drawable d = getResources().getDrawable(R.drawable.bg_purple_dark);
+    Drawable d = getResources().getDrawable(R.color.primaryBlue);
     actionBar.setBackgroundDrawable(d);
 
     // connection
