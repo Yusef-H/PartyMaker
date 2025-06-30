@@ -31,7 +31,7 @@
         android:layout_marginLeft="10dp"
         android:layout_toEndOf="@+id/imgInvitedProfile"
         android:text="@string/email"
-        android:textColor="#039694" />
+        android:textColor="#00796B" />
 
     <ImageView
         android:id="@+id/imgAdminFlag"

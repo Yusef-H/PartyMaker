@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:ignore="ExtraText">
-/>
+    />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgULprofile"
+        android:id="@+id/imgUserListProfile"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="5dp"
         android:src="@drawable/ic_profile" />
 
     <TextView
-        android:id="@+id/tvULusername"
+        android:id="@+id/tvUserListUsername"
         android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:layout_alignStart="@+id/tvULemail"
+        android:layout_alignStart="@+id/tvUserListEmail"
         android:layout_alignParentTop="true"
         android:text="@string/username"
         android:textColor="#004f56"
@@ -26,12 +26,12 @@
         tools:ignore="TextSizeCheck" />
 
     <TextView
-        android:id="@+id/tvULemail"
+        android:id="@+id/tvUserListEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvULusername"
+        android:layout_below="@+id/tvUserListUsername"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/imgULprofile"
+        android:layout_toEndOf="@+id/imgUserListProfile"
         android:text="@string/email_userlist"
         android:textColor="#00796B" />
 

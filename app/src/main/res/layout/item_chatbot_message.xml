@@ -72,12 +72,12 @@
                     android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/_12_34"
-                    android:textSize="9sp"
-                    android:textColor="#9E9E9E"
-                    android:fontFamily="sans-serif"
                     android:alpha="0.9"
-                    tools:ignore="SmallSp" />
+                    android:fontFamily="sans-serif"
+                    android:text="@string/_12_34"
+                    android:textColor="#757575"
+                    android:textSize="9sp"
+                    tools:ignore="SmallSp,TextContrastCheck" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

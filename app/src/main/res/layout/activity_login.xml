@@ -99,7 +99,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        tools:ignore="TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Password -->
@@ -123,7 +124,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        tools:ignore="TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Checkbox -->
