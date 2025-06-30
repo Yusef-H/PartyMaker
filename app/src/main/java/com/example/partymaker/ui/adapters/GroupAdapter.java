@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -39,18 +40,18 @@ public class GroupAdapter extends ArrayAdapter<Group> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.item_group, parent, false);
+    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.item_group, parent, false);
     Group temp = GroupList.get(position);
 
-    TextView tvpGroupName = view.findViewById(R.id.tvGLgroupname);
+    TextView tvpGroupName = view.findViewById(R.id.tvGroupName);
     tvpGroupName.setText(temp.getGroupName());
 
-    TextView tvpGroupDate = view.findViewById(R.id.tvGLgroupdate);
+    TextView tvpGroupDate = view.findViewById(R.id.tvGroupDate);
     String GroupDate =
         (temp.getGroupDays() + " " + temp.getGroupMonths() + " " + temp.getGroupYears());
     tvpGroupDate.setText(GroupDate);
 
-    final ImageView imageView = view.findViewById(R.id.imgGLpicture);
+    final ImageView imageView = view.findViewById(R.id.imgGroupPicture);
 
     String GroupKey = temp.getGroupKey();
 

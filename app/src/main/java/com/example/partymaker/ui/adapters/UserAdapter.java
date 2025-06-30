@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -36,16 +37,16 @@ public class UserAdapter extends ArrayAdapter<User> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    View view = layoutInflater.inflate(R.layout.item_user, parent, false);
+    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.item_user, parent, false);
     User temp = UserList.get(position);
 
-    TextView tvpUserName = view.findViewById(R.id.tvULusername);
+    TextView tvpUserName = view.findViewById(R.id.tvUserListUsername);
     tvpUserName.setText(temp.getUserName());
 
-    TextView tvpEmail = view.findViewById(R.id.tvULemail);
+    TextView tvpEmail = view.findViewById(R.id.tvUserListEmail);
     tvpEmail.setText(temp.getEmail());
 
-    final ImageView imageView = view.findViewById(R.id.imgULprofile);
+    final ImageView imageView = view.findViewById(R.id.imgUserListProfile);
 
     String UserImageProfile = temp.getEmail();
     String email = UserImageProfile.replace('.', ' ');
