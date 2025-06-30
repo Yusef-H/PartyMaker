@@ -46,11 +46,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/make_every_party_unforgettable"
-            android:textSize="16sp"
-            android:textColor="#E0FFFFFF"
+            android:elevation="4dp"
             android:letterSpacing="0.05"
-            android:elevation="4dp" />
+            android:text="@string/make_every_party_unforgettable"
+            android:textColor="#FAFAFA"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -97,9 +97,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="24dp"
+        android:alpha="0.8"
         android:text="@string/version_1_0"
+        android:textColor="#E8EAF6"
         android:textSize="12sp"
-        android:textColor="#80FFFFFF"
-        android:alpha="0.8" />
+        tools:ignore="TextContrastCheck" />
 
 </RelativeLayout>
