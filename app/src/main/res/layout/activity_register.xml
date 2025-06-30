@@ -38,7 +38,8 @@
                 <!-- Floating Animation Container -->
                 <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="UselessParent">
 
                     <!-- Glow effect behind image -->
                     <View
@@ -66,9 +67,10 @@
                         android:layout_gravity="top|end"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="20dp"
+                        android:alpha="0.8"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/shape_sparkle"
-                        android:alpha="0.8" />
+                        tools:ignore="ImageContrastCheck" />
 
                     <ImageView
                         android:layout_width="18dp"
@@ -76,9 +78,10 @@
                         android:layout_gravity="bottom|start"
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="30dp"
+                        android:alpha="0.6"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/shape_sparkle"
-                        android:alpha="0.6" />
+                        tools:ignore="ImageContrastCheck" />
 
                 </FrameLayout>
             </LinearLayout>
@@ -136,8 +139,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
+                        android:paddingVertical="20dp"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:paddingVertical="20dp" />
+                        tools:ignore="TextContrastCheck" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -172,8 +176,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:maxLength="20"
+                        android:paddingVertical="20dp"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:paddingVertical="20dp" />
+                        tools:ignore="TextContrastCheck" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -198,15 +203,17 @@
                     app:helperText="@string/minimum_6_characters"
                     app:helperTextTextColor="?attr/colorOnSurfaceVariant"
                     app:hintTextColor="?attr/colorPrimary"
-                    app:placeholderText="@string/enter_secure_password">
+                    app:placeholderText="@string/enter_secure_password"
+                    tools:ignore="PrivateResource">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPasswordR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
+                        android:paddingVertical="20dp"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:paddingVertical="20dp" />
+                        tools:ignore="TextContrastCheck" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

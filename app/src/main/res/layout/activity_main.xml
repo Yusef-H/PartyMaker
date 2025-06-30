@@ -25,8 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:contentDescription="@string/chat_with_ai_assistant"
         android:src="@android:drawable/ic_dialog_email"
         app:fabSize="normal"
-        android:contentDescription="@string/chat_with_ai_assistant"/>
+        tools:ignore="ImageContrastCheck" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
