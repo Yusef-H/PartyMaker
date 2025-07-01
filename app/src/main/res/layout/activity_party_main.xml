@@ -30,8 +30,8 @@
 
             <ImageButton
                 android:id="@+id/btnEditName"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/tvGroupName"
                 android:layout_toEndOf="@+id/tvGroupName"
                 android:background="@color/transparent"
@@ -48,7 +48,7 @@
                 android:id="@+id/tvCreatedBy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="70dp"
+                android:layout_marginStart="70dp"
                 android:text="@string/username_date"
                 android:textColor="@android:color/white" />
 
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:text="@string/entry_price"
                 android:textColor="@android:color/white" />
 
@@ -77,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@id/tvYourEntry"
+                android:layout_toEndOf="@id/tvYourEntry"
                 android:text="@string/free"
                 android:layout_marginStart="5sp"
                 android:textColor="@android:color/white" />
@@ -102,8 +102,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -117,9 +117,10 @@
 
                     <ImageView
                         android:id="@+id/imgLocation"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
+                        android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_location" />
 
@@ -154,8 +155,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -168,12 +169,12 @@
 
                     <ImageView
                         android:id="@+id/imgCalender"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignEnd="@+id/tvDateDays"
                         android:layout_alignParentTop="true"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginRight="7dp"
+                        android:layout_marginEnd="7dp"
                         android:layout_marginTop="5dp"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_calendar" />
@@ -184,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignEnd="@+id/tvDateDays"
                         android:layout_below="@+id/imgCalender"
-                        android:layout_marginRight="7dp"
+                        android:layout_marginEnd="7dp"
                         android:text="@string/date"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
@@ -196,7 +197,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
                         android:text="@string/_31"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
@@ -209,7 +210,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
                         android:text="@string/at"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
@@ -227,7 +228,7 @@
                             android:id="@+id/tvDateMonths"
                             android:layout_width="wrap_content"
                             android:layout_height="25dp"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
                             android:text="@string/feb"
                             android:textColor="#1986ed"
                             android:textSize="18sp"
@@ -238,7 +239,7 @@
                             android:id="@+id/tvDateYears"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="50dp"
+                            android:layout_marginStart="50dp"
                             android:text="@string/_2018"
                             android:textColor="#1986ed"
                             android:textSize="18sp"
@@ -263,7 +264,7 @@
                     android:id="@+id/imgSeeHours"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
-                    android:layout_marginLeft="140dp"
+                    android:layout_marginStart="140dp"
                     android:layout_marginTop="242dp"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/ic_party_arrow"
@@ -273,7 +274,7 @@
                     android:id="@+id/tvSeeHours"
                     android:layout_width="80dp"
                     android:layout_height="15dp"
-                    android:layout_marginLeft="67dp"
+                    android:layout_marginStart="67dp"
                     android:layout_marginTop="240dp"
                     android:text="@string/press_to_see_time"
                     android:textColor="#1986ed"
@@ -285,7 +286,7 @@
                     android:id="@+id/tvSeeDate"
                     android:layout_width="80dp"
                     android:layout_height="15dp"
-                    android:layout_marginLeft="67dp"
+                    android:layout_marginStart="67dp"
                     android:layout_marginTop="240dp"
                     android:text="@string/press_to_see_date"
                     android:textColor="#1986ed"
@@ -299,8 +300,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -337,8 +338,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -375,8 +376,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardBackgroundColor="#1986ed"
                 app:cardCornerRadius="8dp"
@@ -390,8 +391,8 @@
 
                     <ImageView
                         android:id="@+id/imgThumbDown"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="@string/todo"
@@ -412,8 +413,8 @@
 
                     <ImageView
                         android:id="@+id/imgThumbUp"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
                         android:contentDescription="@string/todo"
@@ -434,10 +435,9 @@
 
                     <ImageView
                         android:id="@+id/imgOptions"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="2dp"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_options" />
 
@@ -461,8 +461,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -499,8 +499,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -514,8 +514,8 @@
 
                     <ImageView
                         android:id="@+id/imgAddFriend"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/textView5"
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center_horizontal"
@@ -541,8 +541,8 @@
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="8dp">
@@ -555,8 +555,8 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_leave" />
