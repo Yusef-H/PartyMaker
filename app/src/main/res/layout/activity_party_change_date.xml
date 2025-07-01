@@ -28,14 +28,14 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
             android:hint="@string/day"
             android:textAlignment="center" />
         <TextView
             android:textColor="@color/black"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
             android:layout_above="@+id/spnDayDate"
             android:text="@string/days"
             android:textAlignment="center" />
@@ -46,14 +46,14 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="140dp"
+            android:layout_marginStart="140dp"
             android:hint="@string/month"
             android:textAlignment="center" />
         <TextView
             android:textColor="@color/black"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="140dp"
+            android:layout_marginStart="140dp"
             android:layout_above="@+id/spnMonthDate"
             android:text="@string/months"
             android:textAlignment="center" />
@@ -64,14 +64,14 @@
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="240dp"
+            android:layout_marginStart="240dp"
             android:hint="@string/year"
             android:textAlignment="center" />
         <TextView
             android:textColor="@color/black"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="240dp"
+            android:layout_marginStart="240dp"
             android:layout_above="@+id/spnYearDate"
             android:text="@string/years"
             android:textAlignment="center" />
@@ -85,7 +85,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
+            android:layout_marginStart="100dp"
             android:text="@string/pick_an_hour"
             android:textColor="@color/black" />
 
@@ -93,7 +93,7 @@
             android:id="@+id/spnHourDate"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="200dp"
+            android:layout_marginStart="200dp"
             android:hint="@string/hours" />
     </RelativeLayout>
 
@@ -134,7 +134,7 @@
             android:id="@+id/btnHelp2"
             android:layout_width="75dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="210dp"
+            android:layout_marginStart="210dp"
             android:background="#0000ffff"
             android:text="Press Here"
             android:textAllCaps="false"
@@ -144,7 +144,7 @@
             android:id="@+id/tvHelp2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="130dp"
+            android:layout_marginStart="130dp"
             android:layout_marginTop="5dp"
             android:text="@string/need_help"
             android:textColor="#0081d1" />
@@ -153,7 +153,7 @@
             android:id="@+id/btnHide2"
             android:layout_width="75dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="200dp"
+            android:layout_marginStart="200dp"
             android:background="#0000ffff"
             android:text="@string/hide_it"
             android:textAllCaps="false"
@@ -164,7 +164,7 @@
             android:id="@+id/tvHide2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="150dp"
+            android:layout_marginStart="150dp"
             android:layout_marginTop="5dp"
             android:text="@string/got_help"
             android:textColor="#0081d1"
