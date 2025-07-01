@@ -40,7 +40,8 @@ public class GroupAdapter extends ArrayAdapter<Group> {
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.item_group, parent, false);
+    @SuppressLint("ViewHolder")
+    View view = layoutInflater.inflate(R.layout.item_group, parent, false);
     Group temp = GroupList.get(position);
 
     TextView tvpGroupName = view.findViewById(R.id.tvGroupName);
