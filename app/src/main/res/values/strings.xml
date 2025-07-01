@@ -3,8 +3,6 @@
     <!-- App Info -->
     <string name="app_name">PartyMaker</string>
 
-    <!-- Content Descriptions -->
-
     <!-- Login Screen -->
     <string name="password">Password</string>
     <string name="stay_connected">Stay connected!</string>
@@ -75,9 +73,10 @@
     <string name="public_parties">Public Parties</string>
     <string name="logout">Logout</string>
 
-    <!-- Header Section -->
-
-    <!-- Form Section -->
+    <string-array name="languages_array">
+        <item>English</item>
+        <item>עברית</item>
+    </string-array>
 
     <!-- Email Input -->
     <string name="valid_email_required">Valid email required</string>
