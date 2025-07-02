@@ -39,7 +39,8 @@ public class InvitedAdapter extends ArrayAdapter<User> {
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    @SuppressLint("ViewHolder") View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
+    @SuppressLint("ViewHolder")
+    View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
     User temp = InvitedList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvInvitedUsername);
