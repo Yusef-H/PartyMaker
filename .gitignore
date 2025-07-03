@@ -23,24 +23,24 @@ secrets.properties
 *.pem
 *.key
 
-# API Keys and sensitive configuration
-api_keys.xml
-secrets.xml
-config.properties
-app/src/main/res/values/api_keys.xml
-app/src/main/res/values/secrets.xml
+# API Keys and sensitive configuration (anywhere in project)
+**/api_keys.xml
+**/secrets.xml
+**/config.properties
 
-# Google Services configuration
-google-services.json
-app/google-services.json
+# Google Services configuration (anywhere in project)
+**/google-services.json
+
+# Firebase Admin SDK service account key (anywhere in project)
+**/serviceAccountKey.json
 
 # Firebase configuration
-app/src/main/res/values/firebase_config.xml
+**/firebase_config.xml
 
-# Environment files
-.env
-.env.local
+# Environment files (anywhere in project)
+**/.env
+**/.env.local
 
-# Signed builds
+# Signed builds and credentials
 app/release/
 credentials/
