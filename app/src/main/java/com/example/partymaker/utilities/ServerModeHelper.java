@@ -1,0 +1,24 @@
+package com.example.partymaker.utilities;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+/** Helper class to manage server mode settings */
+public class ServerModeHelper {
+  private static final String PREF_USE_SERVER_MODE = "use_server_mode";
+
+  /** Check if server mode is enabled */
+  public static boolean isServerModeEnabled(Context context) {
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    return prefs.getBoolean(PREF_USE_SERVER_MODE, true);
+  }
+
+  /** Enable or disable server mode */
+  public static void setServerModeEnabled(Context context, boolean enabled) {
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences.Editor editor = prefs.edit();
+    editor.putBoolean(PREF_USE_SERVER_MODE, enabled);
+    editor.apply();
+  }
+}
