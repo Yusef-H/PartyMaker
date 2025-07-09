@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * REST Controller for handling Firebase-related API endpoints.
+ * Provides CRUD operations for data, users, groups, and messages in Firebase.
+ * All endpoints are under /api/firebase.
+ */
 @RestController
 @RequestMapping("/api/firebase")
 public class FirebaseController {
@@ -21,6 +26,11 @@ public class FirebaseController {
         this.firebaseService = firebaseService;
     }
 
+    /**
+     * Retrieves data from Firebase at the specified path.
+     * @param path The path in Firebase.
+     * @return Map of data at the path, or 500 on error.
+     */
     @GetMapping("/data/{path}")
     public ResponseEntity<Map<String, Object>> getData(@PathVariable String path) {
         try {
@@ -32,6 +42,11 @@ public class FirebaseController {
         }
     }
 
+    /**
+     * Retrieves a list of data objects from Firebase at the specified path.
+     * @param path The path in Firebase.
+     * @return List of maps representing the data, or 500 on error.
+     */
     @GetMapping("/list/{path}")
     public ResponseEntity<List<Map<String, Object>>> getDataAsList(@PathVariable String path) {
         try {
@@ -43,6 +58,12 @@ public class FirebaseController {
         }
     }
 
+    /**
+     * Saves data to Firebase at the specified path.
+     * @param path The path in Firebase.
+     * @param data The data to save.
+     * @return 200 OK on success, 500 on error.
+     */
     @PostMapping("/data/{path}")
     public ResponseEntity<Void> saveData(@PathVariable String path, @RequestBody Object data) {
         try {
@@ -54,6 +75,12 @@ public class FirebaseController {
         }
     }
 
+    /**
+     * Updates data at the specified path in Firebase.
+     * @param path The path in Firebase.
+     * @param updates The updates to apply.
+     * @return 200 OK on success, 500 on error.
+     */
     @PutMapping("/data/{path}")
     public ResponseEntity<Void> updateData(@PathVariable String path, @RequestBody Map<String, Object> updates) {
         try {
@@ -65,6 +92,11 @@ public class FirebaseController {
         }
     }
 
+    /**
+     * Deletes data at the specified path in Firebase.
+     * @param path The path in Firebase.
+     * @return 200 OK on success, 500 on error.
+     */
     @DeleteMapping("/data/{path}")
     public ResponseEntity<Void> deleteData(@PathVariable String path) {
         try {
@@ -76,7 +108,11 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for UserGroups
+    /**
+     * Retrieves user groups for a specific user.
+     * @param userId The user ID.
+     * @return Map of user groups, or 500 on error.
+     */
     @GetMapping("/UserGroups/{userId}")
     public ResponseEntity<Map<String, Object>> getUserGroups(@PathVariable String userId) {
         try {
@@ -89,7 +125,12 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for saving UserGroups
+    /**
+     * Saves user groups for a specific user.
+     * @param userId The user ID.
+     * @param data The data to save.
+     * @return 200 OK on success, 500 on error.
+     */
     @PostMapping("/UserGroups/{userId}")
     public ResponseEntity<Void> saveUserGroups(@PathVariable String userId, @RequestBody Object data) {
         try {
@@ -101,7 +142,11 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for getting a single group by ID
+    /**
+     * Retrieves a single group by its ID.
+     * @param groupId The group ID.
+     * @return The group object, 404 if not found, 500 on error.
+     */
     @GetMapping("/Groups/{groupId}")
     public ResponseEntity<Object> getGroup(@PathVariable String groupId) {
         try {
@@ -126,7 +171,10 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for getting all groups
+    /**
+     * Retrieves all groups from Firebase.
+     * @return Map of all groups, or 500 on error.
+     */
     @GetMapping("/Groups")
     public ResponseEntity<Map<String, Object>> getAllGroups() {
         try {
@@ -141,7 +189,10 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for getting all messages
+    /**
+     * Retrieves all messages from Firebase.
+     * @return Map of all messages, or 500 on error.
+     */
     @GetMapping("/GroupsMessages")
     public ResponseEntity<Map<String, Object>> getAllMessages() {
         try {
@@ -156,7 +207,11 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for getting messages for a group
+    /**
+     * Retrieves all messages for a specific group.
+     * @param groupId The group ID.
+     * @return Map of messages for the group, or 500 on error.
+     */
     @GetMapping("/GroupsMessages/{groupId}")
     public ResponseEntity<Map<String, Object>> getGroupMessages(@PathVariable String groupId) {
         try {
@@ -193,7 +248,12 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for saving a message
+    /**
+     * Saves a message to Firebase under the specified message key.
+     * @param messageKey The message key.
+     * @param data The message data.
+     * @return 200 OK on success, 500 on error.
+     */
     @PostMapping("/GroupsMessages/{messageKey}")
     public ResponseEntity<Void> saveMessage(@PathVariable String messageKey, @RequestBody Object data) {
         try {
@@ -205,7 +265,12 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for updating a group (for MessageKeys updates)
+    /**
+     * Updates a group in Firebase (e.g., for updating MessageKeys).
+     * @param groupId The group ID.
+     * @param updates The updates to apply.
+     * @return 200 OK on success, 500 on error.
+     */
     @PutMapping("/Groups/{groupId}")
     public ResponseEntity<Void> updateGroup(@PathVariable String groupId, @RequestBody Map<String, Object> updates) {
         try {
@@ -220,7 +285,10 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for getting all users
+    /**
+     * Retrieves all users from Firebase.
+     * @return Map of all users, or 500 on error.
+     */
     @GetMapping("/Users")
     public ResponseEntity<Map<String, Object>> getAllUsers() {
         try {
@@ -235,7 +303,11 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for getting a single user by ID
+    /**
+     * Retrieves a single user by ID.
+     * @param userId The user ID.
+     * @return The user object, 404 if not found, 500 on error.
+     */
     @GetMapping("/Users/{userId}")
     public ResponseEntity<Object> getUser(@PathVariable String userId) {
         try {
@@ -260,7 +332,12 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for saving a user
+    /**
+     * Saves a user to Firebase.
+     * @param userId The user ID.
+     * @param data The user data.
+     * @return 200 OK on success, 500 on error.
+     */
     @PostMapping("/Users/{userId}")
     public ResponseEntity<Void> saveUser(@PathVariable String userId, @RequestBody Object data) {
         try {
@@ -275,7 +352,12 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for updating a user
+    /**
+     * Updates a user in Firebase.
+     * @param userId The user ID.
+     * @param updates The updates to apply.
+     * @return 200 OK on success, 500 on error.
+     */
     @PutMapping("/Users/{userId}")
     public ResponseEntity<Void> updateUser(@PathVariable String userId, @RequestBody Map<String, Object> updates) {
         try {
@@ -290,7 +372,11 @@ public class FirebaseController {
         }
     }
     
-    // Specific endpoint for deleting a user
+    /**
+     * Deletes a user from Firebase.
+     * @param userId The user ID.
+     * @return 200 OK on success, 500 on error.
+     */
     @DeleteMapping("/Users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
         try {

@@ -28,20 +28,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * API client for communicating with the PartyMaker backend server (Spring Boot).
+ * Handles CRUD operations for groups, users, and messages via HTTP requests.
+ * Implements singleton pattern for global access.
+ */
 public class FirebaseServerClient {
+  /** Tag for logging. */
   private static final String TAG = "FirebaseServerClient";
+  /** Singleton instance. */
   private static FirebaseServerClient instance;
+  /** Default server URL (for emulator). */
   private static final String DEFAULT_SERVER_URL = "http://10.0.2.2:8080"; // Default for emulator
+  /** SharedPreferences key for server URL. */
   private static final String PREF_SERVER_URL = "server_url";
 
+  /** The current server URL. */
   private String serverUrl = DEFAULT_SERVER_URL;
+  /** Gson instance for JSON serialization. */
   private final Gson gson = new Gson();
+  /** Application context. */
   private Context context;
 
+  /**
+   * Private constructor for singleton pattern.
+   */
   private FirebaseServerClient() {
     // Private constructor for singleton
   }
 
+  /**
+   * Gets the singleton instance of the client.
+   * @return the instance
+   */
   public static synchronized FirebaseServerClient getInstance() {
     if (instance == null) {
       instance = new FirebaseServerClient();
@@ -49,12 +68,19 @@ public class FirebaseServerClient {
     return instance;
   }
 
+  /**
+   * Initializes the client with application context and loads the server URL.
+   * @param context the application context
+   */
   public void initialize(Context context) {
     this.context = context.getApplicationContext();
     loadServerUrl();
     Log.i(TAG, "FirebaseServerClient initialized with server URL: " + serverUrl);
   }
 
+  /**
+   * Loads the server URL from SharedPreferences or uses the default.
+   */
   private void loadServerUrl() {
     if (context != null) {
       serverUrl =

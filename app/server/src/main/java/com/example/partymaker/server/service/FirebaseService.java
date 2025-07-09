@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Service class for interacting with Firebase Realtime Database.
+ * Provides async CRUD operations for data, lists, and objects.
+ */
 @Service
 public class FirebaseService {
 
@@ -20,6 +24,11 @@ public class FirebaseService {
         this.firebaseDatabase = firebaseDatabase;
     }
 
+    /**
+     * Retrieves data from Firebase at the specified path as a Map.
+     * @param path The path in Firebase.
+     * @return CompletableFuture with the data map.
+     */
     public CompletableFuture<Map<String, Object>> getData(String path) {
         CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
         
@@ -45,6 +54,11 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Retrieves data from Firebase at the specified path as a List of Maps.
+     * @param path The path in Firebase.
+     * @return CompletableFuture with the list of maps.
+     */
     public CompletableFuture<List<Map<String, Object>>> getDataAsList(String path) {
         CompletableFuture<List<Map<String, Object>>> future = new CompletableFuture<>();
         
@@ -75,6 +89,12 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Saves data to Firebase at the specified path.
+     * @param path The path in Firebase.
+     * @param data The data to save.
+     * @return CompletableFuture that completes when the operation finishes.
+     */
     public CompletableFuture<Void> saveData(String path, Object data) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         
@@ -90,6 +110,12 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Updates data at the specified path in Firebase.
+     * @param path The path in Firebase.
+     * @param updates The updates to apply.
+     * @return CompletableFuture that completes when the operation finishes.
+     */
     public CompletableFuture<Void> updateData(String path, Map<String, Object> updates) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         
@@ -105,6 +131,11 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Deletes data at the specified path in Firebase (sets value to null).
+     * @param path The path in Firebase.
+     * @return CompletableFuture that completes when the operation finishes.
+     */
     public CompletableFuture<Void> deleteData(String path) {
         return saveData(path, null);
     }
