@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
+import androidx.appcompat.widget.SwitchCompat;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +14,7 @@ import com.example.partymaker.utilities.ServerModeHelper;
 
 public class ServerSettingsActivity extends AppCompatActivity {
 
-  private Switch switchServerMode;
+  private SwitchCompat switchServerMode;
   private EditText editServerUrl;
   private Button btnSaveSettings;
 
