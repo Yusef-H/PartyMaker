@@ -19,10 +19,7 @@ import com.example.partymaker.ui.group.UsersListActivity;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
-/**
- * Adapter for displaying groups in a ListView.
- * Loads group images and displays group details.
- */
+/** Adapter for displaying groups in a ListView. Loads group images and displays group details. */
 public class GroupAdapter extends ArrayAdapter<Group> {
   /** The context in which the adapter is used. */
   Context context;
@@ -33,6 +30,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
 
   /**
    * Constructor for GroupAdapter.
+   *
    * @param context the context
    * @param resource the layout resource ID
    * @param textViewResourceId the text view resource ID
@@ -50,8 +48,9 @@ public class GroupAdapter extends ArrayAdapter<Group> {
   }
 
   /**
-   * Returns the view for a specific group in the list.
-   * Loads group image and displays group details.
+   * Returns the view for a specific group in the list. Loads group image and displays group
+   * details.
+   *
    * @param position the position in the list
    * @param convertView the recycled view
    * @param parent the parent view group

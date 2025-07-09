@@ -11,8 +11,8 @@ import com.example.partymaker.data.model.ChatMessageGpt;
 import java.util.List;
 
 /**
- * RecyclerView Adapter for displaying GPT-based chatbot messages.
- * Handles user/assistant message styling.
+ * RecyclerView Adapter for displaying GPT-based chatbot messages. Handles user/assistant message
+ * styling.
  */
 public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageViewHolder> {
   /** The list of chatbot messages to display. */
@@ -20,15 +20,14 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
 
   /**
    * Constructs the adapter with a list of messages.
+   *
    * @param messages the list of chatbot messages
    */
   public ChatbotAdapter(List<ChatMessageGpt> messages) {
     this.messages = messages;
   }
 
-  /**
-   * Inflates the view for a single message.
-   */
+  /** Inflates the view for a single message. */
   @NonNull
   @Override
   public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,9 +37,7 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
     return new MessageViewHolder(view);
   }
 
-  /**
-   * Binds a message to the view holder, styling by role.
-   */
+  /** Binds a message to the view holder, styling by role. */
   @Override
   public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
     ChatMessageGpt message = messages.get(position);
@@ -56,17 +53,13 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
     }
   }
 
-  /**
-   * Returns the number of messages in the adapter.
-   */
+  /** Returns the number of messages in the adapter. */
   @Override
   public int getItemCount() {
     return messages.size();
   }
 
-  /**
-   * ViewHolder for chatbot messages.
-   */
+  /** ViewHolder for chatbot messages. */
   static class MessageViewHolder extends RecyclerView.ViewHolder {
     TextView messageText;
 

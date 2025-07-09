@@ -2,9 +2,7 @@ package com.example.partymaker.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Represents a user in the PartyMaker application.
- */
+/** Represents a user in the PartyMaker application. */
 public class User {
   /** The user's email address. */
   @SerializedName("email")
@@ -20,6 +18,7 @@ public class User {
 
   /**
    * Gets the user's email address.
+   *
    * @return the email address
    */
   public String getEmail() {
@@ -28,6 +27,7 @@ public class User {
 
   /**
    * Sets the user's email address.
+   *
    * @param email the email address
    */
   public void setEmail(String email) {
@@ -36,6 +36,7 @@ public class User {
 
   /**
    * Gets the user's display name.
+   *
    * @return the user name
    */
   public String getUserName() {
@@ -44,6 +45,7 @@ public class User {
 
   /**
    * Sets the user's display name.
+   *
    * @param userName the user name
    */
   public void setUserName(String userName) {
@@ -52,6 +54,7 @@ public class User {
 
   /**
    * Gets the last login timestamp.
+   *
    * @return the last login
    */
   public String getLastLogin() {
@@ -60,19 +63,19 @@ public class User {
 
   /**
    * Sets the last login timestamp.
+   *
    * @param lastLogin the last login
    */
   public void setLastLogin(String lastLogin) {
     this.lastLogin = lastLogin;
   }
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public User() {}
 
   /**
    * Constructs a user with email and user name.
+   *
    * @param email the email address
    * @param userName the user name
    */

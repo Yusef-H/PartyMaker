@@ -19,8 +19,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * Adapter for displaying users in a ListView.
- * Loads user profile images and displays user details.
+ * Adapter for displaying users in a ListView. Loads user profile images and displays user details.
  */
 public class UserAdapter extends ArrayAdapter<User> {
   /** The context in which the adapter is used. */
@@ -30,6 +29,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 
   /**
    * Constructor for UserAdapter.
+   *
    * @param context the context
    * @param resource the layout resource ID
    * @param textViewResourceId the text view resource ID
@@ -46,8 +46,9 @@ public class UserAdapter extends ArrayAdapter<User> {
   }
 
   /**
-   * Returns the view for a specific user in the list.
-   * Loads user profile image and displays user details.
+   * Returns the view for a specific user in the list. Loads user profile image and displays user
+   * details.
+   *
    * @param position the position in the list
    * @param convertView the recycled view
    * @param parent the parent view group

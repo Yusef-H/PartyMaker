@@ -19,8 +19,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.partymaker.R;
 
 /**
- * Activity for displaying the intro/welcome slides to new users.
- * Handles ViewPager navigation and onboarding flow.
+ * Activity for displaying the intro/welcome slides to new users. Handles ViewPager navigation and
+ * onboarding flow.
  */
 public class IntroActivity extends Activity {
 
@@ -109,6 +109,7 @@ public class IntroActivity extends Activity {
 
   /**
    * Adds the bottom dots indicator for the intro slides.
+   *
    * @param currentPage the current page index
    */
   private void addBottomDots(int currentPage) {
@@ -129,6 +130,7 @@ public class IntroActivity extends Activity {
 
   /**
    * Returns the next item index for the ViewPager.
+   *
    * @param i the offset
    * @return the next item index
    */
@@ -136,17 +138,13 @@ public class IntroActivity extends Activity {
     return viewPager.getCurrentItem() + i;
   }
 
-  /**
-   * Launches the LoginActivity and finishes the intro.
-   */
+  /** Launches the LoginActivity and finishes the intro. */
   private void launchHomeScreen() {
     startActivity(new Intent(getBaseContext(), LoginActivity.class));
     finish();
   }
 
-  /**
-   * PagerAdapter for the intro slides.
-   */
+  /** PagerAdapter for the intro slides. */
   public class ViewPagerAdapter extends PagerAdapter {
 
     public ViewPagerAdapter() {}

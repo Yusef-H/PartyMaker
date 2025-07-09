@@ -29,9 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * API client for communicating with the PartyMaker backend server (Spring Boot).
- * Handles CRUD operations for groups, users, and messages via HTTP requests.
- * Implements singleton pattern for global access.
+ * API client for communicating with the PartyMaker backend server (Spring Boot). Handles CRUD
+ * operations for groups, users, and messages via HTTP requests. Implements singleton pattern for
+ * global access.
  */
 public class FirebaseServerClient {
   /** Tag for logging. */
@@ -50,15 +50,14 @@ public class FirebaseServerClient {
   /** Application context. */
   private Context context;
 
-  /**
-   * Private constructor for singleton pattern.
-   */
+  /** Private constructor for singleton pattern. */
   private FirebaseServerClient() {
     // Private constructor for singleton
   }
 
   /**
    * Gets the singleton instance of the client.
+   *
    * @return the instance
    */
   public static synchronized FirebaseServerClient getInstance() {
@@ -70,6 +69,7 @@ public class FirebaseServerClient {
 
   /**
    * Initializes the client with application context and loads the server URL.
+   *
    * @param context the application context
    */
   public void initialize(Context context) {
@@ -78,9 +78,7 @@ public class FirebaseServerClient {
     Log.i(TAG, "FirebaseServerClient initialized with server URL: " + serverUrl);
   }
 
-  /**
-   * Loads the server URL from SharedPreferences or uses the default.
-   */
+  /** Loads the server URL from SharedPreferences or uses the default. */
   private void loadServerUrl() {
     if (context != null) {
       serverUrl =

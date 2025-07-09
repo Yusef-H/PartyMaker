@@ -35,8 +35,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Objects;
 
 /**
- * Activity for user login, including email/password and Google sign-in.
- * Handles authentication, navigation, and UI state.
+ * Activity for user login, including email/password and Google sign-in. Handles authentication,
+ * navigation, and UI state.
  */
 public class LoginActivity extends AppCompatActivity {
   /** Email input field. */
@@ -102,9 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     eventHandler();
   }
 
-  /**
-   * Handles all button click events and login logic.
-   */
+  /** Handles all button click events and login logic. */
   private void eventHandler() {
     btnLogin.setOnClickListener(
         new View.OnClickListener() {
@@ -179,17 +177,13 @@ public class LoginActivity extends AppCompatActivity {
         });
   }
 
-  /**
-   * Initiates Google sign-in flow.
-   */
+  /** Initiates Google sign-in flow. */
   private void signInWithGoogle() {
     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
     startActivityForResult(signInIntent, RC_SIGN_IN);
   }
 
-  /**
-   * Handles the result of Google sign-in intent.
-   */
+  /** Handles the result of Google sign-in intent. */
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -209,6 +203,7 @@ public class LoginActivity extends AppCompatActivity {
 
   /**
    * Authenticates with Firebase using Google ID token.
+   *
    * @param idToken the Google ID token
    */
   private void firebaseAuthWithGoogle(String idToken) {

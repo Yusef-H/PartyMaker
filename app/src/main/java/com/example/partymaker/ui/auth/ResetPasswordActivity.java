@@ -18,8 +18,8 @@ import com.example.partymaker.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
- * Activity for resetting user password via email.
- * Handles UI theme switching and password reset logic.
+ * Activity for resetting user password via email. Handles UI theme switching and password reset
+ * logic.
  */
 public class ResetPasswordActivity extends AppCompatActivity {
   /** White theme button. */
@@ -73,9 +73,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     eventHandler();
   }
 
-  /**
-   * Sends a password reset email to the user.
-   */
+  /** Sends a password reset email to the user. */
   private void ResetPass() {
     final String email = etInputEmail.getText().toString(); // the user email
     if (email.matches("")) {
@@ -98,9 +96,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Handles all button click events and UI theme switching.
-   */
+  /** Handles all button click events and UI theme switching. */
   private void eventHandler() {
     btnReset.setOnClickListener(v -> ResetPass());
     btnWhite.setOnClickListener(

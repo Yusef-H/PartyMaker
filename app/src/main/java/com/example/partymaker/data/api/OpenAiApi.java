@@ -7,8 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * API client for interacting with OpenAI's GPT chat completion endpoint.
- * Supports sending single messages and message history.
+ * API client for interacting with OpenAI's GPT chat completion endpoint. Supports sending single
+ * messages and message history.
  */
 public class OpenAiApi {
   /** The base URL for the OpenAI API. */
@@ -20,6 +20,7 @@ public class OpenAiApi {
 
   /**
    * Constructs the API client with the given API key.
+   *
    * @param apiKey the OpenAI API key
    */
   public OpenAiApi(String apiKey) {
@@ -28,6 +29,7 @@ public class OpenAiApi {
 
   /**
    * Sends a single user message to the OpenAI API and returns the assistant's reply.
+   *
    * @param userMessage the user's message
    * @return the assistant's reply
    * @throws Exception if the request fails
@@ -68,6 +70,7 @@ public class OpenAiApi {
 
   /**
    * Sends a list of chat messages (history) to the OpenAI API and returns the assistant's reply.
+   *
    * @param history the list of chat messages
    * @return the assistant's reply
    * @throws Exception if the request fails

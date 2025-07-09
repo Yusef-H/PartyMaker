@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Adapter for displaying chat messages in a ListView for group chat.
- * Handles message alignment, bubble style, and user identification.
+ * Adapter for displaying chat messages in a ListView for group chat. Handles message alignment,
+ * bubble style, and user identification.
  */
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
   /** The context in which the adapter is used. */
@@ -33,6 +33,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 
   /**
    * Constructor for ChatAdapter.
+   *
    * @param context the context
    * @param resource the layout resource ID
    * @param textViewResourceId the text view resource ID
@@ -50,6 +51,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 
   /**
    * Constructor for ChatAdapter without textViewResourceId.
+   *
    * @param context the context
    * @param resource the layout resource ID
    * @param messageList the list of chat messages
@@ -63,6 +65,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 
   /**
    * Add a single message to the adapter and refresh the view.
+   *
    * @param message The message to add
    */
   public void addMessage(ChatMessage message) {
@@ -73,8 +76,9 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
   }
 
   /**
-   * Returns the view for a specific message in the list.
-   * Handles alignment, bubble style, and user identification.
+   * Returns the view for a specific message in the list. Handles alignment, bubble style, and user
+   * identification.
+   *
    * @param position the position in the list
    * @param convertView the recycled view
    * @param parent the parent view group

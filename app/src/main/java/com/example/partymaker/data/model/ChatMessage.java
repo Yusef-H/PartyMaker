@@ -2,9 +2,7 @@ package com.example.partymaker.data.model;
 
 import java.util.HashMap;
 
-/**
- * Represents a chat message in a group chat.
- */
+/** Represents a chat message in a group chat. */
 public class ChatMessage {
   /** The text content of the message. */
   private String messageText;
@@ -21,13 +19,12 @@ public class ChatMessage {
   /** Map of message content (optional). */
   private HashMap<String, Object> messageContent;
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public ChatMessage() {}
 
   /**
    * Constructs a chat message with main fields.
+   *
    * @param messageText the text
    * @param messageUser the user
    * @param messageTime the time

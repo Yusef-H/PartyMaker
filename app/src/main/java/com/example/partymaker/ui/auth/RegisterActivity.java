@@ -46,8 +46,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Activity for user registration, including form validation, animations, and notifications.
- * Handles user input, password strength, and registration logic.
+ * Activity for user registration, including form validation, animations, and notifications. Handles
+ * user input, password strength, and registration logic.
  */
 public class RegisterActivity extends AppCompatActivity {
   /** TextInputLayouts for validation. */
@@ -115,9 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
     setupFormProgressTracking();
   }
 
-  /**
-   * Initializes all view components.
-   */
+  /** Initializes all view components. */
   private void initializeViews() {
     // TextInputLayouts for validation
     tilEmail = findViewById(R.id.tilEmail);
@@ -148,9 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
     createCelebrationLayout();
   }
 
-  /**
-   * Creates the password strength indicator UI.
-   */
+  /** Creates the password strength indicator UI. */
   @SuppressLint("SetTextI18n")
   private void createPasswordStrengthIndicator() {
     // Create password strength bar and text
@@ -182,9 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
     parentLayout.addView(passwordContainer, passwordIndex + 1);
   }
 
-  /**
-   * Creates the form progress indicator UI.
-   */
+  /** Creates the form progress indicator UI. */
   @SuppressLint("SetTextI18n")
   private void createFormProgressIndicator() {
     formProgressText = new TextView(this);
@@ -202,9 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
     parentLayout.addView(progressIndicator, 1);
   }
 
-  /**
-   * Creates the celebration layout UI.
-   */
+  /** Creates the celebration layout UI. */
   @SuppressLint("SetTextI18n")
   private void createCelebrationLayout() {
     celebrationLayout = new LinearLayout(this);

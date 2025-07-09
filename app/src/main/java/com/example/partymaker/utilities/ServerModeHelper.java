@@ -5,14 +5,15 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 /**
- * Helper class to manage server mode settings for PartyMaker.
- * Allows toggling between server and local modes.
+ * Helper class to manage server mode settings for PartyMaker. Allows toggling between server and
+ * local modes.
  */
 public class ServerModeHelper {
   private static final String PREF_USE_SERVER_MODE = "use_server_mode";
 
   /**
    * Checks if server mode is enabled in SharedPreferences.
+   *
    * @param context the context
    * @return true if enabled, false otherwise
    */
@@ -23,6 +24,7 @@ public class ServerModeHelper {
 
   /**
    * Enables or disables server mode in SharedPreferences.
+   *
    * @param context the context
    * @param enabled true to enable, false to disable
    */

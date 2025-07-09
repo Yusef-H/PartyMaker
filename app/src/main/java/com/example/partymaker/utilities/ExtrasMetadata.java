@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * Holds all the data that needs to be passed between activities in PartyMaker.
- * Immutable, Serializable data holder for group/event metadata.
+ * Holds all the data that needs to be passed between activities in PartyMaker. Immutable,
+ * Serializable data holder for group/event metadata.
  */
 public class ExtrasMetadata implements Serializable {
   private final String groupName;

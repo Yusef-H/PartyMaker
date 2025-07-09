@@ -18,10 +18,7 @@ import com.example.partymaker.data.model.User;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
-/**
- * Adapter for displaying invited users in a ListView.
- * Shows user details and admin flag.
- */
+/** Adapter for displaying invited users in a ListView. Shows user details and admin flag. */
 public class InvitedAdapter extends ArrayAdapter<User> {
   /** The context in which the adapter is used. */
   Context context;
@@ -32,6 +29,7 @@ public class InvitedAdapter extends ArrayAdapter<User> {
 
   /**
    * Constructor for InvitedAdapter.
+   *
    * @param context the context
    * @param resource the layout resource ID
    * @param textViewResourceId the text view resource ID
@@ -51,8 +49,8 @@ public class InvitedAdapter extends ArrayAdapter<User> {
   }
 
   /**
-   * Returns the view for a specific invited user in the list.
-   * Shows user details and admin flag.
+   * Returns the view for a specific invited user in the list. Shows user details and admin flag.
+   *
    * @param position the position in the list
    * @param convertView the recycled view
    * @param parent the parent view group

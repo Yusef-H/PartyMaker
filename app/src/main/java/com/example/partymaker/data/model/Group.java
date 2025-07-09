@@ -2,9 +2,7 @@ package com.example.partymaker.data.model;
 
 import java.util.HashMap;
 
-/**
- * Represents a group (party) in the PartyMaker application.
- */
+/** Represents a group (party) in the PartyMaker application. */
 public class Group {
   /** The group's display name. */
   private String groupName;
@@ -69,13 +67,12 @@ public class Group {
     this.comingKeys = comingKeys;
   }
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public Group() {}
 
   /**
    * Constructs a group with all fields.
+   *
    * @param groupName the group name
    * @param groupKey the group key
    * @param groupLocation the location

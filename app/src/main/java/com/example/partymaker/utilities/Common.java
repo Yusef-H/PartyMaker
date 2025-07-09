@@ -26,15 +26,14 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import java.util.HashMap;
 
-/**
- * Utility methods for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker.
- */
+/** Utility methods for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker. */
 public class Common {
   private static float downX, downY, dX, dY;
   private static int touchSlop;
 
   /**
    * Packs all fields from ExtrasMetadata into the given Intent.
+   *
    * @param intent the Intent to add extras to
    * @param extras the ExtrasMetadata object
    */
@@ -58,6 +57,7 @@ public class Common {
 
   /**
    * Extracts ExtrasMetadata from an Intent.
+   *
    * @param intent the Intent containing extras
    * @return the extracted ExtrasMetadata, or null if not found
    */
@@ -85,6 +85,7 @@ public class Common {
 
   /**
    * Handles drag-and-drop for a floating chat button.
+   *
    * @param view the button view
    * @param event the MotionEvent
    * @return true if handled, false otherwise
@@ -132,6 +133,7 @@ public class Common {
 
   /**
    * Reads an API key from local.properties in assets.
+   *
    * @param ctx the context
    * @param key the property key
    * @return the API key value, or empty string if not found
@@ -149,6 +151,7 @@ public class Common {
 
   /**
    * Extracts a HashMap extra from a Bundle.
+   *
    * @param extras the Bundle
    * @param key the key for the HashMap
    * @return the HashMap, or null if not found
@@ -161,6 +164,7 @@ public class Common {
   // UI utility methods
   /**
    * Sets visibility to VISIBLE for all given views.
+   *
    * @param views the views to show
    */
   public static void showViews(View... views) {
@@ -171,6 +175,7 @@ public class Common {
 
   /**
    * Sets visibility to INVISIBLE for all given views.
+   *
    * @param views the views to hide
    */
   public static void hideViews(View... views) {
