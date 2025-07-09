@@ -9,94 +9,102 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.partymaker.ui.group.ChangeDateActivity">
 
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/todo"
+        app:srcCompat="@drawable/ic_cake_black" />
 
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/todo"
-            app:srcCompat="@drawable/ic_cake_black" />
-
-    <RelativeLayout
-        android:layout_marginTop="20dp"
+    <!-- Date Selection Section -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_white_background"
+        android:padding="20dp">
 
-        <Spinner
-            android:id="@+id/spnDayDate"
-            android:layout_alignParentBottom="true"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="40dp"
-            android:hint="@string/day"
-            android:textAlignment="center" />
-        <TextView
-            android:textColor="@color/black"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_above="@+id/spnDayDate"
-            android:text="@string/days"
-            android:textAlignment="center" />
-
-        <Spinner
-            android:id="@+id/spnMonthDate"
-            android:layout_alignParentBottom="true"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="140dp"
-            android:hint="@string/month"
-            android:textAlignment="center" />
-        <TextView
-            android:textColor="@color/black"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="140dp"
-            android:layout_above="@+id/spnMonthDate"
-            android:text="@string/months"
-            android:textAlignment="center" />
-
-        <Spinner
-            android:id="@+id/spnYearDate"
-            android:layout_width="100dp"
-            android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="240dp"
-            android:hint="@string/year"
-            android:textAlignment="center" />
-        <TextView
-            android:textColor="@color/black"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="240dp"
-            android:layout_above="@+id/spnYearDate"
-            android:text="@string/years"
-            android:textAlignment="center" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:text="@string/pick_an_hour"
-            android:textColor="@color/black" />
+            android:text="@string/select_date"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp" />
 
-        <Spinner
-            android:id="@+id/spnHourDate"
-            android:layout_width="100dp"
+        <TextView
+            android:id="@+id/tvSelectedDate"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
-            android:hint="@string/hours" />
-    </RelativeLayout>
+            android:text="Select a date"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            android:background="@drawable/rounded_border"
+            android:padding="15dp"
+            android:layout_marginBottom="10dp" />
 
+        <Button
+            android:id="@+id/btnSelectDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/choose_date"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_button"
+            android:padding="10dp" />
+
+    </LinearLayout>
+
+    <!-- Time Selection Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_white_background"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_time"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/tvSelectedTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select a time"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            android:background="@drawable/rounded_border"
+            android:padding="15dp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnSelectTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/choose_time"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_button"
+            android:padding="10dp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvInstructions2"
@@ -105,30 +113,28 @@
         android:text="@string/choose_a_new_date_above"
         android:textAlignment="center"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:visibility="invisible"
         android:textColor="@color/black"
         android:textStyle="bold"/>
 
-
     <Button
         android:id="@+id/btnChangeDate"
-        android:layout_width="120dp"
+        android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="200dp"
-        android:background="#106e6e6e"
-        android:shadowColor="@color/primaryGray"
-        android:shadowDx="-0"
-        android:shadowDy="-0"
-        android:shadowRadius="25"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/rounded_button"
         android:text="@string/change_date"
         android:textAllCaps="false"
-        android:textColor="#0081d1"
-        android:textSize="15sp" />
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp">
 
         <Button
             android:id="@+id/btnHelp2"
