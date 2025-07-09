@@ -18,6 +18,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.Place;
 import java.util.Locale;
 
+/**
+ * Utility methods for working with maps, locations, and permissions in PartyMaker.
+ */
 public class MapUtilities {
 
   /** Encodes a LatLng into a simple "latitude,longitude" string. */

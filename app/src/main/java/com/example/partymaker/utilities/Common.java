@@ -26,12 +26,18 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import java.util.HashMap;
 
-/** Utility methods for working with Intents and ExtrasMetadata. */
+/**
+ * Utility methods for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker.
+ */
 public class Common {
   private static float downX, downY, dX, dY;
   private static int touchSlop;
 
-  /** Packs all fields from ExtrasMetadata into the given Intent. */
+  /**
+   * Packs all fields from ExtrasMetadata into the given Intent.
+   * @param intent the Intent to add extras to
+   * @param extras the ExtrasMetadata object
+   */
   public static void addExtrasToIntent(Intent intent, ExtrasMetadata extras) {
     intent.putExtra(GROUP_NAME, extras.getGroupName());
     intent.putExtra(GROUP_KEY, extras.getGroupKey());
@@ -50,6 +56,11 @@ public class Common {
     intent.putExtra(MESSAGE_KEYS, extras.getMessageKeys());
   }
 
+  /**
+   * Extracts ExtrasMetadata from an Intent.
+   * @param intent the Intent containing extras
+   * @return the extracted ExtrasMetadata, or null if not found
+   */
   public static ExtrasMetadata getExtrasMetadataFromIntent(Intent intent) {
     Bundle extras = intent.getExtras();
     if (extras == null) return null;
@@ -72,6 +83,12 @@ public class Common {
         getHashMapExtra(extras, MESSAGE_KEYS));
   }
 
+  /**
+   * Handles drag-and-drop for a floating chat button.
+   * @param view the button view
+   * @param event the MotionEvent
+   * @return true if handled, false otherwise
+   */
   @SuppressLint("ClickableViewAccessibility")
   public static boolean dragChatButtonOnTouch(View view, MotionEvent event) {
     // lazy‐init slop
@@ -113,6 +130,12 @@ public class Common {
     }
   }
 
+  /**
+   * Reads an API key from local.properties in assets.
+   * @param ctx the context
+   * @param key the property key
+   * @return the API key value, or empty string if not found
+   */
   public static String getApiKey(Context ctx, String key) {
     try {
       java.util.Properties properties = new java.util.Properties();
@@ -124,18 +147,32 @@ public class Common {
     }
   }
 
+  /**
+   * Extracts a HashMap extra from a Bundle.
+   * @param extras the Bundle
+   * @param key the key for the HashMap
+   * @return the HashMap, or null if not found
+   */
   @SuppressWarnings("unchecked")
   public static HashMap<String, Object> getHashMapExtra(Bundle extras, String key) {
     return (HashMap<String, Object>) extras.getSerializable(key);
   }
 
   // UI utility methods
+  /**
+   * Sets visibility to VISIBLE for all given views.
+   * @param views the views to show
+   */
   public static void showViews(View... views) {
     for (View view : views) {
       view.setVisibility(View.VISIBLE);
     }
   }
 
+  /**
+   * Sets visibility to INVISIBLE for all given views.
+   * @param views the views to hide
+   */
   public static void hideViews(View... views) {
     for (View view : views) {
       view.setVisibility(View.INVISIBLE);

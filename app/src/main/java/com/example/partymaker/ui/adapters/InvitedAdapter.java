@@ -18,30 +18,53 @@ import com.example.partymaker.data.model.User;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
+/**
+ * Adapter for displaying invited users in a ListView.
+ * Shows user details and admin flag.
+ */
 public class InvitedAdapter extends ArrayAdapter<User> {
+  /** The context in which the adapter is used. */
   Context context;
-  List<User> InvitedList;
+  /** The list of invited users to display. */
+  List<User> invitedList;
+  /** The admin key for identifying admin users. */
   String adminKey;
 
+  /**
+   * Constructor for InvitedAdapter.
+   * @param context the context
+   * @param resource the layout resource ID
+   * @param textViewResourceId the text view resource ID
+   * @param invitedList the list of invited users
+   * @param adminKey the admin key
+   */
   public InvitedAdapter(
       @NonNull Context context,
       @LayoutRes int resource,
       @IdRes int textViewResourceId,
-      @NonNull List<User> InvitedList,
+      @NonNull List<User> invitedList,
       String adminKey) {
-    super(context, resource, textViewResourceId, InvitedList);
+    super(context, resource, textViewResourceId, invitedList);
     this.context = context;
-    this.InvitedList = InvitedList;
+    this.invitedList = invitedList;
     this.adminKey = adminKey;
   }
 
+  /**
+   * Returns the view for a specific invited user in the list.
+   * Shows user details and admin flag.
+   * @param position the position in the list
+   * @param convertView the recycled view
+   * @param parent the parent view group
+   * @return the view for the invited user
+   */
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
     @SuppressLint("ViewHolder")
     View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
-    User temp = InvitedList.get(position);
+    User temp = invitedList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvInvitedUsername);
     tvpUserName.setText(temp.getUserName());

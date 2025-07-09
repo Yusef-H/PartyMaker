@@ -18,20 +18,41 @@ import com.example.partymaker.data.model.User;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
+/**
+ * Adapter for displaying users in a ListView.
+ * Loads user profile images and displays user details.
+ */
 public class UserAdapter extends ArrayAdapter<User> {
+  /** The context in which the adapter is used. */
   Context context;
-  List<User> UserList;
+  /** The list of users to display. */
+  List<User> userList;
 
+  /**
+   * Constructor for UserAdapter.
+   * @param context the context
+   * @param resource the layout resource ID
+   * @param textViewResourceId the text view resource ID
+   * @param userList the list of users
+   */
   public UserAdapter(
       @NonNull Context context,
       @LayoutRes int resource,
       @IdRes int textViewResourceId,
-      @NonNull List<User> UserList) {
-    super(context, resource, textViewResourceId, UserList);
+      @NonNull List<User> userList) {
+    super(context, resource, textViewResourceId, userList);
     this.context = context;
-    this.UserList = UserList;
+    this.userList = userList;
   }
 
+  /**
+   * Returns the view for a specific user in the list.
+   * Loads user profile image and displays user details.
+   * @param position the position in the list
+   * @param convertView the recycled view
+   * @param parent the parent view group
+   * @return the view for the user
+   */
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -39,7 +60,7 @@ public class UserAdapter extends ArrayAdapter<User> {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
     @SuppressLint("ViewHolder")
     View view = layoutInflater.inflate(R.layout.item_user, parent, false);
-    User temp = UserList.get(position);
+    User temp = userList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvUserListUsername);
     tvpUserName.setText(temp.getUserName());

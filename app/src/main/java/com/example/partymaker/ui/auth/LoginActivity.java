@@ -34,14 +34,32 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Objects;
 
+/**
+ * Activity for user login, including email/password and Google sign-in.
+ * Handles authentication, navigation, and UI state.
+ */
 public class LoginActivity extends AppCompatActivity {
-  private TextInputEditText etEmail, etPassword;
+  /** Email input field. */
+  private TextInputEditText etEmail;
+  /** Password input field. */
+  private TextInputEditText etPassword;
+  /** About button. */
   private ImageButton btnAbout;
-  private MaterialButton btnLogin, btnPress, btnResetPass;
+  /** Login button. */
+  private MaterialButton btnLogin;
+  /** Register button. */
+  private MaterialButton btnPress;
+  /** Reset password button. */
+  private MaterialButton btnResetPass;
+  /** Remember me checkbox. */
   private MaterialCheckBox cbRememberMe;
+  /** Google sign-in button. */
   private SignInButton btnGoogleSignIn;
+  /** Google sign-in client. */
   private GoogleSignInClient mGoogleSignInClient;
+  /** Request code for Google sign-in. */
   private static final int RC_SIGN_IN = 9001;
+  /** Firebase authentication instance. */
   private FirebaseAuth mAuth;
 
   @Override
@@ -84,7 +102,9 @@ public class LoginActivity extends AppCompatActivity {
     eventHandler();
   }
 
-  // Login Button Onclick
+  /**
+   * Handles all button click events and login logic.
+   */
   private void eventHandler() {
     btnLogin.setOnClickListener(
         new View.OnClickListener() {
@@ -159,11 +179,17 @@ public class LoginActivity extends AppCompatActivity {
         });
   }
 
+  /**
+   * Initiates Google sign-in flow.
+   */
   private void signInWithGoogle() {
     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
     startActivityForResult(signInIntent, RC_SIGN_IN);
   }
 
+  /**
+   * Handles the result of Google sign-in intent.
+   */
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -181,6 +207,10 @@ public class LoginActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * Authenticates with Firebase using Google ID token.
+   * @param idToken the Google ID token
+   */
   private void firebaseAuthWithGoogle(String idToken) {
     AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
     mAuth

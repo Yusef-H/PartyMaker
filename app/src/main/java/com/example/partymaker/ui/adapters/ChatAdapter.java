@@ -21,47 +21,72 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Adapter for displaying chat messages in a ListView for group chat.
+ * Handles message alignment, bubble style, and user identification.
+ */
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
+  /** The context in which the adapter is used. */
   Context context;
-  List<ChatMessage> MessageList;
+  /** The list of chat messages to display. */
+  List<ChatMessage> messageList;
 
+  /**
+   * Constructor for ChatAdapter.
+   * @param context the context
+   * @param resource the layout resource ID
+   * @param textViewResourceId the text view resource ID
+   * @param messageList the list of chat messages
+   */
   public ChatAdapter(
       @NonNull Context context,
       @LayoutRes int resource,
       @IdRes int textViewResourceId,
-      @NonNull List<ChatMessage> MessageList) {
-    super(context, resource, textViewResourceId, MessageList);
+      @NonNull List<ChatMessage> messageList) {
+    super(context, resource, textViewResourceId, messageList);
     this.context = context;
-    this.MessageList = MessageList;
-  }
-
-  /** Constructor that takes Context, resource ID, and a List of ChatMessages */
-  public ChatAdapter(
-      @NonNull Context context, @LayoutRes int resource, @NonNull List<ChatMessage> MessageList) {
-    super(context, resource, MessageList);
-    this.context = context;
-    this.MessageList = MessageList;
+    this.messageList = messageList;
   }
 
   /**
-   * Add a single message to the adapter
-   *
+   * Constructor for ChatAdapter without textViewResourceId.
+   * @param context the context
+   * @param resource the layout resource ID
+   * @param messageList the list of chat messages
+   */
+  public ChatAdapter(
+      @NonNull Context context, @LayoutRes int resource, @NonNull List<ChatMessage> messageList) {
+    super(context, resource, messageList);
+    this.context = context;
+    this.messageList = messageList;
+  }
+
+  /**
+   * Add a single message to the adapter and refresh the view.
    * @param message The message to add
    */
   public void addMessage(ChatMessage message) {
     if (message != null) {
-      this.MessageList.add(message);
+      this.messageList.add(message);
       notifyDataSetChanged();
     }
   }
 
+  /**
+   * Returns the view for a specific message in the list.
+   * Handles alignment, bubble style, and user identification.
+   * @param position the position in the list
+   * @param convertView the recycled view
+   * @param parent the parent view group
+   * @return the view for the message
+   */
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
     @SuppressLint("ViewHolder")
     View view = layoutInflater.inflate(R.layout.item_chat_message, parent, false);
-    ChatMessage temp = MessageList.get(position);
+    ChatMessage temp = messageList.get(position);
 
     String currentUser = Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail();
     boolean isMine = temp.getMessageUser() != null && temp.getMessageUser().equals(currentUser);
@@ -118,7 +143,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 
     // Add spaces between messages
     if (position > 0) {
-      ChatMessage prevMessage = MessageList.get(position - 1);
+      ChatMessage prevMessage = messageList.get(position - 1);
       if (prevMessage.getMessageUser() != null
           && temp.getMessageUser() != null
           && prevMessage.getMessageUser().equals(temp.getMessageUser())) {
