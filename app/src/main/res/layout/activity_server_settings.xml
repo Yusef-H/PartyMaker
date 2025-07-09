@@ -11,23 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Server Mode Settings"
+        android:text="@string/server_mode_settings"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_server_mode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Use Server Mode"
+        android:text="@string/use_server_mode"
         android:textSize="16sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Server URL"
+        android:text="@string/server_url"
         android:textSize="16sp" />
 
     <EditText
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="http://10.0.2.2:8080"
+        android:hint="@string/server_url_default"
         android:inputType="textUri" />
 
     <TextView
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Note: Use 10.0.2.2:8080 for Android Emulator. For physical devices, use your computer's IP address."
+        android:text="@string/server_url_note"
         android:textSize="14sp"
         android:textStyle="italic" />
 
@@ -52,6 +52,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Save Settings" />
+        android:text="@string/save_settings" />
 
 </LinearLayout> 

@@ -94,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/location"
                     android:src="@drawable/ic_party_location" />
 
                 <TextView
@@ -148,7 +148,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginEnd="7dp"
                     android:layout_marginTop="5dp"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/date"
                     android:src="@drawable/ic_party_calendar" />
 
                 <TextView
@@ -238,7 +238,7 @@
                 android:layout_height="15dp"
                 android:layout_marginStart="140dp"
                 android:layout_marginTop="182dp"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/press_to_see_time"
                 android:src="@drawable/ic_party_arrow"
                 android:visibility="invisible" />
 
@@ -289,7 +289,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/join_group"
                     android:src="@drawable/ic_party_join" />
 
                 <TextView
@@ -328,7 +328,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/back"
                     android:src="@drawable/ic_party_leave" />
 
                 <TextView

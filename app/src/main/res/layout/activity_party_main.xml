@@ -159,7 +159,7 @@
                         android:layout_below="@+id/tvGroupLocation"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="5dp"
-                        android:text="Tap to open in Maps"
+                        android:text="@string/tap_to_open_maps"
                         android:textColor="#1986ed"
                         android:textSize="12sp"
                         android:textStyle="italic" />
@@ -533,8 +533,6 @@
                         android:id="@+id/imgAddFriend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/textView5"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/todo"
                         android:src="@drawable/ic_party_add" />

@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="Map will open in Google Maps app"
+        android:text="@string/map_will_open"
         android:textColor="#666666"
         android:textSize="18sp" />
 
@@ -29,10 +29,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:drawableStart="@android:drawable/ic_menu_close_clear_cancel"
+            app:drawableStartCompat="@android:drawable/ic_menu_close_clear_cancel"
             android:drawablePadding="8dp"
             android:padding="8dp"
-            android:text="סגור מפה"
+            android:text="@string/close_map"
             android:textColor="#1986ed" />
     </androidx.cardview.widget.CardView>
 
@@ -50,10 +50,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:drawableStart="@android:drawable/ic_menu_directions"
+            app:drawableStartCompat="@android:drawable/ic_menu_directions"
             android:drawablePadding="8dp"
             android:padding="8dp"
-            android:text="פתח בגוגל מפות"
+            android:text="@string/open_in_google_maps"
             android:textColor="#1986ed" />
     </androidx.cardview.widget.CardView>
 

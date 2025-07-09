@@ -40,7 +40,7 @@
             android:id="@+id/tvSelectedDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select a date"
+            android:text="@string/select_date"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textAlignment="center"
@@ -85,7 +85,7 @@
             android:id="@+id/tvSelectedTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select a time"
+            android:text="@string/select_time"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textAlignment="center"
@@ -142,7 +142,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="210dp"
             android:background="#0000ffff"
-            android:text="Press Here"
+            android:text="@string/press_here"
             android:textAllCaps="false"
             android:textColor="#0081d1" />
 

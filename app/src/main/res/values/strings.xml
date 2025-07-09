@@ -7,6 +7,14 @@
     <!-- Login Screen -->
     <string name="password">Password</string>
     <string name="stay_connected">Stay connected!</string>
+    <string name="login_input_required">Please enter both email and password</string>
+    <string name="login_invalid_email">Please enter a valid email address</string>
+    <string name="login_connecting">Connecting</string>
+    <string name="login_please_wait">Please wait...</string>
+    <string name="login_connected">Connected successfully</string>
+    <string name="login_invalid_credentials">Invalid email or password</string>
+    <string name="login_google_signin_failed">Google sign in failed</string>
+    <string name="login_google_token_error">Failed to get Google authentication token</string>
 
     <!-- Google Auth -->
     <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
@@ -166,6 +174,63 @@
     <string name="select_time">Select Time</string>
     <string name="choose_date">Choose Date</string>
     <string name="choose_time">Choose Time</string>
+    
+    <!-- Chatbot -->
+    <string name="chatgpt_icon">ChatGPT Icon</string>
+    <string name="ai_assistant">AI Assistant</string>
+    <string name="type_message">Type a message</string>
+    <string name="send">Send</string>
+    
+    <!-- Friends -->
+    <string name="remove_friends">Remove Friends</string>
+    <string name="help">Help</string>
+    <string name="need_help">Need help?</string>
+    <string name="hide">Hide</string>
+    <string name="hide_instructions">Hide instructions</string>
+    <string name="enter_friend_email_remove">Enter the email of the friend you want to remove from the group, or select a friend from the list below.</string>
+    <string name="enter_friend_email">Enter friend\'s email</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="friends_in_group">Friends in group:</string>
+    
+    <!-- Group Details -->
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="invited_members">Invited Members</string>
+    
+    <!-- Party -->
+    <string name="select_date">Select a date</string>
+    <string name="select_time">Select a time</string>
+    <string name="tap_to_open_maps">Tap to open in Maps</string>
+    <string name="todo">TODO</string>
+    
+    <!-- Server Settings -->
+    <string name="server_mode_settings">Server Mode Settings</string>
+    <string name="use_server_mode">Use Server Mode</string>
+    <string name="server_url">Server URL</string>
+    <string name="server_url_default">http://10.0.2.2:8080</string>
+    <string name="server_url_note">Note: Use 10.0.2.2:8080 for Android Emulator. For physical devices, use your computer\'s IP address.</string>
+    <string name="save_settings">Save Settings</string>
+    
+    <!-- Dialog -->
+    <string name="date_example">31/December/2024</string>
+    <string name="time_example">20:00</string>
+    <string name="map_will_open">Map will open in Google Maps app</string>
+    <string name="close_map">סגור מפה</string>
+    <string name="open_in_google_maps">פתח בגוגל מפות</string>
+    
+    <!-- Item -->
+    <string name="profile_picture">Profile Picture</string>
+    <string name="username_label">Username</string>
+    <string name="email_example">email@example.com</string>
+    <string name="admin_flag">Admin Flag</string>
+    
+    <!-- Additional strings -->
+    <string name="press_here">Press Here</string>
+    <string name="info_button">Info Button</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="party_date_time">Party Date &amp; Time</string>
+    <string name="only_admin_can_change_date">Only admin can change the date</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">

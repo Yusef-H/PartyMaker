@@ -145,6 +145,14 @@
     <string name="select_time">בחר שעה</string>
     <string name="choose_date">בחר תאריך</string>
     <string name="choose_time">בחר שעה</string>
+    <string name="login_input_required">אנא הזן גם כתובת אימייל וגם סיסמה</string>
+    <string name="login_invalid_email">אנא הזן כתובת אימייל תקינה</string>
+    <string name="login_connecting">מתחבר</string>
+    <string name="login_please_wait">אנא המתן</string>
+    <string name="login_connected">התחברת בהצלחה</string>
+    <string name="login_invalid_credentials">אימייל או סיסמה שגויים</string>
+    <string name="login_google_signin_failed">התחברות עם Google נכשלה</string>
+    <string name="login_google_token_error">התקבלה שגיאה באימות החשבון של Google</string>
 
     <string-array name="languages_array">
         <item>English</item>
