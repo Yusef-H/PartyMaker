@@ -19,8 +19,9 @@
     <!-- Google Auth -->
     <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
 
-    <!-- These can be safely kept empty since they're defined above with different names -->
+    <!-- Email Input -->
     <string name="hint_email">Email</string>
+    <string name="valid_email_required">Valid email required</string>
 
     <!-- Welcome Slider -->
     <string name="next">Next</string>
@@ -32,8 +33,8 @@
     <string name="desc_slide2">The app was created to make order because when it comes to parties there are no apps that helps with this subject.</string>
     <string name="title_slide3">About the app</string>
     <string name="desc_slide3">The app was made by Nati Fishman as a final project</string>
-    <string name="group_s_picture">Group\'s Picture</string>
-    <string name="your_party_s_name">Your Party\'s Name</string>
+    <string name="group_s_picture">Group's Picture</string>
+    <string name="your_party_s_name">Your Party's Name</string>
     <string name="private_party">Private Party</string>
     <string name="name">Name</string>
     <string name="create_party">Create Party</string>
@@ -67,8 +68,8 @@
     <string name="calendar">calendar</string>
     <string name="options">options</string>
     <string name="leave">leave</string>
-    <string name="input_your_friend_s_email">Input your friend\'s email</string>
-    <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend\'s email above and press delete Friend to delete him from current group</string>
+    <string name="input_your_friend_s_email">Input your friend's email</string>
+    <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend's email above and press delete Friend to delete him from current group</string>
     <string name="register_cake">Register Cake</string>
     <string name="register">Register</string>
     <string name="have_an_account">Have an account?</string>
@@ -81,14 +82,6 @@
     <string name="your_parties">Your Parties</string>
     <string name="public_parties">Public Parties</string>
     <string name="logout">Logout</string>
-
-    <string-array name="languages_array">
-        <item>English</item>
-        <item>עברית</item>
-    </string-array>
-
-    <!-- Email Input -->
-    <string name="valid_email_required">Valid email required</string>
 
     <!-- Username Input -->
     <string name="username_visible_to_everyone">Username will be visible to everyone</string>
@@ -145,14 +138,14 @@
     <string name="input_email">input email</string>
     <string name="white_screen">White Screen</string>
     <string name="black_screen">Black Screen</string>
-    <string name="type_in_your_email_address_above_and_we_ll_send_you_an_email_with_instructions_on_how_to_create_a_new_password">Type in your email address above and we\'ll send you an email with instructions on how to create a new password</string>
+    <string name="type_in_your_email_address_above_and_we_ll_send_you_an_email_with_instructions_on_how_to_create_a_new_password">Type in your email address above and we'll send you an email with instructions on how to create a new password</string>
     <string name="_12_34">12:34</string>
     <string name="message_content">message content</string>
     <string name="sender_name">Sender Name</string>
     <string name="email">email</string>
     <string name="friends_list">Friends List</string>
     <string name="i_dont_know">I dont know</string>
-    <string name="type_in_your_friend_s_email_above_and_press_add_friend_to_add_him_to_the_current_group">Type in your friend\'s email above and press Add Friend to add him to the current group</string>
+    <string name="type_in_your_friend_s_email_above_and_press_add_friend_to_add_him_to_the_current_group">Type in your friend's email above and press Add Friend to add him to the current group</string>
     <string name="is_he_coming_to_the_party">Is he coming to the party?</string>
     <string name="yes">Yes</string>
     <string name="add_friend">Add Friend</string>
@@ -174,174 +167,57 @@
     <string name="select_time">Select Time</string>
     <string name="choose_date">Choose Date</string>
     <string name="choose_time">Choose Time</string>
-    
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="party_date_time">Party Date &amp; Time</string>
+    <string name="only_admin_can_change_date">Only admin can change the date</string>
+    <string name="time">Time</string>
+
     <!-- Chatbot -->
     <string name="chatgpt_icon">ChatGPT Icon</string>
     <string name="ai_assistant">AI Assistant</string>
-    <string name="type_message">Type a message</string>
     <string name="send">Send</string>
-    
+
     <!-- Friends -->
     <string name="remove_friends">Remove Friends</string>
     <string name="help">Help</string>
-    <string name="need_help">Need help?</string>
     <string name="hide">Hide</string>
     <string name="hide_instructions">Hide instructions</string>
     <string name="enter_friend_email_remove">Enter the email of the friend you want to remove from the group, or select a friend from the list below.</string>
-    <string name="enter_friend_email">Enter friend\'s email</string>
-    <string name="remove_friend">Remove Friend</string>
+    <string name="enter_friend_email">Enter friend's email</string>
     <string name="friends_in_group">Friends in group:</string>
-    
+
     <!-- Group Details -->
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="invited_members">Invited Members</string>
-    
+
     <!-- Party -->
-    <string name="select_date">Select a date</string>
-    <string name="select_time">Select a time</string>
     <string name="tap_to_open_maps">Tap to open in Maps</string>
-    <string name="todo">TODO</string>
-    
+
     <!-- Server Settings -->
     <string name="server_mode_settings">Server Mode Settings</string>
     <string name="use_server_mode">Use Server Mode</string>
     <string name="server_url">Server URL</string>
     <string name="server_url_default">http://10.0.2.2:8080</string>
-    <string name="server_url_note">Note: Use 10.0.2.2:8080 for Android Emulator. For physical devices, use your computer\'s IP address.</string>
+    <string name="server_url_note">Note: Use 10.0.2.2:8080 for Android Emulator. For physical devices, use your computer's IP address.</string>
     <string name="save_settings">Save Settings</string>
-    
+
     <!-- Dialog -->
     <string name="date_example">31/December/2024</string>
     <string name="time_example">20:00</string>
     <string name="map_will_open">Map will open in Google Maps app</string>
-    <string name="close_map">סגור מפה</string>
-    <string name="open_in_google_maps">פתח בגוגל מפות</string>
-    
+    <string name="close_map">Close Map</string>
+    <string name="open_in_google_maps">Open in Google Maps</string>
+
     <!-- Item -->
     <string name="profile_picture">Profile Picture</string>
     <string name="username_label">Username</string>
     <string name="email_example">email@example.com</string>
     <string name="admin_flag">Admin Flag</string>
-    
-    <!-- Additional strings -->
-    <string name="press_here">Press Here</string>
-    <string name="info_button">Info Button</string>
-    <string name="close">Close</string>
-    <string name="ok">OK</string>
-    <string name="party_date_time">Party Date &amp; Time</string>
-    <string name="only_admin_can_change_date">Only admin can change the date</string>
 
-    <!-- Arrays for date/time pickers -->
-    <string-array name="array_days">
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
-        <item>15</item>
-        <item>16</item>
-        <item>17</item>
-        <item>18</item>
-        <item>19</item>
-        <item>20</item>
-        <item>21</item>
-        <item>22</item>
-        <item>23</item>
-        <item>24</item>
-        <item>25</item>
-        <item>26</item>
-        <item>27</item>
-        <item>28</item>
-        <item>29</item>
-        <item>30</item>
-        <item>31</item>
+    <string-array name="languages_array">
+        <item>English</item>
+        <item>עברית</item>
     </string-array>
-    <string-array name="array_months">
-        <item>January</item>
-        <item>February</item>
-        <item>March</item>
-        <item>April</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>August</item>
-        <item>September</item>
-        <item>October</item>
-        <item>November</item>
-        <item>December</item>
-    </string-array>
-    <string-array name="array_years">
-        <item>2025</item>
-        <item>2026</item>
-        <item>2027</item>
-        <item>2028</item>
-        <item>2029</item>
-    </string-array>
-    <string-array name="array_hours">
-        <item>01:00</item>
-        <item>01:30</item>
-        <item>02:00</item>
-        <item>02:30</item>
-        <item>03:00</item>
-        <item>03:30</item>
-        <item>04:00</item>
-        <item>04:30</item>
-        <item>05:00</item>
-        <item>05:30</item>
-        <item>06:00</item>
-        <item>06:30</item>
-        <item>07:00</item>
-        <item>07:30</item>
-        <item>08:00</item>
-        <item>08:30</item>
-        <item>09:00</item>
-        <item>09:30</item>
-        <item>10:00</item>
-        <item>10:30</item>
-        <item>11:00</item>
-        <item>11:30</item>
-        <item>12:00</item>
-        <item>12:30</item>
-        <item>13:00</item>
-        <item>13:30</item>
-        <item>14:00</item>
-        <item>14:30</item>
-        <item>15:00</item>
-        <item>15:30</item>
-        <item>16:00</item>
-        <item>16:30</item>
-        <item>17:00</item>
-        <item>17:30</item>
-        <item>18:00</item>
-        <item>18:30</item>
-        <item>19:00</item>
-        <item>19:30</item>
-        <item>20:00</item>
-        <item>20:30</item>
-        <item>21:00</item>
-        <item>21:30</item>
-        <item>22:00</item>
-        <item>22:30</item>
-        <item>23:00</item>
-        <item>23:30</item>
-        <item>00:00</item>
-        <item>00:30</item>
-    </string-array>
-    
-    <!-- Date Dialog Strings -->
-    <string name="party_date_time">Party Date &amp; Time</string>
-    <string name="time">Time</string>
-    <string name="only_admin_can_change_date">Only admin can change the date</string>
-    <string name="close">Close</string>
-    <string name="ok">OK</string>
 </resources>
