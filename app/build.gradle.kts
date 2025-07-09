@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.preference:preference:1.2.1")
 
     // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -105,6 +106,9 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.okhttp)
     implementation(libs.json)
+    
+    // Gson for JSON parsing
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Testing
     testImplementation(libs.junit)
