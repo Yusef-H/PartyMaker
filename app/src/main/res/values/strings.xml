@@ -2,6 +2,7 @@
 <resources>
     <!-- App Info -->
     <string name="app_name">PartyMaker</string>
+    <string name="server_settings">Server Settings</string>
 
     <!-- Login Screen -->
     <string name="password">Password</string>
@@ -161,6 +162,10 @@
     <string name="my_parties">My Parties</string>
     <string name="create_group_logo">Create Group Logo</string>
     <string name="input_party_name">Input Party Name</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_time">Select Time</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="choose_time">Choose Time</string>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_days">
@@ -267,4 +272,11 @@
         <item>00:00</item>
         <item>00:30</item>
     </string-array>
+    
+    <!-- Date Dialog Strings -->
+    <string name="party_date_time">Party Date &amp; Time</string>
+    <string name="time">Time</string>
+    <string name="only_admin_can_change_date">Only admin can change the date</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
 </resources>

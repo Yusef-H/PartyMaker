@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">יוצר מסיבות</string>
+    <string name="server_settings">הגדרות שרת</string>
     <string name="password">סיסמה</string>
     <string name="stay_connected">הישאר מחובר!</string>
     <string name="hint_email">אימייל</string>
@@ -140,6 +141,10 @@
     <string name="my_parties">המסיבות שלי</string>
     <string name="create_group_logo">צור לוגו לקבוצה</string>
     <string name="input_party_name">הזן שם למסיבה</string>
+    <string name="select_date">בחר תאריך</string>
+    <string name="select_time">בחר שעה</string>
+    <string name="choose_date">בחר תאריך</string>
+    <string name="choose_time">בחר שעה</string>
 
     <string-array name="languages_array">
         <item>English</item>
@@ -251,4 +256,11 @@
         <item>00:00</item>
         <item>00:30</item>
     </string-array>
+    
+    <!-- Date Dialog Strings -->
+    <string name="party_date_time">תאריך ושעת המסיבה</string>
+    <string name="time">שעה</string>
+    <string name="only_admin_can_change_date">רק מנהל יכול לשנות את התאריך</string>
+    <string name="close">סגור</string>
+    <string name="ok">אישור</string>
 </resources>

@@ -27,6 +27,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/idServerSettings"
+        android:icon="@drawable/ic_party_pencil"
+        android:title="@string/server_settings"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/idLogout"
         android:icon="@drawable/ic_party_leave"
         android:title="@string/logout"
