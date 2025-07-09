@@ -1,10 +1,15 @@
 package com.example.partymaker.data.model;
 
+import java.util.HashMap;
+
 public class ChatMessage {
   private String messageText;
   private String messageUser;
   private String messageTime;
   private String MessageKey;
+  private String groupId; // Added groupId field
+  private String msg1;
+  private HashMap<String, Object> messageContent;
 
   public ChatMessage(
       String messageText, String messageUser, String messageTime, String messageKey) {
@@ -46,5 +51,29 @@ public class ChatMessage {
 
   public void setMessageKey(String messageKey) {
     MessageKey = messageKey;
+  }
+
+  public String getGroupId() {
+    return groupId;
+  }
+
+  public void setGroupId(String groupId) {
+    this.groupId = groupId;
+  }
+
+  public String getMsg1() {
+    return msg1;
+  }
+
+  public void setMsg1(String msg1) {
+    this.msg1 = msg1;
+  }
+
+  public HashMap<String, Object> getMessageContent() {
+    return messageContent;
+  }
+
+  public void setMessageContent(HashMap<String, Object> messageContent) {
+    this.messageContent = messageContent;
   }
 }

@@ -31,12 +31,24 @@ public class Group {
     return MessageKeys;
   }
 
+  public void setMessageKeys(HashMap<String, Object> messageKeys) {
+    MessageKeys = messageKeys;
+  }
+
   public HashMap<String, Object> getFriendKeys() {
     return FriendKeys;
   }
 
+  public void setFriendKeys(HashMap<String, Object> friendKeys) {
+    FriendKeys = friendKeys;
+  }
+
   public HashMap<String, Object> getComingKeys() {
     return ComingKeys;
+  }
+
+  public void setComingKeys(HashMap<String, Object> comingKeys) {
+    ComingKeys = comingKeys;
   }
 
   public Group() {}

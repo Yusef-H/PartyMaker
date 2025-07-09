@@ -113,7 +113,33 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private void initializePlacesAPI() {
     if (!Places.isInitialized()) {
       String apiKey = Common.getApiKey(this, "MAPS_KEY");
-      Places.initialize(getApplicationContext(), apiKey);
+      if (apiKey.isEmpty()) {
+        // Use a default key from resources or show an error message
+        Toast.makeText(
+                this,
+                "Google Maps API key not found. Some features may not work properly.",
+                Toast.LENGTH_LONG)
+            .show();
+        // Try to get key from manifest metadata as fallback
+        try {
+          apiKey =
+              getPackageManager()
+                  .getApplicationInfo(
+                      getPackageName(), android.content.pm.PackageManager.GET_META_DATA)
+                  .metaData
+                  .getString("com.google.android.geo.API_KEY");
+        } catch (Exception e) {
+          apiKey = "YOUR_DEFAULT_API_KEY"; // Replace with your actual key if needed
+        }
+      }
+
+      try {
+        Places.initialize(getApplicationContext(), apiKey);
+      } catch (IllegalArgumentException e) {
+        Toast.makeText(this, "Error initializing Google Maps: " + e.getMessage(), Toast.LENGTH_LONG)
+            .show();
+        // Continue without maps functionality
+      }
     }
   }
 

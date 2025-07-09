@@ -1,7 +1,16 @@
 package com.example.partymaker.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
-  private String Email, UserName;
+  @SerializedName("email")
+  private String Email;
+
+  @SerializedName("userName")
+  private String UserName;
+
+  @SerializedName("lastLogin")
+  private String lastLogin;
 
   public String getEmail() {
     return Email;
@@ -18,6 +27,14 @@ public class User {
   @SuppressWarnings("unused")
   public void setUserName(String userName) {
     UserName = userName;
+  }
+
+  public String getLastLogin() {
+    return lastLogin;
+  }
+
+  public void setLastLogin(String lastLogin) {
+    this.lastLogin = lastLogin;
   }
 
   public User() {}

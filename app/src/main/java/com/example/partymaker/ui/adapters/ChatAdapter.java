@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +35,26 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     this.MessageList = MessageList;
   }
 
+  /** Constructor that takes Context, resource ID, and a List of ChatMessages */
+  public ChatAdapter(
+      @NonNull Context context, @LayoutRes int resource, @NonNull List<ChatMessage> MessageList) {
+    super(context, resource, MessageList);
+    this.context = context;
+    this.MessageList = MessageList;
+  }
+
+  /**
+   * Add a single message to the adapter
+   *
+   * @param message The message to add
+   */
+  public void addMessage(ChatMessage message) {
+    if (message != null) {
+      this.MessageList.add(message);
+      notifyDataSetChanged();
+    }
+  }
+
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -43,7 +64,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     ChatMessage temp = MessageList.get(position);
 
     String currentUser = Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail();
-    boolean isMine = temp.getMessageUser().equals(currentUser);
+    boolean isMine = temp.getMessageUser() != null && temp.getMessageUser().equals(currentUser);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);
@@ -52,8 +73,31 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     Space spaceLeft = view.findViewById(R.id.spaceLeft);
     Space spaceRight = view.findViewById(R.id.spaceRight);
 
-    tvMessage.setText(temp.getMessageText());
-    tvTime.setText(temp.getMessageTime().substring(11, 16)); // show only HH:mm
+    // Handle message text, checking for null or complex content
+    String messageText = temp.getMessageText();
+    if (messageText == null) {
+      // Try to get content from messageContent if available
+      HashMap<String, Object> messageContent = temp.getMessageContent();
+      if (messageContent != null) {
+        // Try to extract text from the HashMap
+        Object textObj = messageContent.get("text");
+        if (textObj instanceof String) {
+          messageText = (String) textObj;
+        } else {
+          messageText = "[Complex message content]";
+        }
+      } else {
+        messageText = "[No message content]";
+      }
+    }
+    tvMessage.setText(messageText);
+
+    // Handle time display with null check
+    if (temp.getMessageTime() != null && temp.getMessageTime().length() >= 16) {
+      tvTime.setText(temp.getMessageTime().substring(11, 16)); // show only HH:mm
+    } else {
+      tvTime.setText("");
+    }
 
     if (isMine) {
       // My messages: right alignment, green bubble, no name
@@ -65,7 +109,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     } else {
       // Messages from others: left alignment, gray bubble, with name
       bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble);
-      tvSender.setText(temp.getMessageUser());
+      tvSender.setText(temp.getMessageUser() != null ? temp.getMessageUser() : "Unknown");
       tvSender.setVisibility(View.VISIBLE);
       spaceLeft.setVisibility(View.GONE);
       spaceRight.setVisibility(View.VISIBLE);
@@ -75,7 +119,9 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     // Add spaces between messages
     if (position > 0) {
       ChatMessage prevMessage = MessageList.get(position - 1);
-      if (prevMessage.getMessageUser().equals(temp.getMessageUser())) {
+      if (prevMessage.getMessageUser() != null
+          && temp.getMessageUser() != null
+          && prevMessage.getMessageUser().equals(temp.getMessageUser())) {
         // If it's the same user, reduce the interval.
         view.setPadding(0, 2, 0, 0);
       } else {

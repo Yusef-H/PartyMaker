@@ -17,7 +17,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
+import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.example.partymaker.utilities.MapUtilities;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class AdminOptionsActivity extends AppCompatActivity implements OnMapReadyCallback {
+  private static final String TAG = "AdminOptionsActivity";
   private LinearLayout mainContent;
   private String AdminKey,
       GroupKey,
@@ -46,7 +49,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
       GroupHour,
       GroupLocation,
       CreatedAt,
-      GroupPrice;
+      GroupPrice,
+      UserKey; // Add UserKey for admin verification
   private int GroupType;
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
   private boolean CanAdd;
@@ -55,19 +59,59 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   private LatLng chosenLatLng;
   private Button saveLocationButton;
   private FrameLayout mapContainer;
+  private boolean isAdminVerified = false; // Track admin verification status
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_options);
 
+    // Initialize Places API with proper error handling
+    String apiKey = Common.getApiKey(this, "MAPS_KEY");
+    if (apiKey.isEmpty()) {
+      // Use a default key from resources or show an error message
+      Toast.makeText(
+              this,
+              "Google Maps API key not found. Some features may not work properly.",
+              Toast.LENGTH_LONG)
+          .show();
+      // Try to get key from manifest metadata as fallback
+      try {
+        apiKey =
+            getPackageManager()
+                .getApplicationInfo(
+                    getPackageName(), android.content.pm.PackageManager.GET_META_DATA)
+                .metaData
+                .getString("com.google.android.geo.API_KEY");
+      } catch (Exception e) {
+        apiKey = "YOUR_DEFAULT_API_KEY"; // Replace with your actual key if needed
+      }
+    }
+
     if (!Places.isInitialized()) {
-      Places.initialize(getApplicationContext(), Common.getApiKey(this, "MAPS_KEY"));
+      try {
+        Places.initialize(getApplicationContext(), apiKey);
+      } catch (IllegalArgumentException e) {
+        Toast.makeText(this, "Error initializing Google Maps: " + e.getMessage(), Toast.LENGTH_LONG)
+            .show();
+        // Continue without maps functionality
+      }
     }
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
     Objects.requireNonNull(actionBar).hide();
+
+    // Get current user key for admin verification
+    try {
+      UserKey =
+          Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
+              .replace('.', ' ');
+    } catch (Exception e) {
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
 
     // Get Values from GroupScreen By intent + connection between intent and current
     // activity objects
@@ -94,6 +138,53 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     ComingKeys = extras.getComingKeys();
     MessageKeys = extras.getMessageKeys();
 
+    // Verify admin status before allowing access
+    verifyAdminStatus();
+  }
+
+  private void verifyAdminStatus() {
+    // Show loading message
+    Toast.makeText(this, "Verifying admin permissions...", Toast.LENGTH_SHORT).show();
+
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    serverClient.getGroup(
+        GroupKey,
+        new FirebaseServerClient.DataCallback<Group>() {
+          @Override
+          public void onSuccess(Group group) {
+            if (group != null
+                && group.getAdminKey() != null
+                && group.getAdminKey().equals(UserKey)) {
+              // User is verified as admin
+              isAdminVerified = true;
+              // Update local admin key to match server data
+              AdminKey = group.getAdminKey();
+              // Initialize UI after verification
+              initializeUI();
+            } else {
+              // User is not admin - deny access
+              Toast.makeText(
+                      AdminOptionsActivity.this,
+                      "Access denied. Only group admin can access this page.",
+                      Toast.LENGTH_LONG)
+                  .show();
+              finish();
+            }
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Toast.makeText(
+                    AdminOptionsActivity.this,
+                    "Failed to verify admin status: " + errorMessage,
+                    Toast.LENGTH_LONG)
+                .show();
+            finish();
+          }
+        });
+  }
+
+  private void initializeUI() {
     // connection between XML and AdminOptions
     mainContent = findViewById(R.id.mainContent);
     GridLayout myGrid = findViewById(R.id.MyGrid);
@@ -115,6 +206,12 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   }
 
   private void eventHandler() {
+    // Check admin verification before allowing any operations
+    if (!isAdminVerified) {
+      Toast.makeText(this, "Admin verification required", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
     CardPrice.setOnClickListener(
         v -> {
           final EditText edittext = new EditText(AdminOptionsActivity.this);
@@ -129,10 +226,19 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
           alert.setPositiveButton(
               "Change price",
               (dialog, whichButton) -> {
+                // Double-check admin status before making changes
+                if (!isAdminVerified || !AdminKey.equals(UserKey)) {
+                  Toast.makeText(
+                          AdminOptionsActivity.this,
+                          "Access denied. Admin verification failed.",
+                          Toast.LENGTH_LONG)
+                      .show();
+                  return;
+                }
                 // if pressed changed name
                 GroupPrice = edittext.getText().toString();
                 DBRef.refGroups.child(GroupKey).child("groupPrice").setValue(GroupPrice);
-                Toast.makeText(AdminOptionsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
+                Toast.makeText(AdminOptionsActivity.this, "Price Changed", Toast.LENGTH_SHORT)
                     .show();
               });
 
@@ -147,6 +253,16 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     CardLocation.setOnClickListener(
         v -> {
+          // Double-check admin status before allowing location changes
+          if (!isAdminVerified || !AdminKey.equals(UserKey)) {
+            Toast.makeText(
+                    AdminOptionsActivity.this,
+                    "Access denied. Admin verification failed.",
+                    Toast.LENGTH_LONG)
+                .show();
+            return;
+          }
+
           mainContent.setVisibility(View.INVISIBLE);
           MapUtilities.centerMapOnChosenPlace(
               map,
@@ -157,6 +273,16 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
           saveLocationButton.setOnClickListener(
               v1 -> {
+                // Triple-check admin status before saving location
+                if (!isAdminVerified || !AdminKey.equals(UserKey)) {
+                  Toast.makeText(
+                          AdminOptionsActivity.this,
+                          "Access denied. Admin verification failed.",
+                          Toast.LENGTH_LONG)
+                      .show();
+                  return;
+                }
+
                 if (chosenLatLng != null) {
                   String locationValue =
                       MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);

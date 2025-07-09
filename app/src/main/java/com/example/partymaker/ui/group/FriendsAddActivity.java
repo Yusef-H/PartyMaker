@@ -14,16 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
+import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class FriendsAddActivity extends AppCompatActivity {
@@ -45,7 +47,7 @@ public class FriendsAddActivity extends AppCompatActivity {
   private int GroupType;
   private ImageButton btnBack;
   private boolean CanAdd;
-  private DatabaseReference database;
+  private Object usersRef;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +83,9 @@ public class FriendsAddActivity extends AppCompatActivity {
     ComingKeys = extras.getComingKeys();
     MessageKeys = extras.getMessageKeys();
 
-    // database set
-    database = FirebaseDatabase.getInstance().getReference("Users");
+    // Initialize Firebase database references
+    FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
+    usersRef = accessManager.getUsersRef();
 
     // connection
     btnAddFriend = findViewById(R.id.btnAddFriend);
@@ -119,70 +122,46 @@ public class FriendsAddActivity extends AppCompatActivity {
           // This if - checks if EditText is not Empty
           if (!etFriendEmail.getText().toString().trim().isEmpty()) {
             CurrentFriend = etFriendEmail.getText().toString().replace('.', ' ');
-            database.addValueEventListener(
-                new ValueEventListener() {
-                  @Override
-                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    boolean flag = false;
-                    boolean flag1 = false;
-                    HashMap<String, Object> GroupFriends;
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                      String UserEmail =
-                          Objects.requireNonNull(data.getValue(User.class))
-                              .getEmail()
-                              .replace('.', ' ');
-                      String CurrentUserEmail =
-                          etFriendEmail.getText().toString().replace('.', ' ');
-                      GroupFriends = FriendKeys;
-                      if (CurrentUserEmail.equals(UserEmail)) {
-                        for (String GroupFriend : GroupFriends.keySet()) {
-                          if (CurrentUserEmail.equals(GroupFriend)) {
-                            flag1 = true;
-                            break;
-                          }
-                        }
-                        if (!flag1) {
-                          FriendKeys.put(CurrentFriend, "true");
-                          DBRef.refGroups
-                              .child(GroupKey)
-                              .child("FriendKeys")
-                              .updateChildren(FriendKeys);
-                          Toast.makeText(
-                                  FriendsAddActivity.this,
-                                  "Friend successfully added",
-                                  Toast.LENGTH_SHORT)
-                              .show();
-                        } else {
-                          Toast.makeText(
-                                  FriendsAddActivity.this,
-                                  "User already in group",
-                                  Toast.LENGTH_SHORT)
-                              .show();
-                        }
-                        flag = true;
-                      }
+
+            if (usersRef instanceof DatabaseReference) {
+              // Direct Firebase access mode
+              DatabaseReference dbRef = (DatabaseReference) usersRef;
+              dbRef.addValueEventListener(
+                  new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                      processUserData(dataSnapshot);
                     }
-                    if (!flag) {
-                      Toast.makeText(FriendsAddActivity.this, "Email not Exist", Toast.LENGTH_SHORT)
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                      Toast.makeText(
+                              FriendsAddActivity.this,
+                              "Database error: " + databaseError.getMessage(),
+                              Toast.LENGTH_SHORT)
                           .show();
                     }
-                    if (!flag1 && flag) {
-                      hideViews(
-                          etFriendEmail,
-                          btnAddFriend,
-                          btnFriendsList,
-                          tvInstructions1,
-                          btnHide,
-                          tvHide,
-                          btnHelp,
-                          tvHelp);
-                      showViews(tvAddMore, btnYes, btnNo);
+                  });
+            } else if (usersRef instanceof FirebaseServerClient) {
+              // Server mode
+              FirebaseServerClient serverClient = (FirebaseServerClient) usersRef;
+              serverClient.getUsers(
+                  new FirebaseServerClient.DataCallback<Map<String, User>>() {
+                    @Override
+                    public void onSuccess(Map<String, User> data) {
+                      processServerUserData(data);
                     }
-                  }
 
-                  @Override
-                  public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
+                    @Override
+                    public void onError(String errorMessage) {
+                      Toast.makeText(
+                              FriendsAddActivity.this,
+                              "Server error: " + errorMessage,
+                              Toast.LENGTH_SHORT)
+                          .show();
+                    }
+                  });
+            }
           } else {
             Toast.makeText(FriendsAddActivity.this, "Input email please", Toast.LENGTH_SHORT)
                 .show();
@@ -235,5 +214,129 @@ public class FriendsAddActivity extends AppCompatActivity {
           startActivity(intent);
           startActivity(intent);
         });
+  }
+
+  private void processUserData(DataSnapshot dataSnapshot) {
+    boolean flag = false;
+    boolean flag1 = false;
+    HashMap<String, Object> GroupFriends;
+    for (DataSnapshot data : dataSnapshot.getChildren()) {
+      String UserEmail =
+          Objects.requireNonNull(data.getValue(User.class)).getEmail().replace('.', ' ');
+      String CurrentUserEmail = etFriendEmail.getText().toString().replace('.', ' ');
+      GroupFriends = FriendKeys;
+      if (CurrentUserEmail.equals(UserEmail)) {
+        for (String GroupFriend : GroupFriends.keySet()) {
+          if (CurrentUserEmail.equals(GroupFriend)) {
+            flag1 = true;
+            break;
+          }
+        }
+        if (!flag1) {
+          FriendKeys.put(CurrentFriend, "true");
+          DBRef.refGroups.child(GroupKey).child("FriendKeys").updateChildren(FriendKeys);
+          Toast.makeText(FriendsAddActivity.this, "Friend successfully added", Toast.LENGTH_SHORT)
+              .show();
+        } else {
+          Toast.makeText(FriendsAddActivity.this, "User already in group", Toast.LENGTH_SHORT)
+              .show();
+        }
+        flag = true;
+      }
+    }
+    if (!flag) {
+      Toast.makeText(FriendsAddActivity.this, "Email not Exist", Toast.LENGTH_SHORT).show();
+    }
+    if (!flag1 && flag) {
+      hideViews(
+          etFriendEmail,
+          btnAddFriend,
+          btnFriendsList,
+          tvInstructions1,
+          btnHide,
+          tvHide,
+          btnHelp,
+          tvHelp);
+      showViews(tvAddMore, btnYes, btnNo);
+    }
+  }
+
+  private void processServerUserData(Map<String, User> userData) {
+    boolean flag = false;
+    boolean flag1 = false;
+    HashMap<String, Object> GroupFriends;
+    String CurrentUserEmail = etFriendEmail.getText().toString().replace('.', ' ');
+
+    for (User user : userData.values()) {
+      String UserEmail = user.getEmail().replace('.', ' ');
+      GroupFriends = FriendKeys;
+
+      if (CurrentUserEmail.equals(UserEmail)) {
+        for (String GroupFriend : GroupFriends.keySet()) {
+          if (CurrentUserEmail.equals(GroupFriend)) {
+            flag1 = true;
+            break;
+          }
+        }
+        if (!flag1) {
+          FriendKeys.put(CurrentFriend, "true");
+
+          // Use FirebaseAccessManager to get groups reference
+          FirebaseAccessManager accessManager = new FirebaseAccessManager(FriendsAddActivity.this);
+          Object groupsRef = accessManager.getGroupsRef();
+          if (groupsRef instanceof DatabaseReference) {
+            ((DatabaseReference) groupsRef)
+                .child(GroupKey)
+                .child("FriendKeys")
+                .updateChildren(FriendKeys);
+          } else if (groupsRef instanceof FirebaseServerClient) {
+            // For server mode, we need to update the group data
+            ((FirebaseServerClient) groupsRef)
+                .updateGroup(
+                    GroupKey,
+                    "FriendKeys",
+                    FriendKeys,
+                    new FirebaseServerClient.DataCallback<Void>() {
+                      @Override
+                      public void onSuccess(Void result) {
+                        // Success handled below
+                      }
+
+                      @Override
+                      public void onError(String errorMessage) {
+                        Toast.makeText(
+                                FriendsAddActivity.this,
+                                "Error updating group: " + errorMessage,
+                                Toast.LENGTH_SHORT)
+                            .show();
+                      }
+                    });
+          }
+
+          Toast.makeText(FriendsAddActivity.this, "Friend successfully added", Toast.LENGTH_SHORT)
+              .show();
+        } else {
+          Toast.makeText(FriendsAddActivity.this, "User already in group", Toast.LENGTH_SHORT)
+              .show();
+        }
+        flag = true;
+      }
+    }
+
+    if (!flag) {
+      Toast.makeText(FriendsAddActivity.this, "Email not Exist", Toast.LENGTH_SHORT).show();
+    }
+    if (!flag1 && flag) {
+      hideViews(
+          etFriendEmail,
+          btnAddFriend,
+          btnFriendsList,
+          tvInstructions1,
+          btnHide,
+          tvHide,
+          btnHelp,
+          tvHelp);
+      showViews(tvAddMore, btnYes, btnNo);
+    }
   }
 }
