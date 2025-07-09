@@ -1,18 +1,29 @@
-# Android Studio generated files
+# === Android Studio generated files ===
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.gradle/
+.idea/
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Build and output folders
+/build/
+/captures/
+/.externalNativeBuild/
+/cxx/
+outputs/
+*.apk
+*.ap_
+
+# IntelliJ
+*.iws
+*.ipr
+
+# Android Studio specific
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
 
 # Secret configuration files
 local.properties
@@ -44,3 +55,19 @@ secrets.properties
 # Signed builds and credentials
 app/release/
 credentials/
+
+# Miscellaneous
+*.log
+*.tmp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code settings (אם אתה עורך גם שם)
+.vscode/
+
+# Crashlytics/Firebase/Analytics
+crashlytics-build.properties
+fabric.properties
