@@ -71,3 +71,19 @@ Desktop.ini
 # Crashlytics/Firebase/Analytics
 crashlytics-build.properties
 fabric.properties
+/app/server/lib/firebase-admin-9.1.1.jar
+/app/server/build/resources/main/firebase-service-account.json
+/app/server/src/main/resources/firebase-service-account.json
+/app/server/build/tmp/compileJava/compileTransaction/stash-dir/FirebaseController.class.uniqueId0
+/app/server/build/classes/java/main/com/example/partymaker/server/service/FirebaseService$1.class
+/app/server/build/classes/java/main/com/example/partymaker/server/service/FirebaseService$2.class
+/logs.txt
+/app/.cursor/rules/main.mdc
+/app/server/build/libs/party-maker-server-0.0.1-SNAPSHOT.jar
+/app/server/build/libs/party-maker-server-0.0.1-SNAPSHOT-plain.jar
+/app/server/build/tmp/compileJava/previous-compilation-data.bin
+/app/server/lib/spring-boot-starter-web-2.7.5.jar
+/app/test_data.json
+/test_data.json
+/app/test_results.json
+/app/test_server_endpoints.py
