@@ -33,8 +33,8 @@
     <string name="desc_slide2">The app was created to make order because when it comes to parties there are no apps that helps with this subject.</string>
     <string name="title_slide3">About the app</string>
     <string name="desc_slide3">The app was made by Nati Fishman as a final project</string>
-    <string name="group_s_picture">Group's Picture</string>
-    <string name="your_party_s_name">Your Party's Name</string>
+    <string name="group_s_picture">Group Picture</string>
+    <string name="your_party_s_name">Your Party Name</string>
     <string name="private_party">Private Party</string>
     <string name="name">Name</string>
     <string name="create_party">Create Party</string>
@@ -68,8 +68,8 @@
     <string name="calendar">calendar</string>
     <string name="options">options</string>
     <string name="leave">leave</string>
-    <string name="input_your_friend_s_email">Input your friend's email</string>
-    <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend's email above and press delete Friend to delete him from current group</string>
+    <string name="input_your_friend_s_email">Input your friend email</string>
+    <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend email above and press delete Friend to delete him from current group</string>
     <string name="register_cake">Register Cake</string>
     <string name="register">Register</string>
     <string name="have_an_account">Have an account?</string>
@@ -138,14 +138,14 @@
     <string name="input_email">input email</string>
     <string name="white_screen">White Screen</string>
     <string name="black_screen">Black Screen</string>
-    <string name="type_in_your_email_address_above_and_we_ll_send_you_an_email_with_instructions_on_how_to_create_a_new_password">Type in your email address above and we'll send you an email with instructions on how to create a new password</string>
+    <string name="type_in_your_email_address_above_and_we_ll_send_you_an_email_with_instructions_on_how_to_create_a_new_password">Type in your email address above and we will send you an email with instructions on how to create a new password</string>
     <string name="_12_34">12:34</string>
     <string name="message_content">message content</string>
     <string name="sender_name">Sender Name</string>
     <string name="email">email</string>
     <string name="friends_list">Friends List</string>
     <string name="i_dont_know">I dont know</string>
-    <string name="type_in_your_friend_s_email_above_and_press_add_friend_to_add_him_to_the_current_group">Type in your friend's email above and press Add Friend to add him to the current group</string>
+    <string name="type_in_your_friend_s_email_above_and_press_add_friend_to_add_him_to_the_current_group">Type in your friend email above and press Add Friend to add him to the current group</string>
     <string name="is_he_coming_to_the_party">Is he coming to the party?</string>
     <string name="yes">Yes</string>
     <string name="add_friend">Add Friend</string>
@@ -184,7 +184,7 @@
     <string name="hide">Hide</string>
     <string name="hide_instructions">Hide instructions</string>
     <string name="enter_friend_email_remove">Enter the email of the friend you want to remove from the group, or select a friend from the list below.</string>
-    <string name="enter_friend_email">Enter friend's email</string>
+    <string name="enter_friend_email">Enter friend email</string>
     <string name="friends_in_group">Friends in group:</string>
 
     <!-- Group Details -->
@@ -200,7 +200,7 @@
     <string name="use_server_mode">Use Server Mode</string>
     <string name="server_url">Server URL</string>
     <string name="server_url_default">http://10.0.2.2:8080</string>
-    <string name="server_url_note">Note: Use 10.0.2.2:8080 for Android Emulator. For physical devices, use your computer's IP address.</string>
+    <string name="server_url_note">Note: Use 10.0.2.2:8080 for Android Emulator. For physical devices, use your computer IP address.</string>
     <string name="save_settings">Save Settings</string>
 
     <!-- Dialog -->
@@ -219,5 +219,57 @@
     <string-array name="languages_array">
         <item>English</item>
         <item>עברית</item>
+    </string-array>
+
+    <!-- Arrays for date/time pickers -->
+    <string-array name="array_hours">
+        <item>01:00</item>
+        <item>01:30</item>
+        <item>02:00</item>
+        <item>02:30</item>
+        <item>03:00</item>
+        <item>03:30</item>
+        <item>04:00</item>
+        <item>04:30</item>
+        <item>05:00</item>
+        <item>05:30</item>
+        <item>06:00</item>
+        <item>06:30</item>
+        <item>07:00</item>
+        <item>07:30</item>
+        <item>08:00</item>
+        <item>08:30</item>
+        <item>09:00</item>
+        <item>09:30</item>
+        <item>10:00</item>
+        <item>10:30</item>
+        <item>11:00</item>
+        <item>11:30</item>
+        <item>12:00</item>
+        <item>12:30</item>
+        <item>13:00</item>
+        <item>13:30</item>
+        <item>14:00</item>
+        <item>14:30</item>
+        <item>15:00</item>
+        <item>15:30</item>
+        <item>16:00</item>
+        <item>16:30</item>
+        <item>17:00</item>
+        <item>17:30</item>
+        <item>18:00</item>
+        <item>18:30</item>
+        <item>19:00</item>
+        <item>19:30</item>
+        <item>20:00</item>
+        <item>20:30</item>
+        <item>21:00</item>
+        <item>21:30</item>
+        <item>22:00</item>
+        <item>22:30</item>
+        <item>23:00</item>
+        <item>23:30</item>
+        <item>00:00</item>
+        <item>00:30</item>
     </string-array>
 </resources>
