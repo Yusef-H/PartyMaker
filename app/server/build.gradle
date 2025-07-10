@@ -18,13 +18,13 @@ repositories {
 
 dependencies {
     // --- Spring Boot Web ---
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation libs.spring.boot.starter.web
     // --- Firebase Admin SDK ---
-    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation libs.firebase.admin
     // --- Testing ---
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation libs.spring.boot.starter.test
 }
 
 test {
     useJUnitPlatform()
-} 
+}

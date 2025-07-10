@@ -5,6 +5,7 @@
 [versions]
 # --- Core Versions ---
 agp = "8.9.0"
+firebaseAdmin = "9.1.1"
 kotlin = "2.0.21"
 gson = "2.10.1"
 
@@ -69,6 +70,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 # --- Material ---
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
@@ -102,6 +104,8 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 
 [plugins]
 # --- Gradle Plugins ---
