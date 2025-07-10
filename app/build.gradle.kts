@@ -1,3 +1,5 @@
+// app/build.gradle.kts – Android application module configuration
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -17,7 +19,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -30,31 +31,28 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
     kotlinOptions {
         jvmTarget = "11"
     }
-
     buildFeatures {
         compose = true
         buildConfig = true
     }
-
     composeOptions {
         kotlinCompilerExtensionVersion = "2.0.0"
     }
 }
 
+// Spotless – Java code formatting
 spotless {
     java {
         target("src/**/*.java")
         googleJavaFormat("1.7")
-
-        // Common cleanup steps
         trimTrailingWhitespace()
         indentWithSpaces(4)
         endWithNewline()
@@ -62,26 +60,26 @@ spotless {
 }
 
 dependencies {
-    // Core AndroidX libraries
+    // --- AndroidX Core ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.constraintlayout)
-    implementation("androidx.preference:preference:1.2.1")
+    implementation(libs.androidx.preference)
 
-    // Jetpack Compose
+    // --- Jetpack Compose ---
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Material Design
+    // --- Material Design ---
     implementation(libs.material)
 
-    // Firebase
+    // --- Firebase ---
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.google.firebase.auth)
@@ -89,28 +87,28 @@ dependencies {
     implementation(libs.google.firebase.storage)
     implementation(libs.firebase.firestore)
 
-    // Google Auth
+    // --- Google Auth ---
     implementation(libs.gms.play.services.auth)
 
-    // Google Maps & Location
+    // --- Google Maps & Location ---
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     implementation(libs.places)
 
-    // Media & UI
+    // --- Media & UI ---
     implementation(libs.picasso)
     implementation(libs.circleimageview)
 
-    // OpenAI & HTTP
+    // --- OpenAI & HTTP ---
     implementation(libs.openai.client)
     implementation(libs.ktor.client.android)
     implementation(libs.okhttp)
     implementation(libs.json)
     
-    // Gson for JSON parsing
-    implementation("com.google.code.gson:gson:2.10.1")
+    // --- Gson for JSON parsing ---
+    implementation(libs.gson)
 
-    // Testing
+    // --- Testing ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -120,6 +118,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
+// Secrets plugin configuration
 secrets {
     defaultPropertiesFileName = "secrets.properties"
 }
