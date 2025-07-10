@@ -16,9 +16,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
   private SwitchCompat switchServerMode;
   private EditText editServerUrl;
-  private Button btnSaveSettings;
-
-  private static final String PREF_SERVER_URL = "server_url";
+    private static final String PREF_SERVER_URL = "server_url";
   private static final String DEFAULT_SERVER_URL = "http://10.0.2.2:8080"; // Default for emulator
 
   @Override
@@ -36,7 +34,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
     // Initialize views
     switchServerMode = findViewById(R.id.switch_server_mode);
     editServerUrl = findViewById(R.id.edit_server_url);
-    btnSaveSettings = findViewById(R.id.btn_save_settings);
+    Button btnSaveSettings = findViewById(R.id.btn_save_settings);
 
     // Load current settings
     loadSettings();

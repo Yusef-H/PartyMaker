@@ -20,4 +20,3 @@ buildscript {
 }
 
 // No dependencies or configuration should be added here unless it applies to ALL modules.
-
