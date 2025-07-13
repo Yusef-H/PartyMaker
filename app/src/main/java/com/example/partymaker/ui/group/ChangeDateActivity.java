@@ -3,10 +3,12 @@ package com.example.partymaker.ui.group;
 import static com.example.partymaker.utilities.Common.hideViews;
 import static com.example.partymaker.utilities.Common.showViews;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.AuthHelper;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -60,9 +63,12 @@ public class ChangeDateActivity extends AppCompatActivity {
 
     // Get current user key for admin verification
     try {
-      UserKey =
-          Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-              .replace('.', ' ');
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      if (UserKey == null) {
+        Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+        finish();
+        return;
+      }
     } catch (Exception e) {
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
       finish();

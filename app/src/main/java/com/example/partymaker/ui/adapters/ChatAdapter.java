@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
+import com.example.partymaker.utilities.AuthHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -92,8 +93,8 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     View view = layoutInflater.inflate(R.layout.item_chat_message, parent, false);
     ChatMessage temp = messageList.get(position);
 
-    String currentUser = Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail();
-    boolean isMine = temp.getMessageUser() != null && temp.getMessageUser().equals(currentUser);
+    String currentUser = AuthHelper.getCurrentUserEmail(context);
+    boolean isMine = temp.getMessageUser() != null && currentUser != null && temp.getMessageUser().equals(currentUser);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);

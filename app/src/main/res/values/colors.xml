@@ -13,6 +13,10 @@
     <color name="primaryBlue">#0E81D1</color>
     <color name="primaryGray">#E4E9EF</color>
 
+    <!-- Missing colors referenced in layouts -->
+    <color name="blue_primary">#0E81D1</color>
+    <color name="gray_medium">#848484</color>
+
     <!-- Original color definitions -->
     <color name="colorPrimary">#000000</color>
     <color name="colorPrimaryDark">#000000</color>

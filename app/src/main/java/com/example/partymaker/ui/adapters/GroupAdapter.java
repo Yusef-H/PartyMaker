@@ -16,6 +16,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.group.UsersListActivity;
+import com.example.partymaker.utilities.AuthHelper;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -77,20 +78,27 @@ public class GroupAdapter extends ArrayAdapter<Group> {
 
     String GroupKey = temp.getGroupKey();
 
-    DBRef.refStorage
-        .child("Groups/" + GroupKey)
-        .getDownloadUrl()
-        .addOnSuccessListener(
-            uri ->
-                Picasso.get()
-                    .load(uri) // image url goes here
-                    .fit()
-                    .centerCrop()
-                    .into(imageView))
-        .addOnFailureListener(
-            exception -> {
-              // Handle any errors
-            });
+    // Only try to load image if Firebase Auth is available
+    if (AuthHelper.isFirebaseAuthAvailable(context)) {
+      DBRef.refStorage
+          .child("Groups/" + GroupKey)
+          .getDownloadUrl()
+          .addOnSuccessListener(
+              uri ->
+                  Picasso.get()
+                      .load(uri) // image url goes here
+                      .fit()
+                      .centerCrop()
+                      .into(imageView))
+          .addOnFailureListener(
+              exception -> {
+                // Set default image on failure
+                imageView.setImageResource(R.drawable.ic_group);
+              });
+    } else {
+      // Set default image when Firebase Auth is not available
+      imageView.setImageResource(R.drawable.ic_group);
+    }
 
     return view;
   }

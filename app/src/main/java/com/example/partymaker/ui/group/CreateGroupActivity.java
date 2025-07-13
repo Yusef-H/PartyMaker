@@ -44,6 +44,7 @@ import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.MapUtilities;
 import com.example.partymaker.utilities.groupBuilder.GroupBuilder;
 import com.example.partymaker.utilities.groupBuilder.GroupDateTime;
@@ -528,10 +529,24 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   private String getCurrentUserEmail() {
+    // Get current user using AuthHelper
+    String currentUserEmail = AuthHelper.getCurrentUserEmail(this);
+    
+    if (currentUserEmail != null) {
+      // Return the email in Firebase key format (replace dots with spaces)
+      return currentUserEmail.replace('.', ' ');
+    }
+    
+    // Fallback to Firebase Auth if AuthHelper fails
     FirebaseUser currentUser = DBRef.Auth.getCurrentUser();
-    return currentUser != null
-        ? Objects.requireNonNull(currentUser.getEmail()).replace('.', ' ')
-        : "";
+    if (currentUser != null) {
+      return Objects.requireNonNull(currentUser.getEmail()).replace('.', ' ');
+    }
+    
+    // If both methods fail, show error and return empty string
+    Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+    finish();
+    return "";
   }
 
   private String getCurrentTimestamp() {

@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Objects;
+import com.example.partymaker.utilities.AuthHelper;
 
 /**
  * Activity for user login, including email/password and Google sign-in. Handles authentication,
@@ -121,33 +122,9 @@ public class LoginActivity extends AppCompatActivity {
               final ProgressDialog pd =
                   ProgressDialog.show(LoginActivity.this, "connecting", "please wait... ", true);
               pd.show();
-              DBRef.Auth.signInWithEmailAndPassword(email, password)
-                  .addOnCompleteListener(
-                      LoginActivity.this,
-                      task -> {
-                        if (task.isSuccessful()) {
-                          // Saves IsChecked - True/False in app's cache
-                          SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                          SharedPreferences.Editor editor = settings.edit();
-                          editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                          editor.apply();
-
-                          Intent intent = new Intent();
-                          Toast.makeText(LoginActivity.this, "Connected", Toast.LENGTH_SHORT)
-                              .show();
-                          intent.setClass(getBaseContext(), MainActivity.class);
-                          btnAbout.clearAnimation();
-                          startActivity(intent);
-                        } else {
-                          Toast.makeText(
-                                  LoginActivity.this,
-                                  "Invalid Email or Password",
-                                  Toast.LENGTH_SHORT)
-                              .show();
-                          pd.dismiss();
-                          btnResetPass.setVisibility(View.VISIBLE);
-                        }
-                      });
+              
+              // Try server authentication directly for reliability
+              authenticateWithServer(email, password, pd);
             }
           }
         });
@@ -175,6 +152,56 @@ public class LoginActivity extends AppCompatActivity {
           Intent i = new Intent(LoginActivity.this, IntroActivity.class);
           startActivity(i);
         });
+  }
+
+  private void authenticateWithServer(String email, String password, ProgressDialog pd) {
+    new Thread(() -> {
+      try {
+        // Convert email to Firebase key format (replace dots with spaces)
+        String userKey = email.replace('.', ' ');
+        
+        // Check if user exists in server database
+        java.net.URL url = new java.net.URL("http://10.0.2.2:8080/api/firebase/Users/" + userKey);
+        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(10000); // Increased timeout
+        connection.setReadTimeout(10000);
+        
+        int responseCode = connection.getResponseCode();
+        
+        runOnUiThread(() -> {
+          if (responseCode == 200) {
+            // User exists in database, proceed with login
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
+            editor.apply();
+
+            // Set user session using AuthHelper
+            AuthHelper.setCurrentUserSession(LoginActivity.this, email);
+
+            Intent intent = new Intent();
+            Toast.makeText(LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT).show();
+            intent.setClass(getBaseContext(), MainActivity.class);
+            btnAbout.clearAnimation();
+            startActivity(intent);
+            pd.dismiss();
+            finish(); // Close login activity
+          } else {
+            Toast.makeText(LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+            btnResetPass.setVisibility(View.VISIBLE);
+          }
+        });
+        
+      } catch (Exception e) {
+        runOnUiThread(() -> {
+          Toast.makeText(LoginActivity.this, "Network error. Please try again.", Toast.LENGTH_SHORT).show();
+          pd.dismiss();
+          btnResetPass.setVisibility(View.VISIBLE);
+        });
+      }
+    }).start();
   }
 
   /** Initiates Google sign-in flow. */

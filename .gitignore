@@ -87,3 +87,4 @@ fabric.properties
 /app/test_server_endpoints.py
 /logs.txt
 /app/.cursor/rules/main.mdc
+app/server/src/main/resources/firebase-service-account.json

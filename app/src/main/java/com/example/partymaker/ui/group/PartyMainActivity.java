@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import com.example.partymaker.utilities.AuthHelper;
 
 public class PartyMainActivity extends AppCompatActivity {
   private static final String TAG = "PartyMainActivity";
@@ -83,15 +84,13 @@ public class PartyMainActivity extends AppCompatActivity {
       }
     }
 
-    // Try to get UserKey from Firebase Auth first
+    // Try to get UserKey from AuthHelper first
     try {
-      UserKey =
-          Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-              .replace('.', ' ');
-      Log.d(TAG, "UserKey from Firebase Auth: " + UserKey);
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user email", e);
-      // Fallback to intent if Firebase auth fails
+      // Fallback to intent if auth fails
       UserKey = intent.getStringExtra("UserKey");
       Log.d(TAG, "UserKey from intent: " + UserKey);
     }

@@ -30,6 +30,8 @@ import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.AuthHelper;
+import static com.example.partymaker.utilities.Constants.PREFS_NAME;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseUser;
 import java.text.SimpleDateFormat;
@@ -40,6 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import android.content.SharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -85,17 +88,17 @@ public class MainActivity extends AppCompatActivity {
    */
   private boolean initializeUser() {
     try {
-      FirebaseUser currentUser = DBRef.Auth.getCurrentUser();
-      if (currentUser == null || currentUser.getEmail() == null) {
+      String userEmail = AuthHelper.getCurrentUserEmail(this);
+      if (userEmail != null) {
+        UserKey = userEmail.replace('.', ' ');
+        Log.d(TAG, "User initialized successfully: " + UserKey);
+        return true;
+      } else {
         Log.e(TAG, "User not logged in or email is null");
         showError("Authentication error. Please login again.");
         navigateToLogin();
         return false;
       }
-
-      UserKey = currentUser.getEmail().replace('.', ' ');
-      Log.d(TAG, "User initialized successfully");
-      return true;
 
     } catch (Exception e) {
       Log.e(TAG, "Error initializing user", e);
@@ -489,8 +492,7 @@ public class MainActivity extends AppCompatActivity {
   // Handles user logout process
   private void handleLogout() {
     try {
-      DBRef.Auth.signOut();
-      DBRef.CurrentUser = null;
+      AuthHelper.clearAuthData(this);
       navigateToLogin();
       Log.d(TAG, "User logged out successfully");
     } catch (Exception e) {

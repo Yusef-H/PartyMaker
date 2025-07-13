@@ -19,6 +19,7 @@ import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.AuthHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,15 +70,13 @@ public class GroupDetailsActivity extends AppCompatActivity {
     if (extras != null) {
       GroupKey = extras.getGroupKey();
 
-      // Get UserKey from Firebase Auth instead of intent
+      // Get UserKey from AuthHelper instead of Firebase Auth
       try {
-        UserKey =
-            Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-                .replace('.', ' ');
+        UserKey = AuthHelper.getCurrentUserKey(this);
         Log.d(TAG, "UserKey initialized: " + UserKey);
       } catch (Exception e) {
         Log.e(TAG, "Failed to get current user", e);
-        UserKey = intent.getStringExtra("UserKey"); // Fallback to intent if Firebase auth fails
+        UserKey = intent.getStringExtra("UserKey"); // Fallback to intent if auth fails
         Log.d(TAG, "Using fallback UserKey from intent: " + UserKey);
       }
 

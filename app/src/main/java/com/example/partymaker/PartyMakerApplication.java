@@ -15,10 +15,10 @@ public class PartyMakerApplication extends Application {
     // Initialize the Firebase server client
     FirebaseServerClient.getInstance().initialize(this);
 
-    // Force server mode to be always enabled
+    // Force server mode to be always enabled for stability
     ServerModeHelper.setServerModeEnabled(this, true);
 
     // Log that server mode is enabled
-    Log.d(TAG, "Server mode is enabled");
+    Log.d(TAG, "Server mode is enabled for stable authentication");
   }
 }

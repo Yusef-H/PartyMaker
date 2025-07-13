@@ -23,6 +23,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.example.partymaker.utilities.MapUtilities;
+import com.example.partymaker.utilities.AuthHelper;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -104,9 +105,12 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // Get current user key for admin verification
     try {
-      UserKey =
-          Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-              .replace('.', ' ');
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      if (UserKey == null) {
+        Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+        finish();
+        return;
+      }
     } catch (Exception e) {
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
       finish();

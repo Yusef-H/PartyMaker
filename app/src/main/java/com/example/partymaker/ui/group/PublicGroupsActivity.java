@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -21,6 +22,7 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   ArrayList<Group> group;
   GroupAdapter allGroupsAdapter;
   String UserKey;
+  private static final String TAG = "PublicGroupsActivity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +55,17 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     // connection
     lv1 = findViewById(R.id.lv5);
-    UserKey =
-        Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-            .replace('.', ' ');
+
+    // Get UserKey from AuthHelper instead of Firebase Auth
+    try {
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to get current user from AuthHelper", e);
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
 
     // Initialize Firebase database reference
     FirebaseAccessManager accessManager = new FirebaseAccessManager(this);

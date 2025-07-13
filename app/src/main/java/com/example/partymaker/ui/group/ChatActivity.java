@@ -26,6 +26,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.ChatAdapter;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.AuthHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -103,15 +104,13 @@ public class ChatActivity extends AppCompatActivity {
 
     Log.d(TAG, "GroupKey retrieved: " + GroupKey);
 
-    // Get UserKey from Firebase Auth email instead of uid
+    // Get UserKey from AuthHelper instead of Firebase Auth
     try {
-      UserKey =
-          Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-              .replace('.', ' ');
-      Log.d(TAG, "UserKey initialized from email: " + UserKey);
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey initialized from AuthHelper: " + UserKey);
     } catch (Exception e) {
-      Log.e(TAG, "Failed to get current user email", e);
-      UserKey = intent.getStringExtra("UserKey"); // Fallback to intent if Firebase auth fails
+      Log.e(TAG, "Failed to get current user from AuthHelper", e);
+      UserKey = intent.getStringExtra("UserKey"); // Fallback to intent if auth fails
       Log.d(TAG, "Using fallback UserKey from intent: " + UserKey);
 
       if (UserKey == null) {

@@ -15,6 +15,7 @@ import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.InvitedAdapter;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.AuthHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,12 +58,10 @@ public class MembersComingActivity extends AppCompatActivity {
     Log.d(TAG, "AdminKey: " + adminKey);
     Log.d(TAG, "GroupKey: " + GroupKey);
 
-    // Get UserKey from Firebase Auth
+    // Get UserKey from AuthHelper instead of Firebase Auth
     try {
-      UserKey =
-          Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-              .replace('.', ' ');
-      Log.d(TAG, "UserKey from Auth: " + UserKey);
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
     } catch (Exception e) {
       UserKey = getIntent().getStringExtra("UserKey");
       Log.d(TAG, "UserKey from Intent: " + UserKey);

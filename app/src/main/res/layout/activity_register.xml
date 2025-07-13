@@ -238,8 +238,7 @@
                     app:iconTint="?attr/colorOnPrimary"
                     app:rippleColor="?attr/colorOnPrimary"
                     app:backgroundTint="?attr/colorPrimary"
-                    android:elevation="8dp"
-                    android:stateListAnimator="@drawable/btn_elevation" />
+                    android:elevation="8dp" />
 
                 <!-- Enhanced Divider with Animation -->
                 <LinearLayout

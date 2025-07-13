@@ -6,6 +6,7 @@ import static com.example.partymaker.utilities.Common.showViews;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -18,7 +19,9 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.MapUtilities;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -42,6 +45,8 @@ public class JoinGroupActivity extends AppCompatActivity {
   private String CurrentUser;
   private int IsClicked = 1;
   private HashMap<String, Object> FriendKeys;
+  private String UserKey;
+  private static final String TAG = "JoinGroupActivity";
 
   @SuppressLint("SetTextI18n")
   @Override
@@ -73,6 +78,17 @@ public class JoinGroupActivity extends AppCompatActivity {
     String groupPrice = extras.getGroupPrice();
     FriendKeys = extras.getFriendKeys();
 
+    // Get UserKey from AuthHelper instead of Firebase Auth
+    try {
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to get current user from AuthHelper", e);
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
+
     // connection
     GridLayout joinGrid = findViewById(R.id.joinGrid);
     imgCalender = findViewById(R.id.imgGroupDate);
@@ -90,10 +106,8 @@ public class JoinGroupActivity extends AppCompatActivity {
     TextView tvEntryPrice = findViewById(R.id.tvEntryPrice1);
     TextView tvYourEntry = findViewById(R.id.tvYourEntry1);
 
-    // get current account's email
-    CurrentUser =
-        Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-            .replace('.', ' ');
+    // get current account's email - use the UserKey that was already obtained from AuthHelper
+    CurrentUser = UserKey;
 
     // setting of GroupScreen for all users(not in buttons)
     tvGroupName.setText(groupName);
