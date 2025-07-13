@@ -53,10 +53,29 @@ public class MembersComingActivity extends AppCompatActivity {
     adminKey = extras.getAdminKey();
     GroupKey = extras.getGroupKey();
 
-    Log.d(
-        TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
+    Log.d(TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
     Log.d(TAG, "AdminKey: " + adminKey);
     Log.d(TAG, "GroupKey: " + GroupKey);
+    
+    // Debug: Print detailed ComingKeys information
+    if (ComingKeys != null) {
+      Log.d(TAG, "ComingKeys is not null, size: " + ComingKeys.size());
+      Log.d(TAG, "ComingKeys contents:");
+      for (String key : ComingKeys.keySet()) {
+        Log.d(TAG, "  ComingKey: '" + key + "' -> " + ComingKeys.get(key));
+      }
+    } else {
+      Log.e(TAG, "ComingKeys is null! This is the problem.");
+      
+      // Try to get ComingKeys directly from intent
+      HashMap<String, Object> directComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
+      if (directComingKeys != null) {
+        Log.d(TAG, "Found ComingKeys directly in intent, size: " + directComingKeys.size());
+        ComingKeys = directComingKeys;
+      } else {
+        Log.e(TAG, "ComingKeys not found in intent either");
+      }
+    }
 
     // Get UserKey from AuthHelper instead of Firebase Auth
     try {

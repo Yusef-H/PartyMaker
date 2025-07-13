@@ -586,46 +586,48 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Create ExtrasMetadata with current group data
       if (currentGroup != null) {
-        Log.d(
-            TAG, "Navigating to MembersComingActivity with group: " + currentGroup.getGroupName());
-        Log.d(
-            TAG,
-            "FriendKeys size: "
-                + (currentGroup.getFriendKeys() != null
-                    ? currentGroup.getFriendKeys().size()
-                    : "null"));
-        Log.d(
-            TAG,
-            "ComingKeys size: "
-                + (currentGroup.getComingKeys() != null
-                    ? currentGroup.getComingKeys().size()
-                    : "null"));
+        Log.d(TAG, "Navigating to MembersComingActivity with group: " + currentGroup.getGroupName());
+        Log.d(TAG, "FriendKeys size: " + (currentGroup.getFriendKeys() != null ? currentGroup.getFriendKeys().size() : "null"));
+        Log.d(TAG, "ComingKeys size: " + (currentGroup.getComingKeys() != null ? currentGroup.getComingKeys().size() : "null"));
         Log.d(TAG, "AdminKey: " + currentGroup.getAdminKey());
+        
+        // Debug: Print detailed ComingKeys information
+        if (currentGroup.getComingKeys() != null) {
+          Log.d(TAG, "ComingKeys details:");
+          for (String key : currentGroup.getComingKeys().keySet()) {
+            Log.d(TAG, "  ComingKey: '" + key + "' -> " + currentGroup.getComingKeys().get(key));
+          }
+        } else {
+          Log.e(TAG, "currentGroup.getComingKeys() is null!");
+        }
 
-        ExtrasMetadata extras =
-            new ExtrasMetadata(
-                currentGroup.getGroupName(),
-                GroupKey,
-                currentGroup.getGroupDays(),
-                currentGroup.getGroupMonths(),
-                currentGroup.getGroupYears(),
-                currentGroup.getGroupHours(),
-                currentGroup.getGroupLocation(),
-                currentGroup.getAdminKey(),
-                currentGroup.getCreatedAt(),
-                currentGroup.getGroupPrice(),
-                currentGroup.getGroupType(),
-                currentGroup.isCanAdd(),
-                currentGroup.getFriendKeys() != null
-                    ? new HashMap<>(currentGroup.getFriendKeys())
-                    : new HashMap<>(),
-                currentGroup.getComingKeys() != null
-                    ? new HashMap<>(currentGroup.getComingKeys())
-                    : new HashMap<>(),
-                new HashMap<>(MessageKeys));
+        HashMap<String, Object> comingKeysToPass = currentGroup.getComingKeys() != null ? new HashMap<>(currentGroup.getComingKeys()) : new HashMap<>();
+        Log.d(TAG, "ComingKeys to pass size: " + comingKeysToPass.size());
+
+        ExtrasMetadata extras = new ExtrasMetadata(
+            currentGroup.getGroupName(),
+            GroupKey,
+            currentGroup.getGroupDays(),
+            currentGroup.getGroupMonths(),
+            currentGroup.getGroupYears(),
+            currentGroup.getGroupHours(),
+            currentGroup.getGroupLocation(),
+            currentGroup.getAdminKey(),
+            currentGroup.getCreatedAt(),
+            currentGroup.getGroupPrice(),
+            currentGroup.getGroupType(),
+            currentGroup.isCanAdd(),
+            currentGroup.getFriendKeys() != null ? new HashMap<>(currentGroup.getFriendKeys()) : new HashMap<>(),
+            comingKeysToPass,
+            new HashMap<>(MessageKeys));
 
         Common.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
+        
+        // Debug: Also add ComingKeys directly to intent as backup
+        intent.putExtra("ComingKeys", comingKeysToPass);
+        Log.d(TAG, "Added ComingKeys directly to intent as backup");
+        
         startActivity(intent);
       } else {
         Log.e(TAG, "currentGroup is null when trying to navigate to MembersComingActivity");
