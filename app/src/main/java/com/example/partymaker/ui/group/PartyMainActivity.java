@@ -419,7 +419,7 @@ public class PartyMainActivity extends AppCompatActivity {
       // Check if it's coordinates (contains comma and numbers)
       if (location.contains(",") && location.matches(".*\\d+.*")) {
         // It's coordinates, show a clean location text
-        tvGroupLocation.setText("📍 מיקום המסיבה");
+        tvGroupLocation.setText("📍 Location");
         tvGroupLocation.setVisibility(View.VISIBLE);
         // Add a map icon to indicate it's clickable
         tvGroupLocation.setCompoundDrawablesWithIntrinsicBounds(
