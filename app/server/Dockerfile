@@ -1,19 +1,20 @@
-FROM openjdk:11-jre-slim
+# שלב 1: Build
+FROM openjdk:11-jre-slim AS build
 
 WORKDIR /app/server
 
-# העתק את כל קבצי השרת
 COPY . .
 
-# ודא של-gradlew יש הרשאות ריצה
 RUN chmod +x gradlew
-
-# בנה את ה-JAR
 RUN ./gradlew bootJar
 
-# העתק את ה-JAR שנבנה לשורש ה-image
+# שלב 2: Run
+FROM openjdk:11-jre-slim
+
 WORKDIR /app
-COPY --from=0 /app/server/build/libs/*.jar app.jar
+
+# העתק את ה-JAR מהשלב הקודם
+COPY --from=build /app/server/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
