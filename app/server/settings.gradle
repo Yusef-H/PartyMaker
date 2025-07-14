@@ -1,9 +1,1 @@
-rootProject.name = 'party-maker-server'
-
-dependencyResolutionManagement {
-    versionCatalogs {
-        libs {
-            from(files("gradle/libs.versions.toml"))
-        }
-    }
-} 
+rootProject.name = 'party-maker-server' 
