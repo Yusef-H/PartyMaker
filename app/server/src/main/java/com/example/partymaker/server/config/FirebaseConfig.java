@@ -18,8 +18,7 @@ public class FirebaseConfig {
     public void initialize() {
         try {
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(
-                            new ClassPathResource("firebase-service-account.json").getInputStream()))
+                    .setCredentials(GoogleCredentials.getApplicationDefault())
                     .setDatabaseUrl("https://partymaker-9c966-default-rtdb.firebaseio.com")
                     .build();
 
