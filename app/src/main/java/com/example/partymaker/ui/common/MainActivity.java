@@ -17,7 +17,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
@@ -28,12 +27,11 @@ import com.example.partymaker.ui.group.PartyMainActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
+import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.example.partymaker.utilities.AuthHelper;
-import static com.example.partymaker.utilities.Constants.PREFS_NAME;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseUser;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +40,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import android.content.SharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     initializeDatabase();
     setupEventHandlers();
     setupFloatingChatButton();
+    setupBottomNavigation();
   }
 
   /**
@@ -227,6 +225,10 @@ public class MainActivity extends AppCompatActivity {
 
     fabChat.setOnClickListener(view -> navigateToChat());
     fabChat.setOnTouchListener(Common::dragChatButtonOnTouch);
+  }
+
+  private void setupBottomNavigation() {
+    BottomNavigationHelper.setupBottomNavigation(this, "myparties");
   }
 
   // Navigates to the chat activity.
@@ -462,15 +464,7 @@ public class MainActivity extends AppCompatActivity {
     int itemId = item.getItemId();
 
     try {
-      if (itemId == R.id.idMenu) {
-        navigateToActivity(MainActivity.class);
-      } else if (itemId == R.id.idAddProfile) {
-        navigateToActivity(CreateGroupActivity.class);
-      } else if (itemId == R.id.idEditProfile) {
-        navigateToActivity(EditProfileActivity.class);
-      } else if (itemId == R.id.idPublicParties) {
-        navigateToActivity(PublicGroupsActivity.class);
-      } else if (itemId == R.id.idServerSettings) {
+      if (itemId == R.id.idServerSettings) {
         navigateToActivity(ServerSettingsActivity.class);
       } else if (itemId == R.id.idLogout) {
         handleLogout();

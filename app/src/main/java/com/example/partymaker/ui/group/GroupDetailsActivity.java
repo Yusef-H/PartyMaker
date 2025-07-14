@@ -14,16 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.example.partymaker.utilities.AuthHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class GroupDetailsActivity extends AppCompatActivity {
   private static final String TAG = "GroupDetailsActivity";

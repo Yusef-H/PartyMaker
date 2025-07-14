@@ -15,12 +15,10 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.utilities.AuthHelper;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Adapter for displaying chat messages in a ListView for group chat. Handles message alignment,
@@ -94,7 +92,12 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     ChatMessage temp = messageList.get(position);
 
     String currentUser = AuthHelper.getCurrentUserEmail(context);
-    boolean isMine = temp.getMessageUser() != null && currentUser != null && temp.getMessageUser().equals(currentUser);
+    // Convert to the same format as messageUser (dots replaced with spaces)
+    String currentUserKey = currentUser != null ? currentUser.replace('.', ' ') : null;
+    boolean isMine =
+        temp.getMessageUser() != null
+            && currentUserKey != null
+            && temp.getMessageUser().equals(currentUserKey);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);
@@ -136,6 +139,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
       spaceLeft.setVisibility(View.VISIBLE);
       spaceRight.setVisibility(View.GONE);
       tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
+      tvTime.setTextColor(ContextCompat.getColor(context, R.color.gray));
     } else {
       // Messages from others: left alignment, gray bubble, with name
       bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble);
@@ -144,6 +148,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
       spaceLeft.setVisibility(View.GONE);
       spaceRight.setVisibility(View.VISIBLE);
       tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
+      tvTime.setTextColor(ContextCompat.getColor(context, R.color.gray));
     }
 
     // Add spaces between messages

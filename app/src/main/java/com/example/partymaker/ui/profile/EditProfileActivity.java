@@ -22,9 +22,10 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.group.CreateGroupActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
+import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.squareup.picasso.Picasso;
-import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -43,10 +44,17 @@ public class EditProfileActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_edit_profile);
 
+    // Hide action bar to remove black bar at top
+    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
+
     setupActionBar();
     initViews();
     loadProfileImage();
     setListeners();
+    setupBottomNavigation();
   }
 
   // Sets up the action bar with custom gradient background and styling.
@@ -115,7 +123,7 @@ public class EditProfileActivity extends AppCompatActivity {
       finish();
       return;
     }
-    
+
     // Convert to Firebase key format
     String userKey = userEmail.replace('.', ' ');
 
@@ -150,6 +158,10 @@ public class EditProfileActivity extends AppCompatActivity {
             e -> Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show());
   }
 
+  private void setupBottomNavigation() {
+    BottomNavigationHelper.setupBottomNavigation(this, "profile");
+  }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu, menu);
@@ -159,17 +171,8 @@ public class EditProfileActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     Intent goToNextActivity;
 
-    if (item.getItemId() == R.id.idMenu) {
-      goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idAddProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idEditProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idPublicParties) {
-      goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);
+    if (item.getItemId() == R.id.idServerSettings) {
+      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idLogout) {
       // Use AuthHelper for logout

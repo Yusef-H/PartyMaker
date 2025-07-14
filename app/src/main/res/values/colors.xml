@@ -6,6 +6,8 @@
     <!-- Standard Colors -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#000000</color>
+    <color name="gray">#888888</color>
+    <color name="light_gray">#E0E0E0</color>
     <color name="transparent">#00000000</color>
     <color name="teal">#039694</color>
 

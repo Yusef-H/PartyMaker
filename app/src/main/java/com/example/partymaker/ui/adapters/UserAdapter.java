@@ -68,12 +68,12 @@ public class UserAdapter extends ArrayAdapter<User> {
     tvpUserName.setText(temp.getUserName());
 
     TextView tvpEmail = view.findViewById(R.id.tvUserListEmail);
-    tvpEmail.setText(temp.getEmail());
+    tvpEmail.setText(temp.getEmail() != null ? temp.getEmail() : "No email");
 
     final ImageView imageView = view.findViewById(R.id.imgUserListProfile);
 
     String UserImageProfile = temp.getEmail();
-    String email = UserImageProfile.replace('.', ' ');
+    String email = UserImageProfile != null ? UserImageProfile.replace('.', ' ') : "unknown";
 
     // Only try to load image if Firebase Auth is available
     if (AuthHelper.isFirebaseAuthAvailable(context)) {

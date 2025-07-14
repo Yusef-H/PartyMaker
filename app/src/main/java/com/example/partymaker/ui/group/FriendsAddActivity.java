@@ -268,6 +268,10 @@ public class FriendsAddActivity extends AppCompatActivity {
     String CurrentUserEmail = etFriendEmail.getText().toString().replace('.', ' ');
 
     for (User user : userData.values()) {
+      if (user == null || user.getEmail() == null || user.getEmail().isEmpty()) {
+        continue; // Skip null or empty email users
+      }
+
       String UserEmail = user.getEmail().replace('.', ' ');
       GroupFriends = FriendKeys;
 

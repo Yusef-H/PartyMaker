@@ -16,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.utilities.AuthHelper;
 
@@ -115,21 +114,21 @@ public class SplashActivity extends AppCompatActivity {
     if (!rememberMeChecked) {
       return false;
     }
-    
+
     // Check if session is valid
     if (!AuthHelper.isSessionValid(this)) {
       // Clear expired session
       AuthHelper.clearAuthData(this);
       return false;
     }
-    
+
     // Check if user is authenticated
     if (AuthHelper.isUserAuthenticated(this)) {
       // Refresh session for continued use
       AuthHelper.refreshSession(this);
       return true;
     }
-    
+
     return false;
   }
 

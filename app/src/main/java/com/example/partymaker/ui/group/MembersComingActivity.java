@@ -10,12 +10,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.InvitedAdapter;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.example.partymaker.utilities.AuthHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,10 +52,11 @@ public class MembersComingActivity extends AppCompatActivity {
     adminKey = extras.getAdminKey();
     GroupKey = extras.getGroupKey();
 
-    Log.d(TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
+    Log.d(
+        TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
     Log.d(TAG, "AdminKey: " + adminKey);
     Log.d(TAG, "GroupKey: " + GroupKey);
-    
+
     // Debug: Print detailed ComingKeys information
     if (ComingKeys != null) {
       Log.d(TAG, "ComingKeys is not null, size: " + ComingKeys.size());
@@ -66,9 +66,10 @@ public class MembersComingActivity extends AppCompatActivity {
       }
     } else {
       Log.e(TAG, "ComingKeys is null! This is the problem.");
-      
+
       // Try to get ComingKeys directly from intent
-      HashMap<String, Object> directComingKeys = (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
+      HashMap<String, Object> directComingKeys =
+          (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
       if (directComingKeys != null) {
         Log.d(TAG, "Found ComingKeys directly in intent, size: " + directComingKeys.size());
         ComingKeys = directComingKeys;
