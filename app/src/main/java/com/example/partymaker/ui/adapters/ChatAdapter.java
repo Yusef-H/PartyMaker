@@ -15,12 +15,10 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.utilities.AuthHelper;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Adapter for displaying chat messages in a ListView for group chat. Handles message alignment,
@@ -94,7 +92,10 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     ChatMessage temp = messageList.get(position);
 
     String currentUser = AuthHelper.getCurrentUserEmail(context);
-    boolean isMine = temp.getMessageUser() != null && currentUser != null && temp.getMessageUser().equals(currentUser);
+    boolean isMine =
+        temp.getMessageUser() != null
+            && currentUser != null
+            && temp.getMessageUser().equals(currentUser);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);

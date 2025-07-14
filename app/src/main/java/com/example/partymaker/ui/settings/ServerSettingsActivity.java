@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import androidx.appcompat.widget.SwitchCompat;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
 import com.example.partymaker.R;
 import com.example.partymaker.utilities.ServerModeHelper;
@@ -16,7 +16,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
   private SwitchCompat switchServerMode;
   private EditText editServerUrl;
-    private static final String PREF_SERVER_URL = "server_url";
+  private static final String PREF_SERVER_URL = "server_url";
   private static final String DEFAULT_SERVER_URL = "http://10.0.2.2:8080"; // Default for emulator
 
   @Override
