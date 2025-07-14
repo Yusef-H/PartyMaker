@@ -30,13 +30,19 @@ public class Group {
   /** Whether users can add new members. */
   private boolean canAdd;
   /** Map of friend user keys. */
-  @SerializedName(value = "friendKeys", alternate = {"FriendKeys"})
+  @SerializedName(
+      value = "friendKeys",
+      alternate = {"FriendKeys"})
   private HashMap<String, Object> friendKeys = new HashMap<>();
   /** Map of users who are coming. */
-  @SerializedName(value = "comingKeys", alternate = {"ComingKeys"})
+  @SerializedName(
+      value = "comingKeys",
+      alternate = {"ComingKeys"})
   private HashMap<String, Object> comingKeys = new HashMap<>();
   /** Map of message keys for the group. */
-  @SerializedName(value = "messageKeys", alternate = {"MessageKeys"})
+  @SerializedName(
+      value = "messageKeys",
+      alternate = {"MessageKeys"})
   private HashMap<String, Object> messageKeys = new HashMap<>();
 
   public boolean isCanAdd() {

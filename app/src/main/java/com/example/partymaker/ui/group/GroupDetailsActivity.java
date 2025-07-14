@@ -184,8 +184,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                   GroupDetailsActivity.this,
                   "Edit name functionality not implemented yet",
                   Toast.LENGTH_SHORT)
-                    .show();
-              });
+              .show();
+        });
 
     btnDelete.setOnClickListener(
         v -> {
@@ -209,11 +209,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
     cardLocation.setOnClickListener(
         v -> {
           if (currentGroup != null && currentGroup.getGroupLocation() != null) {
-                      Toast.makeText(
+            Toast.makeText(
                     GroupDetailsActivity.this,
                     "Location: " + currentGroup.getGroupLocation(),
                     Toast.LENGTH_SHORT)
-                          .show();
+                .show();
             // Here you could navigate to a map activity showing the location
           }
         });
@@ -240,28 +240,28 @@ public class GroupDetailsActivity extends AppCompatActivity {
           if (currentGroup != null && currentGroup.getComingKeys() != null) {
             int count = currentGroup.getComingKeys().size();
             Toast.makeText(GroupDetailsActivity.this, count + " people coming", Toast.LENGTH_SHORT)
-                    .show();
+                .show();
             // Here you could navigate to a list of people coming
           }
         });
 
     cardAddFriends.setOnClickListener(
         v -> {
-                      Toast.makeText(
+          Toast.makeText(
                   GroupDetailsActivity.this,
                   "Add friends functionality not implemented yet",
                   Toast.LENGTH_SHORT)
-                          .show();
+              .show();
           // Here you could navigate to an activity to add friends
         });
 
     cardLeave.setOnClickListener(
         v -> {
-                      Toast.makeText(
+          Toast.makeText(
                   GroupDetailsActivity.this,
                   "Leave group functionality not implemented yet",
                   Toast.LENGTH_SHORT)
-                          .show();
+              .show();
           // Here you could implement the logic to leave the group
         });
   }
