@@ -161,6 +161,18 @@ public class LoginActivity extends AppCompatActivity {
                 // Convert email to Firebase key format (replace dots with spaces)
                 String userKey = email.replace('.', ' ');
 
+                // Load server URL from SharedPreferences
+                String serverUrl = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString("server_url", "http://10.0.2.2:8080");
+                if (serverUrl == null || serverUrl.isEmpty()) {
+                  serverUrl = "http://10.0.2.2:8080";
+                }
+                // Ensure no trailing slash
+                if (serverUrl.endsWith("/")) {
+                  serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
+                }
+                android.util.Log.d("LoginActivity", "Using serverUrl: " + serverUrl);
+
                 // Check if user exists in server database
                 java.net.URL url =
                     new java.net.URL("http://10.0.2.2:8080/api/firebase/Users/" + userKey);
