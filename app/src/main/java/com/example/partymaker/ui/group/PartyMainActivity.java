@@ -166,8 +166,19 @@ public class PartyMainActivity extends AppCompatActivity {
             currentGroup = group;
             Log.d(
                 TAG,
-                "Loaded group data from extras: " + group.getGroupName() + ", key: " + GroupKey);
+                "Loaded group data from server: " + group.getGroupName() + ", key: " + GroupKey);
             Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+            
+            // Debug: Log ComingKeys data from server
+            if (group.getComingKeys() != null) {
+              Log.d(TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
+              Log.d(TAG, "ComingKeys details from server:");
+              for (String key : group.getComingKeys().keySet()) {
+                Log.d(TAG, "  ComingKey from server: '" + key + "' -> " + group.getComingKeys().get(key));
+              }
+            } else {
+              Log.e(TAG, "ComingKeys is null in group data from server!");
+            }
 
             // Update UI with group data
             updateGroupUI(group);
