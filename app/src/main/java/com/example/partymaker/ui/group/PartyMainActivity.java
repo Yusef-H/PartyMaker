@@ -17,16 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import com.example.partymaker.utilities.AuthHelper;
 
 public class PartyMainActivity extends AppCompatActivity {
   private static final String TAG = "PartyMainActivity";
@@ -597,11 +595,22 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Create ExtrasMetadata with current group data
       if (currentGroup != null) {
-        Log.d(TAG, "Navigating to MembersComingActivity with group: " + currentGroup.getGroupName());
-        Log.d(TAG, "FriendKeys size: " + (currentGroup.getFriendKeys() != null ? currentGroup.getFriendKeys().size() : "null"));
-        Log.d(TAG, "ComingKeys size: " + (currentGroup.getComingKeys() != null ? currentGroup.getComingKeys().size() : "null"));
+        Log.d(
+            TAG, "Navigating to MembersComingActivity with group: " + currentGroup.getGroupName());
+        Log.d(
+            TAG,
+            "FriendKeys size: "
+                + (currentGroup.getFriendKeys() != null
+                    ? currentGroup.getFriendKeys().size()
+                    : "null"));
+        Log.d(
+            TAG,
+            "ComingKeys size: "
+                + (currentGroup.getComingKeys() != null
+                    ? currentGroup.getComingKeys().size()
+                    : "null"));
         Log.d(TAG, "AdminKey: " + currentGroup.getAdminKey());
-        
+
         // Debug: Print detailed ComingKeys information
         if (currentGroup.getComingKeys() != null) {
           Log.d(TAG, "ComingKeys details:");
@@ -612,33 +621,39 @@ public class PartyMainActivity extends AppCompatActivity {
           Log.e(TAG, "currentGroup.getComingKeys() is null!");
         }
 
-        HashMap<String, Object> comingKeysToPass = currentGroup.getComingKeys() != null ? new HashMap<>(currentGroup.getComingKeys()) : new HashMap<>();
+        HashMap<String, Object> comingKeysToPass =
+            currentGroup.getComingKeys() != null
+                ? new HashMap<>(currentGroup.getComingKeys())
+                : new HashMap<>();
         Log.d(TAG, "ComingKeys to pass size: " + comingKeysToPass.size());
 
-        ExtrasMetadata extras = new ExtrasMetadata(
-            currentGroup.getGroupName(),
-            GroupKey,
-            currentGroup.getGroupDays(),
-            currentGroup.getGroupMonths(),
-            currentGroup.getGroupYears(),
-            currentGroup.getGroupHours(),
-            currentGroup.getGroupLocation(),
-            currentGroup.getAdminKey(),
-            currentGroup.getCreatedAt(),
-            currentGroup.getGroupPrice(),
-            currentGroup.getGroupType(),
-            currentGroup.isCanAdd(),
-            currentGroup.getFriendKeys() != null ? new HashMap<>(currentGroup.getFriendKeys()) : new HashMap<>(),
-            comingKeysToPass,
-            new HashMap<>(MessageKeys));
+        ExtrasMetadata extras =
+            new ExtrasMetadata(
+                currentGroup.getGroupName(),
+                GroupKey,
+                currentGroup.getGroupDays(),
+                currentGroup.getGroupMonths(),
+                currentGroup.getGroupYears(),
+                currentGroup.getGroupHours(),
+                currentGroup.getGroupLocation(),
+                currentGroup.getAdminKey(),
+                currentGroup.getCreatedAt(),
+                currentGroup.getGroupPrice(),
+                currentGroup.getGroupType(),
+                currentGroup.isCanAdd(),
+                currentGroup.getFriendKeys() != null
+                    ? new HashMap<>(currentGroup.getFriendKeys())
+                    : new HashMap<>(),
+                comingKeysToPass,
+                new HashMap<>(MessageKeys));
 
         Common.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
-        
+
         // Debug: Also add ComingKeys directly to intent as backup
         intent.putExtra("ComingKeys", comingKeysToPass);
         Log.d(TAG, "Added ComingKeys directly to intent as backup");
-        
+
         startActivity(intent);
       } else {
         Log.e(TAG, "currentGroup is null when trying to navigate to MembersComingActivity");

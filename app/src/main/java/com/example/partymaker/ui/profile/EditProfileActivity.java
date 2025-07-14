@@ -24,7 +24,6 @@ import com.example.partymaker.ui.group.CreateGroupActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.example.partymaker.utilities.AuthHelper;
 import com.squareup.picasso.Picasso;
-import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -115,7 +114,7 @@ public class EditProfileActivity extends AppCompatActivity {
       finish();
       return;
     }
-    
+
     // Convert to Firebase key format
     String userKey = userEmail.replace('.', ' ');
 

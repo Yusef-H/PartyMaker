@@ -3,12 +3,10 @@ package com.example.partymaker.ui.group;
 import static com.example.partymaker.utilities.Common.hideViews;
 import static com.example.partymaker.utilities.Common.showViews;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,14 +16,13 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.example.partymaker.utilities.AuthHelper;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Objects;
 
 public class ChangeDateActivity extends AppCompatActivity {
   private static final String TAG = "ChangeDateActivity";
