@@ -1,5 +1,9 @@
 package com.example.partymaker.utilities;
 
+/**
+ * Constants used throughout the PartyMaker application. Includes keys for SharedPreferences, Intent
+ * extras, and default values.
+ */
 public class Constants {
   // SharedPreferences keys
   public static final String PREFS_NAME = "PREFS_NAME";

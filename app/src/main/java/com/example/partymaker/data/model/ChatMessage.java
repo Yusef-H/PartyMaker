@@ -1,20 +1,42 @@
 package com.example.partymaker.data.model;
 
-public class ChatMessage {
-  private String messageText;
-  private String messageUser;
-  private String messageTime;
-  private String MessageKey;
+import java.util.HashMap;
 
+/** Represents a chat message in a group chat. */
+public class ChatMessage {
+  /** The text content of the message. */
+  private String messageText;
+  /** The user who sent the message. */
+  private String messageUser;
+  /** The time the message was sent. */
+  private String messageTime;
+  /** The unique key for the message. */
+  private String messageKey;
+  /** The group ID this message belongs to. */
+  private String groupId;
+  /** Additional message content (optional). */
+  private String msg1;
+  /** Map of message content (optional). */
+  private HashMap<String, Object> messageContent;
+
+  /** Default constructor. */
+  public ChatMessage() {}
+
+  /**
+   * Constructs a chat message with main fields.
+   *
+   * @param messageText the text
+   * @param messageUser the user
+   * @param messageTime the time
+   * @param messageKey the key
+   */
   public ChatMessage(
       String messageText, String messageUser, String messageTime, String messageKey) {
     this.messageText = messageText;
     this.messageUser = messageUser;
     this.messageTime = messageTime;
-    MessageKey = messageKey;
+    this.messageKey = messageKey;
   }
-
-  public ChatMessage() {}
 
   public String getMessageText() {
     return messageText;
@@ -41,10 +63,34 @@ public class ChatMessage {
   }
 
   public String getMessageKey() {
-    return MessageKey;
+    return messageKey;
   }
 
   public void setMessageKey(String messageKey) {
-    MessageKey = messageKey;
+    this.messageKey = messageKey;
+  }
+
+  public String getGroupId() {
+    return groupId;
+  }
+
+  public void setGroupId(String groupId) {
+    this.groupId = groupId;
+  }
+
+  public String getMsg1() {
+    return msg1;
+  }
+
+  public void setMsg1(String msg1) {
+    this.msg1 = msg1;
+  }
+
+  public HashMap<String, Object> getMessageContent() {
+    return messageContent;
+  }
+
+  public void setMessageContent(HashMap<String, Object> messageContent) {
+    this.messageContent = messageContent;
   }
 }

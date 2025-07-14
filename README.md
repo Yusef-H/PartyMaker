@@ -1,188 +1,303 @@
 # PartyMaker 🎉
 
-PartyMaker is a comprehensive social event planning Android application that enables users to organize gatherings, create communities through groups, manage invitations, and communicate seamlessly with attendees. Built with modern Android development practices and Firebase integration.
+![Project Views](https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square)
 
-## 🛠️ Technical Stack
+A comprehensive social event planning platform with a modern Android client and Spring Boot server architecture. PartyMaker enables users to create, manage, and participate in social events with real-time communication, group management, and AI-powered features.
 
-- **Platform**: Android (Kotlin/Java)
-- **Backend**: Firebase (Authentication, FireStore, Cloud Messaging)
-- **Architecture**: MVVM with Repository pattern
-- **UI Framework**: Android Views with Material Design
-- **Real-time Features**: Firebase Realtime Database
-- **Location Services**: Google Maps integration
-- **AI Integration**: Custom chatbot implementation
-- **CI/CD**: GitHub Actions with secure secrets management
+## 🏗️ Architecture Overview
+
+PartyMaker follows a **client-server architecture** with clear separation of concerns:
+
+- **Android Client**: Native Android application built with Kotlin/Java
+- **Spring Boot Server**: RESTful API server handling business logic and data operations
+- **Firebase Backend**: Authentication, real-time database, and cloud services
+- **AI Integration**: OpenAI-powered chatbot for enhanced user experience
+
+## 🛠️ Technology Stack
+
+### 📱 Android Client
+- **Language**: Kotlin & Java
+- **Minimum SDK**: API 33 (Android 13)
+- **Target SDK**: API 35 (Android 15)
+- **UI Framework**: Traditional Android Views with Material Design
+- **Architecture**: Traditional Android Architecture with Service Layer
+- **Build System**: Gradle with Version Catalogs
+
+### 🖥️ Spring Boot Server
+- **Framework**: Spring Boot 2.7.5
+- **Language**: Java 11
+- **Architecture**: RESTful API with Service Layer
+- **Database**: Firebase Realtime Database (via Admin SDK)
+
+### 🔥 Firebase Services
+- **Authentication**: User registration, login, and session management
+- **Realtime Database**: Real-time data synchronization
+- **Cloud Storage**: File and image storage
+- **Cloud Storage**: File and image storage
+
+### 🎨 UI & Design
+- **Material Design**: Modern UI components and theming
+- **Custom Animations**: Smooth transitions and loading effects
+- **Responsive Layout**: Adaptive design for different screen sizes
+
+### 🤖 AI & External Services
+- **OpenAI Integration**: Intelligent chatbot using GPT models
+- **Google Maps**: Location services and mapping
+- **Google Places**: Location search and autocomplete
 
 ## ✨ Key Features
 
 ### 🔐 User Management
-- **Secure Authentication**: Complete registration, login, and password reset system
-- **Profile Customization**: Create and edit detailed user profiles
-- **Friend Network**: Add and manage friends with dedicated friend lists
+- **Secure Authentication**: Firebase Auth with email/password and Google Sign-In
+- **Profile Management**: Complete user profile creation and editing
+- **Friend System**: Add, remove, and manage friends
 - **User Discovery**: Browse and connect with other users
 
-### 👥 Group & Community System
-- **Public & Private Groups**: Create or join groups based on interests
-- **Group Management**: Advanced group administration tools
-- **Group Activities**: Dedicated screens for group interactions and management
-- **Flexible Membership**: Easy joining/leaving mechanisms
+### 👥 Group & Community
+- **Group Creation**: Public and private group management
+- **Membership Control**: Join, leave, and admin group operations
+- **Group Administration**: Advanced admin tools and settings
+- **Group Activities**: Dedicated group interaction screens
 
-### 🎊 Event Planning & Management
+### 🎊 Event Planning
 - **Event Creation**: Comprehensive event setup with date/time management
-- **Invitation System**: Send invitations and track responses
-- **Attendance Tracking**: Monitor who's coming to your events
-- **Event Administration**: Tools for event organizers and administrators
+- **Invitation System**: Send and track event invitations
+- **Attendance Tracking**: Monitor event participation
+- **Event Administration**: Tools for event organizers
 
-### 💬 Communication Hub
-- **Real-time Messaging**: In-app chat system for seamless communication
-- **Message History**: Persistent conversation tracking
-- **AI-Powered Chatbot**: Intelligent assistant for user support and engagement
+### 💬 Real-time Communication
+- **In-app Messaging**: Real-time chat within groups
+- **Message History**: Persistent conversation storage
+- **AI Chatbot**: Intelligent assistant for user support
+- **Local Notifications**: App-level notification system
 
-### 🛠️ Administrative Tools
-- **Admin Dashboard**: Special controls for platform administrators
-- **Content Moderation**: Tools for managing users and content
-- **Analytics & Insights**: Track app usage and engagement
+### 🗺️ Location Services
+- **Google Maps Integration**: Interactive maps for event locations
+- **Location Search**: Google Places integration for venue discovery
+- **Geolocation**: User location tracking and sharing
 
-## 📱 Application Architecture
+## 📁 Project Structure
 
-For detailed architecture documentation, see [ARCHITECTURE.docx](./ARCHITECTURE.docx)
-
-### Core Data Models
-- **User Management**: User profiles, authentication, and preferences
-- **Group System**: Group creation, membership, and administration
-- **Messaging**: Chat functionality with message persistence
-- **Event Planning**: Event creation, invitations, and attendance tracking
-
-### Utility Components
-- **Common Utilities**: Shared functionality and helper classes
-- **Metadata Handling**: Extended app metadata and configuration
-- **Map Integration**: Location-based features and utilities
-- **UI Theming**: Consistent design system and themes
-
-## 🖥️ User Interface Screens
-
-### 🚀 Onboarding Experience
-- **Dynamic Splash Screen**: Engaging app introduction
-- **Interactive Intro**: Multi-slide app overview with smooth transitions
-- **Streamlined Authentication**: User-friendly registration and login flows
-
-### 👤 Profile & Social Features
-- **Profile Management**: Comprehensive profile editing capabilities
-- **Social Discovery**: Friend finding and connection features
-- **Activity Tracking**: User engagement and activity monitoring
-
-### 🎯 Event Management Interface
-- **Event Creation Wizard**: Step-by-step event setup
-- **Date Management**: Flexible scheduling and rescheduling tools
-- **Guest Management**: Invitation sending, tracking, and attendee management
-- **Communication Hub**: Event-specific messaging and updates
-
-### 💬 Communication Features
-- **Chat Interface**: Modern messaging experience
-- **Conversation Management**: Message threading and history
-- **Real-time Updates**: Live messaging with instant notifications
+```
+PartyMaker/
+├── app/                          # Android Application
+│   ├── src/main/
+│   │   ├── java/com/example/partymaker/
+│   │   │   ├── data/             # Data layer (API, Firebase, Models)
+│   │   │   ├── ui/               # UI components and activities
+│   │   │   │   ├── auth/         # Authentication screens
+│   │   │   │   ├── group/        # Group management screens
+│   │   │   │   ├── chatbot/      # AI chatbot interface
+│   │   │   │   └── common/       # Shared UI components
+│   │   │   └── utilities/        # Helper classes and utilities
+│   │   └── res/                  # Android resources
+│   └── build.gradle.kts          # Android build configuration
+├── app/server/                   # Spring Boot Server
+│   ├── src/main/java/
+│   │   └── com/example/partymaker/server/
+│   │       ├── controller/       # REST API controllers
+│   │       ├── service/          # Business logic services
+│   │       └── config/           # Configuration classes
+│   └── build.gradle             # Server build configuration
+├── gradle/
+│   └── libs.versions.toml       # Centralized dependency management
+└── build.gradle.kts             # Root build configuration
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Android Studio**: Latest stable version
-- **Android SDK**: API level 23 (Android 6.0) or higher
-- **Firebase Account**: For backend services
-- **Internet Connection**: Required for social features and real-time sync
 
-### Installation Steps
+- **Android Studio**: Latest stable version (Hedgehog or newer)
+- **Java Development Kit**: JDK 11 or higher
+- **Android SDK**: API level 33+ (Android 13)
+- **Firebase Account**: For backend services
+- **Google Cloud Account**: For Maps and Places APIs
+- **OpenAI API Key**: For chatbot functionality
+
+### Installation
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/partymaker.git
-   cd partymaker
+   git clone https://github.com/Natifishman/PartyMaker.git
+   cd PartyMaker
    ```
 
 2. **Firebase Configuration**
    ```bash
-   # Copy the template file
+   # Copy Firebase configuration
    cp google-services.json.template app/google-services.json
    
-   # Edit with your Firebase configuration
-   # Get your config from Firebase Console
+   # Edit with your Firebase project configuration
+   # Get configuration from Firebase Console > Project Settings
    ```
 
 3. **API Keys Setup**
    ```bash
-   # Copy the API keys template
-   cp api_keys.xml.template app/src/main/res/values/api_keys.xml
+   # Create secrets.properties file
+   cp secrets.properties.template app/secrets.properties
    
-   # Add your actual API keys (Maps, Analytics, etc.)
+   # Add your API keys:
+   # - GOOGLE_MAPS_API_KEY=your_maps_api_key
+   # - OPENAI_API_KEY=your_openai_api_key
+   # - FIREBASE_SERVER_KEY=your_firebase_server_key
    ```
 
-4. **Build and Run**
-   - Open the project in Android Studio
-   - Sync Gradle files
-   - Build and run on device or emulator
+4. **Server Configuration**
+   ```bash
+   # Copy Firebase service account
+   cp firebase-service-account.json.template app/server/src/main/resources/firebase-service-account.json
+   
+   # Edit with your Firebase Admin SDK service account
+   ```
 
-### Configuration Files
-⚠️ **Security Note**: Configuration files containing sensitive data are gitignored:
-- `google-services.json` - Firebase configuration
-- `local.properties` - API keys and secrets
+5. **Build and Run**
+   ```bash
+   # Build Android app
+   ./gradlew assembleDebug
+   
+   # Run Spring Boot server
+   cd app/server
+   ./gradlew bootRun
+   
+   # Run Android app
+   # Open in Android Studio and run on device/emulator
+   ```
 
+## 🔧 Configuration
 
-## 📋 Recent Updates & Improvements
+### Required Environment Variables
 
-### ✅ Bug Fixes
-- Resolved authentication flow errors in login and registration
-- Fixed user location display issues on home screen
-- Improved group joining functionality and error handling
+| Variable              | Description         | Source               |
+|-----------------------|---------------------|----------------------|
+| `GOOGLE_MAPS_API_KEY` | Google Maps API key | Google Cloud Console |
+| `OPENAI_API_KEY`      | OpenAI API key      | OpenAI Platform      |
+| `FIREBASE_SERVER_KEY` | Firebase Server key | Firebase Console     |
 
-### 🎯 Feature Enhancements
-- Enhanced invitation system with better tracking
-- Improved chat performance and message delivery
-- Streamlined admin controls and moderation tools
+### Firebase Setup
 
-### 🔄 Performance Optimizations
-- Optimized database queries for faster loading
-- Improved memory management for large friend lists
-- Enhanced image loading and caching
+1. Create a new Firebase project
+2. Enable Authentication (Email/Password, Google Sign-In)
+3. Enable Realtime Database
+4. Enable Cloud Storage
+5. Download `google-services.json` and `firebase-service-account.json`
+
+### Google Cloud Setup
+
+1. Enable Google Maps API
+2. Enable Places API
+3. Create API key with appropriate restrictions
+
+## 📱 API Endpoints
+
+### Server API (Spring Boot)
+
+| Endpoint                       | Method | Description                 |
+|--------------------------------|--------|-----------------------------|
+| `/api/firebase/data/{path}`    | GET    | Retrieve data from Firebase |
+| `/api/firebase/data/{path}`    | POST   | Save data to Firebase       |
+| `/api/firebase/data/{path}`    | PUT    | Update data in Firebase     |
+| `/api/firebase/data/{path}`    | DELETE | Delete data from Firebase   |
+| `/api/firebase/Users`          | GET    | Get all users               |
+| `/api/firebase/Groups`         | GET    | Get all groups              |
+| `/api/firebase/GroupsMessages` | GET    | Get all messages            |
+
+### Client API (Android)
+
+- **Firebase Server Client**: Direct Firebase operations
+- **OpenAI API Client**: Chatbot integration
+- **Google Maps API**: Location services
+
+## 🧪 Testing
+
+### Android Testing
+```bash
+# Unit tests
+./gradlew test
+
+# Instrumented tests
+./gradlew connectedAndroidTest
+```
+
+### Server Testing
+```bash
+# Run server tests
+cd app/server
+./gradlew test
+```
+
+## 📦 Build Variants
+
+### Android
+- **Debug**: Development build with debugging enabled
+- **Release**: Production build with optimizations
+
+### Server
+- **Development**: Local development with hot reload
+- **Production**: Optimized for deployment
+
+## 🔒 Security Considerations
+
+- **API Key Management**: All sensitive keys stored in `secrets.properties`
+- **Firebase Security Rules**: Configured for secure data access
+- **Authentication**: Firebase Auth with secure token management
+- **HTTPS**: All API communications use HTTPS
+
+## 🚀 Deployment
+
+### Android App
+1. Generate signed APK/AAB
+2. Upload to Google Play Console
+3. Configure Firebase for production
+
+### Spring Boot Server
+1. Build JAR file: `./gradlew bootJar`
+2. Deploy to cloud platform (AWS, GCP, Azure)
+3. Configure environment variables
+4. Set up SSL certificates
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We welcome contributions! Please follow these guidelines:
 
-1. **Fork the Repository**
-   ```bash
-   git fork https://github.com/yourusername/partymaker.git
-   ```
-
-2. **Create Feature Branch**
-   ```bash
-   git checkout -b feature/your-amazing-feature
-   ```
-
-3. **Commit Changes**
-   ```bash
-   git commit -m "feat: add your amazing feature"
-   ```
-
-4. **Push and Create PR**
-   ```bash
-   git push origin feature/your-amazing-feature
-   ```
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Follow coding standards**:
+   - Use consistent naming conventions
+   - Add JavaDoc comments for public methods
+   - Follow traditional Android architecture patterns
+4. **Test your changes**: Ensure all tests pass
+5. **Commit with clear messages**: Use conventional commit format
+6. **Create a Pull Request**: Provide detailed description
 
 ### Development Guidelines
-- Follow Android coding conventions
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
+
+- **Code Style**: Follow Android and Java coding conventions
+- **Architecture**: Maintain traditional Android patterns and separation of concerns
+- **Testing**: Write unit tests for new features
+- **Documentation**: Update README and add inline comments
+- **Security**: Never commit API keys or sensitive data
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support & Contact
+## 🆘 Support
 
-- **Issues**: Report bugs and request features via GitHub Issues
-- **Documentation**: Check the Wiki for detailed guides
-- **Community**: Join our community discussions
+- **Issues**: Report bugs via [GitHub Issues](https://github.com/Natifishman/PartyMaker/issues)
+- **Documentation**: Check the [Wiki](https://github.com/Natifishman/PartyMaker/wiki)
+- **Discussions**: Join community discussions
+
+## 🙏 Acknowledgments
+
+- **Firebase**: For robust backend services
+- **Google Maps**: For location services
+- **OpenAI**: For AI-powered chatbot
+- **Spring Boot**: For server framework
+- **Material Design**: For modern UI components
 
 ---
 
-**Made with ❤️ for bringing people together through amazing events!**
+**Built with ❤️ for bringing people together through amazing events!**
+
+*PartyMaker - Where every event becomes a celebration*

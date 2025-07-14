@@ -5,36 +5,38 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import androidx.annotation.NonNull;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
+import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class PublicGroupsActivity extends AppCompatActivity {
   private ListView lv1;
-  private DatabaseReference database;
+  private Object groupsRef;
   ArrayList<Group> group;
   GroupAdapter allGroupsAdapter;
   String UserKey;
+  private static final String TAG = "PublicGroupsActivity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +55,22 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     // connection
     lv1 = findViewById(R.id.lv5);
-    UserKey =
-        Objects.requireNonNull(Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail())
-            .replace('.', ' ');
-    database = FirebaseDatabase.getInstance().getReference("Groups");
+
+    // Get UserKey from AuthHelper instead of Firebase Auth
+    try {
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to get current user from AuthHelper", e);
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
+
+    // Initialize Firebase database reference
+    FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
+    groupsRef = accessManager.getGroupsRef();
+
     retrieveData();
     EventHandler();
   }
@@ -105,41 +119,73 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   public void retrieveData() {
-    database.addValueEventListener(
-        new ValueEventListener() {
-          @SuppressLint("SuspiciousIndentation")
+    // Always use server mode
+    FirebaseServerClient serverClient = (FirebaseServerClient) groupsRef;
+    serverClient.getGroups(
+        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
           @Override
-          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            HashMap<String, Object> UserKeys;
-            group = new ArrayList<>();
-
-            for (DataSnapshot data : dataSnapshot.getChildren()) { // scan all group in data
-              Group p = data.getValue(Group.class);
-              UserKeys = Objects.requireNonNull(data.getValue(Group.class)).getFriendKeys();
-
-              if (Objects.requireNonNull(p).getGroupType() == 0) { // if group is public
-                boolean flag = false;
-                for (String userKey : UserKeys.keySet()) { // scan all group friends
-                  if (UserKey.equals(
-                      userKey)) // if current user not friend in current group so it show
-                  // current group
-                  {
-                    flag = true;
-                    break;
-                  }
-                }
-                if (!flag) {
-                  group.add(p);
-                }
-              }
-            }
-            allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
-            lv1.setAdapter(allGroupsAdapter);
+          public void onSuccess(Map<String, Group> data) {
+            processServerGroupData(data);
           }
 
           @Override
-          public void onCancelled(@NonNull DatabaseError databaseError) {}
+          public void onError(String errorMessage) {
+            Toast.makeText(
+                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
+                .show();
+          }
         });
+  }
+
+  private void processGroupData(DataSnapshot dataSnapshot) {
+    HashMap<String, Object> UserKeys;
+    group = new ArrayList<>();
+
+    for (DataSnapshot data : dataSnapshot.getChildren()) { // scan all group in data
+      Group p = data.getValue(Group.class);
+      UserKeys = Objects.requireNonNull(data.getValue(Group.class)).getFriendKeys();
+
+      if (Objects.requireNonNull(p).getGroupType() == 0) { // if group is public
+        boolean flag = false;
+        for (String userKey : UserKeys.keySet()) { // scan all group friends
+          if (UserKey.equals(userKey)) // if current user not friend in current group so it show
+          // current group
+          {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          group.add(p);
+        }
+      }
+    }
+    allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
+    lv1.setAdapter(allGroupsAdapter);
+  }
+
+  private void processServerGroupData(Map<String, Group> groupData) {
+    group = new ArrayList<>();
+
+    for (Group p : groupData.values()) {
+      HashMap<String, Object> UserKeys = p.getFriendKeys();
+
+      if (p.getGroupType() == 0) { // if group is public
+        boolean flag = false;
+        for (String userKey : UserKeys.keySet()) { // scan all group friends
+          if (UserKey.equals(userKey)) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          group.add(p);
+        }
+      }
+    }
+
+    allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
+    lv1.setAdapter(allGroupsAdapter);
   }
 
   public boolean onOptionsItemSelected(MenuItem item) {

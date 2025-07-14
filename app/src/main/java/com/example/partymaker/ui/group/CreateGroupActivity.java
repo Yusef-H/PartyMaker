@@ -44,6 +44,7 @@ import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.MapUtilities;
 import com.example.partymaker.utilities.groupBuilder.GroupBuilder;
 import com.example.partymaker.utilities.groupBuilder.GroupDateTime;
@@ -113,7 +114,33 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private void initializePlacesAPI() {
     if (!Places.isInitialized()) {
       String apiKey = Common.getApiKey(this, "MAPS_KEY");
-      Places.initialize(getApplicationContext(), apiKey);
+      if (apiKey.isEmpty()) {
+        // Use a default key from resources or show an error message
+        Toast.makeText(
+                this,
+                "Google Maps API key not found. Some features may not work properly.",
+                Toast.LENGTH_LONG)
+            .show();
+        // Try to get key from manifest metadata as fallback
+        try {
+          apiKey =
+              getPackageManager()
+                  .getApplicationInfo(
+                      getPackageName(), android.content.pm.PackageManager.GET_META_DATA)
+                  .metaData
+                  .getString("com.google.android.geo.API_KEY");
+        } catch (Exception e) {
+          apiKey = "YOUR_DEFAULT_API_KEY"; // Replace with your actual key if needed
+        }
+      }
+
+      try {
+        Places.initialize(getApplicationContext(), apiKey);
+      } catch (IllegalArgumentException e) {
+        Toast.makeText(this, "Error initializing Google Maps: " + e.getMessage(), Toast.LENGTH_LONG)
+            .show();
+        // Continue without maps functionality
+      }
     }
   }
 
@@ -502,10 +529,24 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   private String getCurrentUserEmail() {
+    // Get current user using AuthHelper
+    String currentUserEmail = AuthHelper.getCurrentUserEmail(this);
+    
+    if (currentUserEmail != null) {
+      // Return the email in Firebase key format (replace dots with spaces)
+      return currentUserEmail.replace('.', ' ');
+    }
+    
+    // Fallback to Firebase Auth if AuthHelper fails
     FirebaseUser currentUser = DBRef.Auth.getCurrentUser();
-    return currentUser != null
-        ? Objects.requireNonNull(currentUser.getEmail()).replace('.', ' ')
-        : "";
+    if (currentUser != null) {
+      return Objects.requireNonNull(currentUser.getEmail()).replace('.', ' ');
+    }
+    
+    // If both methods fail, show error and return empty string
+    Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+    finish();
+    return "";
   }
 
   private String getCurrentTimestamp() {

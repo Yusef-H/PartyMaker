@@ -18,11 +18,19 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import com.example.partymaker.R;
 
+/**
+ * Activity for displaying the intro/welcome slides to new users. Handles ViewPager navigation and
+ * onboarding flow.
+ */
 public class IntroActivity extends Activity {
 
+  /** The ViewPager for intro slides. */
   private ViewPager viewPager;
+  /** The layout for the bottom dots indicator. */
   private LinearLayout dotsLayout;
+  /** The layouts for each intro slide. */
   private int[] layouts;
+  /** Skip and Next buttons. */
   private Button btnSkip, btnNext;
 
   @Override
@@ -99,6 +107,11 @@ public class IntroActivity extends Activity {
         public void onPageScrollStateChanged(int arg0) {}
       };
 
+  /**
+   * Adds the bottom dots indicator for the intro slides.
+   *
+   * @param currentPage the current page index
+   */
   private void addBottomDots(int currentPage) {
     TextView[] dots = new TextView[layouts.length];
 
@@ -115,15 +128,23 @@ public class IntroActivity extends Activity {
       dots[currentPage].setTextColor(getResources().getColor(R.color.dot_active));
   }
 
+  /**
+   * Returns the next item index for the ViewPager.
+   *
+   * @param i the offset
+   * @return the next item index
+   */
   private int getItem(int i) {
     return viewPager.getCurrentItem() + i;
   }
 
+  /** Launches the LoginActivity and finishes the intro. */
   private void launchHomeScreen() {
     startActivity(new Intent(getBaseContext(), LoginActivity.class));
     finish();
   }
 
+  /** PagerAdapter for the intro slides. */
   public class ViewPagerAdapter extends PagerAdapter {
 
     public ViewPagerAdapter() {}

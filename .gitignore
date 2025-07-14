@@ -1,18 +1,29 @@
-# Android Studio generated files
+# === Android Studio generated files ===
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.gradle/
+.idea/
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Build and output folders
+/build/
+/captures/
+/.externalNativeBuild/
+/cxx/
+outputs/
+*.apk
+*.ap_
+
+# IntelliJ
+*.iws
+*.ipr
+
+# Android Studio specific
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
 
 # Secret configuration files
 local.properties
@@ -44,3 +55,36 @@ secrets.properties
 # Signed builds and credentials
 app/release/
 credentials/
+
+# Miscellaneous
+*.log
+*.tmp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code settings
+.vscode/
+
+# Crashlytics/Firebase/Analytics
+crashlytics-build.properties
+fabric.properties
+
+# Server build artifacts
+/app/server/build/
+/app/server/lib/
+/app/server/*.jar
+/app/server/*.war
+/app/server/logs/
+/app/server/*.log
+
+# Test files
+/app/test_data.json
+/test_data.json
+/app/test_results.json
+/app/test_server_endpoints.py
+/logs.txt
+/app/.cursor/rules/main.mdc
+app/server/src/main/resources/firebase-service-account.json

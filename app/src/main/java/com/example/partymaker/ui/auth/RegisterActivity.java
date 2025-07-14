@@ -45,19 +45,44 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * Activity for user registration, including form validation, animations, and notifications. Handles
+ * user input, password strength, and registration logic.
+ */
 public class RegisterActivity extends AppCompatActivity {
+  /** TextInputLayouts for validation. */
   private TextInputLayout tilEmail, tilUsername, tilPassword;
-  private TextInputEditText etEmail, etUsername, etPassword;
-  private MaterialButton btnRegister, btnPress;
+  /** Email input field. */
+  private TextInputEditText etEmail;
+  /** Username input field. */
+  private TextInputEditText etUsername;
+  /** Password input field. */
+  private TextInputEditText etPassword;
+  /** Register button. */
+  private MaterialButton btnRegister;
+  /** Go to login button. */
+  private MaterialButton btnPress;
+  /** Register image. */
   private ImageView imgRegister;
-  private MaterialCardView headerCard, formCard;
+  /** Header card view. */
+  private MaterialCardView headerCard;
+  /** Form card view. */
+  private MaterialCardView formCard;
+  /** Celebration layout. */
   private LinearLayout celebrationLayout;
+  /** Password strength progress bar. */
   private ProgressBar passwordStrengthBar;
-  private TextView passwordStrengthText, formProgressText;
+  /** Password strength text. */
+  private TextView passwordStrengthText;
+  /** Form progress text. */
+  private TextView formProgressText;
+  /** Progress indicator view. */
   private View progressIndicator;
-
+  /** Notification channel ID. */
   private static final String CHANNEL_ID = "registration_channel";
+  /** Animation state flag. */
   private boolean isAnimating = false;
+  /** Number of completed fields. */
   private int completedFields = 0;
 
   @Override
@@ -90,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
     setupFormProgressTracking();
   }
 
+  /** Initializes all view components. */
   private void initializeViews() {
     // TextInputLayouts for validation
     tilEmail = findViewById(R.id.tilEmail);
@@ -120,6 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
     createCelebrationLayout();
   }
 
+  /** Creates the password strength indicator UI. */
   @SuppressLint("SetTextI18n")
   private void createPasswordStrengthIndicator() {
     // Create password strength bar and text
@@ -151,6 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
     parentLayout.addView(passwordContainer, passwordIndex + 1);
   }
 
+  /** Creates the form progress indicator UI. */
   @SuppressLint("SetTextI18n")
   private void createFormProgressIndicator() {
     formProgressText = new TextView(this);
@@ -168,6 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
     parentLayout.addView(progressIndicator, 1);
   }
 
+  /** Creates the celebration layout UI. */
   @SuppressLint("SetTextI18n")
   private void createCelebrationLayout() {
     celebrationLayout = new LinearLayout(this);

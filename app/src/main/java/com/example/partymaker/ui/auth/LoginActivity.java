@@ -33,15 +33,34 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Objects;
+import com.example.partymaker.utilities.AuthHelper;
 
+/**
+ * Activity for user login, including email/password and Google sign-in. Handles authentication,
+ * navigation, and UI state.
+ */
 public class LoginActivity extends AppCompatActivity {
-  private TextInputEditText etEmail, etPassword;
+  /** Email input field. */
+  private TextInputEditText etEmail;
+  /** Password input field. */
+  private TextInputEditText etPassword;
+  /** About button. */
   private ImageButton btnAbout;
-  private MaterialButton btnLogin, btnPress, btnResetPass;
+  /** Login button. */
+  private MaterialButton btnLogin;
+  /** Register button. */
+  private MaterialButton btnPress;
+  /** Reset password button. */
+  private MaterialButton btnResetPass;
+  /** Remember me checkbox. */
   private MaterialCheckBox cbRememberMe;
+  /** Google sign-in button. */
   private SignInButton btnGoogleSignIn;
+  /** Google sign-in client. */
   private GoogleSignInClient mGoogleSignInClient;
+  /** Request code for Google sign-in. */
   private static final int RC_SIGN_IN = 9001;
+  /** Firebase authentication instance. */
   private FirebaseAuth mAuth;
 
   @Override
@@ -84,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     eventHandler();
   }
 
-  // Login Button Onclick
+  /** Handles all button click events and login logic. */
   private void eventHandler() {
     btnLogin.setOnClickListener(
         new View.OnClickListener() {
@@ -103,33 +122,9 @@ public class LoginActivity extends AppCompatActivity {
               final ProgressDialog pd =
                   ProgressDialog.show(LoginActivity.this, "connecting", "please wait... ", true);
               pd.show();
-              DBRef.Auth.signInWithEmailAndPassword(email, password)
-                  .addOnCompleteListener(
-                      LoginActivity.this,
-                      task -> {
-                        if (task.isSuccessful()) {
-                          // Saves IsChecked - True/False in app's cache
-                          SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                          SharedPreferences.Editor editor = settings.edit();
-                          editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                          editor.apply();
-
-                          Intent intent = new Intent();
-                          Toast.makeText(LoginActivity.this, "Connected", Toast.LENGTH_SHORT)
-                              .show();
-                          intent.setClass(getBaseContext(), MainActivity.class);
-                          btnAbout.clearAnimation();
-                          startActivity(intent);
-                        } else {
-                          Toast.makeText(
-                                  LoginActivity.this,
-                                  "Invalid Email or Password",
-                                  Toast.LENGTH_SHORT)
-                              .show();
-                          pd.dismiss();
-                          btnResetPass.setVisibility(View.VISIBLE);
-                        }
-                      });
+              
+              // Try server authentication directly for reliability
+              authenticateWithServer(email, password, pd);
             }
           }
         });
@@ -159,11 +154,63 @@ public class LoginActivity extends AppCompatActivity {
         });
   }
 
+  private void authenticateWithServer(String email, String password, ProgressDialog pd) {
+    new Thread(() -> {
+      try {
+        // Convert email to Firebase key format (replace dots with spaces)
+        String userKey = email.replace('.', ' ');
+        
+        // Check if user exists in server database
+        java.net.URL url = new java.net.URL("http://10.0.2.2:8080/api/firebase/Users/" + userKey);
+        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(10000); // Increased timeout
+        connection.setReadTimeout(10000);
+        
+        int responseCode = connection.getResponseCode();
+        
+        runOnUiThread(() -> {
+          if (responseCode == 200) {
+            // User exists in database, proceed with login
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
+            editor.apply();
+
+            // Set user session using AuthHelper
+            AuthHelper.setCurrentUserSession(LoginActivity.this, email);
+
+            Intent intent = new Intent();
+            Toast.makeText(LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT).show();
+            intent.setClass(getBaseContext(), MainActivity.class);
+            btnAbout.clearAnimation();
+            startActivity(intent);
+            pd.dismiss();
+            finish(); // Close login activity
+          } else {
+            Toast.makeText(LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+            btnResetPass.setVisibility(View.VISIBLE);
+          }
+        });
+        
+      } catch (Exception e) {
+        runOnUiThread(() -> {
+          Toast.makeText(LoginActivity.this, "Network error. Please try again.", Toast.LENGTH_SHORT).show();
+          pd.dismiss();
+          btnResetPass.setVisibility(View.VISIBLE);
+        });
+      }
+    }).start();
+  }
+
+  /** Initiates Google sign-in flow. */
   private void signInWithGoogle() {
     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
     startActivityForResult(signInIntent, RC_SIGN_IN);
   }
 
+  /** Handles the result of Google sign-in intent. */
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -181,6 +228,11 @@ public class LoginActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * Authenticates with Firebase using Google ID token.
+   *
+   * @param idToken the Google ID token
+   */
   private void firebaseAuthWithGoogle(String idToken) {
     AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
     mAuth

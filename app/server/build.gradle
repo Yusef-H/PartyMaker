@@ -1,0 +1,30 @@
+// app/server/build.gradle – Spring Boot server module configuration
+
+plugins {
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+}
+
+group = 'com.example.partymaker'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+defaultTasks 'bootRun'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // --- Spring Boot Web ---
+    implementation libs.spring.boot.starter.web
+    // --- Firebase Admin SDK ---
+    implementation libs.firebase.admin
+    // --- Testing ---
+    testImplementation libs.spring.boot.starter.test
+}
+
+test {
+    useJUnitPlatform()
+}

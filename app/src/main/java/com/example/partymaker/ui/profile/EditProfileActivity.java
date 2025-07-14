@@ -22,6 +22,7 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.group.CreateGroupActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
+import com.example.partymaker.utilities.AuthHelper;
 import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
@@ -107,12 +108,19 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void loadProfileImage() {
-    String userEmail = Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail();
-    assert userEmail != null;
-    String safeEmail = userEmail.replace(".", " ");
+    // Get current user email using AuthHelper
+    String userEmail = AuthHelper.getCurrentUserEmail(this);
+    if (userEmail == null) {
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
+    
+    // Convert to Firebase key format
+    String userKey = userEmail.replace('.', ' ');
 
     DBRef.refStorage
-        .child("Users/" + safeEmail)
+        .child("Users/" + userKey)
         .getDownloadUrl()
         .addOnSuccessListener(
             uri -> Picasso.get().load(uri).placeholder(R.drawable.ic_profile).into(imgProfile))
@@ -124,12 +132,16 @@ public class EditProfileActivity extends AppCompatActivity {
     if (uri == null) return;
 
     imgProfile.setImageURI(uri);
-    String userEmail = Objects.requireNonNull(DBRef.Auth.getCurrentUser()).getEmail();
-    assert userEmail != null;
-    String safeEmail = userEmail.replace(".", " ");
+    String userEmail = AuthHelper.getCurrentUserEmail(this);
+    if (userEmail == null) {
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
+    String userKey = userEmail.replace('.', ' ');
 
     DBRef.refStorage
-        .child("Users/" + safeEmail)
+        .child("Users/" + userKey)
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot ->
@@ -160,10 +172,11 @@ public class EditProfileActivity extends AppCompatActivity {
       goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idLogout) {
-      DBRef.Auth.signOut();
-      DBRef.CurrentUser = null;
+      // Use AuthHelper for logout
+      AuthHelper.clearAuthData(this);
       goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
       startActivity(goToNextActivity);
+      finish();
     }
 
     return true;

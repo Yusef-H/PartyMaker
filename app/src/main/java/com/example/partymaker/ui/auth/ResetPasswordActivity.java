@@ -17,11 +17,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Activity for resetting user password via email. Handles UI theme switching and password reset
+ * logic.
+ */
 public class ResetPasswordActivity extends AppCompatActivity {
-  private Button btnWhite, btnBlack, btnReset, btnHelp, btnHide;
+  /** White theme button. */
+  private Button btnWhite;
+  /** Black theme button. */
+  private Button btnBlack;
+  /** Reset password button. */
+  private Button btnReset;
+  /** Help button. */
+  private Button btnHelp;
+  /** Hide instructions button. */
+  private Button btnHide;
+  /** Reset layout. */
   private RelativeLayout rltReset;
-  private TextView tvForgotPass, tvHelp, tvInstructions, tvHide;
+  /** Forgot password text. */
+  private TextView tvForgotPass;
+  /** Help text. */
+  private TextView tvHelp;
+  /** Instructions text. */
+  private TextView tvInstructions;
+  /** Hide instructions text. */
+  private TextView tvHide;
+  /** Email input field. */
   private EditText etInputEmail;
+  /** Cake image view. */
   private ImageView imgWhiteCake;
 
   @Override
@@ -50,6 +73,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     eventHandler();
   }
 
+  /** Sends a password reset email to the user. */
   private void ResetPass() {
     final String email = etInputEmail.getText().toString(); // the user email
     if (email.matches("")) {
@@ -72,6 +96,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
   }
 
+  /** Handles all button click events and UI theme switching. */
   private void eventHandler() {
     btnReset.setOnClickListener(v -> ResetPass());
     btnWhite.setOnClickListener(

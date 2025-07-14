@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.auth.LoginActivity;
+import com.example.partymaker.utilities.AuthHelper;
 
 /**
  * SplashActivity displays the initial splash screen with animations, then navigates the user to the
@@ -109,9 +110,27 @@ public class SplashActivity extends AppCompatActivity {
     finish();
   }
 
-  // Checks if user is authenticated and 'Remember Me' is checked
+  // Checks if user is authenticated and 'Remember Me' is checked with session validation
   private boolean shouldNavigateToMain(boolean rememberMeChecked) {
-    return DBRef.Auth.getCurrentUser() != null && rememberMeChecked;
+    if (!rememberMeChecked) {
+      return false;
+    }
+    
+    // Check if session is valid
+    if (!AuthHelper.isSessionValid(this)) {
+      // Clear expired session
+      AuthHelper.clearAuthData(this);
+      return false;
+    }
+    
+    // Check if user is authenticated
+    if (AuthHelper.isUserAuthenticated(this)) {
+      // Refresh session for continued use
+      AuthHelper.refreshSession(this);
+      return true;
+    }
+    
+    return false;
   }
 
   @Override

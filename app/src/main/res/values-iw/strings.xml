@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App Info -->
     <string name="app_name">יוצר מסיבות</string>
+    <string name="server_settings">הגדרות שרת</string>
+
+    <!-- Login Screen -->
     <string name="password">סיסמה</string>
     <string name="stay_connected">הישאר מחובר!</string>
+    <string name="login_input_required">אנא הזן גם כתובת אימייל וגם סיסמה</string>
+    <string name="login_invalid_email">אנא הזן כתובת אימייל תקינה</string>
+    <string name="login_connecting">מתחבר</string>
+    <string name="login_please_wait">אנא המתן</string>
+    <string name="login_connected">התחברת בהצלחה</string>
+    <string name="login_invalid_credentials">אימייל או סיסמה שגויים</string>
+    <string name="login_google_signin_failed">התחברות עם Google נכשלה</string>
+    <string name="login_google_token_error">התקבלה שגיאה באימות החשבון של Google</string>
+
+    <!-- Google Auth -->
+    <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
+
+    <!-- Email Input -->
     <string name="hint_email">אימייל</string>
+    <string name="valid_email_required">יש להזין אימייל תקף</string>
+
+    <!-- Welcome Slider -->
     <string name="next">הבא</string>
     <string name="skip">דלג</string>
     <string name="start">התחברות</string>
@@ -62,9 +82,12 @@
     <string name="your_parties">המסיבות שלך</string>
     <string name="public_parties">מסיבות ציבוריות</string>
     <string name="logout">התנתק</string>
-    <string name="valid_email_required">יש להזין אימייל תקף</string>
+
+    <!-- Username Input -->
     <string name="username_visible_to_everyone">שם המשתמש יוצג לכולם</string>
     <string name="choose_username">בחר שם משתמש</string>
+
+    <!-- Password Input -->
     <string name="minimum_6_characters">לפחות 6 תווים</string>
     <string name="enter_secure_password">הכנס סיסמה מאובטחת</string>
     <string name="save_location">שמור מיקום</string>
@@ -140,115 +163,61 @@
     <string name="my_parties">המסיבות שלי</string>
     <string name="create_group_logo">צור לוגו לקבוצה</string>
     <string name="input_party_name">הזן שם למסיבה</string>
+    <string name="select_date">בחר תאריך</string>
+    <string name="select_time">בחר שעה</string>
+    <string name="choose_date">בחר תאריך</string>
+    <string name="choose_time">בחר שעה</string>
+    <string name="close">סגור</string>
+    <string name="ok">אישור</string>
+    <string name="party_date_time">תאריך ושעה של המסיבה</string>
+    <string name="only_admin_can_change_date">רק מנהל יכול לשנות את התאריך</string>
+    <string name="time">שעה</string>
+
+    <!-- Chatbot -->
+    <string name="chatgpt_icon">סמל ChatGPT</string>
+    <string name="ai_assistant">עוזר בינה מלאכותית</string>
+    <string name="send">שלח</string>
+
+    <!-- Friends -->
+    <string name="remove_friends">הסר חברים</string>
+    <string name="help">עזרה</string>
+    <string name="hide">הסתר</string>
+    <string name="hide_instructions">הסתר הוראות</string>
+    <string name="enter_friend_email_remove">הכנס את האימייל של החבר שברצונך להסיר מהקבוצה, או בחר חבר מהרשימה למטה.</string>
+    <string name="enter_friend_email">הכנס אימייל של חבר</string>
+    <string name="friends_in_group">חברים בקבוצה:</string>
+
+    <!-- Group Details -->
+    <string name="edit">ערוך</string>
+    <string name="delete">מחק</string>
+    <string name="invited_members">חברים מוזמנים</string>
+
+    <!-- Party -->
+    <string name="tap_to_open_maps">הקש כדי לפתוח במפות</string>
+
+    <!-- Server Settings -->
+    <string name="server_mode_settings">הגדרות מצב שרת</string>
+    <string name="use_server_mode">השתמש במצב שרת</string>
+    <string name="server_url">כתובת שרת</string>
+    <string name="server_url_default">http://10.0.2.2:8080</string>
+    <string name="server_url_note">הערה: השתמש ב-10.0.2.2:8080 עבור אמולטור Android. עבור מכשירים פיזיים, השתמש בכתובת ה-IP של המחשב שלך.</string>
+    <string name="save_settings">שמור הגדרות</string>
+
+    <!-- Dialog -->
+    <string name="date_example">31/דצמבר/2024</string>
+    <string name="time_example">20:00</string>
+    <string name="map_will_open">המפה תיפתח באפליקציית Google Maps</string>
+    <string name="close_map">סגור מפה</string>
+    <string name="open_in_google_maps">פתח בגוגל מפות</string>
+
+    <!-- Item -->
+    <string name="profile_picture">תמונת פרופיל</string>
+    <string name="username_label">שם משתמש</string>
+    <string name="email_example">email@example.com</string>
+    <string name="admin_flag">דגל מנהל</string>
 
     <string-array name="languages_array">
         <item>English</item>
         <item>עברית</item>
-    </string-array>
-
-    <!-- Arrays for date/time pickers -->
-    <string-array name="array_days">
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
-        <item>15</item>
-        <item>16</item>
-        <item>17</item>
-        <item>18</item>
-        <item>19</item>
-        <item>20</item>
-        <item>21</item>
-        <item>22</item>
-        <item>23</item>
-        <item>24</item>
-        <item>25</item>
-        <item>26</item>
-        <item>27</item>
-        <item>28</item>
-        <item>29</item>
-        <item>30</item>
-        <item>31</item>
-    </string-array>
-    <string-array name="array_months">
-        <item>ינואר</item>
-        <item>פברואר</item>
-        <item>מרץ</item>
-        <item>אפריל</item>
-        <item>מאי</item>
-        <item>יוני</item>
-        <item>יולי</item>
-        <item>אוגוסט</item>
-        <item>ספטמבר</item>
-        <item>אוקטובר</item>
-        <item>נובמבר</item>
-        <item>דצמבר</item>
-    </string-array>
-    <string-array name="array_years">
-        <item>2025</item>
-        <item>2026</item>
-        <item>2027</item>
-        <item>2028</item>
-        <item>2029</item>
-    </string-array>
-    <string-array name="array_hours">
-        <item>01:00</item>
-        <item>01:30</item>
-        <item>02:00</item>
-        <item>02:30</item>
-        <item>03:00</item>
-        <item>03:30</item>
-        <item>04:00</item>
-        <item>04:30</item>
-        <item>05:00</item>
-        <item>05:30</item>
-        <item>06:00</item>
-        <item>06:30</item>
-        <item>07:00</item>
-        <item>07:30</item>
-        <item>08:00</item>
-        <item>08:30</item>
-        <item>09:00</item>
-        <item>09:30</item>
-        <item>10:00</item>
-        <item>10:30</item>
-        <item>11:00</item>
-        <item>11:30</item>
-        <item>12:00</item>
-        <item>12:30</item>
-        <item>13:00</item>
-        <item>13:30</item>
-        <item>14:00</item>
-        <item>14:30</item>
-        <item>15:00</item>
-        <item>15:30</item>
-        <item>16:00</item>
-        <item>16:30</item>
-        <item>17:00</item>
-        <item>17:30</item>
-        <item>18:00</item>
-        <item>18:30</item>
-        <item>19:00</item>
-        <item>19:30</item>
-        <item>20:00</item>
-        <item>20:30</item>
-        <item>21:00</item>
-        <item>21:30</item>
-        <item>22:00</item>
-        <item>22:30</item>
-        <item>23:00</item>
-        <item>23:30</item>
-        <item>00:00</item>
-        <item>00:30</item>
     </string-array>
 </resources>
