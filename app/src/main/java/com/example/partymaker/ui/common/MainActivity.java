@@ -28,6 +28,7 @@ import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     initializeDatabase();
     setupEventHandlers();
     setupFloatingChatButton();
+    setupBottomNavigation();
   }
 
   /**
@@ -223,6 +225,10 @@ public class MainActivity extends AppCompatActivity {
 
     fabChat.setOnClickListener(view -> navigateToChat());
     fabChat.setOnTouchListener(Common::dragChatButtonOnTouch);
+  }
+
+  private void setupBottomNavigation() {
+    BottomNavigationHelper.setupBottomNavigation(this, "myparties");
   }
 
   // Navigates to the chat activity.
@@ -458,15 +464,7 @@ public class MainActivity extends AppCompatActivity {
     int itemId = item.getItemId();
 
     try {
-      if (itemId == R.id.idMenu) {
-        navigateToActivity(MainActivity.class);
-      } else if (itemId == R.id.idAddProfile) {
-        navigateToActivity(CreateGroupActivity.class);
-      } else if (itemId == R.id.idEditProfile) {
-        navigateToActivity(EditProfileActivity.class);
-      } else if (itemId == R.id.idPublicParties) {
-        navigateToActivity(PublicGroupsActivity.class);
-      } else if (itemId == R.id.idServerSettings) {
+      if (itemId == R.id.idServerSettings) {
         navigateToActivity(ServerSettingsActivity.class);
       } else if (itemId == R.id.idLogout) {
         handleLogout();

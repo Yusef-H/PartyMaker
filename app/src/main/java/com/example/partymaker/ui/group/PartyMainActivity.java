@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,11 +45,23 @@ public class PartyMainActivity extends AppCompatActivity {
   private CardView Card1, Card2, Card3, Card4, Card5, Card6, Card7, Card8;
   private Group currentGroup;
 
+  // Add UI elements for coming/not coming toggle
+  private ImageView imgThumbUp, imgThumbDown, imgOptions;
+  private TextView tvComing, tvNotComing, tvOptions;
+  private boolean isUserAdmin = false;
+  private boolean isUserComing = false;
+
   @SuppressLint("SetTextI18n")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_main);
+
+    // Hide action bar to remove black bar at top
+    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     Log.d(TAG, "PartyMainActivity onCreate started");
 
@@ -226,7 +239,9 @@ public class PartyMainActivity extends AppCompatActivity {
   }
 
   private void initializeViews() {
-    // Get references to all views
+    Log.d(TAG, "Initializing views");
+
+    // Initialize existing views
     back5 = findViewById(R.id.back5);
     tvGroupName = findViewById(R.id.tvGroupName);
     tvCreatedBy = findViewById(R.id.tvCreatedBy);
@@ -237,7 +252,7 @@ public class PartyMainActivity extends AppCompatActivity {
     tvDateYears = findViewById(R.id.tvDateYears);
     tvDateHours = findViewById(R.id.tvDateHours);
 
-    // Get references to CardViews
+    // Initialize card views
     Card1 = findViewById(R.id.Card1);
     Card2 = findViewById(R.id.Card2);
     Card3 = findViewById(R.id.Card3);
@@ -246,10 +261,26 @@ public class PartyMainActivity extends AppCompatActivity {
     Card6 = findViewById(R.id.Card6);
     Card7 = findViewById(R.id.Card7);
     Card8 = findViewById(R.id.Card8);
+
+    // Initialize Card5 coming/not coming elements
+    imgThumbUp = findViewById(R.id.imgThumbUp);
+    imgThumbDown = findViewById(R.id.imgThumbDown);
+    imgOptions = findViewById(R.id.imgOptions);
+    tvComing = findViewById(R.id.tvComing);
+    tvNotComing = findViewById(R.id.tvNotComing);
+    tvOptions = findViewById(R.id.tvOptions);
+
+    // Initialize MessageKeys
+    MessageKeys = new HashMap<>();
+
+    Log.d(TAG, "Views initialized successfully");
   }
 
   private void setupClickListeners() {
     Log.d(TAG, "Setting up click listeners");
+
+    // Back button
+    back5.setOnClickListener(v -> finish());
 
     // Check if Card6 is null
     if (Card6 == null) {
@@ -288,52 +319,18 @@ public class PartyMainActivity extends AppCompatActivity {
     // new Handler().postDelayed(() -> {
     //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
     //     navigateToChatActivity();
-    // }, 5000);
-
-    back5.setOnClickListener(v -> finish());
+    // }, 3000);
 
     Card1.setOnClickListener(
         v -> {
           if (currentGroup != null && currentGroup.getGroupLocation() != null) {
             String location = currentGroup.getGroupLocation();
-            Log.d(TAG, "Opening location in map dialog: " + location);
-
-            try {
-              // Check if the location is in format like "31.7768,35.2224"
-              if (location.contains(",")) {
-                showMapDialog(location);
-              } else {
-                // If location is not coordinates, show a toast and open Google Maps
-                Toast.makeText(
-                        PartyMainActivity.this,
-                        "Opening location in Google Maps",
-                        Toast.LENGTH_SHORT)
-                    .show();
-
-                // Open in Google Maps
-                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(location));
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-
-                // Check if Google Maps is installed
-                if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                  startActivity(mapIntent);
-                } else {
-                  // If Google Maps is not installed, open in browser
-                  Uri browserUri =
-                      Uri.parse(
-                          "https://www.google.com/maps/search/?api=1&query="
-                              + Uri.encode(location));
-                  Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserUri);
-                  startActivity(browserIntent);
-                }
-              }
-            } catch (Exception e) {
-              Log.e(TAG, "Error opening maps", e);
-              Toast.makeText(
-                      PartyMainActivity.this,
-                      "Could not open maps: " + e.getMessage(),
-                      Toast.LENGTH_SHORT)
+            if (location.contains(",")) {
+              // It's coordinates, show map
+              showMapDialog(location);
+            } else {
+              // It's a text location, show in toast
+              Toast.makeText(PartyMainActivity.this, "Location: " + location, Toast.LENGTH_LONG)
                   .show();
             }
           } else {
@@ -379,7 +376,15 @@ public class PartyMainActivity extends AppCompatActivity {
           }
         });
 
-    Card5.setOnClickListener(v -> navigateToAdminOptionsActivity());
+    // Card5 - Admin options OR Coming/Not coming toggle
+    Card5.setOnClickListener(
+        v -> {
+          if (isUserAdmin) {
+            navigateToAdminOptionsActivity();
+          } else {
+            toggleComingStatus();
+          }
+        });
 
     Card7.setOnClickListener(v -> navigateToAddFriendsActivity());
 
@@ -430,6 +435,101 @@ public class PartyMainActivity extends AppCompatActivity {
     tvDateMonths.setText(group.getGroupMonths());
     tvDateYears.setText(group.getGroupYears());
     tvDateHours.setText(group.getGroupHours());
+
+    // Check if user is admin
+    isUserAdmin = group.getAdminKey() != null && group.getAdminKey().equals(UserKey);
+
+    // Check if user is coming
+    isUserComing = group.getComingKeys() != null && group.getComingKeys().containsKey(UserKey);
+
+    // Update Card5 UI based on admin status
+    updateCard5UI();
+  }
+
+  private void updateCard5UI() {
+    if (isUserAdmin) {
+      // Show admin options
+      imgOptions.setVisibility(View.VISIBLE);
+      tvOptions.setVisibility(View.VISIBLE);
+      imgThumbUp.setVisibility(View.INVISIBLE);
+      imgThumbDown.setVisibility(View.INVISIBLE);
+      tvComing.setVisibility(View.INVISIBLE);
+      tvNotComing.setVisibility(View.INVISIBLE);
+    } else {
+      // Show coming/not coming toggle
+      imgOptions.setVisibility(View.INVISIBLE);
+      tvOptions.setVisibility(View.INVISIBLE);
+
+      if (isUserComing) {
+        // User is coming - show thumb up
+        imgThumbUp.setVisibility(View.VISIBLE);
+        tvComing.setVisibility(View.VISIBLE);
+        imgThumbDown.setVisibility(View.INVISIBLE);
+        tvNotComing.setVisibility(View.INVISIBLE);
+      } else {
+        // User is not coming - show thumb down
+        imgThumbUp.setVisibility(View.INVISIBLE);
+        tvComing.setVisibility(View.INVISIBLE);
+        imgThumbDown.setVisibility(View.VISIBLE);
+        tvNotComing.setVisibility(View.VISIBLE);
+      }
+    }
+  }
+
+  private void toggleComingStatus() {
+    if (currentGroup == null || UserKey == null) {
+      Toast.makeText(this, "Error: Missing group or user data", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    // Toggle the coming status
+    isUserComing = !isUserComing;
+    
+    // Update UI immediately for better UX
+    updateCard5UI();
+    
+    // Update server
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    
+    // Prepare ComingKeys update
+    HashMap<String, Object> updatedComingKeys = new HashMap<>();
+    if (currentGroup.getComingKeys() != null) {
+      updatedComingKeys.putAll(currentGroup.getComingKeys());
+    }
+    
+    if (isUserComing) {
+      // Add user to ComingKeys
+      updatedComingKeys.put(UserKey, true);
+      currentGroup.setComingKeys(updatedComingKeys);
+      
+      Toast.makeText(this, "מסומן כמגיע", Toast.LENGTH_SHORT).show();
+    } else {
+      // Remove user from ComingKeys
+      updatedComingKeys.remove(UserKey);
+      currentGroup.setComingKeys(updatedComingKeys);
+      
+      Toast.makeText(this, "מסומן כלא מגיע", Toast.LENGTH_SHORT).show();
+    }
+    
+    // Update server with new ComingKeys
+    Map<String, Object> updates = new HashMap<>();
+    updates.put("ComingKeys", updatedComingKeys);
+    
+    serverClient.updateGroup(GroupKey, updates, new FirebaseServerClient.OperationCallback() {
+      @Override
+      public void onSuccess() {
+        Log.d(TAG, "Coming status updated successfully on server");
+      }
+      
+      @Override
+      public void onError(String errorMessage) {
+        Log.e(TAG, "Failed to update coming status on server: " + errorMessage);
+        // Revert the UI change on error
+        isUserComing = !isUserComing;
+        updateCard5UI();
+        Toast.makeText(PartyMainActivity.this, "שגיאה בעדכון הסטטוס", Toast.LENGTH_SHORT).show();
+      }
+    });
   }
 
   private void navigateToChatActivity() {

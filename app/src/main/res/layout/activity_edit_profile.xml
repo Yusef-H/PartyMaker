@@ -11,26 +11,50 @@
     android:weightSum="1"
     tools:context="com.example.partymaker.ui.profile.EditProfileActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgProfile"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:backgroundTint="@android:color/white"
-        android:contentDescription="@string/edit_profile"
-        android:src="@drawable/ic_profile"
-        app:civ_border_color="@android:color/darker_gray"
-        app:civ_border_width="4dp" />
+    <!-- Main content wrapper -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNavigationInclude">
 
-    <TextView
-        android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgProfile"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginTop="60dp"
+                android:backgroundTint="@android:color/white"
+                android:contentDescription="@string/edit_profile"
+                android:src="@drawable/ic_profile"
+                app:civ_border_color="@android:color/darker_gray"
+                app:civ_border_width="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/press_on_your_profile_picture_to_change_it"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <include
+        android:id="@+id/bottomNavigationInclude"
+        layout="@layout/bottom_navigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imgProfile"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/press_on_your_profile_picture_to_change_it"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="16sp" />
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>

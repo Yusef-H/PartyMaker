@@ -136,7 +136,8 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
       tvSender.setVisibility(View.GONE);
       spaceLeft.setVisibility(View.VISIBLE);
       spaceRight.setVisibility(View.GONE);
-      tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
+      tvMessage.setTextColor(ContextCompat.getColor(context, R.color.white));
+      tvTime.setTextColor(ContextCompat.getColor(context, R.color.light_gray));
     } else {
       // Messages from others: left alignment, gray bubble, with name
       bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble);
@@ -145,6 +146,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
       spaceLeft.setVisibility(View.GONE);
       spaceRight.setVisibility(View.VISIBLE);
       tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
+      tvTime.setTextColor(ContextCompat.getColor(context, R.color.gray));
     }
 
     // Add spaces between messages

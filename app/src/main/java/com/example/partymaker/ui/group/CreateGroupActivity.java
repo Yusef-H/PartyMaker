@@ -43,7 +43,9 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
+import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.MapUtilities;
 import com.example.partymaker.utilities.groupBuilder.GroupBuilder;
@@ -92,8 +94,16 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_create);
+
+    // Hide action bar to remove black bar at top
+    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
+
     setupUI();
     setupLogic();
+    setupBottomNavigation();
   }
 
   // UI call
@@ -633,23 +643,14 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   public boolean onOptionsItemSelected(MenuItem item) {
     Intent goToNextActivity;
 
-    if (item.getItemId() == R.id.idMenu) {
-      goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idAddProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idEditProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idPublicParties) {
-      goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);
+    if (item.getItemId() == R.id.idServerSettings) {
+      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idLogout) {
-      DBRef.Auth.signOut();
-      DBRef.CurrentUser = null;
+      AuthHelper.clearAuthData(this);
       goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
       startActivity(goToNextActivity);
+      finish();
     }
 
     return true;
@@ -709,5 +710,9 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
           map.clear();
           map.addMarker(new MarkerOptions().position(latlng).title("Party here"));
         });
+  }
+
+  private void setupBottomNavigation() {
+    BottomNavigationHelper.setupBottomNavigation(this, "creategroup");
   }
 }

@@ -271,7 +271,7 @@ public class FriendsAddActivity extends AppCompatActivity {
       if (user == null || user.getEmail() == null || user.getEmail().isEmpty()) {
         continue; // Skip null or empty email users
       }
-      
+
       String UserEmail = user.getEmail().replace('.', ' ');
       GroupFriends = FriendKeys;
 

@@ -21,7 +21,9 @@ import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
+import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +45,41 @@ public class PublicGroupsActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_public_parties);
 
+    // Hide action bar to remove black bar at top
+    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
+
+    // Initialize user
+    initializeUser();
+
+    // Initialize views
+    initializeViews();
+
+    // Setup event handlers
+    setupEventHandlers();
+
+    // Setup bottom navigation
+    setupBottomNavigation();
+
+    // Load public groups
+    loadPublicGroups();
+  }
+
+  private void initializeUser() {
+    try {
+      UserKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to get current user from AuthHelper", e);
+      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
+  }
+
+  private void initializeViews() {
     // Change title Name and Color
     ActionBar actionBar = getSupportActionBar();
     Objects.requireNonNull(actionBar)
@@ -55,27 +92,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     // connection
     lv1 = findViewById(R.id.lv5);
-
-    // Get UserKey from AuthHelper instead of Firebase Auth
-    try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
-    } catch (Exception e) {
-      Log.e(TAG, "Failed to get current user from AuthHelper", e);
-      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
-      finish();
-      return;
-    }
-
-    // Initialize Firebase database reference
-    FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-    groupsRef = accessManager.getGroupsRef();
-
-    retrieveData();
-    EventHandler();
   }
 
-  private void EventHandler() {
+  private void setupEventHandlers() {
     lv1.setOnItemClickListener(
         (parent, view, position, id) -> {
           // intent Value
@@ -118,7 +137,17 @@ public class PublicGroupsActivity extends AppCompatActivity {
     lv1.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
-  public void retrieveData() {
+  private void setupBottomNavigation() {
+    BottomNavigationHelper.setupBottomNavigation(this, "publicparties");
+  }
+
+  public void loadPublicGroups() {
+    // Initialize groupsRef if not already done
+    if (groupsRef == null) {
+      FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
+      groupsRef = accessManager.getGroupsRef();
+    }
+    
     // Always use server mode
     FirebaseServerClient serverClient = (FirebaseServerClient) groupsRef;
     serverClient.getGroups(
@@ -191,23 +220,14 @@ public class PublicGroupsActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     Intent goToNextActivity;
 
-    if (item.getItemId() == R.id.idMenu) {
-      goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idAddProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idEditProfile) {
-      goToNextActivity = new Intent(getApplicationContext(), EditProfileActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idPublicParties) {
-      goToNextActivity = new Intent(getApplicationContext(), PublicGroupsActivity.class);
+    if (item.getItemId() == R.id.idServerSettings) {
+      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
       startActivity(goToNextActivity);
     } else if (item.getItemId() == R.id.idLogout) {
-      DBRef.Auth.signOut();
-      DBRef.CurrentUser = null;
+      AuthHelper.clearAuthData(this);
       goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
       startActivity(goToNextActivity);
+      finish();
     }
 
     return true;
