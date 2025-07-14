@@ -416,17 +416,21 @@ public class PartyMainActivity extends AppCompatActivity {
     // Update location
     String location = group.getGroupLocation();
     if (location != null && !location.isEmpty()) {
-      tvGroupLocation.setText(location);
-      tvGroupLocation.setVisibility(View.VISIBLE);
-
-      // Add a map icon to indicate it's clickable
-      if (location.contains(",")) {
-        // It's likely coordinates
+      // Check if it's coordinates (contains comma and numbers)
+      if (location.contains(",") && location.matches(".*\\d+.*")) {
+        // It's coordinates, show a clean location text
+        tvGroupLocation.setText("📍 מיקום המסיבה");
+        tvGroupLocation.setVisibility(View.VISIBLE);
+        // Add a map icon to indicate it's clickable
         tvGroupLocation.setCompoundDrawablesWithIntrinsicBounds(
             0, 0, R.drawable.ic_party_location, 0);
+      } else {
+        // It's a text location, show as is
+        tvGroupLocation.setText(location);
+        tvGroupLocation.setVisibility(View.VISIBLE);
       }
     } else {
-      tvGroupLocation.setText("No location set");
+      tvGroupLocation.setText("אין מיקום");
       tvGroupLocation.setVisibility(View.VISIBLE);
     }
 
