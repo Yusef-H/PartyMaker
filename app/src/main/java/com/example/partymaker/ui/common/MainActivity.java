@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    // Force set server URL to Render
+    forceSetServerUrl();
+
     if (!initializeUser()) {
       return; // Exit if user initialization failed
     }
@@ -77,6 +80,18 @@ public class MainActivity extends AppCompatActivity {
     setupEventHandlers();
     setupFloatingChatButton();
     setupBottomNavigation();
+  }
+
+  /**
+   * Forces the server URL to be set to Render
+   */
+  private void forceSetServerUrl() {
+    String renderUrl = "https://partymaker.onrender.com";
+    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        .edit()
+        .putString("server_url", renderUrl)
+        .apply();
+    Log.d(TAG, "Forced server URL to: " + renderUrl);
   }
 
   /**

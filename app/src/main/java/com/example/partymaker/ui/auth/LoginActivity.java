@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -68,8 +69,17 @@ public class LoginActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
 
+    // Force set server URL to Render
+    forceSetServerUrl();
+
     // Initialize Firebase Auth
     mAuth = FirebaseAuth.getInstance();
+
+    // Add debug option to reset test user password
+    resetTestUserPassword();
+    
+    // Check server connectivity
+    checkServerConnectivity();
 
     // Configure Google Sign In
     GoogleSignInOptions gso =
@@ -103,6 +113,89 @@ public class LoginActivity extends AppCompatActivity {
     eventHandler();
   }
 
+  /**
+   * Forces the server URL to be set to Render
+   */
+  private void forceSetServerUrl() {
+    String renderUrl = "https://partymaker.onrender.com";
+    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        .edit()
+        .putString("server_url", renderUrl)
+        .apply();
+    Log.d("LoginActivity", "Forced server URL to: " + renderUrl);
+  }
+
+  /**
+   * Resets password for test user (1@1.com) to 123456
+   * This is for debugging purposes only
+   */
+  private void resetTestUserPassword() {
+    String testEmail = "1@1.com";
+    String testPassword = "123456";
+    
+    // Try to sign in with email and password directly
+    mAuth.signInWithEmailAndPassword(testEmail, testPassword)
+        .addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("LoginActivity", "Test user login successful");
+            } else {
+                Log.d("LoginActivity", "Test user login failed, attempting to create user");
+                
+                // If login fails, try to create the user
+                mAuth.createUserWithEmailAndPassword(testEmail, testPassword)
+                    .addOnCompleteListener(createTask -> {
+                        if (createTask.isSuccessful()) {
+                            Log.d("LoginActivity", "Test user created successfully");
+                            // Create user in database
+                            User testUser = new User(testEmail, "Test User");
+                            DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
+                        } else {
+                            Log.d("LoginActivity", "Test user creation failed: " + 
+                                (createTask.getException() != null ? createTask.getException().getMessage() : "unknown error"));
+                        }
+                    });
+            }
+        });
+  }
+
+  /**
+   * Checks connectivity to the server
+   */
+  private void checkServerConnectivity() {
+    new Thread(() -> {
+      try {
+        String serverUrl = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+            .getString("server_url", "https://partymaker.onrender.com");
+        
+        Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
+        
+        java.net.URL url = new java.net.URL(serverUrl + "/api/firebase/health");
+        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
+        
+        int responseCode = connection.getResponseCode();
+        Log.d("LoginActivity", "Server response code: " + responseCode);
+        
+        if (responseCode == 200) {
+          java.io.BufferedReader reader = new java.io.BufferedReader(
+              new java.io.InputStreamReader(connection.getInputStream()));
+          StringBuilder response = new StringBuilder();
+          String line;
+          while ((line = reader.readLine()) != null) {
+            response.append(line);
+          }
+          reader.close();
+          
+          Log.d("LoginActivity", "Server response: " + response.toString());
+        }
+      } catch (Exception e) {
+        Log.e("LoginActivity", "Error checking server connectivity", e);
+      }
+    }).start();
+  }
+
   /** Handles all button click events and login logic. */
   private void eventHandler() {
     btnLogin.setOnClickListener(
@@ -123,8 +216,34 @@ public class LoginActivity extends AppCompatActivity {
                   ProgressDialog.show(LoginActivity.this, "connecting", "please wait... ", true);
               pd.show();
 
-              // Try server authentication directly for reliability
-              authenticateWithServer(email, password, pd);
+              mAuth.signInWithEmailAndPassword(email, password)
+                  .addOnCompleteListener(LoginActivity.this, task -> {
+                    pd.dismiss();
+                    if (task.isSuccessful()) {
+                      // Set user session using AuthHelper
+                      AuthHelper.setCurrentUserSession(LoginActivity.this, email);
+
+                      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                      SharedPreferences.Editor editor = settings.edit();
+                      editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
+                      editor.apply();
+
+                      Toast.makeText(LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT).show();
+                      Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                      btnAbout.clearAnimation();
+                      startActivity(intent);
+                      finish();
+                    } else {
+                      // Log the error details
+                      Log.e("LoginActivity", "Authentication failed", task.getException());
+                      String errorMessage = task.getException() != null ? 
+                          task.getException().getMessage() : "Unknown error";
+                      Log.e("LoginActivity", "Error details: " + errorMessage);
+                      
+                      Toast.makeText(LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
+                      btnResetPass.setVisibility(View.VISIBLE);
+                    }
+                  });
             }
           }
         });
@@ -152,82 +271,6 @@ public class LoginActivity extends AppCompatActivity {
           Intent i = new Intent(LoginActivity.this, IntroActivity.class);
           startActivity(i);
         });
-  }
-
-  private void authenticateWithServer(String email, String password, ProgressDialog pd) {
-    new Thread(
-            () -> {
-              try {
-                // Convert email to Firebase key format (replace dots with spaces)
-                String userKey = email.replace('.', ' ');
-
-                // Load server URL from SharedPreferences
-                String serverUrl = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString("server_url", "http://10.0.2.2:8080");
-                if (serverUrl == null || serverUrl.isEmpty()) {
-                  serverUrl = "http://10.0.2.2:8080";
-                }
-                // Ensure no trailing slash
-                if (serverUrl.endsWith("/")) {
-                  serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
-                }
-                android.util.Log.d("LoginActivity", "Using serverUrl: " + serverUrl);
-
-                // Check if user exists in server database
-                java.net.URL url =
-                    new java.net.URL("http://10.0.2.2:8080/api/firebase/Users/" + userKey);
-                java.net.HttpURLConnection connection =
-                    (java.net.HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(10000); // Increased timeout
-                connection.setReadTimeout(10000);
-
-                int responseCode = connection.getResponseCode();
-
-                runOnUiThread(
-                    () -> {
-                      if (responseCode == 200) {
-                        // User exists in database, proceed with login
-                        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                        editor.apply();
-
-                        // Set user session using AuthHelper
-                        AuthHelper.setCurrentUserSession(LoginActivity.this, email);
-
-                        Intent intent = new Intent();
-                        Toast.makeText(
-                                LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT)
-                            .show();
-                        intent.setClass(getBaseContext(), MainActivity.class);
-                        btnAbout.clearAnimation();
-                        startActivity(intent);
-                        pd.dismiss();
-                        finish(); // Close login activity
-                      } else {
-                        Toast.makeText(
-                                LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT)
-                            .show();
-                        pd.dismiss();
-                        btnResetPass.setVisibility(View.VISIBLE);
-                      }
-                    });
-
-              } catch (Exception e) {
-                runOnUiThread(
-                    () -> {
-                      Toast.makeText(
-                              LoginActivity.this,
-                              "Network error. Please try again.",
-                              Toast.LENGTH_SHORT)
-                          .show();
-                      pd.dismiss();
-                      btnResetPass.setVisibility(View.VISIBLE);
-                    });
-              }
-            })
-        .start();
   }
 
   /** Initiates Google sign-in flow. */

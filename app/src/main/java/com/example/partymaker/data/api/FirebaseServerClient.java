@@ -39,7 +39,7 @@ public class FirebaseServerClient {
   /** Singleton instance. */
   private static FirebaseServerClient instance;
   /** Default server URL (for emulator). */
-  private static final String DEFAULT_SERVER_URL = "http://10.0.2.2:8080"; // Default for emulator
+  private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com"; // Changed to Render URL
   /** SharedPreferences key for server URL. */
   private static final String PREF_SERVER_URL = "server_url";
 
@@ -91,9 +91,15 @@ public class FirebaseServerClient {
     }
   }
 
+  // Helper method to log API calls
+  private void logApiCall(String method, String path) {
+    Log.d(TAG, String.format("API %s: %s/api/firebase/%s", method, serverUrl, path));
+  }
+
   // Groups methods
   public void getGroups(final DataCallback<Map<String, Group>> callback) {
     Log.d(TAG, "getGroups called");
+    logApiCall("GET", "Groups");
 
     new AsyncTask<Void, Void, Map<String, Group>>() {
       private String errorMessage = null;
@@ -952,6 +958,7 @@ public class FirebaseServerClient {
   }
 
   private String makeGetRequest(String path, int timeout) {
+    logApiCall("GET", path);
     HttpURLConnection connection = null;
     BufferedReader reader = null;
 
@@ -1032,6 +1039,7 @@ public class FirebaseServerClient {
   }
 
   private boolean makePostRequest(String path, String jsonBody, int timeout) {
+    logApiCall("POST", path);
     HttpURLConnection connection = null;
 
     try {
@@ -1122,6 +1130,7 @@ public class FirebaseServerClient {
   }
 
   private boolean makePutRequest(String path, String jsonBody, int timeout) {
+    logApiCall("PUT", path);
     HttpURLConnection connection = null;
 
     try {
@@ -1157,6 +1166,7 @@ public class FirebaseServerClient {
   }
 
   private boolean makeDeleteRequest(String path, int timeout) {
+    logApiCall("DELETE", path);
     HttpURLConnection connection = null;
 
     try {

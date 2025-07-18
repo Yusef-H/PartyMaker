@@ -37,8 +37,23 @@ public class SplashActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_splash);
 
+    // Force set server URL to Render
+    forceSetServerUrl();
+
     initializeViews();
     startSplashFlow();
+  }
+
+  /**
+   * Forces the server URL to be set to Render
+   */
+  private void forceSetServerUrl() {
+    String renderUrl = "https://partymaker.onrender.com";
+    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        .edit()
+        .putString("server_url", renderUrl)
+        .apply();
+    android.util.Log.d("SplashActivity", "Forced server URL to: " + renderUrl);
   }
 
   // Initialize views and handler
