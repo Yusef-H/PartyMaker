@@ -18,6 +18,7 @@ import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
+import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
@@ -69,6 +70,16 @@ public class UsersListActivity extends AppCompatActivity {
       FriendKeys = extras.getFriendKeys();
       ComingKeys = extras.getComingKeys();
       MessageKeys = extras.getMessageKeys();
+      
+      Log.d(TAG, "Received GroupKey: " + GroupKey);
+      Log.d(TAG, "Received AdminKey: " + AdminKey);
+      if (FriendKeys != null) {
+        Log.d(TAG, "Received FriendKeys: " + FriendKeys.size());
+      } else {
+        Log.d(TAG, "FriendKeys is null");
+      }
+    } else {
+      Log.e(TAG, "No extras received from intent");
     }
 
     // Actionbar settings
@@ -117,14 +128,47 @@ public class UsersListActivity extends AppCompatActivity {
   }
   
   private void addUserToGroup(User user) {
-    if (user == null || user.getEmail() == null || user.getUserKey() == null) {
+    if (user == null || user.getEmail() == null) {
       Toast.makeText(this, "Invalid user data", Toast.LENGTH_SHORT).show();
       return;
     }
     
     // Format email for Firebase key
-    String userEmail = user.getEmail().replace('.', ' ');
+    final String userEmail = user.getEmail().replace('.', ' ');
+    
+    // Try to get userKey from user object first
     String userKey = user.getUserKey();
+    
+    // If userKey is null or empty, try to get it from email
+    if (userKey == null || userKey.isEmpty()) {
+      try {
+        // Get current user key for comparison
+        String currentUserKey = AuthHelper.getCurrentUserKey(this);
+        
+        // If this is the current user, use their key
+        if (user.getEmail().equals(AuthHelper.getCurrentUserEmail(this))) {
+          userKey = currentUserKey;
+          Log.d(TAG, "Using current user key: " + userKey);
+        } else {
+          // Otherwise use email as key (common pattern in Firebase)
+          userKey = userEmail;
+          Log.d(TAG, "Using email as key: " + userKey);
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "Error getting user key", e);
+        // Use email as fallback
+        userKey = userEmail;
+      }
+    }
+    
+    // Ensure we have a valid user key
+    if (userKey == null || userKey.isEmpty()) {
+      Toast.makeText(this, "Could not determine user key", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    
+    final String finalUserKey = userKey;
+    Log.d(TAG, "Adding user to group: " + userEmail + " with key: " + finalUserKey);
     
     // Check if user is already in the group
     serverClient.getGroup(
@@ -137,12 +181,16 @@ public class UsersListActivity extends AppCompatActivity {
               return;
             }
             
+            Log.d(TAG, "Group found: " + group.getGroupName());
+            
             boolean alreadyInGroup = false;
             
             // Check if user is already in FriendKeys
             if (group.getFriendKeys() != null) {
               for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                if (entry.getValue().equals(userKey) || entry.getKey().equals(userEmail)) {
+                Log.d(TAG, "Checking friend key: " + entry.getKey() + " -> " + entry.getValue());
+                if (entry.getKey().equals(userEmail) || 
+                    (entry.getValue() != null && entry.getValue().toString().equals(finalUserKey))) {
                   alreadyInGroup = true;
                   break;
                 }
@@ -156,46 +204,63 @@ public class UsersListActivity extends AppCompatActivity {
             
             // Add user to FriendKeys
             Map<String, Object> updates = new HashMap<>();
-            updates.put(userEmail, userKey);
+            updates.put(userEmail, finalUserKey);
             
-            serverClient.updateData(
-                "Groups/" + GroupKey + "/FriendKeys",
-                updates,
-                new FirebaseServerClient.OperationCallback() {
-                  @Override
-                  public void onSuccess() {
-                    // Update local data
-                    if (FriendKeys == null) {
-                      FriendKeys = new HashMap<>();
+            Log.d(TAG, "Updating FriendKeys at path: Groups/" + GroupKey + "/FriendKeys");
+            Log.d(TAG, "Adding: " + userEmail + " -> " + finalUserKey);
+            
+            // Try direct Firebase update first
+            try {
+              // Update directly in Firebase
+              HashMap<String, Object> directUpdates = new HashMap<>();
+              if (FriendKeys == null) {
+                FriendKeys = new HashMap<>();
+              }
+              FriendKeys.put(userEmail, finalUserKey);
+              directUpdates.put("FriendKeys", FriendKeys);
+              
+              serverClient.updateGroup(
+                  GroupKey,
+                  directUpdates,
+                  new FirebaseServerClient.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                      Toast.makeText(UsersListActivity.this, "Friend successfully added", Toast.LENGTH_SHORT).show();
+                      
+                      // Ask if user wants to add to coming list
+                      new androidx.appcompat.app.AlertDialog.Builder(UsersListActivity.this)
+                          .setTitle("Add to Coming List")
+                          .setMessage("Add " + user.getEmail() + " to the coming list?")
+                          .setPositiveButton("Yes", (dialog, which) -> {
+                            addUserToComingList(userEmail);
+                          })
+                          .setNegativeButton("No", null)
+                          .show();
                     }
-                    FriendKeys.put(userEmail, userKey);
                     
-                    Toast.makeText(UsersListActivity.this, "Friend successfully added", Toast.LENGTH_SHORT).show();
-                    
-                    // Ask if user wants to add to coming list
-                    new androidx.appcompat.app.AlertDialog.Builder(UsersListActivity.this)
-                        .setTitle("Add to Coming List")
-                        .setMessage("Add " + user.getEmail() + " to the coming list?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                          addUserToComingList(userEmail);
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-                  }
-                  
-                  @Override
-                  public void onError(String errorMessage) {
-                    Toast.makeText(
-                            UsersListActivity.this,
-                            "Error adding friend: " + errorMessage,
-                            Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                });
+                    @Override
+                    public void onError(String errorMessage) {
+                      Log.e(TAG, "Error adding friend: " + errorMessage);
+                      Toast.makeText(
+                              UsersListActivity.this,
+                              "Error adding friend: " + errorMessage,
+                              Toast.LENGTH_SHORT)
+                          .show();
+                    }
+                  });
+            } catch (Exception e) {
+              Log.e(TAG, "Error updating group", e);
+              Toast.makeText(
+                      UsersListActivity.this,
+                      "Error adding friend: " + e.getMessage(),
+                      Toast.LENGTH_SHORT)
+                  .show();
+            }
           }
           
           @Override
           public void onError(String errorMessage) {
+            Log.e(TAG, "Error loading group: " + errorMessage);
             Toast.makeText(
                     UsersListActivity.this,
                     "Error loading group: " + errorMessage,
@@ -210,27 +275,26 @@ public class UsersListActivity extends AppCompatActivity {
       return;
     }
     
-    // Add to coming list
-    Map<String, Object> updates = new HashMap<>();
-    updates.put(userEmail, "true");
+    // Update directly in Firebase
+    HashMap<String, Object> directUpdates = new HashMap<>();
+    if (ComingKeys == null) {
+      ComingKeys = new HashMap<>();
+    }
+    ComingKeys.put(userEmail, "true");
+    directUpdates.put("ComingKeys", ComingKeys);
     
-    serverClient.updateData(
-        "Groups/" + GroupKey + "/ComingKeys",
-        updates,
+    serverClient.updateGroup(
+        GroupKey,
+        directUpdates,
         new FirebaseServerClient.OperationCallback() {
           @Override
           public void onSuccess() {
-            // Update local data
-            if (ComingKeys == null) {
-              ComingKeys = new HashMap<>();
-            }
-            ComingKeys.put(userEmail, "true");
-            
             Toast.makeText(UsersListActivity.this, "Added to Coming List", Toast.LENGTH_SHORT).show();
           }
           
           @Override
           public void onError(String errorMessage) {
+            Log.e(TAG, "Error adding to coming list: " + errorMessage);
             Toast.makeText(
                     UsersListActivity.this,
                     "Error adding to coming list: " + errorMessage,
