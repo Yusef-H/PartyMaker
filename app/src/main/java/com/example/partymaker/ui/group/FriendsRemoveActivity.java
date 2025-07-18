@@ -421,30 +421,44 @@ public class FriendsRemoveActivity extends AppCompatActivity {
               return;
             }
             
-            // Remove from FriendKeys
             final String finalKeyToRemove = keyToRemove;
-            serverClient.updateData(
-                "Groups/" + GroupKey + "/FriendKeys/" + keyToRemove,
-                null,
+            Log.d(TAG, "Removing friend with key: " + finalKeyToRemove);
+            
+            // Create modified copies of the maps
+            HashMap<String, Object> updatedFriendKeys = new HashMap<>();
+            if (group.getFriendKeys() != null) {
+              updatedFriendKeys.putAll(group.getFriendKeys());
+              updatedFriendKeys.remove(finalKeyToRemove);
+            }
+            
+            HashMap<String, Object> updatedComingKeys = new HashMap<>();
+            if (group.getComingKeys() != null) {
+              updatedComingKeys.putAll(group.getComingKeys());
+              // Remove from ComingKeys if present
+              updatedComingKeys.remove(finalKeyToRemove);
+            }
+            
+            // Create updates map for the entire group
+            HashMap<String, Object> groupUpdates = new HashMap<>();
+            groupUpdates.put("FriendKeys", updatedFriendKeys);
+            groupUpdates.put("ComingKeys", updatedComingKeys);
+            
+            // Update the group with both changes at once
+            serverClient.updateGroup(
+                GroupKey,
+                groupUpdates,
                 new FirebaseServerClient.OperationCallback() {
                   @Override
                   public void onSuccess() {
-                    // Also remove from ComingKeys if present
-                    if (group.getComingKeys() != null) {
-                      for (Map.Entry<String, Object> entry : group.getComingKeys().entrySet()) {
-                        if (entry.getValue().equals(friendKey)) {
-                          serverClient.updateData(
-                              "Groups/" + GroupKey + "/ComingKeys/" + entry.getKey(),
-                              null,
-                              null);
-                          break;
-                        }
-                      }
-                    }
+                    Log.d(TAG, "Friend removed successfully from both FriendKeys and ComingKeys");
                     
                     // Update local data
-                    if (FriendKeys != null && FriendKeys.containsKey(finalKeyToRemove)) {
-                      FriendKeys.remove(finalKeyToRemove);
+                    if (FriendKeys != null) {
+                      FriendKeys = updatedFriendKeys;
+                    }
+                    
+                    if (ComingKeys != null) {
+                      ComingKeys = updatedComingKeys;
                     }
                     
                     Toast.makeText(FriendsRemoveActivity.this, "Friend removed successfully", Toast.LENGTH_SHORT).show();
@@ -455,6 +469,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
                   
                   @Override
                   public void onError(String errorMessage) {
+                    Log.e(TAG, "Error removing friend: " + errorMessage);
                     Toast.makeText(
                             FriendsRemoveActivity.this,
                             "Error removing friend: " + errorMessage,
@@ -466,6 +481,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
           
           @Override
           public void onError(String errorMessage) {
+            Log.e(TAG, "Error loading group: " + errorMessage);
             Toast.makeText(
                     FriendsRemoveActivity.this,
                     "Error loading group: " + errorMessage,
