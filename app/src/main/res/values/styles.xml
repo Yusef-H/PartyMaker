@@ -14,4 +14,10 @@
         <!-- Other theme attributes -->
         <item name="android:windowBackground">@color/colorBackground</item>
     </style>
+    
+    <!-- Theme with no action bar for activities with custom toolbar -->
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

@@ -62,7 +62,9 @@
         <activity android:name=".ui.group.JoinGroupActivity" />
         <activity android:name=".ui.group.AdminSettingsActivity" />
         <activity android:name=".ui.group.PartyMainActivity" />
-        <activity android:name=".ui.group.PublicGroupsActivity" />
+        <activity 
+            android:name=".ui.group.PublicGroupsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.settings.ServerSettingsActivity" />
         <activity android:name=".ui.chatbot.GptChatActivity" />
 
