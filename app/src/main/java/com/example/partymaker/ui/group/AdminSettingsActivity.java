@@ -162,6 +162,8 @@ public class AdminSettingsActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
     // Handle back button press to ensure proper navigation
     navigateBackToPartyMain();
   }

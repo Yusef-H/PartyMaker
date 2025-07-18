@@ -165,6 +165,8 @@ public class FriendsRemoveActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
     navigateBack();
   }
 

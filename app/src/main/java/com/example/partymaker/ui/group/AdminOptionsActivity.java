@@ -243,6 +243,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
   @Override
   public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
     // Handle back button press to ensure proper navigation
     navigateBackToPartyMain();
   }

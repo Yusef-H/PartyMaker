@@ -1097,6 +1097,8 @@ public class PartyMainActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
     Log.d(TAG, "Back button pressed, navigating to MainActivity");
     Intent intent = new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
     startActivity(intent);
