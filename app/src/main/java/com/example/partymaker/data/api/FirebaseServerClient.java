@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.lang.ref.WeakReference;
 
 /**
  * API client for communicating with the PartyMaker backend server (Spring Boot). Handles CRUD
@@ -48,8 +49,8 @@ public class FirebaseServerClient {
   private String serverUrl = DEFAULT_SERVER_URL;
   /** Gson instance for JSON serialization. */
   private final Gson gson = new Gson();
-  /** Application context. */
-  private Context context;
+  /** Application context - using WeakReference to prevent memory leaks. */
+  private WeakReference<Context> contextRef;
   /** ExecutorService for background tasks. */
   private final ExecutorService executor = Executors.newCachedThreadPool();
   /** Handler for posting to main thread. */
@@ -78,13 +79,23 @@ public class FirebaseServerClient {
    * @param context the application context
    */
   public void initialize(Context context) {
-    this.context = context.getApplicationContext();
+    this.contextRef = new WeakReference<>(context.getApplicationContext());
     loadServerUrl();
     Log.i(TAG, "FirebaseServerClient initialized with server URL: " + serverUrl);
   }
 
+  /**
+   * Gets the context from the WeakReference
+   * 
+   * @return the context or null if it has been garbage collected
+   */
+  private Context getContext() {
+    return contextRef != null ? contextRef.get() : null;
+  }
+
   /** Loads the server URL from SharedPreferences or uses the default. */
   private void loadServerUrl() {
+    Context context = getContext();
     if (context != null) {
       serverUrl =
           PreferenceManager.getDefaultSharedPreferences(context)
@@ -106,6 +117,13 @@ public class FirebaseServerClient {
   public void getGroups(final DataCallback<Map<String, Group>> callback) {
     Log.d(TAG, "getGroups called");
     logApiCall("GET", "Groups");
+
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
@@ -166,6 +184,13 @@ public class FirebaseServerClient {
     if (groupId == null || groupId.isEmpty()) {
       Log.e(TAG, "Invalid groupId: null or empty");
       mainHandler.post(() -> callback.onError("Invalid group ID"));
+      return;
+    }
+
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
 
@@ -243,6 +268,13 @@ public class FirebaseServerClient {
   public void saveGroup(String groupId, Group group, final OperationCallback callback) {
     Log.d(TAG, "saveGroup called for groupId: " + groupId);
     
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
+    
     if (groupId == null || groupId.isEmpty() || group == null) {
       Log.e(TAG, "Invalid parameters for saveGroup");
       mainHandler.post(() -> callback.onError("Invalid group data"));
@@ -291,6 +323,13 @@ public class FirebaseServerClient {
       String groupId, Map<String, Object> updates, final OperationCallback callback) {
     Log.d(TAG, "updateGroup called for groupId: " + groupId);
     
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
+    
     if (groupId == null || groupId.isEmpty() || updates == null || updates.isEmpty()) {
       Log.e(TAG, "Invalid parameters for updateGroup");
       mainHandler.post(() -> callback.onError("Invalid update data"));
@@ -336,6 +375,13 @@ public class FirebaseServerClient {
 
   public void deleteGroup(String groupId, final OperationCallback callback) {
     Log.d(TAG, "deleteGroup called for groupId: " + groupId);
+    
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
     
     if (groupId == null || groupId.isEmpty()) {
       Log.e(TAG, "Invalid groupId for deleteGroup");
@@ -383,6 +429,13 @@ public class FirebaseServerClient {
       String groupId, String field, Object value, final DataCallback<Void> callback) {
     Log.d(TAG, "updateGroup field called for groupId: " + groupId + ", field: " + field);
     
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
+    
     if (groupId == null || groupId.isEmpty() || field == null || field.isEmpty()) {
       Log.e(TAG, "Invalid parameters for updateGroup field");
       mainHandler.post(() -> callback.onError("Invalid update data"));
@@ -413,6 +466,13 @@ public class FirebaseServerClient {
   public void getUsers(final DataCallback<Map<String, User>> callback) {
     Log.d(TAG, "getUsers called");
     logApiCall("GET", "Users");
+
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
@@ -467,76 +527,252 @@ public class FirebaseServerClient {
   }
 
   public void getUser(String userId, final DataCallback<User> callback) {
-    new AsyncTask<String, Void, User>() {
-      private String errorMessage = null;
+    // Make AsyncTask static to prevent memory leaks
+    final String serverUrl = this.serverUrl;
+    final Gson gson = this.gson;
+    final Handler mainHandler = this.mainHandler;
+    
+    new UserAsyncTask(serverUrl, gson, mainHandler, callback).execute(userId);
+  }
 
-      @Override
-      protected User doInBackground(String... params) {
-        String result = makeGetRequest("Users/" + params[0]);
-        if (result != null) {
-          try {
-            return gson.fromJson(result, User.class);
-          } catch (Exception e) {
-            Log.e(TAG, "Error parsing user", e);
-            errorMessage = e.getMessage();
-            return null;
-          }
-        } else {
-          errorMessage = "Failed to fetch user";
+  // Static AsyncTask class for getUser
+  private static class UserAsyncTask extends AsyncTask<String, Void, User> {
+    private String errorMessage = null;
+    private final String serverUrl;
+    private final Gson gson;
+    private final Handler mainHandler;
+    private final DataCallback<User> callback;
+    
+    public UserAsyncTask(String serverUrl, Gson gson, Handler mainHandler, DataCallback<User> callback) {
+      this.serverUrl = serverUrl;
+      this.gson = gson;
+      this.mainHandler = mainHandler;
+      this.callback = callback;
+    }
+
+    @Override
+    protected User doInBackground(String... params) {
+      String result = makeGetRequest("Users/" + params[0]);
+      if (result != null) {
+        try {
+          return gson.fromJson(result, User.class);
+        } catch (Exception e) {
+          Log.e("FirebaseServerClient", "Error parsing user", e);
+          errorMessage = e.getMessage();
           return null;
         }
+      } else {
+        errorMessage = "Failed to fetch user";
+        return null;
       }
+    }
 
-      @Override
-      protected void onPostExecute(User user) {
-        if (user != null) {
-          callback.onSuccess(user);
+    @Override
+    protected void onPostExecute(User user) {
+      if (user != null) {
+        mainHandler.post(() -> callback.onSuccess(user));
+      } else {
+        mainHandler.post(() -> callback.onError(errorMessage != null ? errorMessage : "Failed to fetch user"));
+      }
+    }
+    
+    // Helper method for making GET requests
+    private String makeGetRequest(String path) {
+      return makeGetRequest(path, 15000);
+    }
+    
+    private String makeGetRequest(String path, int timeout) {
+      HttpURLConnection connection = null;
+      BufferedReader reader = null;
+      StringBuilder result = new StringBuilder();
+
+      try {
+        URL url = new URL(serverUrl + "/api/firebase/" + path);
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(timeout);
+        connection.setReadTimeout(timeout);
+
+        int responseCode = connection.getResponseCode();
+        Log.d("FirebaseServerClient", "GET response code: " + responseCode + " for URL: " + url);
+
+        if (responseCode >= 200 && responseCode < 300) {
+          reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+          String line;
+          while ((line = reader.readLine()) != null) {
+            result.append(line);
+          }
+          return result.toString();
         } else {
-          callback.onError(errorMessage != null ? errorMessage : "Failed to fetch user");
+          Log.e("FirebaseServerClient", "GET request failed with response code: " + responseCode);
+          return null;
+        }
+      } catch (Exception e) {
+        Log.e("FirebaseServerClient", "Error making GET request", e);
+        errorMessage = e.getMessage();
+        return null;
+      } finally {
+        if (connection != null) {
+          connection.disconnect();
+        }
+        if (reader != null) {
+          try {
+            reader.close();
+          } catch (IOException e) {
+            Log.e("FirebaseServerClient", "Error closing reader", e);
+          }
         }
       }
-    }.execute(userId);
+    }
   }
 
   public void saveUser(String userId, User user, final OperationCallback callback) {
-    new AsyncTask<Object, Void, Boolean>() {
-      @Override
-      protected Boolean doInBackground(Object... params) {
-        String path = "Users/" + params[0];
-        User userObj = (User) params[1];
-        return makePostRequest(path, gson.toJson(userObj));
-      }
+    // Make AsyncTask static to prevent memory leaks
+    final String serverUrl = this.serverUrl;
+    final Gson gson = this.gson;
+    final Handler mainHandler = this.mainHandler;
+    
+    new SaveUserAsyncTask(serverUrl, gson, mainHandler, callback).execute(userId, user);
+  }
+  
+  // Static AsyncTask class for saveUser
+  private static class SaveUserAsyncTask extends AsyncTask<Object, Void, Boolean> {
+    private final String serverUrl;
+    private final Gson gson;
+    private final Handler mainHandler;
+    private final OperationCallback callback;
+    
+    public SaveUserAsyncTask(String serverUrl, Gson gson, Handler mainHandler, OperationCallback callback) {
+      this.serverUrl = serverUrl;
+      this.gson = gson;
+      this.mainHandler = mainHandler;
+      this.callback = callback;
+    }
+    
+    @Override
+    protected Boolean doInBackground(Object... params) {
+      String path = "Users/" + params[0];
+      User userObj = (User) params[1];
+      return makePostRequest(path, gson.toJson(userObj));
+    }
 
-      @Override
-      protected void onPostExecute(Boolean success) {
-        if (success) {
-          callback.onSuccess();
-        } else {
-          callback.onError("Failed to save user");
+    @Override
+    protected void onPostExecute(Boolean success) {
+      if (success) {
+        mainHandler.post(() -> callback.onSuccess());
+      } else {
+        mainHandler.post(() -> callback.onError("Failed to save user"));
+      }
+    }
+    
+    // Helper method for making POST requests
+    private boolean makePostRequest(String path, String jsonBody) {
+      return makePostRequest(path, jsonBody, 15000);
+    }
+    
+    private boolean makePostRequest(String path, String jsonBody, int timeout) {
+      HttpURLConnection connection = null;
+      try {
+        URL url = new URL(serverUrl + "/api/firebase/" + path);
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setConnectTimeout(timeout);
+        connection.setReadTimeout(timeout);
+        connection.setDoOutput(true);
+
+        try (OutputStream os = connection.getOutputStream()) {
+          byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+          os.write(input, 0, input.length);
+        }
+
+        int responseCode = connection.getResponseCode();
+        Log.d("FirebaseServerClient", "POST response code: " + responseCode + " for URL: " + url);
+        return responseCode >= 200 && responseCode < 300;
+      } catch (Exception e) {
+        Log.e("FirebaseServerClient", "Error making POST request", e);
+        return false;
+      } finally {
+        if (connection != null) {
+          connection.disconnect();
         }
       }
-    }.execute(userId, user);
+    }
   }
 
   public void updateUser(
       String userId, Map<String, Object> updates, final OperationCallback callback) {
-    new AsyncTask<Object, Void, Boolean>() {
-      @Override
-      protected Boolean doInBackground(Object... params) {
-        String path = "Users/" + params[0];
-        Map<String, Object> updatesObj = (Map<String, Object>) params[1];
-        return makePutRequest(path, gson.toJson(updatesObj));
-      }
+    // Make AsyncTask static to prevent memory leaks
+    final String serverUrl = this.serverUrl;
+    final Gson gson = this.gson;
+    final Handler mainHandler = this.mainHandler;
+    
+    new UpdateUserAsyncTask(serverUrl, gson, mainHandler, callback).execute(userId, updates);
+  }
+  
+  // Static AsyncTask class for updateUser
+  private static class UpdateUserAsyncTask extends AsyncTask<Object, Void, Boolean> {
+    private final String serverUrl;
+    private final Gson gson;
+    private final Handler mainHandler;
+    private final OperationCallback callback;
+    
+    public UpdateUserAsyncTask(String serverUrl, Gson gson, Handler mainHandler, OperationCallback callback) {
+      this.serverUrl = serverUrl;
+      this.gson = gson;
+      this.mainHandler = mainHandler;
+      this.callback = callback;
+    }
+    
+    @Override
+    protected Boolean doInBackground(Object... params) {
+      String path = "Users/" + params[0];
+      Map<String, Object> updatesObj = (Map<String, Object>) params[1];
+      return makePutRequest(path, gson.toJson(updatesObj));
+    }
 
-      @Override
-      protected void onPostExecute(Boolean success) {
-        if (success) {
-          callback.onSuccess();
-        } else {
-          callback.onError("Failed to update user");
+    @Override
+    protected void onPostExecute(Boolean success) {
+      if (success) {
+        mainHandler.post(() -> callback.onSuccess());
+      } else {
+        mainHandler.post(() -> callback.onError("Failed to update user"));
+      }
+    }
+    
+    // Helper method for making PUT requests
+    private boolean makePutRequest(String path, String jsonBody) {
+      return makePutRequest(path, jsonBody, 15000);
+    }
+    
+    private boolean makePutRequest(String path, String jsonBody, int timeout) {
+      HttpURLConnection connection = null;
+      try {
+        URL url = new URL(serverUrl + "/api/firebase/" + path);
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("PUT");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setConnectTimeout(timeout);
+        connection.setReadTimeout(timeout);
+        connection.setDoOutput(true);
+
+        try (OutputStream os = connection.getOutputStream()) {
+          byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+          os.write(input, 0, input.length);
+        }
+
+        int responseCode = connection.getResponseCode();
+        Log.d("FirebaseServerClient", "PUT response code: " + responseCode + " for URL: " + url);
+        return responseCode >= 200 && responseCode < 300;
+      } catch (Exception e) {
+        Log.e("FirebaseServerClient", "Error making PUT request", e);
+        return false;
+      } finally {
+        if (connection != null) {
+          connection.disconnect();
         }
       }
-    }.execute(userId, updates);
+    }
   }
 
   // Messages methods
@@ -584,6 +820,13 @@ public class FirebaseServerClient {
     if (groupId == null || groupId.isEmpty()) {
       Log.e(TAG, "Invalid groupId: null or empty");
       callback.onError("Invalid group ID");
+      return;
+    }
+
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
 
@@ -992,6 +1235,13 @@ public class FirebaseServerClient {
    */
   public void updateData(String path, Object value, final OperationCallback callback) {
     Log.d(TAG, "updateData called for path: " + path);
+    
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
     
     if (path == null || path.isEmpty()) {
       Log.e(TAG, "Invalid path for updateData");
