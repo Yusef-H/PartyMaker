@@ -210,6 +210,9 @@ public class FriendsAddActivity extends AppCompatActivity {
             ComingKeys = new HashMap<>();
           }
           
+          // Store CurrentFriend in a final variable to use in inner class
+          final String currentFriendEmail = CurrentFriend;
+          
           // Use server client to update ComingKeys
           serverClient.getGroup(
               GroupKey,
@@ -220,16 +223,19 @@ public class FriendsAddActivity extends AppCompatActivity {
                     // Find the friend key in FriendKeys
                     String friendKey = null;
                     for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                      if (entry.getKey().equals(CurrentFriend)) {
+                      if (entry.getKey().equals(currentFriendEmail)) {
                         friendKey = entry.getKey();
                         break;
                       }
                     }
                     
-                    if (friendKey != null) {
+                    // Store friendKey in a final variable for use in inner class
+                    final String finalFriendKey = friendKey;
+                    
+                    if (finalFriendKey != null) {
                       // Update ComingKeys
                       Map<String, Object> updates = new HashMap<>();
-                      updates.put(friendKey, "true");
+                      updates.put(finalFriendKey, "true");
                       
                       serverClient.updateData(
                           "Groups/" + GroupKey + "/ComingKeys",
@@ -243,7 +249,7 @@ public class FriendsAddActivity extends AppCompatActivity {
                               if (ComingKeys == null) {
                                 ComingKeys = new HashMap<>();
                               }
-                              ComingKeys.put(friendKey, "true");
+                              ComingKeys.put(finalFriendKey, "true");
                               
                               showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
                               hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
@@ -311,6 +317,12 @@ public class FriendsAddActivity extends AppCompatActivity {
       return;
     }
     
+    // Store the friendKey in a final variable for use in inner class
+    final String finalFriendKey = friendKey;
+    
+    // Store CurrentFriend in a final variable for use in inner class
+    final String currentFriendEmail = CurrentFriend;
+    
     // Check if user is already in the group
     serverClient.getGroup(
         GroupKey,
@@ -327,14 +339,14 @@ public class FriendsAddActivity extends AppCompatActivity {
             // Check if user is already in FriendKeys
             if (group.getFriendKeys() != null) {
               for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                if (entry.getValue().equals(friendKey)) {
+                if (entry.getValue().equals(finalFriendKey)) {
                   alreadyInGroup = true;
                   break;
                 }
               }
               
               // Also check by email (key)
-              if (group.getFriendKeys().containsKey(CurrentFriend)) {
+              if (group.getFriendKeys().containsKey(currentFriendEmail)) {
                 alreadyInGroup = true;
               }
             }
@@ -345,9 +357,8 @@ public class FriendsAddActivity extends AppCompatActivity {
             }
             
             // Add user to FriendKeys
-            final String finalFriendKey = friendKey;
             Map<String, Object> updates = new HashMap<>();
-            updates.put(CurrentFriend, friendKey);
+            updates.put(currentFriendEmail, finalFriendKey);
             
             serverClient.updateData(
                 "Groups/" + GroupKey + "/FriendKeys",
@@ -359,7 +370,7 @@ public class FriendsAddActivity extends AppCompatActivity {
                     if (FriendKeys == null) {
                       FriendKeys = new HashMap<>();
                     }
-                    FriendKeys.put(CurrentFriend, finalFriendKey);
+                    FriendKeys.put(currentFriendEmail, finalFriendKey);
                     
                     Toast.makeText(FriendsAddActivity.this, "Friend successfully added", Toast.LENGTH_SHORT).show();
                     
