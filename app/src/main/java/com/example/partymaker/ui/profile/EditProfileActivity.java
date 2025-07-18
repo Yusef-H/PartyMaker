@@ -205,24 +205,30 @@ public class EditProfileActivity extends AppCompatActivity {
     userViewModel.loadCurrentUser(this, true);
     
     // Direct load from Firebase as backup
-    String userKey = AuthHelper.getCurrentUserKey(this);
-    if (userKey != null && !userKey.isEmpty()) {
-      DBRef.refUsers.child(userKey).get()
-          .addOnSuccessListener(dataSnapshot -> {
-            if (dataSnapshot.exists()) {
-              User user = dataSnapshot.getValue(User.class);
-              if (user != null) {
-                // Update UI with user data
-                etUsername.setText(user.getUsername());
-                
-                // Load profile image
-                loadProfileImageFromStorage(userKey);
+    try {
+      String userKey = AuthHelper.getCurrentUserKey(this);
+      if (userKey != null && !userKey.isEmpty()) {
+        DBRef.refUsers.child(userKey).get()
+            .addOnSuccessListener(dataSnapshot -> {
+              if (dataSnapshot.exists()) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                  // Update UI with user data
+                  etUsername.setText(user.getUsername());
+                  
+                  // Load profile image
+                  loadProfileImageFromStorage(userKey);
+                }
               }
-            }
-          })
-          .addOnFailureListener(e -> {
-            Log.e(TAG, "Error loading user data directly", e);
-          });
+            })
+            .addOnFailureListener(e -> {
+              Log.e(TAG, "Error loading user data directly", e);
+            });
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error getting current user key", e);
+      showError("Authentication error: " + e.getMessage());
+      progressBar.setVisibility(View.GONE);
     }
   }
   
@@ -338,14 +344,23 @@ public class EditProfileActivity extends AppCompatActivity {
     // Show a loading indicator
     progressBar.setVisibility(View.VISIBLE);
     
-    User currentUser = userViewModel.getCurrentUser().getValue();
-    if (currentUser == null || currentUser.getUserKey() == null) {
-      showError("Authentication error. Please login again.");
+    String userKey;
+    try {
+      // Get user key directly from AuthHelper instead of relying on ViewModel
+      userKey = AuthHelper.getCurrentUserKey(this);
+      if (userKey == null || userKey.isEmpty()) {
+        showError("Authentication error. Please login again.");
+        progressBar.setVisibility(View.GONE);
+        return;
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error getting current user key", e);
+      showError("Authentication error: " + e.getMessage());
       progressBar.setVisibility(View.GONE);
       return;
     }
     
-    String userKey = currentUser.getUserKey();
+    Log.d(TAG, "Uploading image for user key: " + userKey);
 
     // Set the image immediately for better UX
     imgProfile.setImageURI(uri);
@@ -363,10 +378,22 @@ public class EditProfileActivity extends AppCompatActivity {
                     // Update the profile image URL in the database
                     Map<String, Object> updates = new HashMap<>();
                     updates.put("profileImageUrl", downloadUri.toString());
-                    userViewModel.updateCurrentUser(updates);
                     
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                    // Update directly in Firebase
+                    DBRef.refUsers.child(userKey).updateChildren(updates)
+                        .addOnSuccessListener(aVoid -> {
+                          Log.d(TAG, "Profile image URL updated in database");
+                          progressBar.setVisibility(View.GONE);
+                          Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                          
+                          // Also update in ViewModel to keep UI in sync
+                          userViewModel.updateCurrentUser(updates);
+                        })
+                        .addOnFailureListener(e -> {
+                          Log.e(TAG, "Error updating profile image URL", e);
+                          progressBar.setVisibility(View.GONE);
+                          showError("Error updating profile: " + e.getMessage());
+                        });
                   })
                   .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
