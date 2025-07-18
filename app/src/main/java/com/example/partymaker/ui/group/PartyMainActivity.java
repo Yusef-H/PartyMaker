@@ -338,8 +338,13 @@ public class PartyMainActivity extends AppCompatActivity {
   private void setupClickListeners() {
     Log.d(TAG, "Setting up click listeners");
 
-    // Back button
-    back5.setOnClickListener(v -> finish());
+    // Back button - navigate to MainActivity instead of just finishing
+    back5.setOnClickListener(v -> {
+      Log.d(TAG, "Back button clicked, navigating to MainActivity");
+      Intent intent = new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
+      startActivity(intent);
+      finish();
+    });
 
     // Check if Card6 is null
     if (Card6 == null) {
@@ -1030,5 +1035,13 @@ public class PartyMainActivity extends AppCompatActivity {
       default:
         return -1; // Indicate an error
     }
+  }
+
+  @Override
+  public void onBackPressed() {
+    Log.d(TAG, "Back button pressed, navigating to MainActivity");
+    Intent intent = new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
+    startActivity(intent);
+    finish();
   }
 }
