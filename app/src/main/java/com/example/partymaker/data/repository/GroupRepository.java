@@ -422,7 +422,15 @@ public class GroupRepository {
                     break;
                 case "friendKeys":
                     if (value instanceof Map) {
-                        group.setFriendKeys((Map<String, Boolean>) value);
+                        // Convert to HashMap<String, Object>
+                        HashMap<String, Object> friendKeys = new HashMap<>();
+                        Map<?, ?> valueMap = (Map<?, ?>) value;
+                        for (Map.Entry<?, ?> mapEntry : valueMap.entrySet()) {
+                            if (mapEntry.getKey() instanceof String) {
+                                friendKeys.put((String) mapEntry.getKey(), mapEntry.getValue());
+                            }
+                        }
+                        group.setFriendKeys(friendKeys);
                     }
                     break;
                 // Add more fields as needed

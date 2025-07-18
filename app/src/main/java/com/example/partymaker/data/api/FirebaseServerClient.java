@@ -102,6 +102,7 @@ public class FirebaseServerClient {
   }
 
   // Groups methods
+  @SuppressWarnings("unchecked")
   public void getGroups(final DataCallback<Map<String, Group>> callback) {
     Log.d(TAG, "getGroups called");
     logApiCall("GET", "Groups");
@@ -407,33 +408,38 @@ public class FirebaseServerClient {
   }
 
   // Users methods
+  @SuppressWarnings("unchecked")
   public void getUsers(final DataCallback<Map<String, User>> callback) {
     Log.d(TAG, "getUsers called");
-    
+    logApiCall("GET", "Users");
+
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
       mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
       return;
     }
-    
+
     NetworkUtils.executeWithRetry(
         () -> {
           String result = makeGetRequest("Users");
           if (result == null) {
             throw new IOException("Failed to fetch users data");
           }
-          
+
           Map<String, User> users = new HashMap<>();
           JSONObject jsonObject = new JSONObject(result);
           Iterator<String> keys = jsonObject.keys();
-          
+
           while (keys.hasNext()) {
             String key = keys.next();
             JSONObject userJson = jsonObject.getJSONObject(key);
             User user = gson.fromJson(userJson.toString(), User.class);
+            if (user.getUserKey() == null) {
+              user.setUserKey(key);
+            }
             users.put(key, user);
           }
-          
+
           Log.d(TAG, "Successfully parsed " + users.size() + " users");
           return users;
         },
@@ -443,14 +449,14 @@ public class FirebaseServerClient {
             Log.d(TAG, "getUsers completed successfully with " + result.size() + " users");
             callback.onSuccess(result);
           }
-          
+
           @Override
           public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
             String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
             Log.e(TAG, "getUsers failed: " + errorMessage + " (" + errorType + ")");
             callback.onError(userFriendlyError);
           }
-          
+
           @Override
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying getUsers (attempt " + attemptCount + "): " + e.getMessage());
@@ -1041,6 +1047,7 @@ public class FirebaseServerClient {
     );
   }
 
+  @SuppressWarnings("unchecked")
   public void getUserGroups(String userId, final DataCallback<Map<String, Group>> callback) {
     new AsyncTask<String, Void, Map<String, Group>>() {
       private String errorMessage = null;
