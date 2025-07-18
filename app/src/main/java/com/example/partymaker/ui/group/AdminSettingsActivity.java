@@ -310,8 +310,8 @@ public class AdminSettingsActivity extends AppCompatActivity {
               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                   ChatMessage message = data.getValue(ChatMessage.class);
-                  if (message != null && message.getGroupKey() != null) {
-                    if (message.getGroupKey().equals(GroupKey)) {
+                  if (message != null && message.getGroupId() != null) {
+                    if (message.getGroupId().equals(GroupKey)) {
                       data.getRef().removeValue();
                     }
                   }
