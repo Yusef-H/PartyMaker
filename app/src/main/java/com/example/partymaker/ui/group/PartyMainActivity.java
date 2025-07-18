@@ -295,32 +295,8 @@ public class PartyMainActivity extends AppCompatActivity {
           });
     }
 
-    // Add a test button for direct navigation to ChatActivity
-    Button testButton = new Button(this);
-    testButton.setText("TEST CHAT");
-    testButton.setBackgroundColor(Color.RED);
-    testButton.setTextColor(Color.WHITE);
-
-    // Add the button to the layout
-    ViewGroup rootView = findViewById(android.R.id.content);
-    ViewGroup.LayoutParams params =
-        new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    rootView.addView(testButton, params);
-
-    testButton.setOnClickListener(
-        v -> {
-          Log.d(TAG, "Test button clicked - navigating to ChatActivity");
-          navigateToChatActivity();
-        });
-
-    // Remove automatic navigation - let user click to navigate
-    // Auto-navigate to ChatActivity after 5 seconds
-    // new Handler().postDelayed(() -> {
-    //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
-    //     navigateToChatActivity();
-    // }, 3000);
-
+    // Remove test button code
+    
     Card1.setOnClickListener(
         v -> {
           if (currentGroup != null && currentGroup.getGroupLocation() != null) {
