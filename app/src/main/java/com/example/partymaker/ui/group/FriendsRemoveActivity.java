@@ -1,8 +1,11 @@
 package com.example.partymaker.ui.group;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,7 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
@@ -20,19 +25,14 @@ import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class FriendsRemoveActivity extends AppCompatActivity {
   private static final String TAG = "FriendsRemoveActivity";
-  private Button btnHide, btnHelp, btnDeleteFriend;
-  private TextView tvHide, tvHelp, tvInstructions1;
+  private Button btnDeleteFriend;
+  private TextView tvInstructions1;
   private EditText etFriendEmail;
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
   private String GroupKey,
@@ -47,11 +47,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
       CreatedAt,
       GroupPrice;
   private int GroupType;
-  private ImageButton btnBack;
   private boolean CanAdd;
-  private Object usersRef;
-  private Object groupsRef;
-  private String groupID;
   private ArrayList<User> usersList = new ArrayList<>();
   private ArrayList<String> userKeys = new ArrayList<>();
   private UserAdapter adapter;
@@ -61,6 +57,11 @@ public class FriendsRemoveActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_friends_remove);
+
+    // Set up the toolbar
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    setupActionBar();
 
     // Initialize the server client
     serverClient = FirebaseServerClient.getInstance();
@@ -89,25 +90,10 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     ComingKeys = extras.getComingKeys();
     MessageKeys = extras.getMessageKeys();
 
-    // Initialize Firebase database references
-    FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-    usersRef = accessManager.getUsersRef();
-    groupsRef = accessManager.getGroupsRef();
-
-    // connection
+    // Initialize UI elements
     btnDeleteFriend = findViewById(R.id.btnDeleteFriend);
-    btnHide = findViewById(R.id.btnHide3);
-    btnHelp = findViewById(R.id.btnHelp3);
-    tvHide = findViewById(R.id.tvHide3);
-    tvHelp = findViewById(R.id.tvHelp3);
     tvInstructions1 = findViewById(R.id.tvInstructions3);
     etFriendEmail = findViewById(R.id.etDeleteEmail);
-    btnBack = findViewById(R.id.btnBack4);
-
-    groupID = getIntent().getStringExtra("groupID");
-    if (groupID == null) {
-      groupID = GroupKey; // Use GroupKey as fallback
-    }
 
     ListView listView = findViewById(R.id.friends_remove_list);
     adapter = new UserAdapter(this, R.layout.item_user, R.id.tvUserListUsername, usersList);
@@ -129,11 +115,28 @@ public class FriendsRemoveActivity extends AppCompatActivity {
           builder.show();
         });
 
-    // Set up back button
-    btnBack.setOnClickListener(v -> navigateBack());
-
-    EventHandler();
+    setupEventHandlers();
     loadFriends();
+  }
+
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setTitle("Remove Friends");
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
+      actionBar.setElevation(4);
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      navigateBack();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   private void navigateBack() {
@@ -165,18 +168,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     navigateBack();
   }
 
-  private void EventHandler() {
-    btnHelp.setOnClickListener(
-        v -> {
-          showViews(tvInstructions1, btnHide, tvHide);
-          hideViews(btnHelp, tvHelp);
-        });
-
-    btnHide.setOnClickListener(
-        v -> {
-          showViews(btnHelp, tvHelp);
-          hideViews(tvInstructions1, btnHide, tvHide);
-        });
+  private void setupEventHandlers() {
     btnDeleteFriend.setOnClickListener(
         v -> {
           // This if - checks if EditText is not Empty
@@ -201,7 +193,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
                   }
                 });
           } else {
-            Toast.makeText(FriendsRemoveActivity.this, "Input email please", Toast.LENGTH_SHORT)
+            Toast.makeText(FriendsRemoveActivity.this, "Please enter an email address", Toast.LENGTH_SHORT)
                 .show();
           }
         });
@@ -260,57 +252,8 @@ public class FriendsRemoveActivity extends AppCompatActivity {
               return;
             }
             
-            // Remove from FriendKeys
-            final String keyToRemove = friendKeyInGroup;
-            serverClient.updateData(
-                "Groups/" + GroupKey + "/FriendKeys/" + keyToRemove,
-                null,
-                new FirebaseServerClient.OperationCallback() {
-                  @Override
-                  public void onSuccess() {
-                    // Also remove from ComingKeys if present
-                    if (group.getComingKeys() != null) {
-                      for (Map.Entry<String, Object> entry : group.getComingKeys().entrySet()) {
-                        if (entry.getValue().equals(finalFriendKey)) {
-                          serverClient.updateData(
-                              "Groups/" + GroupKey + "/ComingKeys/" + entry.getKey(),
-                              null,
-                              new FirebaseServerClient.OperationCallback() {
-                                @Override
-                                public void onSuccess() {
-                                  Log.d(TAG, "Removed from ComingKeys");
-                                }
-                                
-                                @Override
-                                public void onError(String errorMessage) {
-                                  Log.e(TAG, "Error removing from ComingKeys: " + errorMessage);
-                                }
-                              });
-                          break;
-                        }
-                      }
-                    }
-                    
-                    // Update local data
-                    if (FriendKeys != null && FriendKeys.containsKey(keyToRemove)) {
-                      FriendKeys.remove(keyToRemove);
-                    }
-                    
-                    Toast.makeText(FriendsRemoveActivity.this, "Friend removed successfully", Toast.LENGTH_SHORT).show();
-                    
-                    // Refresh the list
-                    loadFriends();
-                  }
-                  
-                  @Override
-                  public void onError(String errorMessage) {
-                    Toast.makeText(
-                            FriendsRemoveActivity.this,
-                            "Error removing friend: " + errorMessage,
-                            Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                });
+            // Remove friend using the new method
+            removeFriend(finalFriendKey);
           }
           
           @Override
@@ -322,18 +265,6 @@ public class FriendsRemoveActivity extends AppCompatActivity {
                 .show();
           }
         });
-  }
-
-  private void showViews(View... views) {
-    for (View view : views) {
-      view.setVisibility(View.VISIBLE);
-    }
-  }
-
-  private void hideViews(View... views) {
-    for (View view : views) {
-      view.setVisibility(View.INVISIBLE);
-    }
   }
 
   private void loadFriends() {
@@ -462,6 +393,9 @@ public class FriendsRemoveActivity extends AppCompatActivity {
                     }
                     
                     Toast.makeText(FriendsRemoveActivity.this, "Friend removed successfully", Toast.LENGTH_SHORT).show();
+                    
+                    // Clear the email field
+                    etFriendEmail.setText("");
                     
                     // Refresh the list
                     loadFriends();
