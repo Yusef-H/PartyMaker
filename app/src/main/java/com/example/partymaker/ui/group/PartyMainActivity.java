@@ -379,9 +379,20 @@ public class PartyMainActivity extends AppCompatActivity {
     // Card5 - Admin options OR Coming/Not coming toggle
     Card5.setOnClickListener(
         v -> {
-          if (isUserAdmin) {
+          Log.d(TAG, "Card5 clicked - isUserAdmin: " + isUserAdmin + ", isUserComing: " + isUserComing);
+          
+          // Double check admin status
+          boolean isAdmin = false;
+          if (currentGroup != null && currentGroup.getAdminKey() != null && UserKey != null) {
+            isAdmin = currentGroup.getAdminKey().equals(UserKey);
+            Log.d(TAG, "Card5 click - Rechecked admin status: " + isAdmin);
+          }
+          
+          if (isAdmin) {
+            Log.d(TAG, "Navigating to admin options as user is admin");
             navigateToAdminOptionsActivity();
           } else {
+            Log.d(TAG, "Toggling coming status as user is not admin");
             toggleComingStatus();
           }
         });
@@ -440,17 +451,41 @@ public class PartyMainActivity extends AppCompatActivity {
     tvDateYears.setText(group.getGroupYears());
     tvDateHours.setText(group.getGroupHours());
 
-    // Check if user is admin
-    isUserAdmin = group.getAdminKey() != null && group.getAdminKey().equals(UserKey);
+    // Check if user is admin - compare the actual strings
+    String adminKey = group.getAdminKey();
+    Log.d(TAG, "Checking admin status - AdminKey: " + adminKey + ", UserKey: " + UserKey);
+    
+    if (adminKey != null && UserKey != null) {
+      isUserAdmin = adminKey.equals(UserKey);
+      Log.d(TAG, "Admin status determined: " + isUserAdmin);
+    } else {
+      isUserAdmin = false;
+      Log.d(TAG, "Admin status set to false due to null keys");
+    }
 
     // Check if user is coming
-    isUserComing = group.getComingKeys() != null && group.getComingKeys().containsKey(UserKey);
+    boolean userComingStatus = false;
+    if (group.getComingKeys() != null) {
+      userComingStatus = group.getComingKeys().containsKey(UserKey);
+      Log.d(TAG, "User coming status from server: " + userComingStatus);
+    }
+    isUserComing = userComingStatus;
 
     // Update Card5 UI based on admin status
     updateCard5UI();
   }
 
   private void updateCard5UI() {
+    // Log the admin status for debugging
+    Log.d(TAG, "updateCard5UI - isUserAdmin: " + isUserAdmin + ", UserKey: " + UserKey + 
+          ", Admin key: " + (currentGroup != null ? currentGroup.getAdminKey() : "null"));
+    
+    // Double check admin status to ensure it's correct
+    if (currentGroup != null && currentGroup.getAdminKey() != null) {
+      isUserAdmin = currentGroup.getAdminKey().equals(UserKey);
+      Log.d(TAG, "Re-checked admin status: " + isUserAdmin);
+    }
+    
     if (isUserAdmin) {
       // Show admin options
       imgOptions.setVisibility(View.VISIBLE);
@@ -459,6 +494,7 @@ public class PartyMainActivity extends AppCompatActivity {
       imgThumbDown.setVisibility(View.INVISIBLE);
       tvComing.setVisibility(View.INVISIBLE);
       tvNotComing.setVisibility(View.INVISIBLE);
+      Log.d(TAG, "Showing admin options UI");
     } else {
       // Show coming/not coming toggle
       imgOptions.setVisibility(View.INVISIBLE);
@@ -470,12 +506,14 @@ public class PartyMainActivity extends AppCompatActivity {
         tvComing.setVisibility(View.VISIBLE);
         imgThumbDown.setVisibility(View.INVISIBLE);
         tvNotComing.setVisibility(View.INVISIBLE);
+        Log.d(TAG, "Showing 'coming' UI");
       } else {
         // User is not coming - show thumb down
         imgThumbUp.setVisibility(View.INVISIBLE);
         tvComing.setVisibility(View.INVISIBLE);
         imgThumbDown.setVisibility(View.VISIBLE);
         tvNotComing.setVisibility(View.VISIBLE);
+        Log.d(TAG, "Showing 'not coming' UI");
       }
     }
   }

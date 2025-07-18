@@ -554,18 +554,52 @@ public class FirebaseServerClient {
                 TAG, "Extracted " + messageKeys.size() + " message keys: " + messageKeys.keySet());
           } else {
             Log.d(TAG, "Group does not have MessageKeys");
+            return new ArrayList<>(); // No messages to fetch
           }
 
-          // Fetch all messages from GroupsMessages
-          Log.d(TAG, "Fetching all messages from path: GroupsMessages");
-          String messagesJson = makeGetRequest("GroupsMessages", 15000);
-          if (messagesJson == null) {
-            Log.e(TAG, "Failed to fetch messages");
-            errorMessage = "Failed to fetch messages";
-            return new ArrayList<>(); // Return empty list instead of null
+          if (messageKeys.isEmpty()) {
+            Log.d(TAG, "No message keys found for group: " + groupId);
+            return new ArrayList<>(); // No messages to fetch
           }
 
-          // Parse the messages
+          // Try to fetch messages directly for this group
+          Log.d(TAG, "Fetching messages for group: " + groupId);
+          String messagesPath = "GroupsMessages?groupId=" + groupId;
+          String messagesJson = makeGetRequest(messagesPath, 15000);
+          
+          // If direct query doesn't work (depends on server implementation),
+          // fall back to fetching specific messages by keys
+          if (messagesJson == null || messagesJson.trim().equals("{}") || messagesJson.trim().equals("[]")) {
+            Log.d(TAG, "No messages found with direct query, fetching by keys");
+            List<ChatMessage> messages = new ArrayList<>();
+            
+            // Fetch each message individually by key
+            for (String messageKey : messageKeys.keySet()) {
+              String messagePath = "GroupsMessages/" + messageKey;
+              String messageJson = makeGetRequest(messagePath, 5000);
+              
+              if (messageJson != null && !messageJson.trim().equals("{}")) {
+                try {
+                  ChatMessage message = gson.fromJson(messageJson, ChatMessage.class);
+                  if (message != null) {
+                    // Ensure the message has the key set
+                    if (message.getMessageKey() == null || message.getMessageKey().isEmpty()) {
+                      message.setMessageKey(messageKey);
+                    }
+                    messages.add(message);
+                    Log.d(TAG, "Added message with key: " + messageKey);
+                  }
+                } catch (Exception e) {
+                  Log.e(TAG, "Error parsing message: " + messageKey, e);
+                }
+              }
+            }
+            
+            Log.d(TAG, "Successfully fetched " + messages.size() + " messages by keys");
+            return messages;
+          }
+
+          // Parse the messages from direct query
           List<ChatMessage> messages = new ArrayList<>();
 
           try {
@@ -590,26 +624,11 @@ public class FirebaseServerClient {
                     messageKey = messageObj.optString("MessageKey", "");
                   }
 
-                  Log.d(
-                      TAG,
-                      "Checking message with key: "
-                          + messageKey
-                          + ", groupId: "
-                          + msgGroupId
-                          + " against target groupId: "
-                          + groupId);
-
-                  if (groupId.equals(msgGroupId)
-                      || messageKeys.containsKey(messageKey)
-                      || messageKeys.containsKey(key)) {
+                  if (groupId.equals(msgGroupId) || messageKeys.containsKey(messageKey) || messageKeys.containsKey(key)) {
                     ChatMessage message = gson.fromJson(messageObj.toString(), ChatMessage.class);
                     messages.add(message);
                     Log.d(TAG, "Added message with key: " + messageKey + " to results");
                   }
-                } else if (value instanceof String) {
-                  // This might be a single field message, check if it's a message for our group
-                  // For now, skip string values as they're likely individual fields
-                  Log.d(TAG, "Skipping string value for key: " + key);
                 }
               }
             } else if (messagesJson.trim().startsWith("[")) {
@@ -633,42 +652,18 @@ public class FirebaseServerClient {
                   Log.d(TAG, "Added message with key: " + messageKey + " to results");
                 }
               }
-            } else {
-              // Handle empty response or other formats
-              Log.d(TAG, "Messages response is not in expected format: " + messagesJson);
             }
           } catch (JSONException e) {
             Log.e(TAG, "Error parsing messages JSON", e);
-            // Try to parse as a single message if it's not an array
-            try {
-              JSONObject messageObj = new JSONObject(messagesJson);
-
-              // Check if this message belongs to our group
-              String msgGroupId = messageObj.optString("groupId", "");
-              // Check both messageKey and MessageKey fields
-              String messageKey = messageObj.optString("messageKey", "");
-              if (messageKey.isEmpty()) {
-                messageKey = messageObj.optString("MessageKey", "");
-              }
-
-              if (groupId.equals(msgGroupId) || messageKeys.containsKey(messageKey)) {
-                ChatMessage message = gson.fromJson(messageObj.toString(), ChatMessage.class);
-                messages.add(message);
-                Log.d(TAG, "Added message with key: " + messageKey + " to results");
-              }
-            } catch (JSONException innerE) {
-              Log.e(TAG, "Error parsing message as single object", innerE);
-              errorMessage = "Error parsing messages: " + e.getMessage();
-            }
+            return new ArrayList<>();
           }
 
-          Log.d(
-              TAG, "Successfully processed " + messages.size() + " messages for group: " + groupId);
+          Log.d(TAG, "Successfully processed " + messages.size() + " messages for group: " + groupId);
           return messages;
         } catch (Exception e) {
           Log.e(TAG, "Error fetching messages", e);
           errorMessage = "Error fetching messages: " + e.getMessage();
-          return new ArrayList<>(); // Return empty list instead of null
+          return new ArrayList<>();
         }
       }
 
