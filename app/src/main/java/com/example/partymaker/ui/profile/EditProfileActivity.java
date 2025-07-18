@@ -133,13 +133,19 @@ public class EditProfileActivity extends AppCompatActivity {
         .addOnSuccessListener(
             uri -> Picasso.get().load(uri).placeholder(R.drawable.ic_profile).into(imgProfile))
         .addOnFailureListener(
-            e -> Toast.makeText(this, "Failed to load profile picture", Toast.LENGTH_SHORT).show());
+            e -> {
+              Log.d(TAG, "No profile image found, using default image");
+              // Just use the default image without showing an error
+              imgProfile.setImageResource(R.drawable.ic_profile);
+            });
   }
 
   private void uploadImageToFirebase(Uri uri) {
     if (uri == null) return;
 
-    imgProfile.setImageURI(uri);
+    // Show a loading indicator or message
+    Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
+    
     String userEmail = AuthHelper.getCurrentUserEmail(this);
     if (userEmail == null) {
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
@@ -148,14 +154,25 @@ public class EditProfileActivity extends AppCompatActivity {
     }
     String userKey = userEmail.replace('.', ' ');
 
+    // Set the image immediately for better UX
+    imgProfile.setImageURI(uri);
+    
+    // Create the directory structure if it doesn't exist
     DBRef.refStorage
-        .child("Users/" + userKey)
+        .child("Users")
+        .child(userKey)
         .putFile(uri)
         .addOnSuccessListener(
-            taskSnapshot ->
-                Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show())
+            taskSnapshot -> {
+              Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+              // Refresh the image from Firebase to ensure it's properly cached
+              loadProfileImage();
+            })
         .addOnFailureListener(
-            e -> Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show());
+            e -> {
+              Log.e(TAG, "Error uploading image", e);
+              Toast.makeText(this, "Error uploading image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
   }
 
   private void setupBottomNavigation() {
