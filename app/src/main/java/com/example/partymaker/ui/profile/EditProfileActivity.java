@@ -78,7 +78,7 @@ public class EditProfileActivity extends AppCompatActivity {
     setListeners();
     setupBottomNavigation();
     
-    // Load current user data
+    // Load current user data with force refresh
     loadUserData();
   }
 
@@ -198,10 +198,42 @@ public class EditProfileActivity extends AppCompatActivity {
   }
   
   private void loadUserData() {
+    // Show loading indicator
+    progressBar.setVisibility(View.VISIBLE);
+    
+    // Force refresh from server to ensure we have the latest data
     userViewModel.loadCurrentUser(this, true);
+    
+    // Direct load from Firebase as backup
+    String userKey = AuthHelper.getCurrentUserKey(this);
+    if (userKey != null && !userKey.isEmpty()) {
+      DBRef.refUsers.child(userKey).get()
+          .addOnSuccessListener(dataSnapshot -> {
+            if (dataSnapshot.exists()) {
+              User user = dataSnapshot.getValue(User.class);
+              if (user != null) {
+                // Update UI with user data
+                etUsername.setText(user.getUsername());
+                
+                // Load profile image
+                loadProfileImageFromStorage(userKey);
+              }
+            }
+          })
+          .addOnFailureListener(e -> {
+            Log.e(TAG, "Error loading user data directly", e);
+          });
+    }
   }
   
   private void updateUI(User user) {
+    if (user == null) {
+      Log.e(TAG, "Cannot update UI: user is null");
+      return;
+    }
+    
+    Log.d(TAG, "Updating UI with user: " + user.getUsername() + ", key: " + user.getUserKey());
+    
     // Update username field
     if (user.getUsername() != null) {
       etUsername.setText(user.getUsername());
@@ -209,12 +241,14 @@ public class EditProfileActivity extends AppCompatActivity {
     
     // Load profile image
     if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+      Log.d(TAG, "Loading profile image from URL: " + user.getProfileImageUrl());
       Picasso.get()
           .load(user.getProfileImageUrl())
           .placeholder(R.drawable.ic_profile)
           .error(R.drawable.ic_profile)
           .into(imgProfile);
     } else {
+      Log.d(TAG, "No profile image URL, loading from storage for key: " + user.getUserKey());
       loadProfileImageFromStorage(user.getUserKey());
     }
   }
@@ -247,8 +281,11 @@ public class EditProfileActivity extends AppCompatActivity {
   private void loadProfileImageFromStorage(String userKey) {
     if (userKey == null || userKey.isEmpty()) {
       Log.e(TAG, "Invalid user key");
+      imgProfile.setImageResource(R.drawable.ic_profile);
       return;
     }
+    
+    Log.d(TAG, "Loading profile image from storage for key: " + userKey);
     
     // Check network availability
     if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
@@ -262,17 +299,23 @@ public class EditProfileActivity extends AppCompatActivity {
         .getDownloadUrl()
         .addOnSuccessListener(
             uri -> {
+              Log.d(TAG, "Successfully loaded profile image: " + uri);
+              
               // Update the user's profile image URL in the database
               Map<String, Object> updates = new HashMap<>();
               updates.put("profileImageUrl", uri.toString());
               userViewModel.updateCurrentUser(updates);
               
               // Display the image
-              Picasso.get().load(uri).placeholder(R.drawable.ic_profile).into(imgProfile);
+              Picasso.get()
+                  .load(uri)
+                  .placeholder(R.drawable.ic_profile)
+                  .error(R.drawable.ic_profile)
+                  .into(imgProfile);
             })
         .addOnFailureListener(
             e -> {
-              Log.d(TAG, "No profile image found, using default image");
+              Log.d(TAG, "No profile image found, using default image", e);
               // Just use the default image without showing an error
               imgProfile.setImageResource(R.drawable.ic_profile);
             });

@@ -1,10 +1,12 @@
 package com.example.partymaker.ui.group;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -13,13 +15,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
+import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
+import com.example.partymaker.utilities.Common;
+import com.example.partymaker.utilities.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class UsersListActivity extends AppCompatActivity {
@@ -27,6 +33,14 @@ public class UsersListActivity extends AppCompatActivity {
   private ListView lv;
   public static Context contextOfApplication;
   private Object usersRef;
+  private FirebaseServerClient serverClient;
+  private ArrayList<User> usersList;
+  
+  // Group data
+  private String GroupKey, GroupName, GroupDay, GroupMonth, GroupYear, GroupHour, GroupLocation, AdminKey, CreatedAt, GroupPrice;
+  private int GroupType;
+  private boolean CanAdd;
+  private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +48,36 @@ public class UsersListActivity extends AppCompatActivity {
     setContentView(R.layout.activity_friend_list);
     contextOfApplication = getApplicationContext();
 
+    // Initialize server client
+    serverClient = FirebaseServerClient.getInstance();
+    
+    // Get group data from intent
+    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    if (extras != null) {
+      GroupName = extras.getGroupName();
+      GroupKey = extras.getGroupKey();
+      GroupDay = extras.getGroupDays();
+      GroupMonth = extras.getGroupMonths();
+      GroupYear = extras.getGroupYears();
+      GroupHour = extras.getGroupHours();
+      GroupLocation = extras.getGroupLocation();
+      AdminKey = extras.getAdminKey();
+      CreatedAt = extras.getCreatedAt();
+      GroupPrice = extras.getGroupPrice();
+      GroupType = extras.getGroupType();
+      CanAdd = extras.isCanAdd();
+      FriendKeys = extras.getFriendKeys();
+      ComingKeys = extras.getComingKeys();
+      MessageKeys = extras.getMessageKeys();
+    }
+
     // Actionbar settings
     ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
-    actionBar.setTitle("All users");
-    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+    if (actionBar != null) {
+      actionBar.setTitle("All users");
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
     lv = findViewById(R.id.lv);
 
@@ -47,59 +86,197 @@ public class UsersListActivity extends AppCompatActivity {
     usersRef = accessManager.getUsersRef();
 
     ShowData();
-    eventHandler();
+    setupEventHandlers();
   }
 
-  private void eventHandler() {
-    lv.setOnItemClickListener((parent, view, position, id) -> {});
-    lv.setOnItemLongClickListener((parent, view, position, id) -> false);
+  private void setupEventHandlers() {
+    lv.setOnItemClickListener((parent, view, position, id) -> {
+      User selectedUser = usersList.get(position);
+      
+      if (selectedUser == null || selectedUser.getEmail() == null) {
+        Toast.makeText(this, "Invalid user selected", Toast.LENGTH_SHORT).show();
+        return;
+      }
+      
+      // Check if group data is available
+      if (GroupKey == null || GroupKey.isEmpty()) {
+        Toast.makeText(this, "No group data available", Toast.LENGTH_SHORT).show();
+        return;
+      }
+      
+      // Confirm adding the user
+      new androidx.appcompat.app.AlertDialog.Builder(this)
+          .setTitle("Add Friend")
+          .setMessage("Add " + selectedUser.getEmail() + " to the group?")
+          .setPositiveButton("Add", (dialog, which) -> {
+            addUserToGroup(selectedUser);
+          })
+          .setNegativeButton("Cancel", null)
+          .show();
+    });
+  }
+  
+  private void addUserToGroup(User user) {
+    if (user == null || user.getEmail() == null || user.getUserKey() == null) {
+      Toast.makeText(this, "Invalid user data", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    
+    // Format email for Firebase key
+    String userEmail = user.getEmail().replace('.', ' ');
+    String userKey = user.getUserKey();
+    
+    // Check if user is already in the group
+    serverClient.getGroup(
+        GroupKey,
+        new FirebaseServerClient.DataCallback<Group>() {
+          @Override
+          public void onSuccess(Group group) {
+            if (group == null) {
+              Toast.makeText(UsersListActivity.this, "Group not found", Toast.LENGTH_SHORT).show();
+              return;
+            }
+            
+            boolean alreadyInGroup = false;
+            
+            // Check if user is already in FriendKeys
+            if (group.getFriendKeys() != null) {
+              for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
+                if (entry.getValue().equals(userKey) || entry.getKey().equals(userEmail)) {
+                  alreadyInGroup = true;
+                  break;
+                }
+              }
+            }
+            
+            if (alreadyInGroup) {
+              Toast.makeText(UsersListActivity.this, "User already in group", Toast.LENGTH_SHORT).show();
+              return;
+            }
+            
+            // Add user to FriendKeys
+            Map<String, Object> updates = new HashMap<>();
+            updates.put(userEmail, userKey);
+            
+            serverClient.updateData(
+                "Groups/" + GroupKey + "/FriendKeys",
+                updates,
+                new FirebaseServerClient.OperationCallback() {
+                  @Override
+                  public void onSuccess() {
+                    // Update local data
+                    if (FriendKeys == null) {
+                      FriendKeys = new HashMap<>();
+                    }
+                    FriendKeys.put(userEmail, userKey);
+                    
+                    Toast.makeText(UsersListActivity.this, "Friend successfully added", Toast.LENGTH_SHORT).show();
+                    
+                    // Ask if user wants to add to coming list
+                    new androidx.appcompat.app.AlertDialog.Builder(UsersListActivity.this)
+                        .setTitle("Add to Coming List")
+                        .setMessage("Add " + user.getEmail() + " to the coming list?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                          addUserToComingList(userEmail);
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+                  }
+                  
+                  @Override
+                  public void onError(String errorMessage) {
+                    Toast.makeText(
+                            UsersListActivity.this,
+                            "Error adding friend: " + errorMessage,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                  }
+                });
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            Toast.makeText(
+                    UsersListActivity.this,
+                    "Error loading group: " + errorMessage,
+                    Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
+  }
+  
+  private void addUserToComingList(String userEmail) {
+    if (userEmail == null || userEmail.isEmpty()) {
+      return;
+    }
+    
+    // Add to coming list
+    Map<String, Object> updates = new HashMap<>();
+    updates.put(userEmail, "true");
+    
+    serverClient.updateData(
+        "Groups/" + GroupKey + "/ComingKeys",
+        updates,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            // Update local data
+            if (ComingKeys == null) {
+              ComingKeys = new HashMap<>();
+            }
+            ComingKeys.put(userEmail, "true");
+            
+            Toast.makeText(UsersListActivity.this, "Added to Coming List", Toast.LENGTH_SHORT).show();
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            Toast.makeText(
+                    UsersListActivity.this,
+                    "Error adding to coming list: " + errorMessage,
+                    Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 
   private void ShowData() {
-    if (usersRef instanceof DatabaseReference) {
-      // Direct Firebase access mode
-      DatabaseReference dbRef = (DatabaseReference) usersRef;
-      dbRef.addValueEventListener(
-          new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-              ArrayList<User> ArrUsers = new ArrayList<>();
-              for (DataSnapshot data : dataSnapshot.getChildren()) {
-                User p = data.getValue(User.class);
-                ArrUsers.add(p);
-              }
-              UserAdapter adapter = new UserAdapter(UsersListActivity.this, 0, 0, ArrUsers);
-              lv.setAdapter(adapter);
+    // Show loading indicator
+    Toast.makeText(this, "Loading users...", Toast.LENGTH_SHORT).show();
+    
+    // Always use server client for consistency
+    serverClient.getUsers(
+        new FirebaseServerClient.DataCallback<Map<String, User>>() {
+          @Override
+          public void onSuccess(Map<String, User> data) {
+            usersList = new ArrayList<>(data.values());
+            UserAdapter adapter = new UserAdapter(UsersListActivity.this, 0, 0, usersList);
+            lv.setAdapter(adapter);
+            
+            if (usersList.isEmpty()) {
+              Toast.makeText(UsersListActivity.this, "No users found", Toast.LENGTH_SHORT).show();
             }
+          }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-              Log.e(TAG, "Database error: " + databaseError.getMessage());
-            }
-          });
-    } else if (usersRef instanceof FirebaseServerClient) {
-      // Server mode
-      FirebaseServerClient serverClient = (FirebaseServerClient) usersRef;
-      serverClient.getUsers(
-          new FirebaseServerClient.DataCallback<Map<String, User>>() {
-            @Override
-            public void onSuccess(Map<String, User> data) {
-              ArrayList<User> ArrUsers = new ArrayList<>(data.values());
-              UserAdapter adapter = new UserAdapter(UsersListActivity.this, 0, 0, ArrUsers);
-              lv.setAdapter(adapter);
-            }
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Server error: " + errorMessage);
+            Toast.makeText(
+                    UsersListActivity.this,
+                    "Failed to load users: " + errorMessage,
+                    Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
+  }
 
-            @Override
-            public void onError(String errorMessage) {
-              Log.e(TAG, "Server error: " + errorMessage);
-              Toast.makeText(
-                      UsersListActivity.this,
-                      "Failed to load users: " + errorMessage,
-                      Toast.LENGTH_SHORT)
-                  .show();
-            }
-          });
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      onBackPressed();
+      return true;
     }
+    return super.onOptionsItemSelected(item);
   }
 
   public static Context getContextOfApplication() {
