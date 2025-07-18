@@ -215,6 +215,7 @@
     <string name="username_label">Username</string>
     <string name="email_example">email@example.com</string>
     <string name="admin_flag">Admin Flag</string>
+    <string name="share_party">Share Party</string>
 
     <string-array name="languages_array">
         <item>English</item>
