@@ -7,6 +7,7 @@ import com.example.partymaker.data.api.ConnectivityManager;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.google.firebase.FirebaseApp;
+import com.example.partymaker.utilities.NotificationHelper;
 
 /**
  * Main Application class for PartyMaker.
@@ -26,6 +27,12 @@ public class PartyMakerApplication extends Application {
         } catch (Exception e) {
             Log.e(TAG, "Error initializing Firebase", e);
         }
+        
+        // Initialize notification channels
+        NotificationHelper.createNotificationChannels(this);
+        
+        // Subscribe to global announcements
+        NotificationHelper.subscribeToGlobalAnnouncements();
         
         // Initialize Firebase references
         try {

@@ -18,6 +18,19 @@
             android:layout_height="0dp"
             android:layout_weight="2">
 
+            <!-- Add share button -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/share_party"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:src="@android:drawable/ic_menu_share"
+                app:backgroundTint="#0081d1"
+                app:tint="#FFFFFF"
+                tools:ignore="RelativeOverlap" />
+
             <TextView
                 android:id="@+id/tvGroupName"
                 android:layout_width="wrap_content"
@@ -65,7 +78,7 @@
                 android:id="@+id/back5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:background="@color/transparent"
                 android:text="@string/back"
@@ -589,5 +602,4 @@
 
         </GridLayout>
     </LinearLayout>
-
 </FrameLayout>

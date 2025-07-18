@@ -23,6 +23,11 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.ShareHelper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.view.View.OnClickListener;
+import android.app.AlertDialog;
+import com.example.partymaker.utilities.NotificationHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -329,11 +334,19 @@ public class PartyMainActivity extends AppCompatActivity {
     tvNotComing = findViewById(R.id.tvNotComing);
     tvOptions = findViewById(R.id.tvOptions);
 
+    // Initialize share button
+    FloatingActionButton fabShare = findViewById(R.id.fabShare);
+    if (fabShare != null) {
+        fabShare.setOnClickListener(v -> showShareOptions());
+    } else {
+        Log.e(TAG, "Share button not found in layout");
+    }
+
     // Initialize MessageKeys
     MessageKeys = new HashMap<>();
 
     Log.d(TAG, "Views initialized successfully");
-  }
+}
 
   private void setupClickListeners() {
     Log.d(TAG, "Setting up click listeners");
@@ -1035,6 +1048,51 @@ public class PartyMainActivity extends AppCompatActivity {
       default:
         return -1; // Indicate an error
     }
+  }
+
+  /**
+   * Shows a dialog with share options for the party
+   */
+  private void showShareOptions() {
+      if (currentGroup == null) {
+          Toast.makeText(this, "Party details not available", Toast.LENGTH_SHORT).show();
+          return;
+      }
+
+      final String[] options = {
+          "Share via Text",
+          "Share to WhatsApp",
+          "Share to Facebook",
+          "Share via SMS",
+          "Share via Email"
+      };
+
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle("Share Party");
+      builder.setItems(options, (dialog, which) -> {
+          switch (which) {
+              case 0: // Share via Text
+                  ShareHelper.sharePartyText(PartyMainActivity.this, currentGroup);
+                  break;
+              case 1: // Share to WhatsApp
+                  ShareHelper.shareToWhatsApp(PartyMainActivity.this, currentGroup);
+                  break;
+              case 2: // Share to Facebook
+                  ShareHelper.shareToFacebook(PartyMainActivity.this, currentGroup);
+                  break;
+              case 3: // Share via SMS
+                  ShareHelper.shareViaSMS(PartyMainActivity.this, currentGroup);
+                  break;
+              case 4: // Share via Email
+                  ShareHelper.shareViaEmail(PartyMainActivity.this, currentGroup);
+                  break;
+          }
+      });
+      
+      builder.show();
+      
+      // Subscribe to group notifications when sharing
+      NotificationHelper.subscribeToGroup(currentGroup.getGroupKey());
   }
 
   @Override

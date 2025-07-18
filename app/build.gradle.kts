@@ -132,6 +132,7 @@ dependencies {
     implementation(libs.google.firebase.database)
     implementation(libs.google.firebase.storage)
     implementation(libs.firebase.firestore)
+    // Firebase Cloud Messaging removed - using local notification approach instead
 
     // --- Google Auth ---
     implementation(libs.gms.play.services.auth)
