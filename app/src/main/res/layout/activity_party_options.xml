@@ -41,6 +41,18 @@
                 android:textColor="@color/black"
                 tools:ignore="TextSizeCheck" />
 
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_back" />
+
         </RelativeLayout>
 
         <GridLayout

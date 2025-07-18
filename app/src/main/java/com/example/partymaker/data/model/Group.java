@@ -72,24 +72,6 @@ public class Group {
     this.friendKeys = friendKeys;
   }
   
-  /**
-   * Sets the friend keys from a Map
-   * 
-   * @param friendKeys the map of friend keys
-   */
-  public void setFriendKeys(Map<String, Boolean> friendKeys) {
-    if (friendKeys == null) {
-      this.friendKeys = new HashMap<>();
-      return;
-    }
-    
-    HashMap<String, Object> newFriendKeys = new HashMap<>();
-    for (Map.Entry<String, Boolean> entry : friendKeys.entrySet()) {
-      newFriendKeys.put(entry.getKey(), entry.getValue());
-    }
-    this.friendKeys = newFriendKeys;
-  }
-
   public HashMap<String, Object> getComingKeys() {
     return comingKeys;
   }
