@@ -976,6 +976,71 @@ public class FirebaseServerClient {
     }.execute(path);
   }
 
+  /**
+   * Updates data at a specific path. If value is null, the data will be deleted.
+   *
+   * @param path the path to update
+   * @param value the value to set, or null to delete
+   * @param callback the callback to handle success or failure
+   */
+  public void updateData(String path, Object value, final OperationCallback callback) {
+    Log.d(TAG, "updateData called for path: " + path);
+    
+    if (path == null || path.isEmpty()) {
+      Log.e(TAG, "Invalid path for updateData");
+      mainHandler.post(() -> callback.onError("Invalid path"));
+      return;
+    }
+    
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
+    
+    NetworkUtils.executeWithRetry(
+        () -> {
+          boolean success;
+          if (value == null) {
+            // If value is null, delete the data
+            success = makeDeleteRequest(path);
+          } else {
+            // Otherwise update with the new value
+            String jsonBody = gson.toJson(value);
+            success = makePutRequest(path, jsonBody);
+          }
+          
+          if (!success) {
+            throw new IOException("Failed to update data at " + path);
+          }
+          return true;
+        },
+        new NetworkUtils.RetryCallback<Boolean>() {
+          @Override
+          public void onSuccess(Boolean result) {
+            Log.d(TAG, "updateData completed successfully for path: " + path);
+            if (callback != null) {
+              callback.onSuccess();
+            }
+          }
+          
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "updateData failed: " + errorMessage + " (" + errorType + ")");
+            if (callback != null) {
+              callback.onError(userFriendlyError);
+            }
+          }
+          
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying updateData (attempt " + attemptCount + "): " + e.getMessage());
+          }
+        }
+    );
+  }
+
   public void getUserGroups(String userId, final DataCallback<Map<String, Group>> callback) {
     new AsyncTask<String, Void, Map<String, Group>>() {
       private String errorMessage = null;
