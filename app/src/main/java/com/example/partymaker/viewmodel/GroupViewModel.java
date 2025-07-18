@@ -4,8 +4,10 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.repository.GroupRepository;
 
@@ -43,6 +45,25 @@ public class GroupViewModel extends ViewModel {
      */
     public GroupViewModel() {
         repository = GroupRepository.getInstance();
+        
+        // Observe repository's all groups LiveData
+        LiveData<Result<List<Group>>> repoGroups = repository.getAllGroupsLiveData();
+        Transformations.map(repoGroups, result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
+                isLoading.setValue(false);
+                List<Group> data = result.getData();
+                if (data != null) {
+                    sortGroups(data);
+                    groupList.setValue(data);
+                }
+            } else if (result.isError()) {
+                isLoading.setValue(false);
+                errorMessage.setValue(result.getUserFriendlyError());
+            }
+            return result;
+        });
     }
     
     /**
@@ -85,8 +106,9 @@ public class GroupViewModel extends ViewModel {
      * Loads groups for a specific user
      * 
      * @param userKey The user key (email with dots replaced by spaces)
+     * @param forceRefresh Whether to force a refresh from the server
      */
-    public void loadUserGroups(String userKey) {
+    public void loadUserGroups(String userKey, boolean forceRefresh) {
         if (userKey == null || userKey.isEmpty()) {
             Log.e(TAG, "Cannot load groups: userKey is null or empty");
             errorMessage.setValue("Invalid user key");
@@ -96,57 +118,60 @@ public class GroupViewModel extends ViewModel {
         Log.d(TAG, "Loading groups for user: " + userKey);
         isLoading.setValue(true);
         
-        repository.getUserGroups(userKey, new GroupRepository.DataCallback<List<Group>>() {
-            @Override
-            public void onDataLoaded(List<Group> data) {
-                Log.d(TAG, "Groups loaded successfully: " + data.size() + " groups");
-                sortGroups(data);
-                groupList.setValue(data);
+        repository.getUserGroups(userKey, result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
+                List<Group> data = result.getData();
+                if (data != null) {
+                    Log.d(TAG, "Groups loaded successfully: " + data.size() + " groups");
+                    sortGroups(data);
+                    groupList.setValue(data);
+                }
+                isLoading.setValue(false);
+            } else if (result.isError()) {
+                Log.e(TAG, "Error loading groups: " + result.getError());
+                errorMessage.setValue(result.getUserFriendlyError());
                 isLoading.setValue(false);
             }
-            
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error loading groups: " + error);
-                errorMessage.setValue("Failed to load groups: " + error);
-                isLoading.setValue(false);
-                
-                // Don't try to get all groups as fallback - this is now handled in the repository
-            }
-        });
+        }, forceRefresh);
     }
     
     /**
      * Loads all groups
+     * 
+     * @param forceRefresh Whether to force a refresh from the server
      */
-    public void loadAllGroups() {
+    public void loadAllGroups(boolean forceRefresh) {
         Log.d(TAG, "Loading all groups");
         isLoading.setValue(true);
         
-        repository.getAllGroups(new GroupRepository.DataCallback<List<Group>>() {
-            @Override
-            public void onDataLoaded(List<Group> data) {
-                Log.d(TAG, "All groups loaded successfully: " + data.size() + " groups");
-                sortGroups(data);
-                groupList.setValue(data);
+        repository.getAllGroups(result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
+                List<Group> data = result.getData();
+                if (data != null) {
+                    Log.d(TAG, "All groups loaded successfully: " + data.size() + " groups");
+                    sortGroups(data);
+                    groupList.setValue(data);
+                }
+                isLoading.setValue(false);
+            } else if (result.isError()) {
+                Log.e(TAG, "Error loading all groups: " + result.getError());
+                errorMessage.setValue(result.getUserFriendlyError());
                 isLoading.setValue(false);
             }
-            
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error loading all groups: " + error);
-                errorMessage.setValue("Failed to load groups: " + error);
-                isLoading.setValue(false);
-            }
-        });
+        }, forceRefresh);
     }
     
     /**
      * Loads a specific group by its ID
      * 
      * @param groupId The group ID
+     * @param forceRefresh Whether to force a refresh from the server
      */
-    public void loadGroup(String groupId) {
+    public void loadGroup(String groupId, boolean forceRefresh) {
         if (groupId == null || groupId.isEmpty()) {
             Log.e(TAG, "Cannot load group: groupId is null or empty");
             errorMessage.setValue("Invalid group ID");
@@ -156,21 +181,22 @@ public class GroupViewModel extends ViewModel {
         Log.d(TAG, "Loading group with ID: " + groupId);
         isLoading.setValue(true);
         
-        repository.getGroup(groupId, new GroupRepository.DataCallback<Group>() {
-            @Override
-            public void onDataLoaded(Group data) {
-                Log.d(TAG, "Group loaded successfully: " + data.getGroupName());
-                selectedGroup.setValue(data);
+        repository.getGroup(groupId, result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
+                Group data = result.getData();
+                if (data != null) {
+                    Log.d(TAG, "Group loaded successfully: " + data.getGroupName());
+                    selectedGroup.setValue(data);
+                }
+                isLoading.setValue(false);
+            } else if (result.isError()) {
+                Log.e(TAG, "Error loading group: " + result.getError());
+                errorMessage.setValue(result.getUserFriendlyError());
                 isLoading.setValue(false);
             }
-            
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error loading group: " + error);
-                errorMessage.setValue("Failed to load group: " + error);
-                isLoading.setValue(false);
-            }
-        });
+        }, forceRefresh);
     }
     
     /**
@@ -195,9 +221,10 @@ public class GroupViewModel extends ViewModel {
         Log.d(TAG, "Creating new group: " + group.getGroupName());
         isLoading.setValue(true);
         
-        repository.saveGroup(groupId, group, new GroupRepository.OperationCallback() {
-            @Override
-            public void onComplete() {
+        repository.saveGroup(groupId, group, result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
                 Log.d(TAG, "Group created successfully");
                 
                 // Add the new group to the list
@@ -210,12 +237,9 @@ public class GroupViewModel extends ViewModel {
                 
                 selectedGroup.setValue(group);
                 isLoading.setValue(false);
-            }
-            
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error creating group: " + error);
-                errorMessage.setValue("Failed to create group: " + error);
+            } else if (result.isError()) {
+                Log.e(TAG, "Error creating group: " + result.getError());
+                errorMessage.setValue(result.getUserFriendlyError());
                 isLoading.setValue(false);
             }
         });
@@ -243,29 +267,17 @@ public class GroupViewModel extends ViewModel {
         Log.d(TAG, "Updating group: " + groupId);
         isLoading.setValue(true);
         
-        repository.updateGroup(groupId, updates, new GroupRepository.OperationCallback() {
-            @Override
-            public void onComplete() {
+        repository.updateGroup(groupId, updates, result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
                 Log.d(TAG, "Group updated successfully");
                 
-                // Update the group in the list and selected group
-                Group currentGroup = selectedGroup.getValue();
-                if (currentGroup != null && currentGroup.getGroupKey().equals(groupId)) {
-                    // Apply updates to the current group
-                    for (Map.Entry<String, Object> entry : updates.entrySet()) {
-                        applyUpdateToGroup(currentGroup, entry.getKey(), entry.getValue());
-                    }
-                    selectedGroup.setValue(currentGroup);
-                }
-                
-                // Also update in the list
+                // Update the group in the list and selected group if needed
                 List<Group> currentList = groupList.getValue();
                 if (currentList != null) {
-                    for (int i = 0; i < currentList.size(); i++) {
-                        Group group = currentList.get(i);
-                        if (group != null && group.getGroupKey() != null && 
-                            group.getGroupKey().equals(groupId)) {
-                            // Apply updates to the group in the list
+                    for (Group group : currentList) {
+                        if (groupId.equals(group.getGroupKey())) {
                             for (Map.Entry<String, Object> entry : updates.entrySet()) {
                                 applyUpdateToGroup(group, entry.getKey(), entry.getValue());
                             }
@@ -275,13 +287,18 @@ public class GroupViewModel extends ViewModel {
                     groupList.setValue(currentList);
                 }
                 
+                Group selectedGroupValue = selectedGroup.getValue();
+                if (selectedGroupValue != null && groupId.equals(selectedGroupValue.getGroupKey())) {
+                    for (Map.Entry<String, Object> entry : updates.entrySet()) {
+                        applyUpdateToGroup(selectedGroupValue, entry.getKey(), entry.getValue());
+                    }
+                    selectedGroup.setValue(selectedGroupValue);
+                }
+                
                 isLoading.setValue(false);
-            }
-            
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error updating group: " + error);
-                errorMessage.setValue("Failed to update group: " + error);
+            } else if (result.isError()) {
+                Log.e(TAG, "Error updating group: " + result.getError());
+                errorMessage.setValue(result.getUserFriendlyError());
                 isLoading.setValue(false);
             }
         });
@@ -290,7 +307,7 @@ public class GroupViewModel extends ViewModel {
     /**
      * Deletes a group
      * 
-     * @param groupId The group ID to delete
+     * @param groupId The group ID
      */
     public void deleteGroup(String groupId) {
         if (groupId == null || groupId.isEmpty()) {
@@ -302,68 +319,60 @@ public class GroupViewModel extends ViewModel {
         Log.d(TAG, "Deleting group: " + groupId);
         isLoading.setValue(true);
         
-        repository.deleteGroup(groupId, new GroupRepository.OperationCallback() {
-            @Override
-            public void onComplete() {
+        repository.deleteGroup(groupId, result -> {
+            if (result.isLoading()) {
+                isLoading.setValue(true);
+            } else if (result.isSuccess()) {
                 Log.d(TAG, "Group deleted successfully");
                 
                 // Remove the group from the list
                 List<Group> currentList = groupList.getValue();
                 if (currentList != null) {
-                    currentList.removeIf(group -> 
-                        group != null && 
-                        group.getGroupKey() != null && 
-                        group.getGroupKey().equals(groupId)
-                    );
-                    groupList.setValue(currentList);
+                    List<Group> newList = new ArrayList<>(currentList);
+                    newList.removeIf(group -> groupId.equals(group.getGroupKey()));
+                    groupList.setValue(newList);
                 }
                 
                 // Clear selected group if it was the deleted one
-                Group currentGroup = selectedGroup.getValue();
-                if (currentGroup != null && 
-                    currentGroup.getGroupKey() != null && 
-                    currentGroup.getGroupKey().equals(groupId)) {
+                Group selectedGroupValue = selectedGroup.getValue();
+                if (selectedGroupValue != null && groupId.equals(selectedGroupValue.getGroupKey())) {
                     selectedGroup.setValue(null);
                 }
                 
                 isLoading.setValue(false);
-            }
-            
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error deleting group: " + error);
-                errorMessage.setValue("Failed to delete group: " + error);
+            } else if (result.isError()) {
+                Log.e(TAG, "Error deleting group: " + result.getError());
+                errorMessage.setValue(result.getUserFriendlyError());
                 isLoading.setValue(false);
             }
         });
     }
     
     /**
-     * Selects a group from the list
+     * Selects a group by its ID
      * 
-     * @param groupId The group ID to select
+     * @param groupId The group ID
+     * @param forceRefresh Whether to force a refresh from the server
      */
-    public void selectGroup(String groupId) {
+    public void selectGroup(String groupId, boolean forceRefresh) {
         if (groupId == null || groupId.isEmpty()) {
             Log.e(TAG, "Cannot select group: groupId is null or empty");
-            errorMessage.setValue("Invalid group ID");
             return;
         }
         
-        List<Group> groups = groupList.getValue();
-        if (groups != null) {
-            for (Group group : groups) {
-                if (group != null && 
-                    group.getGroupKey() != null && 
-                    group.getGroupKey().equals(groupId)) {
+        // First check if the group is in the current list
+        List<Group> currentList = groupList.getValue();
+        if (currentList != null) {
+            for (Group group : currentList) {
+                if (groupId.equals(group.getGroupKey())) {
                     selectedGroup.setValue(group);
                     return;
                 }
             }
         }
         
-        // If not found in the list, load it from the server
-        loadGroup(groupId);
+        // If not found in the list, load it from the repository
+        loadGroup(groupId, forceRefresh);
     }
     
     /**
@@ -374,94 +383,65 @@ public class GroupViewModel extends ViewModel {
     }
     
     /**
-     * Sorts the groups by creation date (newest first)
+     * Sorts groups by name
      * 
      * @param groups The list of groups to sort
      */
     private void sortGroups(List<Group> groups) {
-        if (groups != null && !groups.isEmpty()) {
-            Collections.sort(groups, (g1, g2) -> {
-                // Handle null dates properly
-                if (g1 == null || g1.getCreatedAt() == null) return 1;
-                if (g2 == null || g2.getCreatedAt() == null) return -1;
-                return g2.getCreatedAt().compareTo(g1.getCreatedAt());
-            });
+        if (groups == null) {
+            return;
         }
+        
+        Collections.sort(groups, new Comparator<Group>() {
+            @Override
+            public int compare(Group g1, Group g2) {
+                if (g1.getGroupName() == null && g2.getGroupName() == null) {
+                    return 0;
+                } else if (g1.getGroupName() == null) {
+                    return 1;
+                } else if (g2.getGroupName() == null) {
+                    return -1;
+                }
+                return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
+            }
+        });
     }
     
     /**
-     * Applies an update to a group field
+     * Applies an update to a group object
      * 
      * @param group The group to update
-     * @param field The field name
+     * @param field The field to update
      * @param value The new value
      */
     @SuppressWarnings("unchecked")
     private void applyUpdateToGroup(Group group, String field, Object value) {
-        if (group == null || field == null || value == null) {
-            Log.w(TAG, "Cannot apply update: group, field, or value is null");
+        if (group == null) {
             return;
         }
         
         switch (field) {
             case "groupName":
-                group.setGroupName((String) value);
-                break;
-            case "groupType":
                 if (value instanceof String) {
-                    try {
-                        group.setGroupType(Integer.parseInt((String) value));
-                    } catch (NumberFormatException e) {
-                        Log.e(TAG, "Error parsing groupType: " + e.getMessage());
-                    }
-                } else if (value instanceof Integer) {
-                    group.setGroupType((Integer) value);
-                } else if (value instanceof Double) {
-                    group.setGroupType(((Double) value).intValue());
+                    group.setGroupName((String) value);
                 }
                 break;
-            case "groupLocation":
-                group.setGroupLocation((String) value);
-                break;
-            case "groupPrice":
-                group.setGroupPrice((String) value);
-                break;
-            case "groupDays":
-                group.setGroupDays((String) value);
-                break;
-            case "groupMonths":
-                group.setGroupMonths((String) value);
-                break;
-            case "groupYears":
-                group.setGroupYears((String) value);
-                break;
-            case "groupHours":
-                group.setGroupHours((String) value);
+            case "groupDescription":
+                if (value instanceof String) {
+                    group.setGroupDescription((String) value);
+                }
                 break;
             case "adminKey":
-                group.setAdminKey((String) value);
-                break;
-            case "canAdd":
-                group.setCanAdd((Boolean) value);
+                if (value instanceof String) {
+                    group.setAdminKey((String) value);
+                }
                 break;
             case "friendKeys":
-                if (value instanceof HashMap) {
-                    group.setFriendKeys((HashMap<String, Object>) value);
+                if (value instanceof Map) {
+                    group.setFriendKeys((Map<String, Boolean>) value);
                 }
                 break;
-            case "comingKeys":
-                if (value instanceof HashMap) {
-                    group.setComingKeys((HashMap<String, Object>) value);
-                }
-                break;
-            case "messageKeys":
-                if (value instanceof HashMap) {
-                    group.setMessageKeys((HashMap<String, Object>) value);
-                }
-                break;
-            default:
-                Log.w(TAG, "Unknown field in group update: " + field);
-                break;
+            // Add more fields as needed
         }
     }
 } 

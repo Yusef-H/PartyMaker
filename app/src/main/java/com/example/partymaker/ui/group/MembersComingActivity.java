@@ -135,7 +135,7 @@ public class MembersComingActivity extends AppCompatActivity {
                 Log.d(
                     TAG,
                     "    Full user: name='"
-                        + user.getUserName()
+                        + user.getUsername()
                         + "', email='"
                         + user.getEmail()
                         + "'");

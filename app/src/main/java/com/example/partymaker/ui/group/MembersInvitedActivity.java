@@ -16,6 +16,7 @@ import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import android.app.AlertDialog;
 
 public class MembersInvitedActivity extends AppCompatActivity {
 
@@ -105,7 +106,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
                 Log.d(
                     TAG,
                     "    Full user: name='"
-                        + user.getUserName()
+                        + user.getUsername()
                         + "', email='"
                         + user.getEmail()
                         + "'");
@@ -160,5 +161,16 @@ public class MembersInvitedActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+
+  private void showUserInfo(User user) {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle("User Information");
+      builder.setMessage(
+              "Email: "
+                      + user.getEmail()
+                      + "\nUsername: "
+                      + user.getUsername()
+                      + "\n\nDo you want to remove this user?");
   }
 }

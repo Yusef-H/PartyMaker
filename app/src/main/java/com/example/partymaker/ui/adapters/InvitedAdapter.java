@@ -66,7 +66,7 @@ public class InvitedAdapter extends ArrayAdapter<User> {
     User temp = invitedList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvInvitedUsername);
-    tvpUserName.setText(temp.getUserName());
+    tvpUserName.setText(temp.getUsername());
 
     TextView tvpEmail = view.findViewById(R.id.tvInvitedEmail);
     tvpEmail.setText(temp.getEmail());

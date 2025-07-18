@@ -640,20 +640,19 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    Intent goToNextActivity;
-
-    if (item.getItemId() == R.id.idServerSettings) {
-      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idLogout) {
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.settings) {
+      Intent intent = new Intent(CreateGroupActivity.this, ServerSettingsActivity.class);
+      startActivity(intent);
+      return true;
+    } else if (item.getItemId() == R.id.logout) {
       AuthHelper.clearAuthData(this);
-      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
-      startActivity(goToNextActivity);
+      Intent intent = new Intent(CreateGroupActivity.this, LoginActivity.class);
+      startActivity(intent);
       finish();
+      return true;
     }
-
-    return true;
+    return super.onOptionsItemSelected(item);
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {

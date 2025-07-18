@@ -57,185 +57,244 @@ public class PartyMainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_main);
 
-    // Hide action bar to remove black bar at top
-    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
-    }
-
-    Log.d(TAG, "PartyMainActivity onCreate started");
-
-    // Remove automatic navigation - let user click to navigate
-    // Auto-navigate to ChatActivity after 5 seconds
-    // new Handler().postDelayed(() -> {
-    //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
-    //     navigateToChatActivity();
-    // }, 5000);
-
-    // Get data from intent
-    Intent intent = getIntent();
-    Log.d(TAG, "Got intent: " + intent);
-    Log.d(
-        TAG,
-        "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
-
-    // Try to get GroupKey directly from intent first
-    GroupKey = intent.getStringExtra("GroupKey");
-    Log.d(TAG, "GroupKey from intent: " + GroupKey);
-
-    // If not found, try to get it from ExtrasMetadata
-    if (GroupKey == null || GroupKey.isEmpty()) {
-      Log.d(TAG, "GroupKey not found directly in intent, checking ExtrasMetadata");
-      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
-      if (extras != null) {
-        GroupKey = extras.getGroupKey();
-        Log.d(TAG, "GroupKey from ExtrasMetadata: " + GroupKey);
-      } else {
-        Log.d(TAG, "ExtrasMetadata is null");
-      }
-    }
-
-    // Try to get UserKey from AuthHelper first
     try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+      // Hide action bar to remove black bar at top
+      androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+      if (actionBar != null) {
+        actionBar.hide();
+      }
+
+      Log.d(TAG, "PartyMainActivity onCreate started");
+
+      // Get data from intent
+      Intent intent = getIntent();
+      Log.d(TAG, "Got intent: " + intent);
+      Log.d(
+          TAG,
+          "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
+
+      // Try to get GroupKey directly from intent first
+      GroupKey = intent.getStringExtra("GroupKey");
+      Log.d(TAG, "GroupKey from intent: " + GroupKey);
+
+      // If not found, try to get it from ExtrasMetadata
+      if (GroupKey == null || GroupKey.isEmpty()) {
+        Log.d(TAG, "GroupKey not found directly in intent, checking ExtrasMetadata");
+        ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
+        if (extras != null) {
+          GroupKey = extras.getGroupKey();
+          Log.d(TAG, "GroupKey from ExtrasMetadata: " + GroupKey);
+        } else {
+          Log.d(TAG, "ExtrasMetadata is null");
+        }
+      }
+
+      // Try to get UserKey from AuthHelper first
+      try {
+        UserKey = AuthHelper.getCurrentUserKey(this);
+        Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+      } catch (Exception e) {
+        Log.e(TAG, "Failed to get current user email", e);
+        // Fallback to intent if auth fails
+        UserKey = intent.getStringExtra("UserKey");
+        Log.d(TAG, "UserKey from intent: " + UserKey);
+      }
+
+      Log.d(TAG, "UserKey initialized: " + UserKey);
+      Log.d(TAG, "GroupKey initialized: " + GroupKey);
+
+      // Initialize views
+      initializeViews();
+
+      // Check if Card6 is null
+      if (Card6 == null) {
+        Log.e(TAG, "Card6 is null");
+      } else {
+        Log.d(TAG, "Card6 is not null");
+      }
+
+      // Check if we have the required data
+      if (GroupKey == null || GroupKey.isEmpty()) {
+        Log.e(TAG, "Missing GroupKey in intent");
+        showErrorAndFinish("Missing group data. Please try again.");
+        return;
+      }
+
+      if (UserKey == null || UserKey.isEmpty()) {
+        Log.e(TAG, "Missing UserKey");
+        showErrorAndFinish("Missing user data. Please log in again.");
+        return;
+      }
+
+      // Load group data
+      loadGroupData();
+      
     } catch (Exception e) {
-      Log.e(TAG, "Failed to get current user email", e);
-      // Fallback to intent if auth fails
-      UserKey = intent.getStringExtra("UserKey");
-      Log.d(TAG, "UserKey from intent: " + UserKey);
+      Log.e(TAG, "Unexpected error in onCreate", e);
+      showErrorAndFinish("An unexpected error occurred. Please try again.");
     }
+  }
+  
+  /**
+   * Shows an error message and finishes the activity
+   * 
+   * @param message The error message to display
+   */
+  private void showErrorAndFinish(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    finish();
+  }
+  
+  /**
+   * Loads group data from the server with proper error handling
+   */
+  private void loadGroupData() {
+    try {
+      // Show loading indicator
+      showLoading(true);
+      
+      FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+      serverClient.getGroup(
+          GroupKey,
+          new FirebaseServerClient.DataCallback<Group>() {
+            @Override
+            public void onSuccess(Group group) {
+              try {
+                if (group == null) {
+                  Log.e(TAG, "Group data is null");
+                  showErrorAndFinish("Failed to load group data");
+                  return;
+                }
 
-    Log.d(TAG, "UserKey initialized: " + UserKey);
-    Log.d(TAG, "GroupKey initialized: " + GroupKey);
-
-    // Initialize views
-    initializeViews();
-
-    // Check if Card6 is null
-    if (Card6 == null) {
-      Log.e(TAG, "Card6 is null");
-    } else {
-      Log.d(TAG, "Card6 is not null");
-    }
-
-    // Remove automatic navigation - let user click to navigate
-    // Add a test button for ChatActivity - add to the root FrameLayout
-    // Button testChatButton = new Button(this);
-    // testChatButton.setText("TEST CHAT");
-    // testChatButton.setBackgroundDrawable(Color.RED);
-    // testChatButton.setTextColor(Color.WHITE);
-    // testChatButton.setPadding(40, 40, 40, 40);
-    // testChatButton.setTextSize(18);
-
-    // Add the button to the root FrameLayout
-    // FrameLayout rootLayout = (FrameLayout) findViewById(android.R.id.content);
-    // FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-    //         FrameLayout.LayoutParams.WRAP_CONTENT,
-    //         FrameLayout.LayoutParams.WRAP_CONTENT
-    // );
-    // params.gravity = android.view.Gravity.BOTTOM | android.view.Gravity.CENTER_HORIZONTAL;
-    // params.setMargins(0, 0, 0, 100);
-    // rootLayout.addView(testChatButton, params);
-
-    // testChatButton.setOnClickListener(v -> {
-    //     Log.d(TAG, "Test chat button clicked");
-    //     navigateToChatActivity();
-    // });
-
-    // Remove automatic navigation - let user click to navigate
-    // Automatically navigate to ChatActivity after 3 seconds
-    // new Handler().postDelayed(() -> {
-    //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
-    //     navigateToChatActivity();
-    // }, 3000);
-
-    // Check if we have the required data
-    if (GroupKey == null || GroupKey.isEmpty()) {
-      Log.e(TAG, "Missing GroupKey in intent");
-      Toast.makeText(this, "Missing group data", Toast.LENGTH_SHORT).show();
-      finish();
-      return;
-    }
-
-    // Load group data
-    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
-    serverClient.getGroup(
-        GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group == null) {
-              Log.e(TAG, "Group data is null");
-              Toast.makeText(
-                      PartyMainActivity.this, "Failed to load group data", Toast.LENGTH_SHORT)
-                  .show();
-              finish();
-              return;
-            }
-
-            currentGroup = group;
-            Log.d(
-                TAG,
-                "Loaded group data from server: " + group.getGroupName() + ", key: " + GroupKey);
-            Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
-
-            // Debug: Log ComingKeys data from server
-            if (group.getComingKeys() != null) {
-              Log.d(TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
-              Log.d(TAG, "ComingKeys details from server:");
-              for (String key : group.getComingKeys().keySet()) {
+                currentGroup = group;
                 Log.d(
                     TAG,
-                    "  ComingKey from server: '" + key + "' -> " + group.getComingKeys().get(key));
+                    "Loaded group data from server: " + group.getGroupName() + ", key: " + GroupKey);
+                Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+
+                // Debug: Log ComingKeys data from server
+                if (group.getComingKeys() != null) {
+                  Log.d(TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
+                  Log.d(TAG, "ComingKeys details from server:");
+                  for (String key : group.getComingKeys().keySet()) {
+                    Log.d(
+                        TAG,
+                        "  ComingKey from server: '" + key + "' -> " + group.getComingKeys().get(key));
+                  }
+                } else {
+                  Log.e(TAG, "ComingKeys is null in group data from server!");
+                }
+
+                // Update UI with group data
+                runOnUiThread(() -> {
+                  try {
+                    updateGroupUI(group);
+                    setupClickListeners();
+                    showLoading(false);
+                  } catch (Exception e) {
+                    Log.e(TAG, "Error updating UI with group data", e);
+                    showError("Error displaying group data");
+                  }
+                });
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing group data", e);
+                showError("Error processing group data");
               }
-            } else {
-              Log.e(TAG, "ComingKeys is null in group data from server!");
             }
 
-            // Update UI with group data
-            updateGroupUI(group);
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to get group details: " + errorMessage);
+              showError("Failed to load group details: " + errorMessage);
+            }
+          });
 
-            // Setup click listeners
-            setupClickListeners();
-          }
+      // Load messages with error handling
+      loadMessages();
+      
+    } catch (Exception e) {
+      Log.e(TAG, "Error loading group data", e);
+      showError("Error loading group data");
+    }
+  }
+  
+  /**
+   * Loads messages for the current group with proper error handling
+   */
+  private void loadMessages() {
+    try {
+      FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+      serverClient.getMessages(
+          GroupKey,
+          new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
+            @Override
+            public void onSuccess(
+                java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
+              try {
+                if (messages == null || messages.isEmpty()) {
+                  Log.d(TAG, "No messages found for group");
+                  return;
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Failed to get group details: " + errorMessage);
-            Toast.makeText(
-                    PartyMainActivity.this, "Failed to load group details", Toast.LENGTH_SHORT)
-                .show();
-            finish();
-          }
-        });
+                // Update message keys
+                MessageKeys = new HashMap<>();
+                for (ChatMessage message : messages) {
+                  MessageKeys.put(message.getMessageKey(), "true");
+                }
 
-    // Load messages
-    serverClient.getMessages(
-        GroupKey,
-        new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
-          @Override
-          public void onSuccess(
-              java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
-            if (messages == null || messages.isEmpty()) {
-              Log.d(TAG, "No messages found for group");
-              return;
+                Log.d(TAG, "Loaded " + messages.size() + " messages for group");
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing messages", e);
+                showError("Error processing messages");
+              }
             }
 
-            // Update message keys
-            MessageKeys = new HashMap<>();
-            for (ChatMessage message : messages) {
-              MessageKeys.put(message.getMessageKey(), "true");
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to load messages: " + errorMessage);
+              // Don't show error to user for messages - non-critical
             }
-
-            Log.d(TAG, "Loaded " + messages.size() + " messages for group");
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Failed to load messages: " + errorMessage);
-          }
-        });
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error loading messages", e);
+      // Don't show error to user for messages - non-critical
+    }
+  }
+  
+  /**
+   * Shows or hides a loading indicator
+   * 
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    runOnUiThread(() -> {
+      // You can implement a proper loading indicator here
+      // For now, just disable/enable UI elements
+      if (Card1 != null) Card1.setEnabled(!show);
+      if (Card2 != null) Card2.setEnabled(!show);
+      if (Card3 != null) Card3.setEnabled(!show);
+      if (Card4 != null) Card4.setEnabled(!show);
+      if (Card5 != null) Card5.setEnabled(!show);
+      if (Card6 != null) Card6.setEnabled(!show);
+      if (Card7 != null) Card7.setEnabled(!show);
+      if (Card8 != null) Card8.setEnabled(!show);
+    });
+  }
+  
+  /**
+   * Shows an error message to the user
+   * 
+   * @param message The error message to display
+   */
+  private void showError(String message) {
+    runOnUiThread(() -> {
+      try {
+        Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_LONG).show();
+        showLoading(false);
+      } catch (Exception e) {
+        Log.e(TAG, "Error showing error message", e);
+      }
+    });
   }
 
   private void initializeViews() {

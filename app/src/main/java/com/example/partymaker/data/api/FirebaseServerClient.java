@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.json.JSONArray;
@@ -49,6 +50,10 @@ public class FirebaseServerClient {
   private final Gson gson = new Gson();
   /** Application context. */
   private Context context;
+  /** ExecutorService for background tasks. */
+  private final ExecutorService executor = Executors.newCachedThreadPool();
+  /** Handler for posting to main thread. */
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
   /** Private constructor for singleton pattern. */
   private FirebaseServerClient() {
@@ -101,62 +106,56 @@ public class FirebaseServerClient {
     Log.d(TAG, "getGroups called");
     logApiCall("GET", "Groups");
 
-    new AsyncTask<Void, Void, Map<String, Group>>() {
-      private String errorMessage = null;
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
 
-      @Override
-      protected Map<String, Group> doInBackground(Void... params) {
-        try {
-          Log.d(TAG, "Making GET request to URL: " + serverUrl + "/api/firebase/Groups");
+    NetworkUtils.executeWithRetry(
+        () -> {
           String result = makeGetRequest("Groups");
-
-          if (result != null) {
-            Log.d(TAG, "Received groups data");
-            try {
-              Map<String, Group> groups = new HashMap<>();
-              JSONObject jsonObject = new JSONObject(result);
-              Iterator<String> keys = jsonObject.keys();
-
-              while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject groupJson = jsonObject.getJSONObject(key);
-                Group group = gson.fromJson(groupJson.toString(), Group.class);
-                if (group.getGroupKey() == null) {
-                  group.setGroupKey(key);
-                }
-                groups.put(key, group);
-              }
-
-              Log.d(TAG, "Successfully parsed " + groups.size() + " groups");
-              return groups;
-            } catch (Exception e) {
-              Log.e(TAG, "Error parsing groups", e);
-              errorMessage = e.getMessage();
-              return new HashMap<>(); // Return empty map instead of null
-            }
-          } else {
-            Log.e(TAG, "Failed to fetch groups, server may be down");
-            errorMessage = "Failed to fetch groups";
-            return new HashMap<>(); // Return empty map instead of null
+          if (result == null) {
+            throw new IOException("Failed to fetch groups data");
           }
-        } catch (Exception e) {
-          Log.e(TAG, "Error fetching groups", e);
-          errorMessage = "Error fetching groups: " + e.getMessage();
-          return new HashMap<>(); // Return empty map instead of null
-        }
-      }
 
-      @Override
-      protected void onPostExecute(Map<String, Group> result) {
-        if (result != null) {
-          Log.d(TAG, "getGroups completed successfully with " + result.size() + " groups");
-          callback.onSuccess(result);
-        } else {
-          Log.e(TAG, "getGroups failed: " + errorMessage);
-          callback.onError(errorMessage != null ? errorMessage : "Failed to fetch groups");
+          Map<String, Group> groups = new HashMap<>();
+          JSONObject jsonObject = new JSONObject(result);
+          Iterator<String> keys = jsonObject.keys();
+
+          while (keys.hasNext()) {
+            String key = keys.next();
+            JSONObject groupJson = jsonObject.getJSONObject(key);
+            Group group = gson.fromJson(groupJson.toString(), Group.class);
+            if (group.getGroupKey() == null) {
+              group.setGroupKey(key);
+            }
+            groups.put(key, group);
+          }
+
+          Log.d(TAG, "Successfully parsed " + groups.size() + " groups");
+          return groups;
+        },
+        new NetworkUtils.RetryCallback<Map<String, Group>>() {
+          @Override
+          public void onSuccess(Map<String, Group> result) {
+            Log.d(TAG, "getGroups completed successfully with " + result.size() + " groups");
+            callback.onSuccess(result);
+          }
+
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "getGroups failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying getGroups (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-    }.execute();
+    );
   }
 
   public void getGroup(String groupId, final DataCallback<Group> callback) {
@@ -165,17 +164,18 @@ public class FirebaseServerClient {
     // Check if groupId is null or empty
     if (groupId == null || groupId.isEmpty()) {
       Log.e(TAG, "Invalid groupId: null or empty");
-      callback.onError("Invalid group ID");
+      mainHandler.post(() -> callback.onError("Invalid group ID"));
       return;
     }
 
-    new AsyncTask<String, Void, Group>() {
-      private String errorMessage = null;
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
 
-      @Override
-      protected Group doInBackground(String... params) {
-        String groupId = params[0];
-        try {
+    NetworkUtils.executeWithRetry(
+        () -> {
           // First try to fetch the group directly
           Log.d(TAG, "Fetching group directly: " + groupId);
           String groupJson = makeGetRequest("Groups/" + groupId, 15000);
@@ -186,187 +186,277 @@ public class FirebaseServerClient {
             String allGroupsResult = makeGetRequest("Groups");
 
             if (allGroupsResult != null) {
-              try {
-                JSONObject jsonObject = new JSONObject(allGroupsResult);
+              JSONObject jsonObject = new JSONObject(allGroupsResult);
 
-                // Check if the group exists in the general list
-                if (jsonObject.has(groupId)) {
-                  groupJson = jsonObject.getJSONObject(groupId).toString();
-                  Log.d(TAG, "Found group in general list: " + groupId);
-                } else {
-                  Log.e(TAG, "Group not found in general list: " + groupId);
-                  errorMessage = "Group not found";
-                  return null;
-                }
-              } catch (Exception e) {
-                Log.e(TAG, "Error parsing groups list", e);
-                errorMessage = e.getMessage();
-                return null;
+              // Check if the group exists in the general list
+              if (jsonObject.has(groupId)) {
+                groupJson = jsonObject.getJSONObject(groupId).toString();
+                Log.d(TAG, "Found group in general list: " + groupId);
+              } else {
+                Log.e(TAG, "Group not found in general list: " + groupId);
+                throw new IOException("Group not found");
               }
             } else {
-              Log.e(TAG, "Failed to fetch groups list");
-              errorMessage = "Failed to fetch groups";
-              return null;
+              throw new IOException("Failed to fetch groups list");
             }
           }
 
           if (groupJson == null) {
-            Log.e(TAG, "Failed to fetch group: " + groupId);
-            errorMessage = "Failed to fetch group";
-            return null;
+            throw new IOException("Failed to fetch group");
           }
 
-          // Parse the group JSON
           Group group = gson.fromJson(groupJson, Group.class);
-          Log.d(TAG, "Successfully parsed group: " + groupId);
-          return group;
-        } catch (Exception e) {
-          Log.e(TAG, "Error fetching group", e);
-          errorMessage = "Error fetching group: " + e.getMessage();
-          return null;
-        }
-      }
+          if (group == null) {
+            throw new IOException("Failed to parse group data");
+          }
 
-      @Override
-      protected void onPostExecute(Group result) {
-        if (result != null) {
-          Log.d(TAG, "getGroup completed successfully");
-          callback.onSuccess(result);
-        } else {
-          Log.e(TAG, "getGroup failed: " + errorMessage);
-          callback.onError(errorMessage != null ? errorMessage : "Failed to fetch group");
+          // Set the group key if it's not already set
+          if (group.getGroupKey() == null || group.getGroupKey().isEmpty()) {
+            group.setGroupKey(groupId);
+          }
+
+          return group;
+        },
+        new NetworkUtils.RetryCallback<Group>() {
+          @Override
+          public void onSuccess(Group result) {
+            Log.d(TAG, "getGroup completed successfully: " + result.getGroupName());
+            callback.onSuccess(result);
+          }
+
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "getGroup failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying getGroup (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-    }.execute(groupId);
+    );
   }
 
   public void saveGroup(String groupId, Group group, final OperationCallback callback) {
-    new AsyncTask<Object, Void, Boolean>() {
-      @Override
-      protected Boolean doInBackground(Object... params) {
-        String path = "Groups/" + params[0];
-        Group groupObj = (Group) params[1];
-        return makePostRequest(path, gson.toJson(groupObj));
-      }
-
-      @Override
-      protected void onPostExecute(Boolean success) {
-        if (success) {
-          callback.onSuccess();
-        } else {
-          callback.onError("Failed to save group");
+    Log.d(TAG, "saveGroup called for groupId: " + groupId);
+    
+    if (groupId == null || groupId.isEmpty() || group == null) {
+      Log.e(TAG, "Invalid parameters for saveGroup");
+      mainHandler.post(() -> callback.onError("Invalid group data"));
+      return;
+    }
+    
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
+    
+    NetworkUtils.executeWithRetry(
+        () -> {
+          String jsonBody = gson.toJson(group);
+          boolean success = makePostRequest("Groups/" + groupId, jsonBody);
+          if (!success) {
+            throw new IOException("Failed to save group");
+          }
+          return true;
+        },
+        new NetworkUtils.RetryCallback<Boolean>() {
+          @Override
+          public void onSuccess(Boolean result) {
+            Log.d(TAG, "saveGroup completed successfully");
+            callback.onSuccess();
+          }
+          
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "saveGroup failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+          
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying saveGroup (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-    }.execute(groupId, group);
+    );
   }
 
   public void updateGroup(
       String groupId, Map<String, Object> updates, final OperationCallback callback) {
-    new AsyncTask<Object, Void, Boolean>() {
-      @Override
-      protected Boolean doInBackground(Object... params) {
-        String path = "Groups/" + params[0];
-        Map<String, Object> updatesObj = (Map<String, Object>) params[1];
-        return makePutRequest(path, gson.toJson(updatesObj));
-      }
-
-      @Override
-      protected void onPostExecute(Boolean success) {
-        if (success) {
-          callback.onSuccess();
-        } else {
-          callback.onError("Failed to update group");
+    Log.d(TAG, "updateGroup called for groupId: " + groupId);
+    
+    if (groupId == null || groupId.isEmpty() || updates == null || updates.isEmpty()) {
+      Log.e(TAG, "Invalid parameters for updateGroup");
+      mainHandler.post(() -> callback.onError("Invalid update data"));
+      return;
+    }
+    
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
+    
+    NetworkUtils.executeWithRetry(
+        () -> {
+          String jsonBody = gson.toJson(updates);
+          boolean success = makePutRequest("Groups/" + groupId, jsonBody);
+          if (!success) {
+            throw new IOException("Failed to update group");
+          }
+          return true;
+        },
+        new NetworkUtils.RetryCallback<Boolean>() {
+          @Override
+          public void onSuccess(Boolean result) {
+            Log.d(TAG, "updateGroup completed successfully");
+            callback.onSuccess();
+          }
+          
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "updateGroup failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+          
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying updateGroup (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-    }.execute(groupId, updates);
+    );
   }
 
   public void deleteGroup(String groupId, final OperationCallback callback) {
-    new AsyncTask<String, Void, Boolean>() {
-      @Override
-      protected Boolean doInBackground(String... params) {
-        String path = "Groups/" + params[0];
-        return makeDeleteRequest(path);
-      }
-
-      @Override
-      protected void onPostExecute(Boolean success) {
-        if (success) {
-          callback.onSuccess();
-        } else {
-          callback.onError("Failed to delete group");
+    Log.d(TAG, "deleteGroup called for groupId: " + groupId);
+    
+    if (groupId == null || groupId.isEmpty()) {
+      Log.e(TAG, "Invalid groupId for deleteGroup");
+      mainHandler.post(() -> callback.onError("Invalid group ID"));
+      return;
+    }
+    
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
+    
+    NetworkUtils.executeWithRetry(
+        () -> {
+          boolean success = makeDeleteRequest("Groups/" + groupId);
+          if (!success) {
+            throw new IOException("Failed to delete group");
+          }
+          return true;
+        },
+        new NetworkUtils.RetryCallback<Boolean>() {
+          @Override
+          public void onSuccess(Boolean result) {
+            Log.d(TAG, "deleteGroup completed successfully");
+            callback.onSuccess();
+          }
+          
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "deleteGroup failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+          
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying deleteGroup (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-    }.execute(groupId);
+    );
   }
 
-  // Add a method to update a specific field in a group
   public void updateGroup(
       String groupId, String field, Object value, final DataCallback<Void> callback) {
+    Log.d(TAG, "updateGroup field called for groupId: " + groupId + ", field: " + field);
+    
+    if (groupId == null || groupId.isEmpty() || field == null || field.isEmpty()) {
+      Log.e(TAG, "Invalid parameters for updateGroup field");
+      mainHandler.post(() -> callback.onError("Invalid update data"));
+      return;
+    }
+    
     Map<String, Object> updates = new HashMap<>();
     updates.put(field, value);
-
-    new AsyncTask<Object, Void, Boolean>() {
-      @Override
-      protected Boolean doInBackground(Object... params) {
-        String path = "Groups/" + params[0];
-        Map<String, Object> updatesObj = (Map<String, Object>) params[1];
-        return makePutRequest(path, gson.toJson(updatesObj));
-      }
-
-      @Override
-      protected void onPostExecute(Boolean success) {
-        if (success) {
-          callback.onSuccess(null);
-        } else {
-          callback.onError("Failed to update group field");
-        }
-      }
-    }.execute(groupId, updates);
+    
+    updateGroup(
+        groupId,
+        updates,
+        new OperationCallback() {
+          @Override
+          public void onSuccess() {
+            callback.onSuccess(null);
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            callback.onError(errorMessage);
+          }
+        });
   }
 
   // Users methods
   public void getUsers(final DataCallback<Map<String, User>> callback) {
-    new AsyncTask<Void, Void, Map<String, User>>() {
-      private String errorMessage = null;
-
-      @Override
-      protected Map<String, User> doInBackground(Void... voids) {
-        String result = makeGetRequest("Users");
-        if (result != null) {
-          try {
-            JSONObject jsonObject = new JSONObject(result);
-            Map<String, User> users = new HashMap<>();
-
-            Iterator<String> keys = jsonObject.keys();
-            while (keys.hasNext()) {
-              String key = keys.next();
-              JSONObject userJson = jsonObject.getJSONObject(key);
-              User user = gson.fromJson(userJson.toString(), User.class);
-              users.put(key, user);
-            }
-
-            return users;
-          } catch (JSONException e) {
-            Log.e(TAG, "Error parsing users", e);
-            errorMessage = e.getMessage();
-            return null;
+    Log.d(TAG, "getUsers called");
+    
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
+    
+    NetworkUtils.executeWithRetry(
+        () -> {
+          String result = makeGetRequest("Users");
+          if (result == null) {
+            throw new IOException("Failed to fetch users data");
           }
-        } else {
-          errorMessage = "Failed to fetch users";
-          return null;
+          
+          Map<String, User> users = new HashMap<>();
+          JSONObject jsonObject = new JSONObject(result);
+          Iterator<String> keys = jsonObject.keys();
+          
+          while (keys.hasNext()) {
+            String key = keys.next();
+            JSONObject userJson = jsonObject.getJSONObject(key);
+            User user = gson.fromJson(userJson.toString(), User.class);
+            users.put(key, user);
+          }
+          
+          Log.d(TAG, "Successfully parsed " + users.size() + " users");
+          return users;
+        },
+        new NetworkUtils.RetryCallback<Map<String, User>>() {
+          @Override
+          public void onSuccess(Map<String, User> result) {
+            Log.d(TAG, "getUsers completed successfully with " + result.size() + " users");
+            callback.onSuccess(result);
+          }
+          
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "getUsers failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+          
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying getUsers (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-
-      @Override
-      protected void onPostExecute(Map<String, User> users) {
-        if (users != null) {
-          callback.onSuccess(users);
-        } else {
-          callback.onError(errorMessage != null ? errorMessage : "Failed to fetch users");
-        }
-      }
-    }.execute();
+    );
   }
 
   public void getUser(String userId, final DataCallback<User> callback) {
@@ -490,13 +580,14 @@ public class FirebaseServerClient {
       return;
     }
 
-    new AsyncTask<String, Void, List<ChatMessage>>() {
-      private String errorMessage = null;
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      return;
+    }
 
-      @Override
-      protected List<ChatMessage> doInBackground(String... params) {
-        String groupId = params[0];
-        try {
+    NetworkUtils.executeWithRetry(
+        () -> {
           // First, try to fetch the group to get message keys
           Log.d(TAG, "Fetching group to get message keys: " + groupId);
           String groupJson = makeGetRequest("Groups/" + groupId, 15000);
@@ -507,34 +598,23 @@ public class FirebaseServerClient {
             String allGroupsResult = makeGetRequest("Groups");
 
             if (allGroupsResult != null) {
-              try {
-                JSONObject jsonObject = new JSONObject(allGroupsResult);
+              JSONObject jsonObject = new JSONObject(allGroupsResult);
 
-                // Check if the group exists in the general list
-                if (jsonObject.has(groupId)) {
-                  groupJson = jsonObject.getJSONObject(groupId).toString();
-                  Log.d(TAG, "Found group in general list for messages");
-                } else {
-                  Log.e(TAG, "Group not found in general list: " + groupId);
-                  errorMessage = "Group not found";
-                  return new ArrayList<>(); // Return empty list instead of null
-                }
-              } catch (Exception e) {
-                Log.e(TAG, "Error parsing groups list", e);
-                errorMessage = e.getMessage();
-                return new ArrayList<>(); // Return empty list instead of null
+              // Check if the group exists in the general list
+              if (jsonObject.has(groupId)) {
+                groupJson = jsonObject.getJSONObject(groupId).toString();
+                Log.d(TAG, "Found group in general list for messages");
+              } else {
+                Log.e(TAG, "Group not found in general list: " + groupId);
+                throw new IOException("Group not found");
               }
             } else {
-              Log.e(TAG, "Failed to fetch groups list");
-              errorMessage = "Failed to fetch groups";
-              return new ArrayList<>(); // Return empty list instead of null
+              throw new IOException("Failed to fetch groups list");
             }
           }
 
           if (groupJson == null) {
-            Log.e(TAG, "Failed to fetch group: " + groupId);
-            errorMessage = "Failed to fetch group";
-            return new ArrayList<>(); // Return empty list instead of null
+            throw new IOException("Failed to fetch group");
           }
 
           // Parse the group
@@ -660,24 +740,27 @@ public class FirebaseServerClient {
 
           Log.d(TAG, "Successfully processed " + messages.size() + " messages for group: " + groupId);
           return messages;
-        } catch (Exception e) {
-          Log.e(TAG, "Error fetching messages", e);
-          errorMessage = "Error fetching messages: " + e.getMessage();
-          return new ArrayList<>();
+        },
+        new NetworkUtils.RetryCallback<List<ChatMessage>>() {
+          @Override
+          public void onSuccess(List<ChatMessage> result) {
+            Log.d(TAG, "getMessages completed successfully with " + result.size() + " messages");
+            callback.onSuccess(result);
+          }
+          
+          @Override
+          public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
+            String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
+            Log.e(TAG, "getMessages failed: " + errorMessage + " (" + errorType + ")");
+            callback.onError(userFriendlyError);
+          }
+          
+          @Override
+          public void onRetry(int attemptCount, Exception e) {
+            Log.w(TAG, "Retrying getMessages (attempt " + attemptCount + "): " + e.getMessage());
+          }
         }
-      }
-
-      @Override
-      protected void onPostExecute(List<ChatMessage> result) {
-        if (result != null) {
-          Log.d(TAG, "getMessages completed successfully with " + result.size() + " messages");
-          callback.onSuccess(result);
-        } else {
-          Log.e(TAG, "getMessages failed: " + errorMessage);
-          callback.onError(errorMessage != null ? errorMessage : "Failed to fetch messages");
-        }
-      }
-    }.execute(groupId);
+    );
   }
 
   public void saveMessage(
@@ -1183,6 +1266,15 @@ public class FirebaseServerClient {
         connection.disconnect();
       }
     }
+  }
+
+  /**
+   * Cleanup resources when the app is shutting down
+   */
+  public void cleanup() {
+    Log.d(TAG, "Cleaning up FirebaseServerClient resources");
+    executor.shutdownNow();
+    NetworkUtils.cancelAllOperations();
   }
 
   // Callback interfaces

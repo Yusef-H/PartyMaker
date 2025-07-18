@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
@@ -217,20 +218,20 @@ public class PublicGroupsActivity extends AppCompatActivity {
     lv1.setAdapter(allGroupsAdapter);
   }
 
-  public boolean onOptionsItemSelected(MenuItem item) {
-    Intent goToNextActivity;
-
-    if (item.getItemId() == R.id.idServerSettings) {
-      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idLogout) {
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.settings) {
+      Intent intent = new Intent(PublicGroupsActivity.this, ServerSettingsActivity.class);
+      startActivity(intent);
+      return true;
+    } else if (item.getItemId() == R.id.logout) {
       AuthHelper.clearAuthData(this);
-      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
-      startActivity(goToNextActivity);
+      Intent intent = new Intent(PublicGroupsActivity.this, LoginActivity.class);
+      startActivity(intent);
       finish();
+      return true;
     }
-
-    return true;
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

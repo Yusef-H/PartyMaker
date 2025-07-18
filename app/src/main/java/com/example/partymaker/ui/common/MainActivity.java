@@ -67,41 +67,75 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    try {
+      setContentView(R.layout.activity_main);
 
-    // Force set server URL to Render
-    forceSetServerUrl();
+      // Force set server URL to Render
+      forceSetServerUrl();
 
-    if (!initializeUser()) {
-      return; // Exit if user initialization failed
+      if (!initializeUser()) {
+        return; // Exit if user initialization failed
+      }
+
+      // Initialize ViewModel
+      viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
+      
+      initializeViews();
+      setupActionBar();
+      setupEventHandlers();
+      setupFloatingChatButton();
+      setupBottomNavigation();
+      
+      // Observe group data from ViewModel
+      observeViewModel();
+      
+      // Show loading indicator
+      showLoading(true);
+      
+      // Load groups for current user
+      viewModel.loadUserGroups(UserKey, true);
+    } catch (Exception e) {
+      Log.e(TAG, "Fatal error in onCreate", e);
+      showError("An unexpected error occurred. Please restart the app.");
     }
-
-    // Initialize ViewModel
-    viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
-    
-    initializeViews();
-    setupActionBar();
-    setupEventHandlers();
-    setupFloatingChatButton();
-    setupBottomNavigation();
-    
-    // Observe group data from ViewModel
-    observeViewModel();
-    
-    // Load groups for current user
-    viewModel.loadUserGroups(UserKey);
+  }
+  
+  /**
+   * Shows or hides a loading indicator
+   * 
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    try {
+      // Simple implementation without dedicated loading view
+      if (lv1 != null) {
+        lv1.setVisibility(show ? View.GONE : View.VISIBLE);
+      }
+      
+      // Show a toast if loading starts
+      if (show) {
+        Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error toggling loading state", e);
+    }
   }
 
   /**
    * Forces the server URL to be set to Render
    */
   private void forceSetServerUrl() {
-    String renderUrl = "https://partymaker.onrender.com";
-    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-        .edit()
-        .putString("server_url", renderUrl)
-        .apply();
-    Log.d(TAG, "Forced server URL to: " + renderUrl);
+    try {
+      String renderUrl = "https://partymaker.onrender.com";
+      androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+          .edit()
+          .putString("server_url", renderUrl)
+          .apply();
+      Log.d(TAG, "Forced server URL to: " + renderUrl);
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting server URL", e);
+      // Non-critical error, continue execution
+    }
   }
 
   /**
@@ -199,52 +233,95 @@ public class MainActivity extends AppCompatActivity {
 
   // Observes LiveData from the ViewModel
   private void observeViewModel() {
-    // Observe group list
-    viewModel.getGroups().observe(this, groups -> {
-      if (groups != null) {
-        groupList.clear();
-        groupList.addAll(groups);
-        groupAdapter.notifyDataSetChanged();
-        Log.d(TAG, "Group list updated with " + groups.size() + " groups");
-      }
-    });
-    
-    // Observe loading state
-    viewModel.getIsLoading().observe(this, isLoading -> {
-      // You could show/hide a progress indicator here
-    });
-    
-    // Observe error messages
-    viewModel.getErrorMessage().observe(this, errorMsg -> {
-      if (errorMsg != null && !errorMsg.isEmpty()) {
-        showError(errorMsg);
-        viewModel.clearError(); // Clear the error after showing it
-      }
-    });
+    try {
+      // Observe group list
+      viewModel.getGroups().observe(this, groups -> {
+        try {
+          if (groups != null) {
+            groupList.clear();
+            groupList.addAll(groups);
+            groupAdapter.notifyDataSetChanged();
+            Log.d(TAG, "Group list updated with " + groups.size() + " groups");
+            
+            // Hide loading indicator
+            showLoading(false);
+            
+            // Show empty state if needed
+            if (groups.isEmpty()) {
+              showEmptyState();
+            }
+          } else {
+            Log.w(TAG, "Received null groups list from ViewModel");
+            showEmptyState();
+            showLoading(false);
+          }
+        } catch (Exception e) {
+          Log.e(TAG, "Error processing groups data", e);
+          showError("Error displaying groups");
+          showLoading(false);
+        }
+      });
+      
+      // Observe loading state
+      viewModel.getIsLoading().observe(this, isLoading -> {
+        try {
+          showLoading(isLoading);
+        } catch (Exception e) {
+          Log.e(TAG, "Error updating loading state", e);
+        }
+      });
+      
+      // Observe error messages
+      viewModel.getErrorMessage().observe(this, errorMsg -> {
+        try {
+          if (errorMsg != null && !errorMsg.isEmpty()) {
+            showError(errorMsg);
+            viewModel.clearError(); // Clear the error after showing it
+            showLoading(false);
+          }
+        } catch (Exception e) {
+          Log.e(TAG, "Error displaying error message", e);
+        }
+      });
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up observers", e);
+      showError("Error initializing data observers");
+    }
   }
 
   // Sets up all event handlers for UI components.
   private void setupEventHandlers() {
-    if (lv1 != null) {
-      lv1.setOnItemClickListener(
-          (parent, view, position, id) -> {
-            if (isValidPosition(position)) {
-              Group selectedGroup = groupList.get(position);
-              Log.d(
-                  TAG,
-                  "Group clicked: "
-                      + selectedGroup.getGroupName()
-                      + ", key: "
-                      + selectedGroup.getGroupKey()
-                      + ", adminKey: "
-                      + selectedGroup.getAdminKey()
-                      + ", messageKeys size: "
-                      + (selectedGroup.getMessageKeys() != null
-                          ? selectedGroup.getMessageKeys().size()
-                          : "null"));
-              navigateToGroupScreen(selectedGroup);
-            }
-          });
+    try {
+      if (lv1 != null) {
+        lv1.setOnItemClickListener(
+            (parent, view, position, id) -> {
+              try {
+                if (isValidPosition(position)) {
+                  Group selectedGroup = groupList.get(position);
+                  Log.d(
+                      TAG,
+                      "Group clicked: "
+                          + selectedGroup.getGroupName()
+                          + ", key: "
+                          + selectedGroup.getGroupKey()
+                          + ", adminKey: "
+                          + selectedGroup.getAdminKey()
+                          + ", messageKeys size: "
+                          + (selectedGroup.getMessageKeys() != null
+                              ? selectedGroup.getMessageKeys().size()
+                              : "null"));
+                  navigateToGroupScreen(selectedGroup);
+                } else {
+                  Log.w(TAG, "Invalid position clicked: " + position);
+                }
+              } catch (Exception e) {
+                Log.e(TAG, "Error handling item click", e);
+                showError("Error opening group");
+              }
+            });
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up event handlers", e);
     }
   }
 
@@ -309,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
 
     } catch (Exception e) {
       Log.e(TAG, "Error navigating to group screen", e);
-      showError("Failed to open group");
+      showError("Failed to open group: " + e.getMessage());
     }
   }
 
@@ -333,15 +410,18 @@ public class MainActivity extends AppCompatActivity {
         group.getMessageKeys());
   }
 
-  // Show empty state when no groups are available
+  // Shows an empty state when no groups are available
   private void showEmptyState() {
-    runOnUiThread(
-        () -> {
-          if (lv1 != null) {
-            // Just show a toast message since we don't have a dedicated empty state view
-            Toast.makeText(this, "No groups found", Toast.LENGTH_LONG).show();
-          }
-        });
+    try {
+      runOnUiThread(
+          () -> {
+            if (lv1 != null && groupList != null && groupList.isEmpty()) {
+              Toast.makeText(this, "No groups found", Toast.LENGTH_LONG).show();
+            }
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing empty state", e);
+    }
   }
 
   // Checks if the current user is a member of the given group.
@@ -375,16 +455,16 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
+    Intent goToNextActivity;
 
-    try {
-      if (itemId == R.id.idServerSettings) {
-        navigateToActivity(ServerSettingsActivity.class);
-      } else if (itemId == R.id.idLogout) {
-        handleLogout();
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "Error handling menu selection", e);
-      showError("Menu action failed");
+    if (itemId == R.id.settings) {
+      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
+      startActivity(goToNextActivity);
+    } else if (itemId == R.id.logout) {
+      AuthHelper.clearAuthData(this);
+      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
+      startActivity(goToNextActivity);
+      finish();
     }
 
     return true;
@@ -415,9 +495,18 @@ public class MainActivity extends AppCompatActivity {
     finish();
   }
 
-  // Shows an error message to the user.
+  /**
+   * Shows an error message to the user.
+   *
+   * @param message The error message to display
+   */
   private void showError(String message) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    try {
+      Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+      Log.e(TAG, "Error shown to user: " + message);
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing error message", e);
+    }
   }
 
   @Override
