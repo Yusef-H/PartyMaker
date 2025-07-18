@@ -467,16 +467,13 @@ public class PartyMainActivity extends AppCompatActivity {
         // It's coordinates, show a clean location text
         tvGroupLocation.setText("📍 Location");
         tvGroupLocation.setVisibility(View.VISIBLE);
-        // Add a map icon to indicate it's clickable
-        tvGroupLocation.setCompoundDrawablesWithIntrinsicBounds(
-            0, 0, R.drawable.ic_party_location, 0);
       } else {
         // It's a text location, show as is
         tvGroupLocation.setText(location);
         tvGroupLocation.setVisibility(View.VISIBLE);
       }
     } else {
-      tvGroupLocation.setText("אין מיקום");
+      tvGroupLocation.setText("No Location");
       tvGroupLocation.setVisibility(View.VISIBLE);
     }
 
