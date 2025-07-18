@@ -243,10 +243,6 @@ public class PublicGroupsActivity extends AppCompatActivity {
       // Handle the back button in the action bar
       onBackPressed();
       return true;
-    } else if (itemId == R.id.profile) {
-      Intent intent = new Intent(this, EditProfileActivity.class);
-      startActivity(intent);
-      return true;
     } else if (itemId == R.id.settings) {
       Intent intent = new Intent(this, ServerSettingsActivity.class);
       startActivity(intent);
