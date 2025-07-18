@@ -70,6 +70,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import com.example.partymaker.data.api.FirebaseServerClient;
 
 public class CreateGroupActivity extends AppCompatActivity implements OnMapReadyCallback {
   // Constants
@@ -431,9 +432,14 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private void handleCreateGroup(View v) {
     try {
       Group group = createGroupFromForm();
+      
+      // Show loading indicator or disable button
+      btnAddGroup.setEnabled(false);
+      
+      // Save group asynchronously
       saveGroupToDatabase(group);
-      showSuccessMessage();
-      transitionToImageStep();
+      
+      // Success message and UI transition will be handled in the callback
     } catch (Exception e) {
       handleGroupCreationError(e);
     }
@@ -478,14 +484,39 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     GroupKey1 = groupKey;
     group.setGroupKey(groupKey);
 
-    // Save group to database
-    DBRef.refGroups.child(groupKey).setValue(group);
-
-    // Add admin to group members
-    addAdminToGroup(group);
-
-    // Initialize group chat
-    initializeGroupChat(group);
+    // Use FirebaseServerClient instead of direct Firebase calls
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    serverClient.saveGroup(groupKey, group, new FirebaseServerClient.OperationCallback() {
+      @Override
+      public void onSuccess() {
+        Log.d(TAG, "Group saved successfully via server client");
+        
+        // Add admin to group members
+        addAdminToGroup(group);
+        
+        // Initialize group chat
+        initializeGroupChat(group);
+        
+        // Show success message and transition to next step on the UI thread
+        runOnUiThread(() -> {
+          showSuccessMessage();
+          transitionToImageStep();
+          btnAddGroup.setEnabled(true);
+        });
+      }
+      
+      @Override
+      public void onError(String errorMessage) {
+        Log.e(TAG, "Error saving group via server client: " + errorMessage);
+        
+        // Show error message on the UI thread
+        runOnUiThread(() -> {
+          Toast.makeText(CreateGroupActivity.this, 
+              "Error creating group: " + errorMessage, Toast.LENGTH_LONG).show();
+          btnAddGroup.setEnabled(true);
+        });
+      }
+    });
   }
 
   // Helper methods
@@ -590,14 +621,62 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     Map<String, Object> memberData = new HashMap<>();
     memberData.put(adminKey, "true");
 
-    // Add to both friend keys and coming keys
-    DBRef.refGroups.child(group.getGroupKey()).child("FriendKeys").updateChildren(memberData);
-    DBRef.refGroups.child(group.getGroupKey()).child("ComingKeys").updateChildren(memberData);
+    // Use FirebaseServerClient instead of direct Firebase calls
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    
+    // Add to friend keys
+    Map<String, Object> friendKeysUpdate = new HashMap<>();
+    friendKeysUpdate.put("FriendKeys", memberData);
+    serverClient.updateGroup(group.getGroupKey(), friendKeysUpdate, 
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "Admin added to FriendKeys successfully");
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error adding admin to FriendKeys: " + errorMessage);
+          }
+        });
+    
+    // Add to coming keys
+    Map<String, Object> comingKeysUpdate = new HashMap<>();
+    comingKeysUpdate.put("ComingKeys", memberData);
+    serverClient.updateGroup(group.getGroupKey(), comingKeysUpdate, 
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "Admin added to ComingKeys successfully");
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error adding admin to ComingKeys: " + errorMessage);
+          }
+        });
   }
 
   private void initializeGroupChat(Group group) {
     Map<String, Object> emptyChat = new HashMap<>();
-    DBRef.refGroups.child(group.getGroupKey()).child("MessageKeys").updateChildren(emptyChat);
+    
+    // Use FirebaseServerClient instead of direct Firebase calls
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    Map<String, Object> messageKeysUpdate = new HashMap<>();
+    messageKeysUpdate.put("MessageKeys", emptyChat);
+    
+    serverClient.updateGroup(group.getGroupKey(), messageKeysUpdate, 
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "Group chat initialized successfully");
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error initializing group chat: " + errorMessage);
+          }
+        });
   }
 
   private void showSuccessMessage() {

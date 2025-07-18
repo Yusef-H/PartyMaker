@@ -258,7 +258,8 @@ public class FirebaseServerClient {
     NetworkUtils.executeWithRetry(
         () -> {
           String jsonBody = gson.toJson(group);
-          boolean success = makePostRequest("Groups/" + groupId, jsonBody);
+          // Use PUT instead of POST since the server only allows PUT for this endpoint
+          boolean success = makePutRequest("Groups/" + groupId, jsonBody);
           if (!success) {
             throw new IOException("Failed to save group");
           }
