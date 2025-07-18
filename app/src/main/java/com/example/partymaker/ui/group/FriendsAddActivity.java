@@ -110,7 +110,7 @@ public class FriendsAddActivity extends AppCompatActivity {
   }
 
   private void navigateBack() {
-    Intent intent = new Intent(this, GroupDetailsActivity.class);
+    Intent intent = new Intent(this, PartyMainActivity.class);
     ExtrasMetadata extras =
         new ExtrasMetadata(
             GroupName,

@@ -203,7 +203,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // Set up back button click listener
     if (btnBack != null) {
-        btnBack.setOnClickListener(v -> navigateBackToGroupDetails());
+        btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }
 
     wireMapComponents();
@@ -217,8 +217,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     eventHandler();
   }
 
-  private void navigateBackToGroupDetails() {
-    Intent intent = new Intent(this, GroupDetailsActivity.class);
+  private void navigateBackToPartyMain() {
+    Intent intent = new Intent(this, PartyMainActivity.class);
     ExtrasMetadata extras =
         new ExtrasMetadata(
             GroupName,
@@ -244,7 +244,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   @Override
   public void onBackPressed() {
     // Handle back button press to ensure proper navigation
-    navigateBackToGroupDetails();
+    navigateBackToPartyMain();
   }
 
   private void eventHandler() {
@@ -426,10 +426,10 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                       MessageKeys);
               Common.addExtrasToIntent(intent, extras);
               startActivity(intent);
-            } else if (finalI == 5) // open 3,2 (6) Back
+            } else if (finalI == 5) // open 2,2 (4) Back
             {
-              // Navigate back to GroupDetailsActivity
-              navigateBackToGroupDetails();
+              // Navigate back to PartyMainActivity
+              navigateBackToPartyMain();
             }
           });
     }
