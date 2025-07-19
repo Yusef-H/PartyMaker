@@ -20,10 +20,13 @@
     <color name="gray_medium">#848484</color>
 
     <!-- Original color definitions -->
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
     <color name="colorGray">#848484</color>
+
+    <!-- Additional colors -->
+    <color name="green">#4CAF50</color>
 
     <!-- Screens background -->
     <color name="bg_screen1">#4f8500fa</color>

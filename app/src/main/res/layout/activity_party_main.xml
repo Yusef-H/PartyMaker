@@ -12,6 +12,8 @@
         android:background="@drawable/bg_party_screen"
         android:orientation="vertical">
 
+
+
         <!-- Header Section -->
         <RelativeLayout
             android:id="@+id/headerSection"
@@ -122,6 +124,37 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="bold" />
+                        
+                    <!-- Compact payment button -->
+                    <LinearLayout
+                        android:id="@+id/paymentPullUpContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/compact_payment_background"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:elevation="4dp">
+
+                        <ImageView
+                            android:id="@+id/paymentIcon"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_payment"
+                            android:tint="#4CAF50"
+                            android:contentDescription="@string/pull_to_pay" />
+
+                        <TextView
+                            android:id="@+id/tvPayNow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/pay_now"
+                            android:textColor="#4CAF50"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Back Button -->
@@ -202,7 +235,7 @@
                         android:text="@string/location"
                         android:textColor="#1986ed"
                         android:textSize="14sp" />
-                    
+
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
