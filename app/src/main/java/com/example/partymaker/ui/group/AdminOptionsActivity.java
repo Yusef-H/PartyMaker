@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   private Button saveLocationButton;
   private FrameLayout mapContainer;
   private boolean isAdminVerified = false; // Track admin verification status
+  private ImageButton btnBack; // Added back button
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +199,12 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     CardLocation = findViewById(R.id.CardLocation);
     saveLocationButton = findViewById(R.id.saveLocation);
     mapContainer = findViewById(R.id.mapContainer);
+    btnBack = findViewById(R.id.btnBack); // Initialize back button
+
+    // Set up back button click listener
+    if (btnBack != null) {
+        btnBack.setOnClickListener(v -> navigateBackToPartyMain());
+    }
 
     wireMapComponents();
 
@@ -207,6 +215,38 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     wireAdminOptions(myGrid);
 
     eventHandler();
+  }
+
+  private void navigateBackToPartyMain() {
+    Intent intent = new Intent(this, PartyMainActivity.class);
+    ExtrasMetadata extras =
+        new ExtrasMetadata(
+            GroupName,
+            GroupKey,
+            GroupDay,
+            GroupMonth,
+            GroupYear,
+            GroupHour,
+            GroupLocation,
+            AdminKey,
+            CreatedAt,
+            GroupPrice,
+            GroupType,
+            CanAdd,
+            FriendKeys,
+            ComingKeys,
+            MessageKeys);
+    Common.addExtrasToIntent(intent, extras);
+    startActivity(intent);
+    finish(); // Close this activity to prevent it from staying in the back stack
+  }
+
+  @Override
+  public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
+    // Handle back button press to ensure proper navigation
+    navigateBackToPartyMain();
   }
 
   private void eventHandler() {
@@ -315,46 +355,84 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
       final int finalI = i;
       cardView.setOnClickListener(
           view -> {
-            Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);
+            Intent intent;
             // if (finalI == 0)  open 1,1 (1) Change Location
             if (finalI == 1) // open 1,2 (2) Change Date
             {
               // intent from AdminOptions to ChangeDate
               intent = new Intent(getBaseContext(), ChangeDateActivity.class);
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      GroupName,
+                      GroupKey,
+                      GroupDay,
+                      GroupMonth,
+                      GroupYear,
+                      GroupHour,
+                      GroupLocation,
+                      AdminKey,
+                      CreatedAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              startActivity(intent);
             } else if (finalI == 2) // open 2,1 (3) Delete People
             {
               intent = new Intent(getBaseContext(), FriendsRemoveActivity.class);
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      GroupName,
+                      GroupKey,
+                      GroupDay,
+                      GroupMonth,
+                      GroupYear,
+                      GroupHour,
+                      GroupLocation,
+                      AdminKey,
+                      CreatedAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              intent.putExtra("groupID", GroupKey); // Add groupID for FriendsRemoveActivity
+              startActivity(intent);
             }
             // else if (finalI == 3) // open 2,2 (4) Change Entry Price
             else if (finalI == 4) // open 3,1 (5) Group Options
             {
               // intent to GroupOptions Activity with Values
               intent = new Intent(getBaseContext(), AdminSettingsActivity.class);
-
-            } else if (finalI == 5) // open 3,2 (6) Back
+              ExtrasMetadata extras =
+                  new ExtrasMetadata(
+                      GroupName,
+                      GroupKey,
+                      GroupDay,
+                      GroupMonth,
+                      GroupYear,
+                      GroupHour,
+                      GroupLocation,
+                      AdminKey,
+                      CreatedAt,
+                      GroupPrice,
+                      GroupType,
+                      CanAdd,
+                      FriendKeys,
+                      ComingKeys,
+                      MessageKeys);
+              Common.addExtrasToIntent(intent, extras);
+              startActivity(intent);
+            } else if (finalI == 5) // open 2,2 (4) Back
             {
-              // intent back to GroupScreen Activity with Values
-              intent = new Intent(getBaseContext(), GroupDetailsActivity.class);
+              // Navigate back to PartyMainActivity
+              navigateBackToPartyMain();
             }
-            ExtrasMetadata extras =
-                new ExtrasMetadata(
-                    GroupName,
-                    GroupKey,
-                    GroupDay,
-                    GroupMonth,
-                    GroupYear,
-                    GroupHour,
-                    GroupLocation,
-                    AdminKey,
-                    CreatedAt,
-                    GroupPrice,
-                    GroupType,
-                    CanAdd,
-                    FriendKeys,
-                    ComingKeys,
-                    MessageKeys);
-            Common.addExtrasToIntent(intent, extras);
-            startActivity(intent);
           });
     }
   }

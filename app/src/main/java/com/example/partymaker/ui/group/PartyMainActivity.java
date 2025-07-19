@@ -23,6 +23,11 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utilities.ShareHelper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.view.View.OnClickListener;
+import android.app.AlertDialog;
+import com.example.partymaker.utilities.NotificationHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,185 +62,244 @@ public class PartyMainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_main);
 
-    // Hide action bar to remove black bar at top
-    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
-    }
-
-    Log.d(TAG, "PartyMainActivity onCreate started");
-
-    // Remove automatic navigation - let user click to navigate
-    // Auto-navigate to ChatActivity after 5 seconds
-    // new Handler().postDelayed(() -> {
-    //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
-    //     navigateToChatActivity();
-    // }, 5000);
-
-    // Get data from intent
-    Intent intent = getIntent();
-    Log.d(TAG, "Got intent: " + intent);
-    Log.d(
-        TAG,
-        "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
-
-    // Try to get GroupKey directly from intent first
-    GroupKey = intent.getStringExtra("GroupKey");
-    Log.d(TAG, "GroupKey from intent: " + GroupKey);
-
-    // If not found, try to get it from ExtrasMetadata
-    if (GroupKey == null || GroupKey.isEmpty()) {
-      Log.d(TAG, "GroupKey not found directly in intent, checking ExtrasMetadata");
-      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
-      if (extras != null) {
-        GroupKey = extras.getGroupKey();
-        Log.d(TAG, "GroupKey from ExtrasMetadata: " + GroupKey);
-      } else {
-        Log.d(TAG, "ExtrasMetadata is null");
-      }
-    }
-
-    // Try to get UserKey from AuthHelper first
     try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+      // Hide action bar to remove black bar at top
+      androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+      if (actionBar != null) {
+        actionBar.hide();
+      }
+
+      Log.d(TAG, "PartyMainActivity onCreate started");
+
+      // Get data from intent
+      Intent intent = getIntent();
+      Log.d(TAG, "Got intent: " + intent);
+      Log.d(
+          TAG,
+          "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
+
+      // Try to get GroupKey directly from intent first
+      GroupKey = intent.getStringExtra("GroupKey");
+      Log.d(TAG, "GroupKey from intent: " + GroupKey);
+
+      // If not found, try to get it from ExtrasMetadata
+      if (GroupKey == null || GroupKey.isEmpty()) {
+        Log.d(TAG, "GroupKey not found directly in intent, checking ExtrasMetadata");
+        ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
+        if (extras != null) {
+          GroupKey = extras.getGroupKey();
+          Log.d(TAG, "GroupKey from ExtrasMetadata: " + GroupKey);
+        } else {
+          Log.d(TAG, "ExtrasMetadata is null");
+        }
+      }
+
+      // Try to get UserKey from AuthHelper first
+      try {
+        UserKey = AuthHelper.getCurrentUserKey(this);
+        Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+      } catch (Exception e) {
+        Log.e(TAG, "Failed to get current user email", e);
+        // Fallback to intent if auth fails
+        UserKey = intent.getStringExtra("UserKey");
+        Log.d(TAG, "UserKey from intent: " + UserKey);
+      }
+
+      Log.d(TAG, "UserKey initialized: " + UserKey);
+      Log.d(TAG, "GroupKey initialized: " + GroupKey);
+
+      // Initialize views
+      initializeViews();
+
+      // Check if Card6 is null
+      if (Card6 == null) {
+        Log.e(TAG, "Card6 is null");
+      } else {
+        Log.d(TAG, "Card6 is not null");
+      }
+
+      // Check if we have the required data
+      if (GroupKey == null || GroupKey.isEmpty()) {
+        Log.e(TAG, "Missing GroupKey in intent");
+        showErrorAndFinish("Missing group data. Please try again.");
+        return;
+      }
+
+      if (UserKey == null || UserKey.isEmpty()) {
+        Log.e(TAG, "Missing UserKey");
+        showErrorAndFinish("Missing user data. Please log in again.");
+        return;
+      }
+
+      // Load group data
+      loadGroupData();
+      
     } catch (Exception e) {
-      Log.e(TAG, "Failed to get current user email", e);
-      // Fallback to intent if auth fails
-      UserKey = intent.getStringExtra("UserKey");
-      Log.d(TAG, "UserKey from intent: " + UserKey);
+      Log.e(TAG, "Unexpected error in onCreate", e);
+      showErrorAndFinish("An unexpected error occurred. Please try again.");
     }
+  }
+  
+  /**
+   * Shows an error message and finishes the activity
+   * 
+   * @param message The error message to display
+   */
+  private void showErrorAndFinish(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    finish();
+  }
+  
+  /**
+   * Loads group data from the server with proper error handling
+   */
+  private void loadGroupData() {
+    try {
+      // Show loading indicator
+      showLoading(true);
+      
+      FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+      serverClient.getGroup(
+          GroupKey,
+          new FirebaseServerClient.DataCallback<Group>() {
+            @Override
+            public void onSuccess(Group group) {
+              try {
+                if (group == null) {
+                  Log.e(TAG, "Group data is null");
+                  showErrorAndFinish("Failed to load group data");
+                  return;
+                }
 
-    Log.d(TAG, "UserKey initialized: " + UserKey);
-    Log.d(TAG, "GroupKey initialized: " + GroupKey);
-
-    // Initialize views
-    initializeViews();
-
-    // Check if Card6 is null
-    if (Card6 == null) {
-      Log.e(TAG, "Card6 is null");
-    } else {
-      Log.d(TAG, "Card6 is not null");
-    }
-
-    // Remove automatic navigation - let user click to navigate
-    // Add a test button for ChatActivity - add to the root FrameLayout
-    // Button testChatButton = new Button(this);
-    // testChatButton.setText("TEST CHAT");
-    // testChatButton.setBackgroundDrawable(Color.RED);
-    // testChatButton.setTextColor(Color.WHITE);
-    // testChatButton.setPadding(40, 40, 40, 40);
-    // testChatButton.setTextSize(18);
-
-    // Add the button to the root FrameLayout
-    // FrameLayout rootLayout = (FrameLayout) findViewById(android.R.id.content);
-    // FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-    //         FrameLayout.LayoutParams.WRAP_CONTENT,
-    //         FrameLayout.LayoutParams.WRAP_CONTENT
-    // );
-    // params.gravity = android.view.Gravity.BOTTOM | android.view.Gravity.CENTER_HORIZONTAL;
-    // params.setMargins(0, 0, 0, 100);
-    // rootLayout.addView(testChatButton, params);
-
-    // testChatButton.setOnClickListener(v -> {
-    //     Log.d(TAG, "Test chat button clicked");
-    //     navigateToChatActivity();
-    // });
-
-    // Remove automatic navigation - let user click to navigate
-    // Automatically navigate to ChatActivity after 3 seconds
-    // new Handler().postDelayed(() -> {
-    //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
-    //     navigateToChatActivity();
-    // }, 3000);
-
-    // Check if we have the required data
-    if (GroupKey == null || GroupKey.isEmpty()) {
-      Log.e(TAG, "Missing GroupKey in intent");
-      Toast.makeText(this, "Missing group data", Toast.LENGTH_SHORT).show();
-      finish();
-      return;
-    }
-
-    // Load group data
-    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
-    serverClient.getGroup(
-        GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group == null) {
-              Log.e(TAG, "Group data is null");
-              Toast.makeText(
-                      PartyMainActivity.this, "Failed to load group data", Toast.LENGTH_SHORT)
-                  .show();
-              finish();
-              return;
-            }
-
-            currentGroup = group;
-            Log.d(
-                TAG,
-                "Loaded group data from server: " + group.getGroupName() + ", key: " + GroupKey);
-            Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
-
-            // Debug: Log ComingKeys data from server
-            if (group.getComingKeys() != null) {
-              Log.d(TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
-              Log.d(TAG, "ComingKeys details from server:");
-              for (String key : group.getComingKeys().keySet()) {
+                currentGroup = group;
                 Log.d(
                     TAG,
-                    "  ComingKey from server: '" + key + "' -> " + group.getComingKeys().get(key));
+                    "Loaded group data from server: " + group.getGroupName() + ", key: " + GroupKey);
+                Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+
+                // Debug: Log ComingKeys data from server
+                if (group.getComingKeys() != null) {
+                  Log.d(TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
+                  Log.d(TAG, "ComingKeys details from server:");
+                  for (String key : group.getComingKeys().keySet()) {
+                    Log.d(
+                        TAG,
+                        "  ComingKey from server: '" + key + "' -> " + group.getComingKeys().get(key));
+                  }
+                } else {
+                  Log.e(TAG, "ComingKeys is null in group data from server!");
+                }
+
+                // Update UI with group data
+                runOnUiThread(() -> {
+                  try {
+                    updateGroupUI(group);
+                    setupClickListeners();
+                    showLoading(false);
+                  } catch (Exception e) {
+                    Log.e(TAG, "Error updating UI with group data", e);
+                    showError("Error displaying group data");
+                  }
+                });
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing group data", e);
+                showError("Error processing group data");
               }
-            } else {
-              Log.e(TAG, "ComingKeys is null in group data from server!");
             }
 
-            // Update UI with group data
-            updateGroupUI(group);
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to get group details: " + errorMessage);
+              showError("Failed to load group details: " + errorMessage);
+            }
+          });
 
-            // Setup click listeners
-            setupClickListeners();
-          }
+      // Load messages with error handling
+      loadMessages();
+      
+    } catch (Exception e) {
+      Log.e(TAG, "Error loading group data", e);
+      showError("Error loading group data");
+    }
+  }
+  
+  /**
+   * Loads messages for the current group with proper error handling
+   */
+  private void loadMessages() {
+    try {
+      FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+      serverClient.getMessages(
+          GroupKey,
+          new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
+            @Override
+            public void onSuccess(
+                java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
+              try {
+                if (messages == null || messages.isEmpty()) {
+                  Log.d(TAG, "No messages found for group");
+                  return;
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Failed to get group details: " + errorMessage);
-            Toast.makeText(
-                    PartyMainActivity.this, "Failed to load group details", Toast.LENGTH_SHORT)
-                .show();
-            finish();
-          }
-        });
+                // Update message keys
+                MessageKeys = new HashMap<>();
+                for (ChatMessage message : messages) {
+                  MessageKeys.put(message.getMessageKey(), "true");
+                }
 
-    // Load messages
-    serverClient.getMessages(
-        GroupKey,
-        new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
-          @Override
-          public void onSuccess(
-              java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
-            if (messages == null || messages.isEmpty()) {
-              Log.d(TAG, "No messages found for group");
-              return;
+                Log.d(TAG, "Loaded " + messages.size() + " messages for group");
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing messages", e);
+                showError("Error processing messages");
+              }
             }
 
-            // Update message keys
-            MessageKeys = new HashMap<>();
-            for (ChatMessage message : messages) {
-              MessageKeys.put(message.getMessageKey(), "true");
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to load messages: " + errorMessage);
+              // Don't show error to user for messages - non-critical
             }
-
-            Log.d(TAG, "Loaded " + messages.size() + " messages for group");
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Failed to load messages: " + errorMessage);
-          }
-        });
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error loading messages", e);
+      // Don't show error to user for messages - non-critical
+    }
+  }
+  
+  /**
+   * Shows or hides a loading indicator
+   * 
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    runOnUiThread(() -> {
+      // You can implement a proper loading indicator here
+      // For now, just disable/enable UI elements
+      if (Card1 != null) Card1.setEnabled(!show);
+      if (Card2 != null) Card2.setEnabled(!show);
+      if (Card3 != null) Card3.setEnabled(!show);
+      if (Card4 != null) Card4.setEnabled(!show);
+      if (Card5 != null) Card5.setEnabled(!show);
+      if (Card6 != null) Card6.setEnabled(!show);
+      if (Card7 != null) Card7.setEnabled(!show);
+      if (Card8 != null) Card8.setEnabled(!show);
+    });
+  }
+  
+  /**
+   * Shows an error message to the user
+   * 
+   * @param message The error message to display
+   */
+  private void showError(String message) {
+    runOnUiThread(() -> {
+      try {
+        Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_LONG).show();
+        showLoading(false);
+      } catch (Exception e) {
+        Log.e(TAG, "Error showing error message", e);
+      }
+    });
   }
 
   private void initializeViews() {
@@ -270,17 +334,30 @@ public class PartyMainActivity extends AppCompatActivity {
     tvNotComing = findViewById(R.id.tvNotComing);
     tvOptions = findViewById(R.id.tvOptions);
 
+    // Initialize share button
+    FloatingActionButton fabShare = findViewById(R.id.fabShare);
+    if (fabShare != null) {
+        fabShare.setOnClickListener(v -> showShareOptions());
+    } else {
+        Log.e(TAG, "Share button not found in layout");
+    }
+
     // Initialize MessageKeys
     MessageKeys = new HashMap<>();
 
     Log.d(TAG, "Views initialized successfully");
-  }
+}
 
   private void setupClickListeners() {
     Log.d(TAG, "Setting up click listeners");
 
-    // Back button
-    back5.setOnClickListener(v -> finish());
+    // Back button - navigate to MainActivity instead of just finishing
+    back5.setOnClickListener(v -> {
+      Log.d(TAG, "Back button clicked, navigating to MainActivity");
+      Intent intent = new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
+      startActivity(intent);
+      finish();
+    });
 
     // Check if Card6 is null
     if (Card6 == null) {
@@ -295,32 +372,8 @@ public class PartyMainActivity extends AppCompatActivity {
           });
     }
 
-    // Add a test button for direct navigation to ChatActivity
-    Button testButton = new Button(this);
-    testButton.setText("TEST CHAT");
-    testButton.setBackgroundColor(Color.RED);
-    testButton.setTextColor(Color.WHITE);
-
-    // Add the button to the layout
-    ViewGroup rootView = findViewById(android.R.id.content);
-    ViewGroup.LayoutParams params =
-        new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    rootView.addView(testButton, params);
-
-    testButton.setOnClickListener(
-        v -> {
-          Log.d(TAG, "Test button clicked - navigating to ChatActivity");
-          navigateToChatActivity();
-        });
-
-    // Remove automatic navigation - let user click to navigate
-    // Auto-navigate to ChatActivity after 5 seconds
-    // new Handler().postDelayed(() -> {
-    //     Log.d(TAG, "Auto-navigating to ChatActivity after delay");
-    //     navigateToChatActivity();
-    // }, 3000);
-
+    // Remove test button code
+    
     Card1.setOnClickListener(
         v -> {
           if (currentGroup != null && currentGroup.getGroupLocation() != null) {
@@ -379,9 +432,20 @@ public class PartyMainActivity extends AppCompatActivity {
     // Card5 - Admin options OR Coming/Not coming toggle
     Card5.setOnClickListener(
         v -> {
-          if (isUserAdmin) {
+          Log.d(TAG, "Card5 clicked - isUserAdmin: " + isUserAdmin + ", isUserComing: " + isUserComing);
+          
+          // Double check admin status
+          boolean isAdmin = false;
+          if (currentGroup != null && currentGroup.getAdminKey() != null && UserKey != null) {
+            isAdmin = currentGroup.getAdminKey().equals(UserKey);
+            Log.d(TAG, "Card5 click - Rechecked admin status: " + isAdmin);
+          }
+          
+          if (isAdmin) {
+            Log.d(TAG, "Navigating to admin options as user is admin");
             navigateToAdminOptionsActivity();
           } else {
+            Log.d(TAG, "Toggling coming status as user is not admin");
             toggleComingStatus();
           }
         });
@@ -421,16 +485,13 @@ public class PartyMainActivity extends AppCompatActivity {
         // It's coordinates, show a clean location text
         tvGroupLocation.setText("📍 Location");
         tvGroupLocation.setVisibility(View.VISIBLE);
-        // Add a map icon to indicate it's clickable
-        tvGroupLocation.setCompoundDrawablesWithIntrinsicBounds(
-            0, 0, R.drawable.ic_party_location, 0);
       } else {
         // It's a text location, show as is
         tvGroupLocation.setText(location);
         tvGroupLocation.setVisibility(View.VISIBLE);
       }
     } else {
-      tvGroupLocation.setText("אין מיקום");
+      tvGroupLocation.setText("No Location");
       tvGroupLocation.setVisibility(View.VISIBLE);
     }
 
@@ -440,17 +501,41 @@ public class PartyMainActivity extends AppCompatActivity {
     tvDateYears.setText(group.getGroupYears());
     tvDateHours.setText(group.getGroupHours());
 
-    // Check if user is admin
-    isUserAdmin = group.getAdminKey() != null && group.getAdminKey().equals(UserKey);
+    // Check if user is admin - compare the actual strings
+    String adminKey = group.getAdminKey();
+    Log.d(TAG, "Checking admin status - AdminKey: " + adminKey + ", UserKey: " + UserKey);
+    
+    if (adminKey != null && UserKey != null) {
+      isUserAdmin = adminKey.equals(UserKey);
+      Log.d(TAG, "Admin status determined: " + isUserAdmin);
+    } else {
+      isUserAdmin = false;
+      Log.d(TAG, "Admin status set to false due to null keys");
+    }
 
     // Check if user is coming
-    isUserComing = group.getComingKeys() != null && group.getComingKeys().containsKey(UserKey);
+    boolean userComingStatus = false;
+    if (group.getComingKeys() != null) {
+      userComingStatus = group.getComingKeys().containsKey(UserKey);
+      Log.d(TAG, "User coming status from server: " + userComingStatus);
+    }
+    isUserComing = userComingStatus;
 
     // Update Card5 UI based on admin status
     updateCard5UI();
   }
 
   private void updateCard5UI() {
+    // Log the admin status for debugging
+    Log.d(TAG, "updateCard5UI - isUserAdmin: " + isUserAdmin + ", UserKey: " + UserKey + 
+          ", Admin key: " + (currentGroup != null ? currentGroup.getAdminKey() : "null"));
+    
+    // Double check admin status to ensure it's correct
+    if (currentGroup != null && currentGroup.getAdminKey() != null) {
+      isUserAdmin = currentGroup.getAdminKey().equals(UserKey);
+      Log.d(TAG, "Re-checked admin status: " + isUserAdmin);
+    }
+    
     if (isUserAdmin) {
       // Show admin options
       imgOptions.setVisibility(View.VISIBLE);
@@ -459,6 +544,7 @@ public class PartyMainActivity extends AppCompatActivity {
       imgThumbDown.setVisibility(View.INVISIBLE);
       tvComing.setVisibility(View.INVISIBLE);
       tvNotComing.setVisibility(View.INVISIBLE);
+      Log.d(TAG, "Showing admin options UI");
     } else {
       // Show coming/not coming toggle
       imgOptions.setVisibility(View.INVISIBLE);
@@ -470,12 +556,14 @@ public class PartyMainActivity extends AppCompatActivity {
         tvComing.setVisibility(View.VISIBLE);
         imgThumbDown.setVisibility(View.INVISIBLE);
         tvNotComing.setVisibility(View.INVISIBLE);
+        Log.d(TAG, "Showing 'coming' UI");
       } else {
         // User is not coming - show thumb down
         imgThumbUp.setVisibility(View.INVISIBLE);
         tvComing.setVisibility(View.INVISIBLE);
         imgThumbDown.setVisibility(View.VISIBLE);
         tvNotComing.setVisibility(View.VISIBLE);
+        Log.d(TAG, "Showing 'not coming' UI");
       }
     }
   }
@@ -960,5 +1048,60 @@ public class PartyMainActivity extends AppCompatActivity {
       default:
         return -1; // Indicate an error
     }
+  }
+
+  /**
+   * Shows a dialog with share options for the party
+   */
+  private void showShareOptions() {
+      if (currentGroup == null) {
+          Toast.makeText(this, "Party details not available", Toast.LENGTH_SHORT).show();
+          return;
+      }
+
+      final String[] options = {
+          "Share via Text",
+          "Share to WhatsApp",
+          "Share to Facebook",
+          "Share via SMS",
+          "Share via Email"
+      };
+
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle("Share Party");
+      builder.setItems(options, (dialog, which) -> {
+          switch (which) {
+              case 0: // Share via Text
+                  ShareHelper.sharePartyText(PartyMainActivity.this, currentGroup);
+                  break;
+              case 1: // Share to WhatsApp
+                  ShareHelper.shareToWhatsApp(PartyMainActivity.this, currentGroup);
+                  break;
+              case 2: // Share to Facebook
+                  ShareHelper.shareToFacebook(PartyMainActivity.this, currentGroup);
+                  break;
+              case 3: // Share via SMS
+                  ShareHelper.shareViaSMS(PartyMainActivity.this, currentGroup);
+                  break;
+              case 4: // Share via Email
+                  ShareHelper.shareViaEmail(PartyMainActivity.this, currentGroup);
+                  break;
+          }
+      });
+      
+      builder.show();
+      
+      // Subscribe to group notifications when sharing
+      NotificationHelper.subscribeToGroup(currentGroup.getGroupKey());
+  }
+
+  @Override
+  public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
+    Log.d(TAG, "Back button pressed, navigating to MainActivity");
+    Intent intent = new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
+    startActivity(intent);
+    finish();
   }
 }

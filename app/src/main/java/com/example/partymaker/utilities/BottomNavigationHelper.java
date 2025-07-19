@@ -13,6 +13,12 @@ import com.example.partymaker.ui.profile.EditProfileActivity;
 
 public class BottomNavigationHelper {
 
+  /**
+   * Sets up the bottom navigation with the current page highlighted
+   * 
+   * @param activity The activity
+   * @param currentPage The current page identifier
+   */
   public static void setupBottomNavigation(Activity activity, String currentPage) {
     LinearLayout navProfile = activity.findViewById(R.id.navProfile);
     LinearLayout navMyParties = activity.findViewById(R.id.navMyParties);
@@ -39,6 +45,15 @@ public class BottomNavigationHelper {
       navCreateGroup.setOnClickListener(v -> navigateToCreateGroup(activity));
     }
   }
+  
+  /**
+   * Sets up the bottom navigation without highlighting any page
+   * 
+   * @param activity The activity
+   */
+  public static void setupBottomNavigation(Activity activity) {
+    setupBottomNavigation(activity, "none");
+  }
 
   private static void highlightCurrentPage(Activity activity, String currentPage) {
     // Reset all to default colors
@@ -57,6 +72,10 @@ public class BottomNavigationHelper {
         break;
       case "creategroup":
         highlightNavItem(activity, R.id.navCreateGroup);
+        break;
+      case "none":
+      default:
+        // Don't highlight any item
         break;
     }
   }

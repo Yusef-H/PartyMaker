@@ -2,6 +2,7 @@ package com.example.partymaker.data.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
+import java.util.Map;
 
 /** Represents a group (party) in the PartyMaker application. */
 public class Group {
@@ -29,6 +30,8 @@ public class Group {
   private int groupType;
   /** Whether users can add new members. */
   private boolean canAdd;
+  /** The description of the group. */
+  private String groupDescription;
   /** Map of friend user keys. */
   @SerializedName(
       value = "friendKeys",
@@ -68,7 +71,7 @@ public class Group {
   public void setFriendKeys(HashMap<String, Object> friendKeys) {
     this.friendKeys = friendKeys;
   }
-
+  
   public HashMap<String, Object> getComingKeys() {
     return comingKeys;
   }
@@ -218,5 +221,23 @@ public class Group {
 
   public void setGroupHours(String groupHours) {
     this.groupHours = groupHours;
+  }
+  
+  /**
+   * Gets the group description
+   * 
+   * @return the group description
+   */
+  public String getGroupDescription() {
+    return groupDescription;
+  }
+  
+  /**
+   * Sets the group description
+   * 
+   * @param groupDescription the group description
+   */
+  public void setGroupDescription(String groupDescription) {
+    this.groupDescription = groupDescription;
   }
 }

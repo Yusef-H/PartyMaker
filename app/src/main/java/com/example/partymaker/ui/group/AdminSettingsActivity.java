@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class AdminSettingsActivity extends AppCompatActivity {
   private ImageView imgCanAdd, imgType, imgEditGroup;
-  private ImageButton btnEditName;
+  private ImageButton btnEditName, btnBack;
   private String AdminKey,
       GroupKey,
       GroupName,
@@ -57,8 +57,9 @@ public class AdminSettingsActivity extends AppCompatActivity {
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
-    actionBar.hide();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     // Get Values from GroupScreen By intent + connection between intent and current
     // activity objects
@@ -93,6 +94,12 @@ public class AdminSettingsActivity extends AppCompatActivity {
     imgType = findViewById(R.id.imgType);
     imgEditGroup = findViewById(R.id.imgEditGroup);
     btnEditName = findViewById(R.id.btnEditName1);
+    btnBack = findViewById(R.id.btnBack); // Initialize back button
+
+    // Set up back button click listener
+    if (btnBack != null) {
+        btnBack.setOnClickListener(v -> navigateBackToPartyMain());
+    }
 
     // group's Picture options
     DBRef.refStorage
@@ -127,6 +134,38 @@ public class AdminSettingsActivity extends AppCompatActivity {
     Options(groupGrid);
 
     eventHandler();
+  }
+
+  private void navigateBackToPartyMain() {
+    Intent intent = new Intent(this, PartyMainActivity.class);
+    ExtrasMetadata extras =
+        new ExtrasMetadata(
+            GroupName,
+            GroupKey,
+            GroupDay,
+            GroupMonth,
+            GroupYear,
+            GroupHour,
+            GroupLocation,
+            AdminKey,
+            CreatedAt,
+            GroupPrice,
+            GroupType,
+            CanAdd,
+            FriendKeys,
+            ComingKeys,
+            MessageKeys);
+    Common.addExtrasToIntent(intent, extras);
+    startActivity(intent);
+    finish(); // Close this activity to prevent it from staying in the back stack
+  }
+
+  @Override
+  public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
+    // Handle back button press to ensure proper navigation
+    navigateBackToPartyMain();
   }
 
   private void eventHandler() {
@@ -232,68 +271,57 @@ public class AdminSettingsActivity extends AppCompatActivity {
 
             } else if (finalI == 2) // open 2,1 (3) Delete Group
             {
-              // delete all messages written by current group
-              deleteMessages();
+              // Show confirmation dialog before deleting
+              new AlertDialog.Builder(AdminSettingsActivity.this)
+                  .setTitle("Delete Group")
+                  .setMessage("Are you sure you want to delete this group? This action cannot be undone.")
+                  .setPositiveButton("Delete", (dialog, which) -> {
+                    // delete all messages written by current group
+                    deleteMessages();
 
-              // delete group from database
-              DBRef.refGroups.child(GroupKey).removeValue();
+                    // delete group from database
+                    DBRef.refGroups.child(GroupKey).removeValue();
 
-              // delete group's picture
-              DBRef.refStorage.child("Groups/" + GroupKey).delete();
+                    // delete group's picture
+                    DBRef.refStorage.child("Groups/" + GroupKey).delete();
 
-              // if it went successfully so toast write it
-              Toast.makeText(AdminSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT)
+                    // if it went successfully so toast write it
+                    Toast.makeText(AdminSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT)
+                        .show();
+
+                    // intent from GroupScreen to MainMenu
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
+                  })
+                  .setNegativeButton("Cancel", null)
                   .show();
-
-              // intent from GroupScreen to MainMenu
-              Intent intent = new Intent(getBaseContext(), MainActivity.class);
-              startActivity(intent);
             } else if (finalI == 3) // open 2,2 (4) Back
             {
-              // intent to AdminOptions Activity with Values
-              Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);
-              ExtrasMetadata extras =
-                  new ExtrasMetadata(
-                      GroupName,
-                      GroupKey,
-                      GroupDay,
-                      GroupMonth,
-                      GroupYear,
-                      GroupHour,
-                      GroupLocation,
-                      AdminKey,
-                      CreatedAt,
-                      GroupPrice,
-                      GroupType,
-                      CanAdd,
-                      FriendKeys,
-                      ComingKeys,
-                      MessageKeys);
-              Common.addExtrasToIntent(intent, extras);
-              startActivity(intent);
+              // Navigate back to PartyMainActivity
+              navigateBackToPartyMain();
             }
           });
     }
   }
 
   private void deleteMessages() {
-    DBRef.refMessages.addValueEventListener(
-        new ValueEventListener() {
-          @Override
-          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            for (DataSnapshot data : dataSnapshot.getChildren()) {
-              String msgKey =
-                  Objects.requireNonNull(data.getValue(ChatMessage.class)).getMessageKey();
-              for (String chatMsgKey : MessageKeys.keySet()) {
-                if (chatMsgKey.equals(msgKey)) {
-                  DBRef.refMessages.child(chatMsgKey).removeValue();
+    DBRef.refMessages
+        .addListenerForSingleValueEvent(
+            new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                  ChatMessage message = data.getValue(ChatMessage.class);
+                  if (message != null && message.getGroupId() != null) {
+                    if (message.getGroupId().equals(GroupKey)) {
+                      data.getRef().removeValue();
+                    }
+                  }
                 }
               }
-            }
-          }
 
-          @Override
-          public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {}
+            });
   }
 }

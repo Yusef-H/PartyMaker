@@ -56,14 +56,17 @@
         <activity android:name=".ui.group.ChatActivity" />
         <activity android:name=".ui.group.MembersComingActivity" />
         <activity android:name=".ui.group.MembersInvitedActivity" />
-        <activity android:name=".ui.group.FriendsRemoveActivity" />
+        <activity
+            android:name=".ui.group.FriendsRemoveActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.profile.EditProfileActivity" />
         <activity android:name=".ui.group.UsersListActivity" />
         <activity android:name=".ui.group.JoinGroupActivity" />
         <activity android:name=".ui.group.AdminSettingsActivity" />
         <activity android:name=".ui.group.PartyMainActivity" />
-        <activity android:name=".ui.group.GroupDetailsActivity" />
-        <activity android:name=".ui.group.PublicGroupsActivity" />
+        <activity 
+            android:name=".ui.group.PublicGroupsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.settings.ServerSettingsActivity" />
         <activity android:name=".ui.chatbot.GptChatActivity" />
 

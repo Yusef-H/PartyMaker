@@ -2,7 +2,8 @@ package com.example.partymaker.ui.group;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -10,8 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
@@ -39,16 +43,24 @@ public class PublicGroupsActivity extends AppCompatActivity {
   GroupAdapter allGroupsAdapter;
   String UserKey;
   private static final String TAG = "PublicGroupsActivity";
+  private static final String ACTION_BAR_START_COLOR = "#0E81D1";
+  private static final String ACTION_BAR_END_COLOR = "#0E81D1";
+  private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
+  private static final float ACTION_BAR_ELEVATION = 15f;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_public_parties);
 
-    // Hide action bar to remove black bar at top
-    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
+    // Set up toolbar
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    if (toolbar != null) {
+      setSupportActionBar(toolbar);
+      setupActionBar();
+    } else {
+      // Fallback to regular action bar if toolbar not found
+      setupActionBar();
     }
 
     // Initialize user
@@ -67,6 +79,41 @@ public class PublicGroupsActivity extends AppCompatActivity {
     loadPublicGroups();
   }
 
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar == null) {
+      Log.w(TAG, "ActionBar not available");
+      return;
+    }
+
+    try {
+      // Set gradient background
+      GradientDrawable gradient = new GradientDrawable();
+      gradient.setShape(GradientDrawable.RECTANGLE);
+      gradient.setColors(
+          new int[] {
+            Color.parseColor(ACTION_BAR_START_COLOR), Color.parseColor(ACTION_BAR_END_COLOR)
+          });
+      gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+      actionBar.setBackgroundDrawable(gradient);
+
+      // Set title with color
+      String styledTitle = String.format(
+          "<font color='%s'><b>%s</b></font>",
+          ACTION_BAR_TITLE_COLOR, "Public Parties");
+      actionBar.setTitle(Html.fromHtml(styledTitle, Html.FROM_HTML_MODE_LEGACY));
+
+      // Configure other properties
+      actionBar.setElevation(ACTION_BAR_ELEVATION);
+      actionBar.setDisplayShowHomeEnabled(true);
+      actionBar.setDisplayHomeAsUpEnabled(true);
+
+      Log.d(TAG, "ActionBar setup completed");
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up ActionBar", e);
+    }
+  }
+
   private void initializeUser() {
     try {
       UserKey = AuthHelper.getCurrentUserKey(this);
@@ -80,16 +127,6 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   private void initializeViews() {
-    // Change title Name and Color
-    ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar)
-        .setTitle(Html.fromHtml("<font color='#E4E9EF'>Public Parties</font>"));
-
-    // set actionbar background
-    @SuppressLint("UseCompatLoadingForDrawables")
-    Drawable d = getResources().getDrawable(R.color.primaryBlue);
-    actionBar.setBackgroundDrawable(d);
-
     // connection
     lv1 = findViewById(R.id.lv5);
   }
@@ -142,6 +179,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   public void loadPublicGroups() {
+    // Show loading indicator
+    Toast.makeText(this, "Loading public parties...", Toast.LENGTH_SHORT).show();
+    
     // Initialize groupsRef if not already done
     if (groupsRef == null) {
       FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
@@ -149,7 +189,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
     }
     
     // Always use server mode
-    FirebaseServerClient serverClient = (FirebaseServerClient) groupsRef;
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroups(
         new FirebaseServerClient.DataCallback<Map<String, Group>>() {
           @Override
@@ -166,33 +206,6 @@ public class PublicGroupsActivity extends AppCompatActivity {
         });
   }
 
-  private void processGroupData(DataSnapshot dataSnapshot) {
-    HashMap<String, Object> UserKeys;
-    group = new ArrayList<>();
-
-    for (DataSnapshot data : dataSnapshot.getChildren()) { // scan all group in data
-      Group p = data.getValue(Group.class);
-      UserKeys = Objects.requireNonNull(data.getValue(Group.class)).getFriendKeys();
-
-      if (Objects.requireNonNull(p).getGroupType() == 0) { // if group is public
-        boolean flag = false;
-        for (String userKey : UserKeys.keySet()) { // scan all group friends
-          if (UserKey.equals(userKey)) // if current user not friend in current group so it show
-          // current group
-          {
-            flag = true;
-            break;
-          }
-        }
-        if (!flag) {
-          group.add(p);
-        }
-      }
-    }
-    allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
-    lv1.setAdapter(allGroupsAdapter);
-  }
-
   private void processServerGroupData(Map<String, Group> groupData) {
     group = new ArrayList<>();
 
@@ -201,10 +214,12 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
       if (p.getGroupType() == 0) { // if group is public
         boolean flag = false;
-        for (String userKey : UserKeys.keySet()) { // scan all group friends
-          if (UserKey.equals(userKey)) {
-            flag = true;
-            break;
+        if (UserKeys != null) {
+          for (String userKey : UserKeys.keySet()) { // scan all group friends
+            if (UserKey.equals(userKey)) {
+              flag = true;
+              break;
+            }
           }
         }
         if (!flag) {
@@ -215,27 +230,45 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
     lv1.setAdapter(allGroupsAdapter);
+    
+    if (group.isEmpty()) {
+      Toast.makeText(this, "No public parties available", Toast.LENGTH_SHORT).show();
+    }
   }
 
-  public boolean onOptionsItemSelected(MenuItem item) {
-    Intent goToNextActivity;
-
-    if (item.getItemId() == R.id.idServerSettings) {
-      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
-      startActivity(goToNextActivity);
-    } else if (item.getItemId() == R.id.idLogout) {
-      AuthHelper.clearAuthData(this);
-      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
-      startActivity(goToNextActivity);
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int itemId = item.getItemId();
+    if (itemId == android.R.id.home) {
+      // Handle the back button in the action bar
+      onBackPressed();
+      return true;
+    } else if (itemId == R.id.settings) {
+      Intent intent = new Intent(this, ServerSettingsActivity.class);
+      startActivity(intent);
+      return true;
+    } else if (itemId == R.id.logout) {
+      AuthHelper.logout(this);
+      Intent intent = new Intent(this, LoginActivity.class);
+      startActivity(intent);
       finish();
+      return true;
     }
-
-    return true;
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu, menu);
     return true;
+  }
+  
+  @Override
+  public void onBackPressed() {
+    // Call super first
+    super.onBackPressed();
+    Intent intent = new Intent(this, MainActivity.class);
+    startActivity(intent);
+    finish();
   }
 }

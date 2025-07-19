@@ -1,6 +1,7 @@
 package com.example.partymaker.ui.settings;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,9 @@ public class ServerSettingsActivity extends AppCompatActivity {
   private SwitchCompat switchServerMode;
   private EditText editServerUrl;
   private static final String PREF_SERVER_URL = "server_url";
-  private static final String DEFAULT_SERVER_URL = "http://10.0.2.2:8080"; // Default for emulator
+
+  //local server is http://10.0.2.2:8080
+  private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com"; // Default to Render URL
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,8 @@ public class ServerSettingsActivity extends AppCompatActivity {
         .edit()
         .putString(PREF_SERVER_URL, serverUrl)
         .apply();
+
+    Log.d("ServerSettings", "Server URL saved: " + serverUrl);
 
     Toast.makeText(
             this,

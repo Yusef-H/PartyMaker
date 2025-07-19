@@ -191,6 +191,7 @@
     <string name="edit">ערוך</string>
     <string name="delete">מחק</string>
     <string name="invited_members">חברים מוזמנים</string>
+    <string name="share_party">שתף מסיבה</string>
 
     <!-- Party -->
     <string name="tap_to_open_maps">הקש כדי לפתוח במפות</string>

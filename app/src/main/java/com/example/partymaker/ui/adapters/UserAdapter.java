@@ -65,7 +65,7 @@ public class UserAdapter extends ArrayAdapter<User> {
     User temp = userList.get(position);
 
     TextView tvpUserName = view.findViewById(R.id.tvUserListUsername);
-    tvpUserName.setText(temp.getUserName());
+    tvpUserName.setText(temp.getUsername());
 
     TextView tvpEmail = view.findViewById(R.id.tvUserListEmail);
     tvpEmail.setText(temp.getEmail() != null ? temp.getEmail() : "No email");

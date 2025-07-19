@@ -1,10 +1,13 @@
 package com.example.partymaker.ui.group;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
@@ -16,6 +19,7 @@ import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import android.app.AlertDialog;
 
 public class MembersInvitedActivity extends AppCompatActivity {
 
@@ -30,6 +34,14 @@ public class MembersInvitedActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_members_invited);
+
+    // Set up the toolbar/action bar
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setTitle("Invited Members");
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
     // Get extras from intent
     Intent intent = getIntent();
@@ -46,6 +58,9 @@ public class MembersInvitedActivity extends AppCompatActivity {
       Log.d(TAG, "GroupKey: " + GroupKey);
     } else {
       Log.e(TAG, "No extras received from intent");
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return;
     }
 
     // Get UserKey from AuthHelper instead of Firebase Auth
@@ -64,6 +79,15 @@ public class MembersInvitedActivity extends AppCompatActivity {
     EventHandler();
   }
 
+  @Override
+  public boolean onOptionsItemSelected(android.view.MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      onBackPressed();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
   private void EventHandler() {
     lv2.setOnItemClickListener((parent, view, position, id) -> {});
     lv2.setOnItemLongClickListener((parent, view, position, id) -> false);
@@ -71,6 +95,9 @@ public class MembersInvitedActivity extends AppCompatActivity {
 
   private void ShowData() {
     Log.d(TAG, "Starting to load users data");
+
+    // Show loading message
+    Toast.makeText(this, "Loading invited members...", Toast.LENGTH_SHORT).show();
 
     // Use server mode to get users - same as MembersComingActivity
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
@@ -105,7 +132,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
                 Log.d(
                     TAG,
                     "    Full user: name='"
-                        + user.getUserName()
+                        + user.getUsername()
                         + "', email='"
                         + user.getEmail()
                         + "'");
@@ -145,6 +172,10 @@ public class MembersInvitedActivity extends AppCompatActivity {
 
             Log.d(TAG, "Found " + ArrUsers.size() + " invited users");
 
+            if (ArrUsers.isEmpty()) {
+              Toast.makeText(MembersInvitedActivity.this, "No invited members found", Toast.LENGTH_SHORT).show();
+            }
+
             InvitedAdapter adapt =
                 new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers, adminKey);
             lv2.setAdapter(adapt);
@@ -160,5 +191,16 @@ public class MembersInvitedActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+
+  private void showUserInfo(User user) {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle("User Information");
+      builder.setMessage(
+              "Email: "
+                      + user.getEmail()
+                      + "\nUsername: "
+                      + user.getUsername()
+                      + "\n\nDo you want to remove this user?");
   }
 }

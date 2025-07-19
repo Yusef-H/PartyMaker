@@ -36,8 +36,11 @@ public class MembersComingActivity extends AppCompatActivity {
 
     // this 3 lines changes title's name
     ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar).setTitle("Coming to party");
-    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+    if (actionBar != null) {
+      actionBar.setTitle("Coming to party");
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
     ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
@@ -68,6 +71,7 @@ public class MembersComingActivity extends AppCompatActivity {
       Log.e(TAG, "ComingKeys is null! This is the problem.");
 
       // Try to get ComingKeys directly from intent
+      @SuppressWarnings("unchecked")
       HashMap<String, Object> directComingKeys =
           (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
       if (directComingKeys != null) {
@@ -135,7 +139,7 @@ public class MembersComingActivity extends AppCompatActivity {
                 Log.d(
                     TAG,
                     "    Full user: name='"
-                        + user.getUserName()
+                        + user.getUsername()
                         + "', email='"
                         + user.getEmail()
                         + "'");
@@ -143,7 +147,7 @@ public class MembersComingActivity extends AppCompatActivity {
             }
 
             ArrayList<User> ArrUsers = new ArrayList<>();
-            HashMap<String, Object> ComingFriends;
+            HashMap<String, Object> ComingFriends = ComingKeys;
 
             for (User p : users.values()) {
               if (p != null && p.getEmail() != null) {
@@ -152,7 +156,6 @@ public class MembersComingActivity extends AppCompatActivity {
                     TAG,
                     "Processing user: '" + p.getEmail() + "' -> normalized: '" + UserMail + "'");
 
-                ComingFriends = ComingKeys;
                 if (ComingFriends != null) {
                   boolean foundMatch = false;
                   for (String GroupFriend : ComingFriends.keySet()) {
@@ -190,5 +193,14 @@ public class MembersComingActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(android.view.MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      onBackPressed();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

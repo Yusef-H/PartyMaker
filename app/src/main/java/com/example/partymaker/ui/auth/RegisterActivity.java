@@ -38,12 +38,14 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import android.util.Log;
 
 /**
  * Activity for user registration, including form validation, animations, and notifications. Handles
@@ -96,6 +98,9 @@ public class RegisterActivity extends AppCompatActivity {
       actionBar.hide();
     }
 
+    // Add test user for debugging
+    createTestUserIfNeeded();
+
     // Initialize UI components
     initializeViews();
 
@@ -113,6 +118,29 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Set up form progress tracking
     setupFormProgressTracking();
+  }
+
+  /**
+   * Creates a test user for debugging purposes
+   */
+  private void createTestUserIfNeeded() {
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    String testEmail = "1@1.com";
+    String testPassword = "123456";
+
+    mAuth.createUserWithEmailAndPassword(testEmail, testPassword)
+        .addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("RegisterActivity", "Test user created successfully");
+                // Create user in database
+                User testUser = new User(testEmail, "Test User");
+                DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
+            } else {
+                // User might already exist, that's fine
+                Log.d("RegisterActivity", "Test user creation failed: " +
+                    (task.getException() != null ? task.getException().getMessage() : "unknown error"));
+            }
+        });
   }
 
   /** Initializes all view components. */

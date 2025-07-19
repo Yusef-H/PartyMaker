@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
@@ -31,6 +32,7 @@ import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.viewmodel.GroupViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,27 +58,84 @@ public class MainActivity extends AppCompatActivity {
   private FloatingActionButton fabChat;
 
   // Data Components
-  private Object databaseRef;
+  private GroupViewModel viewModel;
   private ArrayList<Group> groupList = new ArrayList<>();
   private String UserKey;
-  private ArrayAdapter<Group> groupAdapter;
+  private GroupAdapter groupAdapter;
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    try {
+      setContentView(R.layout.activity_main);
 
-    if (!initializeUser()) {
-      return; // Exit if user initialization failed
+      // Force set server URL to Render
+      forceSetServerUrl();
+
+      if (!initializeUser()) {
+        return; // Exit if user initialization failed
+      }
+
+      // Initialize ViewModel
+      viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
+      
+      initializeViews();
+      setupActionBar();
+      setupEventHandlers();
+      setupFloatingChatButton();
+      setupBottomNavigation();
+      
+      // Observe group data from ViewModel
+      observeViewModel();
+      
+      // Show loading indicator
+      showLoading(true);
+      
+      // Load groups for current user
+      viewModel.loadUserGroups(UserKey, true);
+    } catch (Exception e) {
+      Log.e(TAG, "Fatal error in onCreate", e);
+      showError("An unexpected error occurred. Please restart the app.");
     }
+  }
+  
+  /**
+   * Shows or hides a loading indicator
+   * 
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    try {
+      // Simple implementation without dedicated loading view
+      if (lv1 != null) {
+        lv1.setVisibility(show ? View.GONE : View.VISIBLE);
+      }
+      
+      // Show a toast if loading starts
+      if (show) {
+        Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error toggling loading state", e);
+    }
+  }
 
-    initializeViews();
-    setupActionBar();
-    initializeDatabase();
-    setupEventHandlers();
-    setupFloatingChatButton();
-    setupBottomNavigation();
+  /**
+   * Forces the server URL to be set to Render
+   */
+  private void forceSetServerUrl() {
+    try {
+      String renderUrl = "https://partymaker.onrender.com";
+      androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+          .edit()
+          .putString("server_url", renderUrl)
+          .apply();
+      Log.d(TAG, "Forced server URL to: " + renderUrl);
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting server URL", e);
+      // Non-critical error, continue execution
+    }
   }
 
   /**
@@ -172,46 +231,97 @@ public class MainActivity extends AppCompatActivity {
     actionBar.setDisplayHomeAsUpEnabled(false);
   }
 
-  // Initializes the Firebase database reference and retrieves data.
-  private void initializeDatabase() {
+  // Observes LiveData from the ViewModel
+  private void observeViewModel() {
     try {
-      // Server mode is always enabled
-      Log.d(TAG, "Server mode enabled: true");
-
-      // Use FirebaseAccessManager to get server client
-      FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-      databaseRef = accessManager.getGroupsRef();
-      retrieveGroupData();
-      Log.d(TAG, "Database initialized successfully");
-
+      // Observe group list
+      viewModel.getGroups().observe(this, groups -> {
+        try {
+          if (groups != null) {
+            groupList.clear();
+            groupList.addAll(groups);
+            groupAdapter.notifyDataSetChanged();
+            Log.d(TAG, "Group list updated with " + groups.size() + " groups");
+            
+            // Hide loading indicator
+            showLoading(false);
+            
+            // Show empty state if needed
+            if (groups.isEmpty()) {
+              showEmptyState();
+            }
+          } else {
+            Log.w(TAG, "Received null groups list from ViewModel");
+            showEmptyState();
+            showLoading(false);
+          }
+        } catch (Exception e) {
+          Log.e(TAG, "Error processing groups data", e);
+          showError("Error displaying groups");
+          showLoading(false);
+        }
+      });
+      
+      // Observe loading state
+      viewModel.getIsLoading().observe(this, isLoading -> {
+        try {
+          showLoading(isLoading);
+        } catch (Exception e) {
+          Log.e(TAG, "Error updating loading state", e);
+        }
+      });
+      
+      // Observe error messages
+      viewModel.getErrorMessage().observe(this, errorMsg -> {
+        try {
+          if (errorMsg != null && !errorMsg.isEmpty()) {
+            showError(errorMsg);
+            viewModel.clearError(); // Clear the error after showing it
+            showLoading(false);
+          }
+        } catch (Exception e) {
+          Log.e(TAG, "Error displaying error message", e);
+        }
+      });
     } catch (Exception e) {
-      Log.e(TAG, "Error initializing database", e);
-      showError("Database connection failed");
+      Log.e(TAG, "Error setting up observers", e);
+      showError("Error initializing data observers");
     }
   }
 
   // Sets up all event handlers for UI components.
   private void setupEventHandlers() {
-    if (lv1 != null) {
-      lv1.setOnItemClickListener(
-          (parent, view, position, id) -> {
-            if (isValidPosition(position)) {
-              Group selectedGroup = groupList.get(position);
-              Log.d(
-                  TAG,
-                  "Group clicked: "
-                      + selectedGroup.getGroupName()
-                      + ", key: "
-                      + selectedGroup.getGroupKey()
-                      + ", adminKey: "
-                      + selectedGroup.getAdminKey()
-                      + ", messageKeys size: "
-                      + (selectedGroup.getMessageKeys() != null
-                          ? selectedGroup.getMessageKeys().size()
-                          : "null"));
-              navigateToGroupScreen(selectedGroup);
-            }
-          });
+    try {
+      if (lv1 != null) {
+        lv1.setOnItemClickListener(
+            (parent, view, position, id) -> {
+              try {
+                if (isValidPosition(position)) {
+                  Group selectedGroup = groupList.get(position);
+                  Log.d(
+                      TAG,
+                      "Group clicked: "
+                          + selectedGroup.getGroupName()
+                          + ", key: "
+                          + selectedGroup.getGroupKey()
+                          + ", adminKey: "
+                          + selectedGroup.getAdminKey()
+                          + ", messageKeys size: "
+                          + (selectedGroup.getMessageKeys() != null
+                              ? selectedGroup.getMessageKeys().size()
+                              : "null"));
+                  navigateToGroupScreen(selectedGroup);
+                } else {
+                  Log.w(TAG, "Invalid position clicked: " + position);
+                }
+              } catch (Exception e) {
+                Log.e(TAG, "Error handling item click", e);
+                showError("Error opening group");
+              }
+            });
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up event handlers", e);
     }
   }
 
@@ -257,6 +367,12 @@ public class MainActivity extends AppCompatActivity {
               + " with key: "
               + group.getGroupKey());
       Intent intent = new Intent(getBaseContext(), PartyMainActivity.class);
+      
+      // Add GroupKey directly to intent
+      intent.putExtra("GroupKey", group.getGroupKey());
+      Log.d(TAG, "Added GroupKey to intent: " + group.getGroupKey());
+      
+      // Also add ExtrasMetadata for backward compatibility
       ExtrasMetadata extras = createExtrasFromGroup(group);
       Common.addExtrasToIntent(intent, extras);
 
@@ -270,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
 
     } catch (Exception e) {
       Log.e(TAG, "Error navigating to group screen", e);
-      showError("Failed to open group");
+      showError("Failed to open group: " + e.getMessage());
     }
   }
 
@@ -294,141 +410,18 @@ public class MainActivity extends AppCompatActivity {
         group.getMessageKeys());
   }
 
-  // Retrieves group data from Firebase database.
-  private void retrieveGroupData() {
-    Log.d(TAG, "Retrieving group data for user: " + UserKey);
-
-    // Create FirebaseAccessManager instance
-    FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-    databaseRef = accessManager.getGroupsRef();
-
-    // Get user groups first
-    if (databaseRef instanceof FirebaseServerClient) {
-      FirebaseServerClient serverClient = (FirebaseServerClient) databaseRef;
-      serverClient.getUserGroups(
-          UserKey,
-          new FirebaseServerClient.DataCallback<Map<String, Group>>() {
-            @Override
-            public void onSuccess(Map<String, Group> groups) {
-              Log.d(TAG, "Successfully retrieved " + groups.size() + " user groups");
-              if (groups != null && !groups.isEmpty()) {
-                groupList.clear();
-                groupList.addAll(groups.values());
-                sortAndDisplayGroups();
-              } else {
-                Log.d(TAG, "No user groups found, retrieving all groups");
-                getAllGroups();
-              }
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-              Log.e(TAG, "Error retrieving user groups: " + errorMessage);
-              getAllGroups();
-            }
-          });
-    } else {
-      Log.e(TAG, "Unknown database reference type");
-      getAllGroups();
-    }
-  }
-
-  private void getAllGroups() {
-    Log.d(TAG, "Retrieving all groups");
-
-    if (databaseRef instanceof FirebaseServerClient) {
-      FirebaseServerClient serverClient = (FirebaseServerClient) databaseRef;
-      serverClient.getGroups(
-          new FirebaseServerClient.DataCallback<Map<String, Group>>() {
-            @Override
-            public void onSuccess(Map<String, Group> groups) {
-              Log.d(TAG, "Successfully retrieved " + groups.size() + " groups");
-              if (groups != null && !groups.isEmpty()) {
-                groupList.clear();
-                groupList.addAll(groups.values());
-                sortAndDisplayGroups();
-              } else {
-                Log.d(TAG, "No groups found");
-                showError("No groups found");
-              }
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-              Log.e(TAG, "Error retrieving groups: " + errorMessage);
-              showError("Error retrieving groups: " + errorMessage);
-            }
-          });
-    } else {
-      Log.e(TAG, "Unknown database reference type: " + databaseRef.getClass().getSimpleName());
-      showError("Unsupported database mode");
-    }
-  }
-
-  private void processGroups(Map<String, Group> groups) {
-    // Clear existing data
-    groupList.clear();
-
-    // Add all groups to the list
-    for (Map.Entry<String, Group> entry : groups.entrySet()) {
-      Group group = entry.getValue();
-      if (group.getGroupKey() == null) {
-        group.setGroupKey(entry.getKey());
-      }
-      groupList.add(group);
-    }
-
-    // Sort groups by date (newest first)
-    Collections.sort(
-        groupList,
-        (g1, g2) -> {
-          try {
-            Date date1 =
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                    .parse(g1.getCreatedAt());
-            Date date2 =
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                    .parse(g2.getCreatedAt());
-            return date2.compareTo(date1);
-          } catch (Exception e) {
-            return 0;
-          }
-        });
-
-    // Update the UI
-    runOnUiThread(
-        () -> {
-          if (groupAdapter != null) {
-            // Use GroupAdapter instead of ArrayAdapter for proper display
-            if (lv1.getAdapter() == null || !(lv1.getAdapter() instanceof GroupAdapter)) {
-              groupAdapter = new GroupAdapter(MainActivity.this, 0, 0, groupList);
-              lv1.setAdapter(groupAdapter);
-            } else {
-              groupAdapter.notifyDataSetChanged();
-            }
-          }
-
-          // Show content
-          if (lv1 != null) {
-            lv1.setVisibility(View.VISIBLE);
-          }
-
-          // Show empty state if no groups
-          if (groupList.isEmpty()) {
-            showEmptyState();
-          }
-        });
-  }
-
-  // Show empty state when no groups are available
+  // Shows an empty state when no groups are available
   private void showEmptyState() {
-    runOnUiThread(
-        () -> {
-          if (lv1 != null) {
-            // Just show a toast message since we don't have a dedicated empty state view
-            Toast.makeText(this, "No groups found", Toast.LENGTH_LONG).show();
-          }
-        });
+    try {
+      runOnUiThread(
+          () -> {
+            if (lv1 != null && groupList != null && groupList.isEmpty()) {
+              Toast.makeText(this, "No groups found", Toast.LENGTH_LONG).show();
+            }
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing empty state", e);
+    }
   }
 
   // Checks if the current user is a member of the given group.
@@ -462,16 +455,16 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
+    Intent goToNextActivity;
 
-    try {
-      if (itemId == R.id.idServerSettings) {
-        navigateToActivity(ServerSettingsActivity.class);
-      } else if (itemId == R.id.idLogout) {
-        handleLogout();
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "Error handling menu selection", e);
-      showError("Menu action failed");
+    if (itemId == R.id.settings) {
+      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
+      startActivity(goToNextActivity);
+    } else if (itemId == R.id.logout) {
+      AuthHelper.clearAuthData(this);
+      goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
+      startActivity(goToNextActivity);
+      finish();
     }
 
     return true;
@@ -502,9 +495,18 @@ public class MainActivity extends AppCompatActivity {
     finish();
   }
 
-  // Shows an error message to the user.
+  /**
+   * Shows an error message to the user.
+   *
+   * @param message The error message to display
+   */
   private void showError(String message) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    try {
+      Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+      Log.e(TAG, "Error shown to user: " + message);
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing error message", e);
+    }
   }
 
   @Override
