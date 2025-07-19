@@ -19,8 +19,9 @@ public class ServerSettingsActivity extends AppCompatActivity {
   private EditText editServerUrl;
   private static final String PREF_SERVER_URL = "server_url";
 
-  //local server is http://10.0.2.2:8080
-  private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com"; // Default to Render URL
+  // local server is http://10.0.2.2:8080
+  private static final String DEFAULT_SERVER_URL =
+      "https://partymaker.onrender.com"; // Default to Render URL
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

@@ -21,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.AppNetworkError;
 import com.example.partymaker.data.api.ConnectivityManager;
@@ -35,7 +34,6 @@ import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.viewmodel.UserViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +45,7 @@ public class EditProfileActivity extends AppCompatActivity {
   private ProgressBar progressBar;
   private UserViewModel userViewModel;
   private View rootLayout;
-  
+
   private final ActivityResultLauncher<String> imagePickerLauncher =
       registerForActivityResult(
           new ActivityResultContracts.GetContent(), this::uploadImageToFirebase);
@@ -77,7 +75,7 @@ public class EditProfileActivity extends AppCompatActivity {
     setupObservers();
     setListeners();
     setupBottomNavigation();
-    
+
     // Load current user data with force refresh
     loadUserData();
   }
@@ -139,91 +137,112 @@ public class EditProfileActivity extends AppCompatActivity {
     progressBar = findViewById(R.id.progressBar);
     rootLayout = findViewById(R.id.rootLayout);
   }
-  
+
   private void setupObservers() {
     // Observe current user
-    userViewModel.getCurrentUser().observe(this, user -> {
-      if (user != null) {
-        updateUI(user);
-      }
-    });
-    
+    userViewModel
+        .getCurrentUser()
+        .observe(
+            this,
+            user -> {
+              if (user != null) {
+                updateUI(user);
+              }
+            });
+
     // Observe loading state
-    userViewModel.getIsLoading().observe(this, isLoading -> {
-      progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-      btnSaveProfile.setEnabled(!isLoading);
-    });
-    
+    userViewModel
+        .getIsLoading()
+        .observe(
+            this,
+            isLoading -> {
+              progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+              btnSaveProfile.setEnabled(!isLoading);
+            });
+
     // Observe error messages
-    userViewModel.getErrorMessage().observe(this, error -> {
-      if (error != null && !error.isEmpty()) {
-        showError(error);
-        userViewModel.clearError();
-      }
-    });
-    
+    userViewModel
+        .getErrorMessage()
+        .observe(
+            this,
+            error -> {
+              if (error != null && !error.isEmpty()) {
+                showError(error);
+                userViewModel.clearError();
+              }
+            });
+
     // Observe network error type
-    userViewModel.getNetworkErrorType().observe(this, errorType -> {
-      if (errorType != null) {
-        handleNetworkError(errorType);
-      }
-    });
-    
+    userViewModel
+        .getNetworkErrorType()
+        .observe(
+            this,
+            errorType -> {
+              if (errorType != null) {
+                handleNetworkError(errorType);
+              }
+            });
+
     // Observe network availability
-    ConnectivityManager.getInstance().getNetworkAvailability().observe(this, isAvailable -> {
-      if (isAvailable) {
-        // Network is back, show a message
-        showNetworkRestored();
-      }
-    });
+    ConnectivityManager.getInstance()
+        .getNetworkAvailability()
+        .observe(
+            this,
+            isAvailable -> {
+              if (isAvailable) {
+                // Network is back, show a message
+                showNetworkRestored();
+              }
+            });
   }
 
   private void setListeners() {
-    imgProfile.setOnClickListener(v -> {
-      // Check network availability before launching image picker
-      if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
-        AppNetworkError.showErrorMessage(
-            this, 
-            NetworkUtils.ErrorType.NO_NETWORK, 
-            "Network not available", 
-            false
-        );
-        return;
-      }
-      
-      imagePickerLauncher.launch("image/*");
-    });
-    
+    imgProfile.setOnClickListener(
+        v -> {
+          // Check network availability before launching image picker
+          if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+            AppNetworkError.showErrorMessage(
+                this, NetworkUtils.ErrorType.NO_NETWORK, "Network not available", false);
+            return;
+          }
+
+          imagePickerLauncher.launch("image/*");
+        });
+
     btnSaveProfile.setOnClickListener(v -> saveUserProfile());
   }
-  
+
   private void loadUserData() {
     // Show loading indicator
     progressBar.setVisibility(View.VISIBLE);
-    
+
     // Force refresh from server to ensure we have the latest data
     userViewModel.loadCurrentUser(this, true);
-    
+
     // Direct load from Firebase as backup
     try {
       String userKey = AuthHelper.getCurrentUserKey(this);
       if (userKey != null && !userKey.isEmpty()) {
-        DBRef.refUsers.child(userKey).get()
-            .addOnSuccessListener(dataSnapshot -> {
-              if (dataSnapshot.exists()) {
-                User user = dataSnapshot.getValue(User.class);
-                if (user != null) {
-                  // Update UI with user data
-                  etUsername.setText(user.getUsername());
-                  
-                  // Load profile image
-                  loadProfileImageFromStorage(userKey);
-                }
-              }
-            })
-            .addOnFailureListener(e -> {
-              Log.e(TAG, "Error loading user data directly", e);
-            });
+        DBRef.refUsers
+            .child(userKey)
+            .get()
+            .addOnSuccessListener(
+                dataSnapshot -> {
+                  if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user != null) {
+                      // Update UI with user data
+                      etUsername.setText(user.getUsername());
+
+                      // Load profile image
+                      loadProfileImageFromStorage(userKey);
+                    }
+                  }
+                })
+            .addOnFailureListener(
+                e -> {
+                  Log.e(TAG, "Error loading user data directly", e);
+                });
       }
     } catch (Exception e) {
       Log.e(TAG, "Error getting current user key", e);
@@ -231,20 +250,20 @@ public class EditProfileActivity extends AppCompatActivity {
       progressBar.setVisibility(View.GONE);
     }
   }
-  
+
   private void updateUI(User user) {
     if (user == null) {
       Log.e(TAG, "Cannot update UI: user is null");
       return;
     }
-    
+
     Log.d(TAG, "Updating UI with user: " + user.getUsername() + ", key: " + user.getUserKey());
-    
+
     // Update username field
     if (user.getUsername() != null) {
       etUsername.setText(user.getUsername());
     }
-    
+
     // Load profile image
     if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
       Log.d(TAG, "Loading profile image from URL: " + user.getProfileImageUrl());
@@ -258,29 +277,25 @@ public class EditProfileActivity extends AppCompatActivity {
       loadProfileImageFromStorage(user.getUserKey());
     }
   }
-  
+
   private void saveUserProfile() {
     String username = etUsername.getText().toString().trim();
-    
+
     if (username.isEmpty()) {
       etUsername.setError("Username cannot be empty");
       return;
     }
-    
+
     // Check network availability
     if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
       AppNetworkError.showErrorMessage(
-          this, 
-          NetworkUtils.ErrorType.NO_NETWORK, 
-          "Network not available", 
-          false
-      );
+          this, NetworkUtils.ErrorType.NO_NETWORK, "Network not available", false);
       return;
     }
-    
+
     Map<String, Object> updates = new HashMap<>();
     updates.put("username", username);
-    
+
     userViewModel.updateCurrentUser(updates);
   }
 
@@ -290,28 +305,28 @@ public class EditProfileActivity extends AppCompatActivity {
       imgProfile.setImageResource(R.drawable.ic_profile);
       return;
     }
-    
+
     Log.d(TAG, "Loading profile image from storage for key: " + userKey);
-    
+
     // Check network availability
     if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
       // Just use default image if network is not available
       imgProfile.setImageResource(R.drawable.ic_profile);
       return;
     }
-    
+
     DBRef.refStorage
         .child("Users/" + userKey)
         .getDownloadUrl()
         .addOnSuccessListener(
             uri -> {
               Log.d(TAG, "Successfully loaded profile image: " + uri);
-              
+
               // Update the user's profile image URL in the database
               Map<String, Object> updates = new HashMap<>();
               updates.put("profileImageUrl", uri.toString());
               userViewModel.updateCurrentUser(updates);
-              
+
               // Display the image
               Picasso.get()
                   .load(uri)
@@ -333,17 +348,16 @@ public class EditProfileActivity extends AppCompatActivity {
     // Check network availability
     if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
       AppNetworkError.showErrorMessage(
-          this, 
-          NetworkUtils.ErrorType.NO_NETWORK, 
-          "Network not available. Cannot upload image.", 
-          false
-      );
+          this,
+          NetworkUtils.ErrorType.NO_NETWORK,
+          "Network not available. Cannot upload image.",
+          false);
       return;
     }
-    
+
     // Show a loading indicator
     progressBar.setVisibility(View.VISIBLE);
-    
+
     String userKey;
     try {
       // Get user key directly from AuthHelper instead of relying on ViewModel
@@ -359,12 +373,12 @@ public class EditProfileActivity extends AppCompatActivity {
       progressBar.setVisibility(View.GONE);
       return;
     }
-    
+
     Log.d(TAG, "Uploading image for user key: " + userKey);
 
     // Set the image immediately for better UX
     imgProfile.setImageURI(uri);
-    
+
     // Create the directory structure if it doesn't exist
     DBRef.refStorage
         .child("Users")
@@ -373,32 +387,43 @@ public class EditProfileActivity extends AppCompatActivity {
         .addOnSuccessListener(
             taskSnapshot -> {
               // Get the download URL and update the user profile
-              DBRef.refStorage.child("Users").child(userKey).getDownloadUrl()
-                  .addOnSuccessListener(downloadUri -> {
-                    // Update the profile image URL in the database
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("profileImageUrl", downloadUri.toString());
-                    
-                    // Update directly in Firebase
-                    DBRef.refUsers.child(userKey).updateChildren(updates)
-                        .addOnSuccessListener(aVoid -> {
-                          Log.d(TAG, "Profile image URL updated in database");
-                          progressBar.setVisibility(View.GONE);
-                          Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();
-                          
-                          // Also update in ViewModel to keep UI in sync
-                          userViewModel.updateCurrentUser(updates);
-                        })
-                        .addOnFailureListener(e -> {
-                          Log.e(TAG, "Error updating profile image URL", e);
-                          progressBar.setVisibility(View.GONE);
-                          showError("Error updating profile: " + e.getMessage());
-                        });
-                  })
-                  .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.GONE);
-                    showError("Error getting download URL: " + e.getMessage());
-                  });
+              DBRef.refStorage
+                  .child("Users")
+                  .child(userKey)
+                  .getDownloadUrl()
+                  .addOnSuccessListener(
+                      downloadUri -> {
+                        // Update the profile image URL in the database
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("profileImageUrl", downloadUri.toString());
+
+                        // Update directly in Firebase
+                        DBRef.refUsers
+                            .child(userKey)
+                            .updateChildren(updates)
+                            .addOnSuccessListener(
+                                aVoid -> {
+                                  Log.d(TAG, "Profile image URL updated in database");
+                                  progressBar.setVisibility(View.GONE);
+                                  Toast.makeText(
+                                          this, "Profile picture updated", Toast.LENGTH_SHORT)
+                                      .show();
+
+                                  // Also update in ViewModel to keep UI in sync
+                                  userViewModel.updateCurrentUser(updates);
+                                })
+                            .addOnFailureListener(
+                                e -> {
+                                  Log.e(TAG, "Error updating profile image URL", e);
+                                  progressBar.setVisibility(View.GONE);
+                                  showError("Error updating profile: " + e.getMessage());
+                                });
+                      })
+                  .addOnFailureListener(
+                      e -> {
+                        progressBar.setVisibility(View.GONE);
+                        showError("Error getting download URL: " + e.getMessage());
+                      });
             })
         .addOnFailureListener(
             e -> {
@@ -419,27 +444,29 @@ public class EditProfileActivity extends AppCompatActivity {
       Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
   }
-  
+
   private void handleNetworkError(NetworkUtils.ErrorType errorType) {
     String message = NetworkUtils.getErrorMessage(errorType);
-    
+
     if (rootLayout != null) {
       Snackbar snackbar = Snackbar.make(rootLayout, message, Snackbar.LENGTH_LONG);
-      
+
       // For server errors, add action to go to server settings
       if (errorType == NetworkUtils.ErrorType.SERVER_ERROR) {
-        snackbar.setAction("Server Settings", v -> {
-          Intent intent = new Intent(this, ServerSettingsActivity.class);
-          startActivity(intent);
-        });
+        snackbar.setAction(
+            "Server Settings",
+            v -> {
+              Intent intent = new Intent(this, ServerSettingsActivity.class);
+              startActivity(intent);
+            });
       }
-      
+
       snackbar.show();
     } else {
       Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
   }
-  
+
   private void showNetworkRestored() {
     if (rootLayout != null) {
       Snackbar.make(rootLayout, "Network connection restored", Snackbar.LENGTH_SHORT).show();

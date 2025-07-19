@@ -15,7 +15,7 @@ public class BottomNavigationHelper {
 
   /**
    * Sets up the bottom navigation with the current page highlighted
-   * 
+   *
    * @param activity The activity
    * @param currentPage The current page identifier
    */
@@ -45,10 +45,10 @@ public class BottomNavigationHelper {
       navCreateGroup.setOnClickListener(v -> navigateToCreateGroup(activity));
     }
   }
-  
+
   /**
    * Sets up the bottom navigation without highlighting any page
-   * 
+   *
    * @param activity The activity
    */
   public static void setupBottomNavigation(Activity activity) {

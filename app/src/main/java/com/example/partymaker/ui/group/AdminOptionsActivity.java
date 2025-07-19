@@ -203,7 +203,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // Set up back button click listener
     if (btnBack != null) {
-        btnBack.setOnClickListener(v -> navigateBackToPartyMain());
+      btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }
 
     wireMapComponents();

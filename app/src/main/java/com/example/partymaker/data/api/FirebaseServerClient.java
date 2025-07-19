@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -22,13 +23,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.lang.ref.WeakReference;
 
 /**
  * API client for communicating with the PartyMaker backend server (Spring Boot). Handles CRUD
@@ -41,7 +40,8 @@ public class FirebaseServerClient {
   /** Singleton instance. */
   private static FirebaseServerClient instance;
   /** Default server URL (for emulator). */
-  private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com"; // Changed to Render URL
+  private static final String DEFAULT_SERVER_URL =
+      "https://partymaker.onrender.com"; // Changed to Render URL
   /** SharedPreferences key for server URL. */
   private static final String PREF_SERVER_URL = "server_url";
 
@@ -86,7 +86,7 @@ public class FirebaseServerClient {
 
   /**
    * Gets the context from the WeakReference
-   * 
+   *
    * @return the context or null if it has been garbage collected
    */
   private Context getContext() {
@@ -127,7 +127,10 @@ public class FirebaseServerClient {
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
 
@@ -173,8 +176,7 @@ public class FirebaseServerClient {
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying getGroups (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void getGroup(String groupId, final DataCallback<Group> callback) {
@@ -196,7 +198,10 @@ public class FirebaseServerClient {
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
 
@@ -261,32 +266,34 @@ public class FirebaseServerClient {
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying getGroup (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void saveGroup(String groupId, Group group, final OperationCallback callback) {
     Log.d(TAG, "saveGroup called for groupId: " + groupId);
-    
+
     Context context = getContext();
     if (context == null) {
       Log.e(TAG, "Context is null");
       mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
-    
+
     if (groupId == null || groupId.isEmpty() || group == null) {
       Log.e(TAG, "Invalid parameters for saveGroup");
       mainHandler.post(() -> callback.onError("Invalid group data"));
       return;
     }
-    
+
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
-    
+
     NetworkUtils.executeWithRetry(
         () -> {
           String jsonBody = gson.toJson(group);
@@ -303,45 +310,47 @@ public class FirebaseServerClient {
             Log.d(TAG, "saveGroup completed successfully");
             callback.onSuccess();
           }
-          
+
           @Override
           public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
             String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
             Log.e(TAG, "saveGroup failed: " + errorMessage + " (" + errorType + ")");
             callback.onError(userFriendlyError);
           }
-          
+
           @Override
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying saveGroup (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void updateGroup(
       String groupId, Map<String, Object> updates, final OperationCallback callback) {
     Log.d(TAG, "updateGroup called for groupId: " + groupId);
-    
+
     Context context = getContext();
     if (context == null) {
       Log.e(TAG, "Context is null");
       mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
-    
+
     if (groupId == null || groupId.isEmpty() || updates == null || updates.isEmpty()) {
       Log.e(TAG, "Invalid parameters for updateGroup");
       mainHandler.post(() -> callback.onError("Invalid update data"));
       return;
     }
-    
+
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
-    
+
     NetworkUtils.executeWithRetry(
         () -> {
           String jsonBody = gson.toJson(updates);
@@ -357,44 +366,46 @@ public class FirebaseServerClient {
             Log.d(TAG, "updateGroup completed successfully");
             callback.onSuccess();
           }
-          
+
           @Override
           public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
             String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
             Log.e(TAG, "updateGroup failed: " + errorMessage + " (" + errorType + ")");
             callback.onError(userFriendlyError);
           }
-          
+
           @Override
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying updateGroup (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void deleteGroup(String groupId, final OperationCallback callback) {
     Log.d(TAG, "deleteGroup called for groupId: " + groupId);
-    
+
     Context context = getContext();
     if (context == null) {
       Log.e(TAG, "Context is null");
       mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
-    
+
     if (groupId == null || groupId.isEmpty()) {
       Log.e(TAG, "Invalid groupId for deleteGroup");
       mainHandler.post(() -> callback.onError("Invalid group ID"));
       return;
     }
-    
+
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
-    
+
     NetworkUtils.executeWithRetry(
         () -> {
           boolean success = makeDeleteRequest("Groups/" + groupId);
@@ -409,42 +420,41 @@ public class FirebaseServerClient {
             Log.d(TAG, "deleteGroup completed successfully");
             callback.onSuccess();
           }
-          
+
           @Override
           public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
             String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
             Log.e(TAG, "deleteGroup failed: " + errorMessage + " (" + errorType + ")");
             callback.onError(userFriendlyError);
           }
-          
+
           @Override
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying deleteGroup (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void updateGroup(
       String groupId, String field, Object value, final DataCallback<Void> callback) {
     Log.d(TAG, "updateGroup field called for groupId: " + groupId + ", field: " + field);
-    
+
     Context context = getContext();
     if (context == null) {
       Log.e(TAG, "Context is null");
       mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
-    
+
     if (groupId == null || groupId.isEmpty() || field == null || field.isEmpty()) {
       Log.e(TAG, "Invalid parameters for updateGroup field");
       mainHandler.post(() -> callback.onError("Invalid update data"));
       return;
     }
-    
+
     Map<String, Object> updates = new HashMap<>();
     updates.put(field, value);
-    
+
     updateGroup(
         groupId,
         updates,
@@ -453,7 +463,7 @@ public class FirebaseServerClient {
           public void onSuccess() {
             callback.onSuccess(null);
           }
-          
+
           @Override
           public void onError(String errorMessage) {
             callback.onError(errorMessage);
@@ -476,7 +486,10 @@ public class FirebaseServerClient {
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
 
@@ -522,8 +535,7 @@ public class FirebaseServerClient {
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying getUsers (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void getUser(String userId, final DataCallback<User> callback) {
@@ -531,7 +543,7 @@ public class FirebaseServerClient {
     final String serverUrl = this.serverUrl;
     final Gson gson = this.gson;
     final Handler mainHandler = this.mainHandler;
-    
+
     new UserAsyncTask(serverUrl, gson, mainHandler, callback).execute(userId);
   }
 
@@ -542,8 +554,9 @@ public class FirebaseServerClient {
     private final Gson gson;
     private final Handler mainHandler;
     private final DataCallback<User> callback;
-    
-    public UserAsyncTask(String serverUrl, Gson gson, Handler mainHandler, DataCallback<User> callback) {
+
+    public UserAsyncTask(
+        String serverUrl, Gson gson, Handler mainHandler, DataCallback<User> callback) {
       this.serverUrl = serverUrl;
       this.gson = gson;
       this.mainHandler = mainHandler;
@@ -572,15 +585,16 @@ public class FirebaseServerClient {
       if (user != null) {
         mainHandler.post(() -> callback.onSuccess(user));
       } else {
-        mainHandler.post(() -> callback.onError(errorMessage != null ? errorMessage : "Failed to fetch user"));
+        mainHandler.post(
+            () -> callback.onError(errorMessage != null ? errorMessage : "Failed to fetch user"));
       }
     }
-    
+
     // Helper method for making GET requests
     private String makeGetRequest(String path) {
       return makeGetRequest(path, 15000);
     }
-    
+
     private String makeGetRequest(String path, int timeout) {
       HttpURLConnection connection = null;
       BufferedReader reader = null;
@@ -631,24 +645,25 @@ public class FirebaseServerClient {
     final String serverUrl = this.serverUrl;
     final Gson gson = this.gson;
     final Handler mainHandler = this.mainHandler;
-    
+
     new SaveUserAsyncTask(serverUrl, gson, mainHandler, callback).execute(userId, user);
   }
-  
+
   // Static AsyncTask class for saveUser
   private static class SaveUserAsyncTask extends AsyncTask<Object, Void, Boolean> {
     private final String serverUrl;
     private final Gson gson;
     private final Handler mainHandler;
     private final OperationCallback callback;
-    
-    public SaveUserAsyncTask(String serverUrl, Gson gson, Handler mainHandler, OperationCallback callback) {
+
+    public SaveUserAsyncTask(
+        String serverUrl, Gson gson, Handler mainHandler, OperationCallback callback) {
       this.serverUrl = serverUrl;
       this.gson = gson;
       this.mainHandler = mainHandler;
       this.callback = callback;
     }
-    
+
     @Override
     protected Boolean doInBackground(Object... params) {
       String path = "Users/" + params[0];
@@ -664,12 +679,12 @@ public class FirebaseServerClient {
         mainHandler.post(() -> callback.onError("Failed to save user"));
       }
     }
-    
+
     // Helper method for making POST requests
     private boolean makePostRequest(String path, String jsonBody) {
       return makePostRequest(path, jsonBody, 15000);
     }
-    
+
     private boolean makePostRequest(String path, String jsonBody, int timeout) {
       HttpURLConnection connection = null;
       try {
@@ -706,24 +721,25 @@ public class FirebaseServerClient {
     final String serverUrl = this.serverUrl;
     final Gson gson = this.gson;
     final Handler mainHandler = this.mainHandler;
-    
+
     new UpdateUserAsyncTask(serverUrl, gson, mainHandler, callback).execute(userId, updates);
   }
-  
+
   // Static AsyncTask class for updateUser
   private static class UpdateUserAsyncTask extends AsyncTask<Object, Void, Boolean> {
     private final String serverUrl;
     private final Gson gson;
     private final Handler mainHandler;
     private final OperationCallback callback;
-    
-    public UpdateUserAsyncTask(String serverUrl, Gson gson, Handler mainHandler, OperationCallback callback) {
+
+    public UpdateUserAsyncTask(
+        String serverUrl, Gson gson, Handler mainHandler, OperationCallback callback) {
       this.serverUrl = serverUrl;
       this.gson = gson;
       this.mainHandler = mainHandler;
       this.callback = callback;
     }
-    
+
     @Override
     protected Boolean doInBackground(Object... params) {
       String path = "Users/" + params[0];
@@ -739,12 +755,12 @@ public class FirebaseServerClient {
         mainHandler.post(() -> callback.onError("Failed to update user"));
       }
     }
-    
+
     // Helper method for making PUT requests
     private boolean makePutRequest(String path, String jsonBody) {
       return makePutRequest(path, jsonBody, 15000);
     }
-    
+
     private boolean makePutRequest(String path, String jsonBody, int timeout) {
       HttpURLConnection connection = null;
       try {
@@ -832,7 +848,10 @@ public class FirebaseServerClient {
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
 
@@ -896,18 +915,20 @@ public class FirebaseServerClient {
           Log.d(TAG, "Fetching messages for group: " + groupId);
           String messagesPath = "GroupsMessages?groupId=" + groupId;
           String messagesJson = makeGetRequest(messagesPath, 15000);
-          
+
           // If direct query doesn't work (depends on server implementation),
           // fall back to fetching specific messages by keys
-          if (messagesJson == null || messagesJson.trim().equals("{}") || messagesJson.trim().equals("[]")) {
+          if (messagesJson == null
+              || messagesJson.trim().equals("{}")
+              || messagesJson.trim().equals("[]")) {
             Log.d(TAG, "No messages found with direct query, fetching by keys");
             List<ChatMessage> messages = new ArrayList<>();
-            
+
             // Fetch each message individually by key
             for (String messageKey : messageKeys.keySet()) {
               String messagePath = "GroupsMessages/" + messageKey;
               String messageJson = makeGetRequest(messagePath, 5000);
-              
+
               if (messageJson != null && !messageJson.trim().equals("{}")) {
                 try {
                   ChatMessage message = gson.fromJson(messageJson, ChatMessage.class);
@@ -924,7 +945,7 @@ public class FirebaseServerClient {
                 }
               }
             }
-            
+
             Log.d(TAG, "Successfully fetched " + messages.size() + " messages by keys");
             return messages;
           }
@@ -954,7 +975,9 @@ public class FirebaseServerClient {
                     messageKey = messageObj.optString("MessageKey", "");
                   }
 
-                  if (groupId.equals(msgGroupId) || messageKeys.containsKey(messageKey) || messageKeys.containsKey(key)) {
+                  if (groupId.equals(msgGroupId)
+                      || messageKeys.containsKey(messageKey)
+                      || messageKeys.containsKey(key)) {
                     ChatMessage message = gson.fromJson(messageObj.toString(), ChatMessage.class);
                     messages.add(message);
                     Log.d(TAG, "Added message with key: " + messageKey + " to results");
@@ -988,7 +1011,8 @@ public class FirebaseServerClient {
             return new ArrayList<>();
           }
 
-          Log.d(TAG, "Successfully processed " + messages.size() + " messages for group: " + groupId);
+          Log.d(
+              TAG, "Successfully processed " + messages.size() + " messages for group: " + groupId);
           return messages;
         },
         new NetworkUtils.RetryCallback<List<ChatMessage>>() {
@@ -997,20 +1021,19 @@ public class FirebaseServerClient {
             Log.d(TAG, "getMessages completed successfully with " + result.size() + " messages");
             callback.onSuccess(result);
           }
-          
+
           @Override
           public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
             String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
             Log.e(TAG, "getMessages failed: " + errorMessage + " (" + errorType + ")");
             callback.onError(userFriendlyError);
           }
-          
+
           @Override
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying getMessages (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   public void saveMessage(
@@ -1235,26 +1258,29 @@ public class FirebaseServerClient {
    */
   public void updateData(String path, Object value, final OperationCallback callback) {
     Log.d(TAG, "updateData called for path: " + path);
-    
+
     Context context = getContext();
     if (context == null) {
       Log.e(TAG, "Context is null");
       mainHandler.post(() -> callback.onError("Internal error: Context is null"));
       return;
     }
-    
+
     if (path == null || path.isEmpty()) {
       Log.e(TAG, "Invalid path for updateData");
       mainHandler.post(() -> callback.onError("Invalid path"));
       return;
     }
-    
+
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError("No network connection available. Please check your internet connection."));
+      mainHandler.post(
+          () ->
+              callback.onError(
+                  "No network connection available. Please check your internet connection."));
       return;
     }
-    
+
     NetworkUtils.executeWithRetry(
         () -> {
           boolean success;
@@ -1266,7 +1292,7 @@ public class FirebaseServerClient {
             String jsonBody = gson.toJson(value);
             success = makePutRequest(path, jsonBody);
           }
-          
+
           if (!success) {
             throw new IOException("Failed to update data at " + path);
           }
@@ -1280,7 +1306,7 @@ public class FirebaseServerClient {
               callback.onSuccess();
             }
           }
-          
+
           @Override
           public void onFailure(NetworkUtils.ErrorType errorType, String errorMessage) {
             String userFriendlyError = NetworkUtils.getErrorMessage(errorType);
@@ -1289,13 +1315,12 @@ public class FirebaseServerClient {
               callback.onError(userFriendlyError);
             }
           }
-          
+
           @Override
           public void onRetry(int attemptCount, Exception e) {
             Log.w(TAG, "Retrying updateData (attempt " + attemptCount + "): " + e.getMessage());
           }
-        }
-    );
+        });
   }
 
   @SuppressWarnings("unchecked")
@@ -1591,9 +1616,7 @@ public class FirebaseServerClient {
     }
   }
 
-  /**
-   * Cleanup resources when the app is shutting down
-   */
+  /** Cleanup resources when the app is shutting down */
   public void cleanup() {
     Log.d(TAG, "Cleaning up FirebaseServerClient resources");
     executor.shutdownNow();

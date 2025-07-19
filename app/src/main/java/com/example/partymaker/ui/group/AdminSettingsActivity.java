@@ -29,7 +29,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class AdminSettingsActivity extends AppCompatActivity {
   private ImageView imgCanAdd, imgType, imgEditGroup;
@@ -98,7 +97,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
 
     // Set up back button click listener
     if (btnBack != null) {
-        btnBack.setOnClickListener(v -> navigateBackToPartyMain());
+      btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }
 
     // group's Picture options
@@ -274,25 +273,31 @@ public class AdminSettingsActivity extends AppCompatActivity {
               // Show confirmation dialog before deleting
               new AlertDialog.Builder(AdminSettingsActivity.this)
                   .setTitle("Delete Group")
-                  .setMessage("Are you sure you want to delete this group? This action cannot be undone.")
-                  .setPositiveButton("Delete", (dialog, which) -> {
-                    // delete all messages written by current group
-                    deleteMessages();
+                  .setMessage(
+                      "Are you sure you want to delete this group? This action cannot be undone.")
+                  .setPositiveButton(
+                      "Delete",
+                      (dialog, which) -> {
+                        // delete all messages written by current group
+                        deleteMessages();
 
-                    // delete group from database
-                    DBRef.refGroups.child(GroupKey).removeValue();
+                        // delete group from database
+                        DBRef.refGroups.child(GroupKey).removeValue();
 
-                    // delete group's picture
-                    DBRef.refStorage.child("Groups/" + GroupKey).delete();
+                        // delete group's picture
+                        DBRef.refStorage.child("Groups/" + GroupKey).delete();
 
-                    // if it went successfully so toast write it
-                    Toast.makeText(AdminSettingsActivity.this, "successfully deleted", Toast.LENGTH_SHORT)
-                        .show();
+                        // if it went successfully so toast write it
+                        Toast.makeText(
+                                AdminSettingsActivity.this,
+                                "successfully deleted",
+                                Toast.LENGTH_SHORT)
+                            .show();
 
-                    // intent from GroupScreen to MainMenu
-                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    startActivity(intent);
-                  })
+                        // intent from GroupScreen to MainMenu
+                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        startActivity(intent);
+                      })
                   .setNegativeButton("Cancel", null)
                   .show();
             } else if (finalI == 3) // open 2,2 (4) Back
@@ -305,23 +310,22 @@ public class AdminSettingsActivity extends AppCompatActivity {
   }
 
   private void deleteMessages() {
-    DBRef.refMessages
-        .addListenerForSingleValueEvent(
-            new ValueEventListener() {
-              @Override
-              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                  ChatMessage message = data.getValue(ChatMessage.class);
-                  if (message != null && message.getGroupId() != null) {
-                    if (message.getGroupId().equals(GroupKey)) {
-                      data.getRef().removeValue();
-                    }
-                  }
+    DBRef.refMessages.addListenerForSingleValueEvent(
+        new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            for (DataSnapshot data : dataSnapshot.getChildren()) {
+              ChatMessage message = data.getValue(ChatMessage.class);
+              if (message != null && message.getGroupId() != null) {
+                if (message.getGroupId().equals(GroupKey)) {
+                  data.getRef().removeValue();
                 }
               }
+            }
+          }
 
-              @Override
-              public void onCancelled(@NonNull DatabaseError databaseError) {}
-            });
+          @Override
+          public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
   }
 }

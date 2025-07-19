@@ -1,6 +1,5 @@
 package com.example.partymaker.ui.group;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -15,26 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.google.firebase.database.DataSnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class PublicGroupsActivity extends AppCompatActivity {
   private ListView lv1;
@@ -98,9 +92,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
       actionBar.setBackgroundDrawable(gradient);
 
       // Set title with color
-      String styledTitle = String.format(
-          "<font color='%s'><b>%s</b></font>",
-          ACTION_BAR_TITLE_COLOR, "Public Parties");
+      String styledTitle =
+          String.format(
+              "<font color='%s'><b>%s</b></font>", ACTION_BAR_TITLE_COLOR, "Public Parties");
       actionBar.setTitle(Html.fromHtml(styledTitle, Html.FROM_HTML_MODE_LEGACY));
 
       // Configure other properties
@@ -181,13 +175,13 @@ public class PublicGroupsActivity extends AppCompatActivity {
   public void loadPublicGroups() {
     // Show loading indicator
     Toast.makeText(this, "Loading public parties...", Toast.LENGTH_SHORT).show();
-    
+
     // Initialize groupsRef if not already done
     if (groupsRef == null) {
       FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
       groupsRef = accessManager.getGroupsRef();
     }
-    
+
     // Always use server mode
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroups(
@@ -230,7 +224,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
     lv1.setAdapter(allGroupsAdapter);
-    
+
     if (group.isEmpty()) {
       Toast.makeText(this, "No public parties available", Toast.LENGTH_SHORT).show();
     }
@@ -262,7 +256,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
     getMenuInflater().inflate(R.menu.menu, menu);
     return true;
   }
-  
+
   @Override
   public void onBackPressed() {
     // Call super first
