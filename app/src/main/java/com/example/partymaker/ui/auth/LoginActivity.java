@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (createTask.isSuccessful()) {
                             Log.d("LoginActivity", "Test user created successfully");
                             // Create user in database
-                            User testUser = new User(testEmail, "Test User");
+                            User testUser = new User("Test User", testEmail);
                             DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
                         } else {
                             Log.d("LoginActivity", "Test user creation failed: " + 
@@ -316,7 +316,7 @@ public class LoginActivity extends AppCompatActivity {
                   String email = firebaseUser.getEmail();
                   String username = firebaseUser.getDisplayName();
 
-                  User u = new User(email, username);
+                  User u = new User(username, email);
 
                   // Replace dots with spaces in the email to make it a valid key in Firebase
                   assert email != null;
