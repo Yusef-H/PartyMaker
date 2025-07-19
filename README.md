@@ -20,7 +20,7 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Minimum SDK**: API 33 (Android 13)
 - **Target SDK**: API 35 (Android 15)
 - **UI Framework**: Traditional Android Views with Material Design
-- **Architecture**: Traditional Android Architecture with Service Layer
+- **Architecture**: MVVM with Repository Pattern and ViewModels
 - **Build System**: Gradle with Version Catalogs
 
 ### 🖥️ Spring Boot Server
@@ -33,12 +33,12 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Authentication**: User registration, login, and session management
 - **Realtime Database**: Real-time data synchronization
 - **Cloud Storage**: File and image storage
-- **Cloud Storage**: File and image storage
 
 ### 🎨 UI & Design
 - **Material Design**: Modern UI components and theming
 - **Custom Animations**: Smooth transitions and loading effects
 - **Responsive Layout**: Adaptive design for different screen sizes
+- **Consistent Toolbars**: Professional UI across all screens
 
 ### 🤖 AI & External Services
 - **OpenAI Integration**: Intelligent chatbot using GPT models
@@ -69,12 +69,25 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **In-app Messaging**: Real-time chat within groups
 - **Message History**: Persistent conversation storage
 - **AI Chatbot**: Intelligent assistant for user support
-- **Local Notifications**: App-level notification system
+- **Local Notifications**: App-level notification system for party updates
 
 ### 🗺️ Location Services
 - **Google Maps Integration**: Interactive maps for event locations
 - **Location Search**: Google Places integration for venue discovery
 - **Geolocation**: User location tracking and sharing
+
+### 🔄 Social Sharing
+- **Party Sharing**: Share party details via multiple channels
+- **WhatsApp Integration**: Direct sharing to WhatsApp
+- **Facebook Integration**: Share parties on Facebook
+- **SMS & Email Sharing**: Send party invites via SMS or email
+- **Text-based Sharing**: Generate shareable party descriptions
+
+### 🔔 Notifications
+- **Real-time Notifications**: Get notified about party updates
+- **Customizable Channels**: Separate channels for parties, messages, and updates
+- **Subscription Management**: Subscribe/unsubscribe to specific party notifications
+- **Visual Indicators**: Clear notification icons and descriptions
 
 ## 📁 Project Structure
 
@@ -84,12 +97,22 @@ PartyMaker/
 │   ├── src/main/
 │   │   ├── java/com/example/partymaker/
 │   │   │   ├── data/             # Data layer (API, Firebase, Models)
+│   │   │   │   ├── api/          # Network communication
+│   │   │   │   ├── firebase/     # Firebase integration
+│   │   │   │   ├── model/        # Data models
+│   │   │   │   └── repository/   # Data repositories
 │   │   │   ├── ui/               # UI components and activities
+│   │   │   │   ├── adapters/     # RecyclerView and ListView adapters
 │   │   │   │   ├── auth/         # Authentication screens
 │   │   │   │   ├── group/        # Group management screens
 │   │   │   │   ├── chatbot/      # AI chatbot interface
+│   │   │   │   ├── profile/      # User profile screens
 │   │   │   │   └── common/       # Shared UI components
-│   │   │   └── utilities/        # Helper classes and utilities
+│   │   │   ├── utilities/        # Helper classes and utilities
+│   │   │   │   ├── NotificationHelper.java  # Notification management
+│   │   │   │   ├── ShareHelper.java         # Social sharing features
+│   │   │   │   └── groupBuilder/            # Group creation utilities
+│   │   │   └── viewmodel/        # ViewModels for MVVM architecture
 │   │   └── res/                  # Android resources
 │   └── build.gradle.kts          # Android build configuration
 ├── app/server/                   # Spring Boot Server
@@ -162,6 +185,17 @@ PartyMaker/
    
    # Run Android app
    # Open in Android Studio and run on device/emulator
+   ```
+
+6. **Running Server Locally (Emergency Fallback)**
+   ```bash
+   # If cloud server is down, run locally
+   cd server
+   ./mvnw spring-boot:run
+   
+   # Then update server URL in app settings:
+   # - Emulator: http://10.0.2.2:8080
+   # - Physical device: http://[your-computer-ip]:8080
    ```
 
 ## 🔧 Configuration
@@ -242,6 +276,17 @@ cd app/server
 - **Firebase Security Rules**: Configured for secure data access
 - **Authentication**: Firebase Auth with secure token management
 - **HTTPS**: All API communications use HTTPS
+- **Memory Management**: Optimized to prevent memory leaks
+
+## 🐞 Bug Fixes & Improvements
+
+- **Back Navigation**: Fixed navigation flow between activities
+- **UI Consistency**: Standardized toolbars and backgrounds across all screens
+- **Memory Leaks**: Fixed memory leaks in AsyncTask operations
+- **Friend Management**: Improved add/remove friend functionality
+- **Profile Display**: Fixed profile image loading and user data display
+- **Group Creation**: Resolved group creation and management issues
+- **Error Handling**: Enhanced error handling and user feedback
 
 ## 🚀 Deployment
 
@@ -265,7 +310,7 @@ We welcome contributions! Please follow these guidelines:
 3. **Follow coding standards**:
    - Use consistent naming conventions
    - Add JavaDoc comments for public methods
-   - Follow traditional Android architecture patterns
+   - Follow MVVM architecture patterns
 4. **Test your changes**: Ensure all tests pass
 5. **Commit with clear messages**: Use conventional commit format
 6. **Create a Pull Request**: Provide detailed description
@@ -273,7 +318,7 @@ We welcome contributions! Please follow these guidelines:
 ### Development Guidelines
 
 - **Code Style**: Follow Android and Java coding conventions
-- **Architecture**: Maintain traditional Android patterns and separation of concerns
+- **Architecture**: Maintain MVVM patterns and separation of concerns
 - **Testing**: Write unit tests for new features
 - **Documentation**: Update README and add inline comments
 - **Security**: Never commit API keys or sensitive data
