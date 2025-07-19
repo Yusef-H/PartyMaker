@@ -10,23 +10,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
-import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
-import com.example.partymaker.ui.group.CreateGroupActivity;
 import com.example.partymaker.ui.group.PartyMainActivity;
-import com.example.partymaker.ui.group.PublicGroupsActivity;
-import com.example.partymaker.ui.profile.EditProfileActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.BottomNavigationHelper;
@@ -34,14 +28,9 @@ import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.example.partymaker.viewmodel.GroupViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,19 +68,19 @@ public class MainActivity extends AppCompatActivity {
 
       // Initialize ViewModel
       viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
-      
+
       initializeViews();
       setupActionBar();
       setupEventHandlers();
       setupFloatingChatButton();
       setupBottomNavigation();
-      
+
       // Observe group data from ViewModel
       observeViewModel();
-      
+
       // Show loading indicator
       showLoading(true);
-      
+
       // Load groups for current user
       viewModel.loadUserGroups(UserKey, true);
     } catch (Exception e) {
@@ -99,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
       showError("An unexpected error occurred. Please restart the app.");
     }
   }
-  
+
   /**
    * Shows or hides a loading indicator
-   * 
+   *
    * @param show True to show loading, false to hide
    */
   private void showLoading(boolean show) {
@@ -111,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
       if (lv1 != null) {
         lv1.setVisibility(show ? View.GONE : View.VISIBLE);
       }
-      
+
       // Show a toast if loading starts
       if (show) {
         Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
@@ -121,9 +110,7 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Forces the server URL to be set to Render
-   */
+  /** Forces the server URL to be set to Render */
   private void forceSetServerUrl() {
     try {
       String renderUrl = "https://partymaker.onrender.com";
@@ -235,54 +222,66 @@ public class MainActivity extends AppCompatActivity {
   private void observeViewModel() {
     try {
       // Observe group list
-      viewModel.getGroups().observe(this, groups -> {
-        try {
-          if (groups != null) {
-            groupList.clear();
-            groupList.addAll(groups);
-            groupAdapter.notifyDataSetChanged();
-            Log.d(TAG, "Group list updated with " + groups.size() + " groups");
-            
-            // Hide loading indicator
-            showLoading(false);
-            
-            // Show empty state if needed
-            if (groups.isEmpty()) {
-              showEmptyState();
-            }
-          } else {
-            Log.w(TAG, "Received null groups list from ViewModel");
-            showEmptyState();
-            showLoading(false);
-          }
-        } catch (Exception e) {
-          Log.e(TAG, "Error processing groups data", e);
-          showError("Error displaying groups");
-          showLoading(false);
-        }
-      });
-      
+      viewModel
+          .getGroups()
+          .observe(
+              this,
+              groups -> {
+                try {
+                  if (groups != null) {
+                    groupList.clear();
+                    groupList.addAll(groups);
+                    groupAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "Group list updated with " + groups.size() + " groups");
+
+                    // Hide loading indicator
+                    showLoading(false);
+
+                    // Show empty state if needed
+                    if (groups.isEmpty()) {
+                      showEmptyState();
+                    }
+                  } else {
+                    Log.w(TAG, "Received null groups list from ViewModel");
+                    showEmptyState();
+                    showLoading(false);
+                  }
+                } catch (Exception e) {
+                  Log.e(TAG, "Error processing groups data", e);
+                  showError("Error displaying groups");
+                  showLoading(false);
+                }
+              });
+
       // Observe loading state
-      viewModel.getIsLoading().observe(this, isLoading -> {
-        try {
-          showLoading(isLoading);
-        } catch (Exception e) {
-          Log.e(TAG, "Error updating loading state", e);
-        }
-      });
-      
+      viewModel
+          .getIsLoading()
+          .observe(
+              this,
+              isLoading -> {
+                try {
+                  showLoading(isLoading);
+                } catch (Exception e) {
+                  Log.e(TAG, "Error updating loading state", e);
+                }
+              });
+
       // Observe error messages
-      viewModel.getErrorMessage().observe(this, errorMsg -> {
-        try {
-          if (errorMsg != null && !errorMsg.isEmpty()) {
-            showError(errorMsg);
-            viewModel.clearError(); // Clear the error after showing it
-            showLoading(false);
-          }
-        } catch (Exception e) {
-          Log.e(TAG, "Error displaying error message", e);
-        }
-      });
+      viewModel
+          .getErrorMessage()
+          .observe(
+              this,
+              errorMsg -> {
+                try {
+                  if (errorMsg != null && !errorMsg.isEmpty()) {
+                    showError(errorMsg);
+                    viewModel.clearError(); // Clear the error after showing it
+                    showLoading(false);
+                  }
+                } catch (Exception e) {
+                  Log.e(TAG, "Error displaying error message", e);
+                }
+              });
     } catch (Exception e) {
       Log.e(TAG, "Error setting up observers", e);
       showError("Error initializing data observers");
@@ -367,11 +366,11 @@ public class MainActivity extends AppCompatActivity {
               + " with key: "
               + group.getGroupKey());
       Intent intent = new Intent(getBaseContext(), PartyMainActivity.class);
-      
+
       // Add GroupKey directly to intent
       intent.putExtra("GroupKey", group.getGroupKey());
       Log.d(TAG, "Added GroupKey to intent: " + group.getGroupKey());
-      
+
       // Also add ExtrasMetadata for backward compatibility
       ExtrasMetadata extras = createExtrasFromGroup(group);
       Common.addExtrasToIntent(intent, extras);

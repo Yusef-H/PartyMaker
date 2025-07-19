@@ -18,7 +18,6 @@ import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class MembersComingActivity extends AppCompatActivity {
 
@@ -194,7 +193,7 @@ public class MembersComingActivity extends AppCompatActivity {
           }
         });
   }
-  
+
   @Override
   public boolean onOptionsItemSelected(android.view.MenuItem item) {
     if (item.getItemId() == android.R.id.home) {

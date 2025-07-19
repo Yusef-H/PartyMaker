@@ -217,35 +217,46 @@ public class ChatActivity extends AppCompatActivity {
                 String gptQuestion = input.getText().toString();
                 if (!gptQuestion.isEmpty()) {
                   // Show loading message
-                  runOnUiThread(() -> {
-                    Toast.makeText(ChatActivity.this, "שולח שאלה ל-GPT...", Toast.LENGTH_SHORT).show();
-                  });
-                  
+                  runOnUiThread(
+                      () -> {
+                        Toast.makeText(ChatActivity.this, "שולח שאלה ל-GPT...", Toast.LENGTH_SHORT)
+                            .show();
+                      });
+
                   new Thread(
                           () -> {
                             try {
                               String prompt =
                                   "You are a party assistant. Your role is to provide details and help with whatever you can for this party. Here are the party details: "
-                                      + getGroupDetails() + "\n\nQuestion: ";
+                                      + getGroupDetails()
+                                      + "\n\nQuestion: ";
                               OpenAiApi openAiApi = new OpenAiApi(getApiKey());
                               String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
                               runOnUiThread(() -> sendBotMessage(gptAnswer));
                             } catch (java.net.UnknownHostException e) {
-                              runOnUiThread(() -> {
-                                Toast.makeText(ChatActivity.this, 
-                                  "שגיאת חיבור לאינטרנט. בדוק את החיבור ונסה שוב.", 
-                                  Toast.LENGTH_LONG).show();
-                                // Send a fallback message
-                                sendBotMessage("מצטער, אני לא יכול להתחבר לאינטרנט כרגע. אנא בדוק את החיבור ונסה שוב מאוחר יותר.");
-                              });
+                              runOnUiThread(
+                                  () -> {
+                                    Toast.makeText(
+                                            ChatActivity.this,
+                                            "שגיאת חיבור לאינטרנט. בדוק את החיבור ונסה שוב.",
+                                            Toast.LENGTH_LONG)
+                                        .show();
+                                    // Send a fallback message
+                                    sendBotMessage(
+                                        "מצטער, אני לא יכול להתחבר לאינטרנט כרגע. אנא בדוק את החיבור ונסה שוב מאוחר יותר.");
+                                  });
                             } catch (Exception e) {
-                              runOnUiThread(() -> {
-                                Toast.makeText(ChatActivity.this, 
-                                  "שגיאה בשירות GPT: " + e.getMessage(), 
-                                  Toast.LENGTH_LONG).show();
-                                // Send a fallback message
-                                sendBotMessage("מצטער, אירעה שגיאה בשירות. אנא נסה שוב מאוחר יותר.");
-                              });
+                              runOnUiThread(
+                                  () -> {
+                                    Toast.makeText(
+                                            ChatActivity.this,
+                                            "שגיאה בשירות GPT: " + e.getMessage(),
+                                            Toast.LENGTH_LONG)
+                                        .show();
+                                    // Send a fallback message
+                                    sendBotMessage(
+                                        "מצטער, אירעה שגיאה בשירות. אנא נסה שוב מאוחר יותר.");
+                                  });
                               e.printStackTrace();
                             }
                           })

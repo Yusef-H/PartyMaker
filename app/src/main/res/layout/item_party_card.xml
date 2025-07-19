@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardPartyItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Card Icon -->
+        <ImageView
+            android:id="@+id/imgCardIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/todo"
+            android:padding="8dp"
+            tools:src="@drawable/ic_party_location" />
+
+        <!-- Card Title -->
+        <TextView
+            android:id="@+id/tvCardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imgCardIcon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:textAlignment="center"
+            android:textColor="#1986ed"
+            android:textSize="18sp"
+            tools:text="Location" />
+
+        <!-- Card Content Container -->
+        <FrameLayout
+            android:id="@+id/cardContentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvCardTitle"
+            android:layout_marginTop="8dp">
+
+            <!-- This container will be populated dynamically based on card type -->
+        </FrameLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView> 

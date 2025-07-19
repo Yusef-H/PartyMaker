@@ -1,5 +1,6 @@
 package com.example.partymaker.ui.group;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -19,7 +20,6 @@ import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import android.app.AlertDialog;
 
 public class MembersInvitedActivity extends AppCompatActivity {
 
@@ -173,7 +173,9 @@ public class MembersInvitedActivity extends AppCompatActivity {
             Log.d(TAG, "Found " + ArrUsers.size() + " invited users");
 
             if (ArrUsers.isEmpty()) {
-              Toast.makeText(MembersInvitedActivity.this, "No invited members found", Toast.LENGTH_SHORT).show();
+              Toast.makeText(
+                      MembersInvitedActivity.this, "No invited members found", Toast.LENGTH_SHORT)
+                  .show();
             }
 
             InvitedAdapter adapt =
@@ -194,13 +196,13 @@ public class MembersInvitedActivity extends AppCompatActivity {
   }
 
   private void showUserInfo(User user) {
-      AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setTitle("User Information");
-      builder.setMessage(
-              "Email: "
-                      + user.getEmail()
-                      + "\nUsername: "
-                      + user.getUsername()
-                      + "\n\nDo you want to remove this user?");
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("User Information");
+    builder.setMessage(
+        "Email: "
+            + user.getEmail()
+            + "\nUsername: "
+            + user.getUsername()
+            + "\n\nDo you want to remove this user?");
   }
 }

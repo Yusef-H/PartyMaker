@@ -11,23 +11,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
-import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class FriendsAddActivity extends AppCompatActivity {
   private static final String TAG = "FriendsAddActivity";
@@ -211,10 +203,10 @@ public class FriendsAddActivity extends AppCompatActivity {
           if (ComingKeys == null) {
             ComingKeys = new HashMap<>();
           }
-          
+
           // Store CurrentFriend in a final variable to use in inner class
           final String currentFriendEmail = CurrentFriend;
-          
+
           // Use server client to update ComingKeys
           serverClient.getGroup(
               GroupKey,
@@ -232,10 +224,11 @@ public class FriendsAddActivity extends AppCompatActivity {
                         }
                       }
                     }
-                    
+
                     // Store friendKey in a final variable for use in inner class
-                    final String finalFriendKey = friendKey != null ? friendKey : currentFriendEmail;
-                    
+                    final String finalFriendKey =
+                        friendKey != null ? friendKey : currentFriendEmail;
+
                     try {
                       // Update the entire ComingKeys object
                       HashMap<String, Object> updatedComingKeys = group.getComingKeys();
@@ -243,13 +236,13 @@ public class FriendsAddActivity extends AppCompatActivity {
                         updatedComingKeys = new HashMap<>();
                       }
                       updatedComingKeys.put(finalFriendKey, "true");
-                      
+
                       // Create updates map for the entire group
                       HashMap<String, Object> groupUpdates = new HashMap<>();
                       groupUpdates.put("ComingKeys", updatedComingKeys);
-                      
+
                       Log.d(TAG, "Updating group: " + GroupKey + " with ComingKeys update");
-                      
+
                       // Use updateGroup instead of updateData
                       serverClient.updateGroup(
                           GroupKey,
@@ -257,18 +250,23 @@ public class FriendsAddActivity extends AppCompatActivity {
                           new FirebaseServerClient.OperationCallback() {
                             @Override
                             public void onSuccess() {
-                              Toast.makeText(FriendsAddActivity.this, "Added to Coming List", Toast.LENGTH_SHORT).show();
-                              
+                              Toast.makeText(
+                                      FriendsAddActivity.this,
+                                      "Added to Coming List",
+                                      Toast.LENGTH_SHORT)
+                                  .show();
+
                               // Update local data
                               if (ComingKeys == null) {
                                 ComingKeys = new HashMap<>();
                               }
                               ComingKeys.put(finalFriendKey, "true");
-                              
-                              showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
+
+                              showViews(
+                                  etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
                               hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
                             }
-                            
+
                             @Override
                             public void onError(String errorMessage) {
                               Log.e(TAG, "Error adding to coming list: " + errorMessage);
@@ -286,17 +284,18 @@ public class FriendsAddActivity extends AppCompatActivity {
                               "Error adding to coming list: " + e.getMessage(),
                               Toast.LENGTH_SHORT)
                           .show();
-                      
+
                       showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
                       hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
                     }
                   } else {
-                    Toast.makeText(FriendsAddActivity.this, "Group not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FriendsAddActivity.this, "Group not found", Toast.LENGTH_SHORT)
+                        .show();
                     showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
                     hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
                   }
                 }
-                
+
                 @Override
                 public void onError(String errorMessage) {
                   Log.e(TAG, "Error loading group: " + errorMessage);
@@ -305,7 +304,7 @@ public class FriendsAddActivity extends AppCompatActivity {
                           "Error loading group: " + errorMessage,
                           Toast.LENGTH_SHORT)
                       .show();
-                  
+
                   showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
                   hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
                 }
@@ -323,7 +322,7 @@ public class FriendsAddActivity extends AppCompatActivity {
     boolean userFound = false;
     String friendKey = null;
     User foundUser = null;
-    
+
     // Find the user by email
     for (Map.Entry<String, User> entry : userData.entrySet()) {
       User user = entry.getValue();
@@ -337,20 +336,20 @@ public class FriendsAddActivity extends AppCompatActivity {
         }
       }
     }
-    
+
     if (!userFound) {
       Toast.makeText(FriendsAddActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
       return;
     }
-    
+
     // Store the friendKey in a final variable for use in inner class
     final String finalFriendKey = friendKey;
-    
+
     // Store CurrentFriend in a final variable for use in inner class
     final String currentFriendEmail = CurrentFriend;
-    
+
     Log.d(TAG, "Adding user to group: " + currentFriendEmail + " with key: " + finalFriendKey);
-    
+
     // Check if user is already in the group
     serverClient.getGroup(
         GroupKey,
@@ -361,28 +360,29 @@ public class FriendsAddActivity extends AppCompatActivity {
               Toast.makeText(FriendsAddActivity.this, "Group not found", Toast.LENGTH_SHORT).show();
               return;
             }
-            
+
             Log.d(TAG, "Group found: " + group.getGroupName());
-            
+
             boolean alreadyInGroup = false;
-            
+
             // Check if user is already in FriendKeys
             if (group.getFriendKeys() != null) {
               for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
                 Log.d(TAG, "Checking friend key: " + entry.getKey() + " -> " + entry.getValue());
-                if ((entry.getValue() != null && entry.getValue().toString().equals(finalFriendKey)) ||
-                    entry.getKey().equals(currentFriendEmail)) {
+                if ((entry.getValue() != null && entry.getValue().toString().equals(finalFriendKey))
+                    || entry.getKey().equals(currentFriendEmail)) {
                   alreadyInGroup = true;
                   break;
                 }
               }
             }
-            
+
             if (alreadyInGroup) {
-              Toast.makeText(FriendsAddActivity.this, "User already in group", Toast.LENGTH_SHORT).show();
+              Toast.makeText(FriendsAddActivity.this, "User already in group", Toast.LENGTH_SHORT)
+                  .show();
               return;
             }
-            
+
             try {
               // Update the entire FriendKeys object instead of just the path
               HashMap<String, Object> updatedFriendKeys = group.getFriendKeys();
@@ -390,13 +390,13 @@ public class FriendsAddActivity extends AppCompatActivity {
                 updatedFriendKeys = new HashMap<>();
               }
               updatedFriendKeys.put(currentFriendEmail, finalFriendKey);
-              
+
               // Create updates map for the entire group
               HashMap<String, Object> groupUpdates = new HashMap<>();
               groupUpdates.put("FriendKeys", updatedFriendKeys);
-              
+
               Log.d(TAG, "Updating group: " + GroupKey + " with FriendKeys update");
-              
+
               // Use updateGroup instead of updateData
               serverClient.updateGroup(
                   GroupKey,
@@ -409,9 +409,13 @@ public class FriendsAddActivity extends AppCompatActivity {
                         FriendKeys = new HashMap<>();
                       }
                       FriendKeys.put(currentFriendEmail, finalFriendKey);
-                      
-                      Toast.makeText(FriendsAddActivity.this, "Friend successfully added", Toast.LENGTH_SHORT).show();
-                      
+
+                      Toast.makeText(
+                              FriendsAddActivity.this,
+                              "Friend successfully added",
+                              Toast.LENGTH_SHORT)
+                          .show();
+
                       // Ask if user wants to add to coming list
                       hideViews(
                           etFriendEmail,
@@ -424,7 +428,7 @@ public class FriendsAddActivity extends AppCompatActivity {
                           tvHelp);
                       showViews(tvAddMore, btnYes, btnNo);
                     }
-                    
+
                     @Override
                     public void onError(String errorMessage) {
                       Log.e(TAG, "Error adding friend: " + errorMessage);
@@ -444,7 +448,7 @@ public class FriendsAddActivity extends AppCompatActivity {
                   .show();
             }
           }
-          
+
           @Override
           public void onError(String errorMessage) {
             Log.e(TAG, "Error loading group: " + errorMessage);

@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Add debug option to reset test user password
     resetTestUserPassword();
-    
+
     // Check server connectivity
     checkServerConnectivity();
 
@@ -113,9 +113,7 @@ public class LoginActivity extends AppCompatActivity {
     eventHandler();
   }
 
-  /**
-   * Forces the server URL to be set to Render
-   */
+  /** Forces the server URL to be set to Render */
   private void forceSetServerUrl() {
     String renderUrl = "https://partymaker.onrender.com";
     androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
@@ -125,75 +123,83 @@ public class LoginActivity extends AppCompatActivity {
     Log.d("LoginActivity", "Forced server URL to: " + renderUrl);
   }
 
-  /**
-   * Resets password for test user (1@1.com) to 123456
-   * This is for debugging purposes only
-   */
+  /** Resets password for test user (1@1.com) to 123456 This is for debugging purposes only */
   private void resetTestUserPassword() {
     String testEmail = "1@1.com";
     String testPassword = "123456";
-    
+
     // Try to sign in with email and password directly
-    mAuth.signInWithEmailAndPassword(testEmail, testPassword)
-        .addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
+    mAuth
+        .signInWithEmailAndPassword(testEmail, testPassword)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
                 Log.d("LoginActivity", "Test user login successful");
-            } else {
+              } else {
                 Log.d("LoginActivity", "Test user login failed, attempting to create user");
-                
+
                 // If login fails, try to create the user
-                mAuth.createUserWithEmailAndPassword(testEmail, testPassword)
-                    .addOnCompleteListener(createTask -> {
-                        if (createTask.isSuccessful()) {
+                mAuth
+                    .createUserWithEmailAndPassword(testEmail, testPassword)
+                    .addOnCompleteListener(
+                        createTask -> {
+                          if (createTask.isSuccessful()) {
                             Log.d("LoginActivity", "Test user created successfully");
                             // Create user in database
                             User testUser = new User("Test User", testEmail);
                             DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
-                        } else {
-                            Log.d("LoginActivity", "Test user creation failed: " + 
-                                (createTask.getException() != null ? createTask.getException().getMessage() : "unknown error"));
-                        }
-                    });
-            }
-        });
+                          } else {
+                            Log.d(
+                                "LoginActivity",
+                                "Test user creation failed: "
+                                    + (createTask.getException() != null
+                                        ? createTask.getException().getMessage()
+                                        : "unknown error"));
+                          }
+                        });
+              }
+            });
   }
 
-  /**
-   * Checks connectivity to the server
-   */
+  /** Checks connectivity to the server */
   private void checkServerConnectivity() {
-    new Thread(() -> {
-      try {
-        String serverUrl = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-            .getString("server_url", "https://partymaker.onrender.com");
-        
-        Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
-        
-        java.net.URL url = new java.net.URL(serverUrl + "/api/firebase/health");
-        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
-        
-        int responseCode = connection.getResponseCode();
-        Log.d("LoginActivity", "Server response code: " + responseCode);
-        
-        if (responseCode == 200) {
-          java.io.BufferedReader reader = new java.io.BufferedReader(
-              new java.io.InputStreamReader(connection.getInputStream()));
-          StringBuilder response = new StringBuilder();
-          String line;
-          while ((line = reader.readLine()) != null) {
-            response.append(line);
-          }
-          reader.close();
-          
-          Log.d("LoginActivity", "Server response: " + response.toString());
-        }
-      } catch (Exception e) {
-        Log.e("LoginActivity", "Error checking server connectivity", e);
-      }
-    }).start();
+    new Thread(
+            () -> {
+              try {
+                String serverUrl =
+                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                        .getString("server_url", "https://partymaker.onrender.com");
+
+                Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
+
+                java.net.URL url = new java.net.URL(serverUrl + "/api/firebase/health");
+                java.net.HttpURLConnection connection =
+                    (java.net.HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
+
+                int responseCode = connection.getResponseCode();
+                Log.d("LoginActivity", "Server response code: " + responseCode);
+
+                if (responseCode == 200) {
+                  java.io.BufferedReader reader =
+                      new java.io.BufferedReader(
+                          new java.io.InputStreamReader(connection.getInputStream()));
+                  StringBuilder response = new StringBuilder();
+                  String line;
+                  while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                  }
+                  reader.close();
+
+                  Log.d("LoginActivity", "Server response: " + response.toString());
+                }
+              } catch (Exception e) {
+                Log.e("LoginActivity", "Error checking server connectivity", e);
+              }
+            })
+        .start();
   }
 
   /** Handles all button click events and login logic. */
@@ -216,34 +222,45 @@ public class LoginActivity extends AppCompatActivity {
                   ProgressDialog.show(LoginActivity.this, "connecting", "please wait... ", true);
               pd.show();
 
-              mAuth.signInWithEmailAndPassword(email, password)
-                  .addOnCompleteListener(LoginActivity.this, task -> {
-                    pd.dismiss();
-                    if (task.isSuccessful()) {
-                      // Set user session using AuthHelper
-                      AuthHelper.setCurrentUserSession(LoginActivity.this, email);
+              mAuth
+                  .signInWithEmailAndPassword(email, password)
+                  .addOnCompleteListener(
+                      LoginActivity.this,
+                      task -> {
+                        pd.dismiss();
+                        if (task.isSuccessful()) {
+                          // Set user session using AuthHelper
+                          AuthHelper.setCurrentUserSession(LoginActivity.this, email);
 
-                      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                      SharedPreferences.Editor editor = settings.edit();
-                      editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                      editor.apply();
+                          SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                          SharedPreferences.Editor editor = settings.edit();
+                          editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
+                          editor.apply();
 
-                      Toast.makeText(LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT).show();
-                      Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                      btnAbout.clearAnimation();
-                      startActivity(intent);
-                      finish();
-                    } else {
-                      // Log the error details
-                      Log.e("LoginActivity", "Authentication failed", task.getException());
-                      String errorMessage = task.getException() != null ? 
-                          task.getException().getMessage() : "Unknown error";
-                      Log.e("LoginActivity", "Error details: " + errorMessage);
-                      
-                      Toast.makeText(LoginActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
-                      btnResetPass.setVisibility(View.VISIBLE);
-                    }
-                  });
+                          Toast.makeText(
+                                  LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT)
+                              .show();
+                          Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                          btnAbout.clearAnimation();
+                          startActivity(intent);
+                          finish();
+                        } else {
+                          // Log the error details
+                          Log.e("LoginActivity", "Authentication failed", task.getException());
+                          String errorMessage =
+                              task.getException() != null
+                                  ? task.getException().getMessage()
+                                  : "Unknown error";
+                          Log.e("LoginActivity", "Error details: " + errorMessage);
+
+                          Toast.makeText(
+                                  LoginActivity.this,
+                                  "Invalid Email or Password",
+                                  Toast.LENGTH_SHORT)
+                              .show();
+                          btnResetPass.setVisibility(View.VISIBLE);
+                        }
+                      });
             }
           }
         });

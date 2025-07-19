@@ -16,6 +16,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import android.util.Log;
 
 /**
  * Activity for user registration, including form validation, animations, and notifications. Handles
@@ -120,27 +120,31 @@ public class RegisterActivity extends AppCompatActivity {
     setupFormProgressTracking();
   }
 
-  /**
-   * Creates a test user for debugging purposes
-   */
+  /** Creates a test user for debugging purposes */
   private void createTestUserIfNeeded() {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     String testEmail = "1@1.com";
     String testPassword = "123456";
 
-    mAuth.createUserWithEmailAndPassword(testEmail, testPassword)
-        .addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
+    mAuth
+        .createUserWithEmailAndPassword(testEmail, testPassword)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
                 Log.d("RegisterActivity", "Test user created successfully");
                 // Create user in database
                 User testUser = new User("Test User", testEmail);
                 DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
-            } else {
+              } else {
                 // User might already exist, that's fine
-                Log.d("RegisterActivity", "Test user creation failed: " +
-                    (task.getException() != null ? task.getException().getMessage() : "unknown error"));
-            }
-        });
+                Log.d(
+                    "RegisterActivity",
+                    "Test user creation failed: "
+                        + (task.getException() != null
+                            ? task.getException().getMessage()
+                            : "unknown error"));
+              }
+            });
   }
 
   /** Initializes all view components. */
