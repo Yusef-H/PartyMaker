@@ -261,12 +261,17 @@ public class UserViewModel extends ViewModel {
                 );
             }
         }
-        
         isLoading.setValue(true);
-        
         repository.getCurrentUser(context, new UserRepository.DataCallback<User>() {
             @Override
             public void onDataLoaded(User data) {
+                // Set userKey
+                if (data != null && (data.getUserKey() == null || data.getUserKey().isEmpty())) {
+                    String email = data.getEmail();
+                    if (email != null && !email.isEmpty()) {
+                        data.setUserKey(email.replace('.', ' '));
+                    }
+                }
                 Log.d(TAG, "Current user loaded successfully: " + data.getUsername());
                 currentUser.setValue(data);
                 isLoading.setValue(false);
