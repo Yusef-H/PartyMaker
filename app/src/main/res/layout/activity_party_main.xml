@@ -13,24 +13,27 @@
         android:orientation="vertical"
         android:weightSum="10">
 
+        <!-- Header Section -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2">
 
-            <!-- Add share button -->
+            <!-- Share Button -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/share_party"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/share_party"
                 android:src="@android:drawable/ic_menu_share"
                 app:backgroundTint="#0081d1"
                 app:tint="#FFFFFF"
                 tools:ignore="RelativeOverlap" />
 
+            <!-- Group Name -->
             <TextView
                 android:id="@+id/tvGroupName"
                 android:layout_width="wrap_content"
@@ -40,6 +43,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="34sp" />
 
+            <!-- Edit Name Button -->
             <ImageButton
                 android:id="@+id/btnEditName"
                 android:layout_width="wrap_content"
@@ -50,12 +54,14 @@
                 android:contentDescription="@string/todo"
                 android:src="@drawable/ic_party_pencil" />
 
+            <!-- Created By Label -->
             <TextView
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:text="@string/created_by"
                 android:textColor="@android:color/white" />
 
+            <!-- Created By Value -->
             <TextView
                 android:id="@+id/tvCreatedBy"
                 android:layout_width="wrap_content"
@@ -64,39 +70,42 @@
                 android:text="@string/username_date"
                 android:textColor="@android:color/white" />
 
+            <!-- Entry Price Label -->
             <TextView
                 android:id="@+id/tvYourEntry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
                 android:layout_marginStart="5dp"
                 android:text="@string/entry_price"
                 android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/back5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:background="@color/transparent"
-                android:text="@string/back"
-                android:textColor="#FFFFFF" />
-
+            <!-- Entry Price Value -->
             <TextView
                 android:id="@+id/tvEntryPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_marginStart="5sp"
                 android:layout_toEndOf="@id/tvYourEntry"
                 android:text="@string/free"
-                android:layout_marginStart="5sp"
                 android:textColor="@android:color/white" />
 
+            <!-- Back Button -->
+            <Button
+                android:id="@+id/back5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:background="@color/transparent"
+                android:text="@string/back"
+                android:textColor="#FFFFFF" />
 
         </RelativeLayout>
 
+        <!-- Main Grid Section -->
         <GridLayout
             android:id="@+id/MainGrid"
             android:layout_width="match_parent"
@@ -107,7 +116,8 @@
             android:columnOrderPreserved="false"
             android:padding="14dp"
             android:rowCount="4">
-            <!-- 1,1 -->
+
+            <!-- Location Card (1,1) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card1"
                 android:layout_width="0dp"
@@ -149,18 +159,18 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvGroupLocation"
-                    android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tvGroupLocation"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tvLocation"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="5dp"
-                    android:gravity="center"
+                        android:gravity="center"
                         android:maxLines="2"
                         android:ellipsize="end"
-                    android:text="@string/hello"
-                    android:textColor="#1986ed"
+                        android:text="@string/location"
+                        android:textColor="#1986ed"
                         android:textSize="14sp"
                         android:visibility="visible" />
 
@@ -175,9 +185,11 @@
                         android:textColor="#1986ed"
                         android:textSize="12sp"
                         android:textStyle="italic" />
+
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 1,2 -->
+
+            <!-- Date Card (1,2) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card2"
                 android:layout_width="0dp"
@@ -285,6 +297,7 @@
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:visibility="invisible" />
+
                     </RelativeLayout>
 
                 </RelativeLayout>
@@ -321,8 +334,10 @@
                     android:textColor="#1986ed"
                     android:textSize="10sp"
                     android:visibility="invisible" />
+
             </androidx.cardview.widget.CardView>
-            <!-- 2,1 -->
+
+            <!-- People Invited Card (2,1) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card3"
                 android:layout_width="0dp"
@@ -360,7 +375,8 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 2,2 -->
+
+            <!-- People Coming Card (2,2) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card4"
                 android:layout_width="0dp"
@@ -398,7 +414,8 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 3,1 -->
+
+            <!-- Admin Options Card (3,1) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card5"
                 android:layout_width="0dp"
@@ -483,7 +500,8 @@
 
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 3,2 -->
+
+            <!-- Chat Card (3,2) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card6"
                 android:layout_width="0dp"
@@ -521,7 +539,8 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 4,1 -->
+
+            <!-- Add Friends Card (4,1) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card7"
                 android:layout_width="0dp"
@@ -561,7 +580,8 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 4,2 -->
+
+            <!-- Leave Card (4,2) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/Card8"
                 android:layout_width="0dp"
