@@ -1,16 +1,21 @@
 package com.example.partymaker.ui.group;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +29,7 @@ import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.example.partymaker.utilities.NotificationHelper;
 import com.example.partymaker.utilities.ShareHelper;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
 import java.util.List;
@@ -46,12 +52,22 @@ public class PartyMainActivity extends AppCompatActivity {
   private TextView tvDateHours;
   private CardView Card1, Card2, Card3, Card4, Card5, Card6, Card7, Card8;
   private Group currentGroup;
+  private MaterialButton btnPayNow;
+  private LinearLayout paymentPullUpContainer;
+  private ImageView pullHandle;
+  
+  // Variables for pull-up animation
+  private float dY;
+  private float initialY;
+  private boolean isExpanded = false;
+  private static final float PULL_THRESHOLD = 100f;
 
   // Add UI elements for coming/not coming toggle
   private ImageView imgThumbUp, imgThumbDown, imgOptions;
   private TextView tvComing, tvNotComing, tvOptions;
   private boolean isUserAdmin = false;
   private boolean isUserComing = false;
+  private boolean hasUserPaid = false;
 
   @SuppressLint("SetTextI18n")
   @Override
@@ -130,6 +146,11 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Load group data
       loadGroupData();
+      
+      // Show a toast message about the payment option
+      new Handler().postDelayed(() -> {
+        Toast.makeText(this, "Swipe down from top to see payment options", Toast.LENGTH_LONG).show();
+      }, 1500);
 
     } catch (Exception e) {
       Log.e(TAG, "Unexpected error in onCreate", e);
@@ -337,6 +358,16 @@ public class PartyMainActivity extends AppCompatActivity {
     tvNotComing = findViewById(R.id.tvNotComing);
     tvOptions = findViewById(R.id.tvOptions);
 
+    // Initialize payment elements
+    paymentPullUpContainer = findViewById(R.id.paymentPullUpContainer);
+    
+    if (paymentPullUpContainer != null) {
+      // Set click listener for the payment button
+      paymentPullUpContainer.setOnClickListener(v -> handlePayment());
+    } else {
+      Log.e(TAG, "Payment container not found in layout");
+    }
+
     // Initialize share button
     FloatingActionButton fabShare = findViewById(R.id.fabShare);
     if (fabShare != null) {
@@ -349,6 +380,95 @@ public class PartyMainActivity extends AppCompatActivity {
     MessageKeys = new HashMap<>();
 
     Log.d(TAG, "Views initialized successfully");
+  }
+  
+  /**
+   * Sets up the pull-up gesture for the payment panel
+   */
+  private void setupPullUpGesture() {
+    paymentPullUpContainer.setOnTouchListener(new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View view, MotionEvent event) {
+        switch (event.getAction()) {
+          case MotionEvent.ACTION_DOWN:
+            // Record initial touch position
+            dY = view.getY() - event.getRawY();
+            initialY = view.getY();
+            return true;
+            
+          case MotionEvent.ACTION_MOVE:
+            // Calculate new position with constraints
+            float newY = event.getRawY() + dY;
+            
+            // Get the height of the container to use as maximum translation
+            int height = view.getHeight();
+            
+            // For pull down, constraints are different
+            if (newY < -70) newY = -70;
+            if (newY > 0) newY = 0;
+            
+            // Update position
+            view.animate()
+                .y(newY)
+                .setDuration(0)
+                .start();
+            return true;
+            
+          case MotionEvent.ACTION_UP:
+            // Determine if we should expand or collapse based on how far user pulled
+            float pulledDistance = view.getY() - initialY;
+            int containerHeight = view.getHeight();
+            
+            if (pulledDistance > containerHeight / 3) {
+              // Expand if pulled more than 1/3 of the height
+              expandPaymentPanel();
+            } else {
+              // Collapse
+              collapsePaymentPanel();
+            }
+            return true;
+            
+          default:
+            return false;
+        }
+      }
+    });
+  }
+  
+  /**
+   * Toggles the payment panel between expanded and collapsed states
+   */
+  private void togglePaymentPanel() {
+    if (isExpanded) {
+      collapsePaymentPanel();
+    } else {
+      expandPaymentPanel();
+    }
+  }
+  
+  /**
+   * Expands the payment panel with animation
+   */
+  private void expandPaymentPanel() {
+    ObjectAnimator animation = ObjectAnimator.ofFloat(
+        paymentPullUpContainer, "translationY", 0f);
+    animation.setDuration(300);
+    animation.setInterpolator(new DecelerateInterpolator());
+    animation.start();
+    isExpanded = true;
+  }
+  
+  /**
+   * Collapses the payment panel with animation
+   */
+  private void collapsePaymentPanel() {
+    // Collapse to show only the handle (-70dp is set in XML)
+    ObjectAnimator animation = ObjectAnimator.ofFloat(
+        paymentPullUpContainer, "translationY", -70f);
+    animation.setDuration(300);
+    animation.setInterpolator(new DecelerateInterpolator());
+    animation.start();
+    isExpanded = false;
   }
 
   private void setupClickListeners() {
@@ -483,7 +603,11 @@ public class PartyMainActivity extends AppCompatActivity {
     tvCreatedBy.setText(group.getAdminKey());
 
     // Update entry price
-    tvEntryPrice.setText(group.getGroupPrice().equals("0") ? "free" : group.getGroupPrice());
+    String price = group.getGroupPrice();
+    tvEntryPrice.setText(price.equals("0") ? "free" : price);
+
+    // Update payment button visibility based on price
+    updatePaymentButtonVisibility(price);
 
     // Update location
     String location = group.getGroupLocation();
@@ -529,8 +653,164 @@ public class PartyMainActivity extends AppCompatActivity {
     }
     isUserComing = userComingStatus;
 
+    // Check if user has paid (this would be stored in the database)
+    checkPaymentStatus();
+
     // Update Card5 UI based on admin status
     updateCard5UI();
+  }
+
+  /**
+   * Updates the payment button visibility based on price and payment status
+   * 
+   * @param price The price of the event
+   */
+  private void updatePaymentButtonVisibility(String price) {
+    // If payment container is null, exit
+    if (paymentPullUpContainer == null) return;
+    
+    // If price is free or user is admin, hide payment container
+    if (price.equals("0") || isUserAdmin) {
+      paymentPullUpContainer.setVisibility(View.GONE);
+      return;
+    }
+
+    // Check if user is coming to the party
+    if (!isUserComing) {
+      paymentPullUpContainer.setVisibility(View.GONE);
+      return;
+    }
+    
+    // FOR TESTING: Always show payment container
+    paymentPullUpContainer.setVisibility(View.VISIBLE);
+    
+    // Get the payment text view
+    TextView tvPayNow = findViewById(R.id.tvPayNow);
+    
+    // Check if user has already paid
+    if (hasUserPaid && tvPayNow != null) {
+      tvPayNow.setText(R.string.payment_success);
+      tvPayNow.setEnabled(false);
+      tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
+    } else if (tvPayNow != null) {
+      // Show payment button with price
+      tvPayNow.setText(getString(R.string.pay_now));
+      tvPayNow.setEnabled(true);
+      tvPayNow.setTextColor(getResources().getColor(R.color.green));
+    }
+  }
+
+  /**
+   * Checks if the user has already paid for the event
+   */
+  private void checkPaymentStatus() {
+    if (currentGroup == null || UserKey == null) {
+      return;
+    }
+
+    // In a real app, this would check a payments collection in the database
+    // For now, we'll simulate this with a simple check
+    // This should be replaced with actual database query
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    
+    // Example of how this might be implemented:
+    // Path would be something like "Payments/{groupKey}/{userKey}"
+    String paymentPath = "Payments/" + GroupKey + "/" + UserKey;
+    
+    // For demo purposes, we'll just set this to false
+    hasUserPaid = false;
+    
+    // Update the payment button based on this status
+    if (currentGroup != null) {
+      updatePaymentButtonVisibility(currentGroup.getGroupPrice());
+    }
+  }
+
+  /**
+   * Handles the payment process when the user clicks the payment button
+   */
+  private void handlePayment() {
+    if (currentGroup == null) {
+      Toast.makeText(this, "Error: Group data not available", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    String price = currentGroup.getGroupPrice();
+    if (price.equals("0")) {
+      Toast.makeText(this, "This event is free!", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    // Show payment processing dialog
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle(getString(R.string.payment_for_party, currentGroup.getGroupName()));
+    builder.setMessage(getString(R.string.payment_processing));
+    builder.setCancelable(false);
+    AlertDialog processingDialog = builder.create();
+    processingDialog.show();
+
+    // Simulate payment processing
+    new android.os.Handler().postDelayed(() -> {
+      processingDialog.dismiss();
+      
+      // Simulate successful payment (in a real app, this would be an actual payment gateway)
+      boolean paymentSuccessful = true;
+      
+      if (paymentSuccessful) {
+        // Update payment status in database
+        updatePaymentInDatabase();
+        
+        // Show success message
+        Toast.makeText(this, R.string.payment_success, Toast.LENGTH_LONG).show();
+        
+        // Update UI
+        hasUserPaid = true;
+        TextView tvPayNow = findViewById(R.id.tvPayNow);
+        if (tvPayNow != null) {
+          tvPayNow.setText(R.string.payment_success);
+          tvPayNow.setEnabled(false);
+          tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
+      } else {
+        // Show failure message
+        Toast.makeText(this, R.string.payment_failed, Toast.LENGTH_LONG).show();
+      }
+    }, 2000); // Simulate 2 second processing time
+  }
+
+  /**
+   * Updates the payment status in the database
+   */
+  private void updatePaymentInDatabase() {
+    if (currentGroup == null || UserKey == null) {
+      return;
+    }
+
+    // In a real app, this would update a payments collection in the database
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    
+    // Example of how this might be implemented:
+    // Path would be something like "Payments/{groupKey}/{userKey}"
+    String paymentPath = "Payments/" + GroupKey;
+    Map<String, Object> paymentData = new HashMap<>();
+    paymentData.put(UserKey, true);
+    
+    // Update the database
+    serverClient.updateData(paymentPath, paymentData, new FirebaseServerClient.OperationCallback() {
+      @Override
+      public void onSuccess() {
+        Log.d(TAG, "Payment recorded successfully");
+        hasUserPaid = true;
+      }
+
+      @Override
+      public void onError(String errorMessage) {
+        Log.e(TAG, "Error recording payment: " + errorMessage);
+        Toast.makeText(PartyMainActivity.this, 
+            "Payment recorded but failed to update database. Please contact support.", 
+            Toast.LENGTH_LONG).show();
+      }
+    });
   }
 
   private void updateCard5UI() {
@@ -593,6 +873,11 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Update UI immediately for better UX
     updateCard5UI();
+    
+    // Update payment button visibility
+    if (currentGroup.getGroupPrice() != null) {
+      updatePaymentButtonVisibility(currentGroup.getGroupPrice());
+    }
 
     // Update server
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
@@ -627,7 +912,19 @@ public class PartyMainActivity extends AppCompatActivity {
         new FirebaseServerClient.OperationCallback() {
           @Override
           public void onSuccess() {
-            Log.d(TAG, "Coming status updated successfully on server");
+            Log.d(TAG, "Coming status updated successfully to: " + isUserComing);
+            
+            // Update UI to reflect the change
+            updateCard5UI();
+            
+            // Update payment button visibility
+            if (currentGroup.getGroupPrice() != null) {
+              updatePaymentButtonVisibility(currentGroup.getGroupPrice());
+            }
+
+            // Show toast message
+            String message = isUserComing ? "You are now coming to this party!" : "You are not coming to this party.";
+            Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_SHORT).show();
           }
 
           @Override

@@ -273,4 +273,12 @@
         <item>00:00</item>
         <item>00:30</item>
     </string-array>
+
+    <!-- Payment strings -->
+    <string name="pay_now">Pay Now</string>
+    <string name="payment_success">Payment successful!</string>
+    <string name="payment_failed">Payment failed. Please try again.</string>
+    <string name="payment_processing">Processing payment…</string>
+    <string name="payment_for_party">Payment for %1$s</string>
+    <string name="pull_to_pay">Swipe down to pay</string>
 </resources>
