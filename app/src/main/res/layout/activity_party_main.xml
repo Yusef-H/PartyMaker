@@ -8,28 +8,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/bg_party_screen"
-        android:orientation="vertical"
-        android:weightSum="10">
+        android:orientation="vertical">
 
         <!-- Header Section -->
         <RelativeLayout
+            android:id="@+id/headerSection"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="12dp">
 
             <!-- Share Button -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="10dp"
+                android:layout_alignTop="@id/tvGroupName"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:contentDescription="@string/share_party"
                 android:src="@android:drawable/ic_menu_share"
                 app:backgroundTint="#0081d1"
+                app:fabSize="mini"
                 app:tint="#FFFFFF"
                 tools:ignore="RelativeOverlap" />
 
@@ -38,7 +42,9 @@
                 android:id="@+id/tvGroupName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/group_name"
                 android:textColor="@android:color/white"
                 android:textSize="34sp" />
@@ -46,75 +52,103 @@
             <!-- Edit Name Button -->
             <ImageButton
                 android:id="@+id/btnEditName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_alignBottom="@+id/tvGroupName"
+                android:layout_marginStart="8dp"
                 android:layout_toEndOf="@+id/tvGroupName"
                 android:background="@color/transparent"
                 android:contentDescription="@string/todo"
+                android:padding="4dp"
                 android:src="@drawable/ic_party_pencil" />
 
-            <!-- Created By Label -->
-            <TextView
-                android:layout_width="70dp"
+            <!-- Created By Section -->
+            <LinearLayout
+                android:id="@+id/createdBySection"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/created_by"
-                android:textColor="@android:color/white" />
+                android:layout_below="@id/tvGroupName"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-            <!-- Created By Value -->
-            <TextView
-                android:id="@+id/tvCreatedBy"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvCreatedByLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/created_by"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvCreatedBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/username_date"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Bottom Header Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="70dp"
-                android:text="@string/username_date"
-                android:textColor="@android:color/white" />
+                android:layout_below="@id/createdBySection"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-            <!-- Entry Price Label -->
-            <TextView
-                android:id="@+id/tvYourEntry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="5dp"
-                android:text="@string/entry_price"
-                android:textColor="@android:color/white" />
+                <!-- Entry Price Section -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-            <!-- Entry Price Value -->
-            <TextView
-                android:id="@+id/tvEntryPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="5sp"
-                android:layout_toEndOf="@id/tvYourEntry"
-                android:text="@string/free"
-                android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/tvYourEntry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/entry_price"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp" />
 
-            <!-- Back Button -->
-            <Button
-                android:id="@+id/back5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:background="@color/transparent"
-                android:text="@string/back"
-                android:textColor="#FFFFFF" />
+                    <TextView
+                        android:id="@+id/tvEntryPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/free"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
+                <!-- Back Button -->
+                <Button
+                    android:id="@+id/back5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@color/transparent"
+                    android:drawableStart="@drawable/ic_back"
+                    android:drawablePadding="4dp"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/back"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </RelativeLayout>
 
         <!-- Main Grid Section -->
         <GridLayout
             android:id="@+id/MainGrid"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="8"
+            android:layout_height="match_parent"
             android:alignmentMode="alignMargins"
             android:columnCount="2"
             android:columnOrderPreserved="false"
-            android:padding="14dp"
+            android:padding="8dp"
             android:rowCount="4">
 
             <!-- Location Card (1,1) -->
@@ -122,28 +156,24 @@
                 android:id="@+id/Card1"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/imgLocation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_location" />
 
                     <TextView
@@ -152,12 +182,12 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/imgLocation"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/location"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/tvGroupLocation"
@@ -165,27 +195,14 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tvLocation"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="8dp"
+                        android:ellipsize="end"
                         android:gravity="center"
                         android:maxLines="2"
-                        android:ellipsize="end"
                         android:text="@string/location"
                         android:textColor="#1986ed"
-                        android:textSize="14sp"
-                        android:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/tvMapHint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tvGroupLocation"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/tap_to_open_maps"
-                        android:textColor="#1986ed"
-                        android:textSize="12sp"
-                        android:textStyle="italic" />
-
+                        android:textSize="14sp" />
+                    
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -194,55 +211,49 @@
                 android:id="@+id/Card2"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/imgCalender"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/tvDateDays"
-                        android:layout_alignParentTop="true"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginEnd="7dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_centerHorizontal="true"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_calendar" />
 
                     <TextView
                         android:id="@+id/tvDateText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/tvDateDays"
                         android:layout_below="@+id/imgCalender"
-                        android:layout_marginEnd="7dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/date"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/tvDateDays"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/tvDateText"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="8dp"
                         android:text="@string/_31"
-                        android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="40sp"
+                        android:textSize="32sp"
                         android:textStyle="bold"
                         android:visibility="invisible" />
 
@@ -250,29 +261,32 @@
                         android:id="@+id/tvAt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/tvDateText"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="8dp"
                         android:text="@string/at"
-                        android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="40sp"
+                        android:textSize="32sp"
                         android:textStyle="bold"
                         android:visibility="invisible" />
 
-                    <RelativeLayout
-                        android:id="@+id/relativeLayout"
-                        android:layout_width="100dp"
-                        android:layout_height="25dp"
-                        android:layout_marginTop="50dp">
+                    <LinearLayout
+                        android:id="@+id/dateDetailsContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvDateDays"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tvDateMonths"
                             android:layout_width="wrap_content"
-                            android:layout_height="25dp"
-                            android:layout_marginStart="10dp"
+                            android:layout_height="wrap_content"
                             android:text="@string/feb"
                             android:textColor="#1986ed"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:visibility="invisible" />
 
@@ -280,61 +294,63 @@
                             android:id="@+id/tvDateYears"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="50dp"
+                            android:layout_marginStart="8dp"
                             android:text="@string/_2018"
                             android:textColor="#1986ed"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvDateHours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/dateDetailsContainer"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/_00_00"
+                        android:textColor="#1986ed"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvSeeHours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/press_to_see_time"
+                            android:textColor="#1986ed"
+                            android:textSize="12sp"
+                            android:visibility="invisible" />
+
+                        <ImageView
+                            android:id="@+id/imgSeeHours"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="4dp"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/ic_party_arrow"
                             android:visibility="invisible" />
 
                         <TextView
-                            android:id="@+id/tvDateHours"
+                            android:id="@+id/tvSeeDate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:text="@string/_00_00"
+                            android:text="@string/press_to_see_date"
                             android:textColor="#1986ed"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
+                            android:textSize="12sp"
                             android:visibility="invisible" />
-
-                    </RelativeLayout>
-
+                    </LinearLayout>
                 </RelativeLayout>
-
-                <ImageView
-                    android:id="@+id/imgSeeHours"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_marginStart="140dp"
-                    android:layout_marginTop="242dp"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ic_party_arrow"
-                    android:visibility="invisible" />
-
-                <TextView
-                    android:id="@+id/tvSeeHours"
-                    android:layout_width="80dp"
-                    android:layout_height="15dp"
-                    android:layout_marginStart="67dp"
-                    android:layout_marginTop="240dp"
-                    android:text="@string/press_to_see_time"
-                    android:textColor="#1986ed"
-                    android:textSize="10sp"
-                    android:visibility="invisible"
-                    tools:ignore="SmallSp" />
-
-                <TextView
-                    android:id="@+id/tvSeeDate"
-                    android:layout_width="80dp"
-                    android:layout_height="15dp"
-                    android:layout_marginStart="67dp"
-                    android:layout_marginTop="240dp"
-                    android:text="@string/press_to_see_date"
-                    android:textColor="#1986ed"
-                    android:textSize="10sp"
-                    android:visibility="invisible" />
-
             </androidx.cardview.widget.CardView>
 
             <!-- People Invited Card (2,1) -->
@@ -342,37 +358,35 @@
                 android:id="@+id/Card3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_invited" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/people_invited"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
+                        android:textSize="18sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -381,37 +395,35 @@
                 android:id="@+id/Card4"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_thumb_up_blue" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/people_coming"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
+                        android:textSize="18sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -420,28 +432,25 @@
                 android:id="@+id/Card5"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
                 app:cardBackgroundColor="#1986ed"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/imgThumbDown"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="2dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_thumb_down"
                         android:visibility="invisible" />
 
@@ -449,21 +458,23 @@
                         android:id="@+id/tvNotComing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="45dp"
+                        android:layout_below="@id/imgThumbDown"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/not_coming"
                         android:textAlignment="center"
                         android:textColor="#ffffff"
                         android:textSize="18sp"
-                        android:textStyle="bold"
                         android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/imgThumbUp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="2dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_thumb_up_white"
                         android:visibility="invisible" />
 
@@ -471,33 +482,36 @@
                         android:id="@+id/tvComing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/imgThumbUp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="45dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/coming"
                         android:textColor="#ffffff"
                         android:textSize="18sp"
-                        android:textStyle="bold"
                         android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/imgOptions"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_centerHorizontal="true"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_options" />
 
                     <TextView
                         android:id="@+id/tvOptions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/imgOptions"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="45dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/admin_options"
+                        android:textAlignment="center"
                         android:textColor="#ffffff"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
+                        android:textSize="18sp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -506,37 +520,35 @@
                 android:id="@+id/Card6"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_chat" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/Chat"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
+                        android:textSize="18sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -545,39 +557,37 @@
                 android:id="@+id/Card7"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/imgAddFriend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_add" />
 
                     <TextView
                         android:id="@+id/tvAddFriend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/add_friends"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
+                        android:textSize="18sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -586,40 +596,37 @@
                 android:id="@+id/Card8"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_rowWeight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:contentDescription="@string/todo"
+                        android:padding="8dp"
                         android:src="@drawable/ic_party_leave" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/leave"
                         android:textAlignment="center"
                         android:textColor="#1986ed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
+                        android:textSize="18sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
         </GridLayout>
     </LinearLayout>
 </FrameLayout>
