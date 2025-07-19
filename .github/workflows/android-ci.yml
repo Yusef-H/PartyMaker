@@ -31,10 +31,10 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      # Step 5: Create secrets.properties
-      - name: Create secrets.properties
+      # Step 5: Decode secrets.properties
+      - name: Decode secrets.properties
         run: |
-          echo "MAPS_KEY=${{ secrets.MAPS_KEY }}" > secrets.properties
+          echo "${{ secrets.SECRETS_PROPERTIES }}" | base64 -d > secrets.properties
 
       # Step 6: Decode google-services.json
       - name: Decode google-services.json

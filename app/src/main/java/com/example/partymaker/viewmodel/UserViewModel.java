@@ -263,6 +263,13 @@ public class UserViewModel extends ViewModel {
         new UserRepository.DataCallback<User>() {
           @Override
           public void onDataLoaded(User data) {
+            // Set userKey
+            if (data != null && (data.getUserKey() == null || data.getUserKey().isEmpty())) {
+              String email = data.getEmail();
+              if (email != null && !email.isEmpty()) {
+                data.setUserKey(email.replace('.', ' '));
+              }
+            }
             Log.d(TAG, "Current user loaded successfully: " + data.getUsername());
             currentUser.setValue(data);
             isLoading.setValue(false);
@@ -516,4 +523,4 @@ public class UserViewModel extends ViewModel {
     super.onCleared();
     // Clean up resources if needed
   }
-}
+} 

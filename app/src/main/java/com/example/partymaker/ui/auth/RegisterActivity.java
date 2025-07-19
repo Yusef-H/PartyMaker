@@ -133,7 +133,7 @@ public class RegisterActivity extends AppCompatActivity {
               if (task.isSuccessful()) {
                 Log.d("RegisterActivity", "Test user created successfully");
                 // Create user in database
-                User testUser = new User(testEmail, "Test User");
+                User testUser = new User("Test User", testEmail);
                 DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
               } else {
                 // User might already exist, that's fine
@@ -646,7 +646,7 @@ public class RegisterActivity extends AppCompatActivity {
                 sendSuccessNotification(username);
 
                 // Save user data to database
-                User user = new User(email, username);
+                User user = new User(username, email);
                 DBRef.refUsers.child(email.replace('.', ' ')).setValue(user);
 
                 // Navigate to login screen after celebration
