@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.firebase.storage.FirebaseStorage;
+import android.os.Handler;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -320,46 +321,56 @@ public class EditProfileActivity extends AppCompatActivity {
     // Show loading indicator
     progressBar.setVisibility(View.VISIBLE);
 
-    // Check network availability
-    boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
-                                ConnectivityManager.getInstance().getNetworkAvailability().getValue();
-    if (!isNetworkAvailable) {
-      Log.e(TAG, "Network not available when trying to save profile");
-      progressBar.setVisibility(View.GONE);
+    // Force refresh network status before checking
+    ConnectivityManager.getInstance().refreshNetworkStatus();
+    
+    // Add a small delay to allow the network status to update
+    new Handler().postDelayed(() -> {
+      // Check network availability again after refresh
+      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
+                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
       
-      // Show a more helpful error message
-      Snackbar.make(
-          findViewById(android.R.id.content),
-          "Cannot save profile while offline. Please check your internet connection.",
-          Snackbar.LENGTH_LONG)
-          .show();
-      return;
-    }
-
-    // Create updates map
-    Map<String, Object> updates = new HashMap<>();
-    updates.put("username", username);
-
-    // Update the user profile
-    userViewModel.updateCurrentUser(updates);
-    
-    // Observe the loading state to hide progress when done
-    userViewModel.getIsLoading().observe(this, isLoading -> {
-      if (!isLoading) {
+      if (!isNetworkAvailable) {
+        Log.e(TAG, "Network not available when trying to save profile");
         progressBar.setVisibility(View.GONE);
+        
+        // Show a more helpful error message
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            "Cannot save profile while offline. Please check your internet connection.",
+            Snackbar.LENGTH_LONG)
+            .show();
+        return;
       }
-    });
-    
-    // Show success message when no error
-    userViewModel.getErrorMessage().observe(this, errorMsg -> {
-      if (errorMsg == null || errorMsg.isEmpty()) {
-        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-      }
-    });
+      
+      // Create updates map
+      Map<String, Object> updates = new HashMap<>();
+      updates.put("username", username);
+      
+      // Update the user profile
+      userViewModel.updateCurrentUser(updates);
+      
+      // Observe the loading state to hide progress when done
+      userViewModel.getIsLoading().observe(this, isLoading -> {
+        if (!isLoading) {
+          progressBar.setVisibility(View.GONE);
+        }
+      });
+      
+      // Show success message when no error
+      userViewModel.getErrorMessage().observe(this, errorMsg -> {
+        if (errorMsg == null || errorMsg.isEmpty()) {
+          Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+        }
+      });
+    }, 500); // 500ms delay to allow network status to update
   }
 
   private void loadProfileImageFromStorage(String userKey) {
     Log.d(TAG, "Loading profile image from storage for key: " + userKey);
+    
+    // Force refresh network status
+    ConnectivityManager.getInstance().refreshNetworkStatus();
     
     // Try to load from local cache first
     try {
@@ -379,7 +390,9 @@ public class EditProfileActivity extends AppCompatActivity {
       }
       
       // No local cache, try to load from Firebase Storage
-      if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
+                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+      if (!isNetworkAvailable) {
         // If offline, just use the default image without showing error
         imgProfile.setImageResource(R.drawable.default_profile_image);
         Log.d(TAG, "Using default profile image (offline mode)");
@@ -725,5 +738,25 @@ public class EditProfileActivity extends AppCompatActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    
+    // Force refresh network status when activity resumes
+    ConnectivityManager.getInstance().refreshNetworkStatus();
+    
+    // Add a small delay to allow the network status to update
+    new Handler().postDelayed(() -> {
+      // Check if we need to reload user data based on network availability
+      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
+                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+      
+      if (isNetworkAvailable) {
+        Log.d(TAG, "Network is available, refreshing user data");
+        loadUserData();
+      }
+    }, 1000);
   }
 }

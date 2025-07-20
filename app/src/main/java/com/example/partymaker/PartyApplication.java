@@ -2,6 +2,7 @@ package com.example.partymaker;
 
 import android.app.Application;
 import android.util.Log;
+import com.example.partymaker.data.api.ConnectivityManager;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
@@ -41,6 +42,10 @@ public class PartyApplication extends Application {
         // Initialize network manager
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.initialize(getApplicationContext());
+        
+        // Initialize ConnectivityManager
+        ConnectivityManager.getInstance().init(getApplicationContext());
+        Log.d(TAG, "ConnectivityManager initialized successfully");
         
         // Initialize FirebaseServerClient
         try {
@@ -83,6 +88,9 @@ public class PartyApplication extends Application {
         
         // Release resources
         NetworkManager.getInstance().release();
+        
+        // Unregister ConnectivityManager callbacks
+        ConnectivityManager.getInstance().unregisterNetworkCallback();
         
         // Clean up FirebaseServerClient
         try {

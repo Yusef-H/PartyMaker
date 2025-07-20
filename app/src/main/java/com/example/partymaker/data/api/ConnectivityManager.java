@@ -25,6 +25,7 @@ public class ConnectivityManager {
   private android.net.ConnectivityManager connectivityManager;
   private android.net.ConnectivityManager.NetworkCallback networkCallback;
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  private Context appContext;
 
   /** Private constructor to enforce singleton pattern */
   private ConnectivityManager() {
@@ -53,6 +54,9 @@ public class ConnectivityManager {
       Log.e(TAG, "Context is null, cannot initialize ConnectivityManager");
       return;
     }
+    
+    // Save application context for later use
+    this.appContext = context.getApplicationContext();
 
     connectivityManager =
         (android.net.ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -76,6 +80,37 @@ public class ConnectivityManager {
     
     // Perform an active network check to ensure we have the correct state
     performActiveNetworkCheck(context);
+    
+    // Schedule periodic network checks
+    schedulePeriodicNetworkChecks();
+  }
+  
+  /**
+   * Schedules periodic network checks to ensure connectivity status is accurate
+   */
+  private void schedulePeriodicNetworkChecks() {
+    // Run a check every 30 seconds
+    mainHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        if (appContext != null) {
+          performActiveNetworkCheck(appContext);
+        }
+        // Schedule the next check
+        mainHandler.postDelayed(this, 30000);
+      }
+    }, 30000);
+  }
+  
+  /**
+   * Forces a refresh of the network connectivity status
+   */
+  public void refreshNetworkStatus() {
+    if (appContext != null) {
+      performActiveNetworkCheck(appContext);
+    } else {
+      Log.e(TAG, "Cannot refresh network status: appContext is null");
+    }
   }
   
   /**
@@ -101,6 +136,9 @@ public class ConnectivityManager {
           isNetworkAvailable.setValue(isConnected);
           if (!isConnected) {
             lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
+          } else {
+            // Clear error if we're now connected
+            lastNetworkError.setValue(null);
           }
         });
       } catch (Exception e) {
@@ -132,7 +170,13 @@ public class ConnectivityManager {
           @Override
           public void onAvailable(@NonNull Network network) {
             Log.d(TAG, "Network available");
-            mainHandler.post(() -> isNetworkAvailable.setValue(true));
+            mainHandler.post(() -> {
+              isNetworkAvailable.setValue(true);
+              // Verify with an active check
+              if (appContext != null) {
+                performActiveNetworkCheck(appContext);
+              }
+            });
           }
 
           @Override
