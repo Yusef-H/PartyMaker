@@ -1,50 +1,92 @@
 package com.example.partymaker.data.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 
-/** Represents a group (party) in the PartyMaker application. */
+/** 
+ * Represents a group (party) in the PartyMaker application.
+ * This class is annotated for Room database storage.
+ */
+@Entity(tableName = "groups")
 public class Group {
   /** The group's display name. */
+  @ColumnInfo(name = "group_name")
   private String groupName;
+  
   /** The unique key for the group. */
+  @PrimaryKey
+  @NonNull
+  @ColumnInfo(name = "groupKey")
   private String groupKey;
+  
   /** The location of the group. */
+  @ColumnInfo(name = "group_location")
   private String groupLocation;
+  
   /** The admin's user key. */
+  @ColumnInfo(name = "admin_key")
   private String adminKey;
+  
   /** The creation timestamp. */
+  @ColumnInfo(name = "created_at")
   private String createdAt;
+  
   /** The day(s) of the event. */
+  @ColumnInfo(name = "group_days")
   private String groupDays;
+  
   /** The month(s) of the event. */
+  @ColumnInfo(name = "group_months")
   private String groupMonths;
+  
   /** The year(s) of the event. */
+  @ColumnInfo(name = "group_years")
   private String groupYears;
+  
   /** The hour(s) of the event. */
+  @ColumnInfo(name = "group_hours")
   private String groupHours;
+  
   /** The price of the event. */
+  @ColumnInfo(name = "group_price")
   private String groupPrice;
+  
   /** 0 = Public group, 1 = Private group. */
+  @ColumnInfo(name = "group_type")
   private int groupType;
+  
   /** Whether users can add new members. */
+  @ColumnInfo(name = "can_add")
   private boolean canAdd;
+  
   /** The description of the group. */
+  @ColumnInfo(name = "group_description")
   private String groupDescription;
+  
   /** Map of friend user keys. */
   @SerializedName(
       value = "friendKeys",
       alternate = {"FriendKeys"})
+  @ColumnInfo(name = "friend_keys")
   private HashMap<String, Object> friendKeys = new HashMap<>();
+  
   /** Map of users who are coming. */
   @SerializedName(
       value = "comingKeys",
       alternate = {"ComingKeys"})
+  @ColumnInfo(name = "coming_keys")
   private HashMap<String, Object> comingKeys = new HashMap<>();
+  
   /** Map of message keys for the group. */
   @SerializedName(
       value = "messageKeys",
       alternate = {"MessageKeys"})
+  @ColumnInfo(name = "message_keys")
   private HashMap<String, Object> messageKeys = new HashMap<>();
 
   public boolean isCanAdd() {
@@ -101,9 +143,10 @@ public class Group {
    * @param comingKeys map of coming keys
    * @param messageKeys map of message keys
    */
+  @Ignore
   public Group(
       String groupName,
-      String groupKey,
+      @NonNull String groupKey,
       String groupLocation,
       String adminKey,
       String createdAt,
