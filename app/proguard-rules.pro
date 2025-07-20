@@ -53,6 +53,7 @@
 # Keep Gson related classes
 -keepattributes Signature
 -keepattributes *Annotation*
+#noinspection ShrinkerUnresolvedReference
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.** { *; }
 -keep class * implements com.google.gson.TypeAdapterFactory
