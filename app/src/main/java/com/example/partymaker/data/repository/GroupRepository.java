@@ -20,11 +20,11 @@ import java.util.concurrent.Executors;
  * This class provides a clean API for accessing Group data from different sources.
  */
 public class GroupRepository {
-    private static final String TAG = "GroupRepository";
+  private static final String TAG = "GroupRepository";
     
-    private static GroupRepository instance;
+  private static GroupRepository instance;
     
-    private final FirebaseServerClient serverClient;
+  private final FirebaseServerClient serverClient;
     private final Executor executor;
     private final Handler mainHandler;
     private AppDatabase database;
@@ -32,25 +32,25 @@ public class GroupRepository {
     /**
      * Private constructor to prevent direct instantiation.
      */
-    private GroupRepository() {
+  private GroupRepository() {
         this.serverClient = FirebaseServerClient.getInstance();
         this.executor = Executors.newFixedThreadPool(4);
         this.mainHandler = new Handler(Looper.getMainLooper());
-    }
-    
-    /**
+  }
+
+  /**
      * Gets the singleton instance of GroupRepository.
-     *
-     * @return The GroupRepository instance
-     */
-    public static synchronized GroupRepository getInstance() {
-        if (instance == null) {
-            instance = new GroupRepository();
-        }
-        return instance;
+   *
+   * @return The GroupRepository instance
+   */
+  public static synchronized GroupRepository getInstance() {
+    if (instance == null) {
+      instance = new GroupRepository();
     }
-    
-    /**
+    return instance;
+  }
+
+  /**
      * Initializes the repository with a context.
      * This is required for database access.
      *
@@ -70,15 +70,15 @@ public class GroupRepository {
      *
      * @param groupKey The group key
      * @param callback Callback to receive the group
-     * @param forceRefresh Whether to force a refresh from the server
-     */
+   * @param forceRefresh Whether to force a refresh from the server
+   */
     public void getGroup(String groupKey, final DataCallback<Group> callback, boolean forceRefresh) {
         if (database == null) {
             Log.e(TAG, "Database not initialized. Call initialize() first.");
             getGroupFromServer(groupKey, callback);
-            return;
-        }
-        
+      return;
+    }
+
         executor.execute(() -> {
             // Try to get from cache first
             Group cachedGroup = database.groupDao().getGroupByKey(groupKey);
@@ -86,9 +86,9 @@ public class GroupRepository {
             if (cachedGroup != null && !forceRefresh) {
                 Log.d(TAG, "Group found in cache: " + groupKey);
                 callback.onDataLoaded(cachedGroup);
-                return;
+              return;
             }
-            
+
             // Otherwise, get from server
             getGroupFromServer(groupKey, new DataCallback<Group>() {
                 @Override
@@ -103,9 +103,9 @@ public class GroupRepository {
                     
                     // Return the group
                     callback.onDataLoaded(group);
-                }
-                
-                @Override
+          }
+
+          @Override
                 public void onError(String error) {
                     // If we have a cached group, return it even if there was an error
                     if (cachedGroup != null) {
@@ -114,12 +114,12 @@ public class GroupRepository {
                     } else {
                         callback.onError(error);
                     }
-                }
+                  }
             });
         });
-    }
-    
-    /**
+  }
+
+  /**
      * Gets a group from the server.
      *
      * @param groupKey The group key
@@ -127,31 +127,31 @@ public class GroupRepository {
      */
     private void getGroupFromServer(String groupKey, final DataCallback<Group> callback) {
         serverClient.getGroup(groupKey, new FirebaseServerClient.DataCallback<Group>() {
-            @Override
+          @Override
             public void onSuccess(Group group) {
                 callback.onDataLoaded(group);
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
+          }
+
+          @Override
+          public void onError(String errorMessage) {
                 callback.onError(errorMessage);
-            }
+          }
         });
-    }
-    
-    /**
+  }
+
+  /**
      * Gets all groups.
-     *
+   *
      * @param callback Callback to receive the groups
-     * @param forceRefresh Whether to force a refresh from the server
-     */
+   * @param forceRefresh Whether to force a refresh from the server
+   */
     public void getAllGroups(final DataCallback<List<Group>> callback, boolean forceRefresh) {
         if (database == null) {
             Log.e(TAG, "Database not initialized. Call initialize() first.");
             getAllGroupsFromServer(callback);
-            return;
-        }
-        
+      return;
+    }
+
         executor.execute(() -> {
             // Try to get from cache first
             List<Group> cachedGroups = database.groupDao().getAllGroups();
@@ -159,12 +159,12 @@ public class GroupRepository {
             if (cachedGroups != null && !cachedGroups.isEmpty() && !forceRefresh) {
                 Log.d(TAG, "Groups found in cache: " + cachedGroups.size());
                 callback.onDataLoaded(cachedGroups);
-                return;
-            }
-            
+      return;
+    }
+
             // Otherwise, get from server
             getAllGroupsFromServer(new DataCallback<List<Group>>() {
-                @Override
+          @Override
                 public void onDataLoaded(List<Group> groups) {
                     // Cache the groups
                     if (groups != null && !groups.isEmpty()) {
@@ -203,26 +203,26 @@ public class GroupRepository {
             public void onSuccess(Map<String, Group> groupMap) {
                 List<Group> groups = new java.util.ArrayList<>(groupMap.values());
                 callback.onDataLoaded(groups);
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
+          }
+
+          @Override
+          public void onError(String errorMessage) {
                 callback.onError(errorMessage);
-            }
+          }
         });
-    }
-    
-    /**
+  }
+
+  /**
      * Saves a group.
-     *
+   *
      * @param groupKey The group key
-     * @param group The group to save
-     * @param callback Callback for operation result
-     */
+   * @param group The group to save
+   * @param callback Callback for operation result
+   */
     public void saveGroup(String groupKey, Group group, final OperationCallback callback) {
         serverClient.saveGroup(groupKey, group, new FirebaseServerClient.OperationCallback() {
-            @Override
-            public void onSuccess() {
+          @Override
+          public void onSuccess() {
                 // Cache the group
                 if (database != null) {
                     executor.execute(() -> {
@@ -232,22 +232,22 @@ public class GroupRepository {
                 }
                 
                 callback.onComplete();
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
+          }
+
+          @Override
+          public void onError(String errorMessage) {
                 callback.onError(errorMessage);
-            }
+          }
         });
-    }
-    
-    /**
+  }
+
+  /**
      * Updates a group.
-     *
+   *
      * @param groupKey The group key
      * @param updates The updates to apply
-     * @param callback Callback for operation result
-     */
+   * @param callback Callback for operation result
+   */
     public void updateGroup(String groupKey, Map<String, Object> updates, final OperationCallback callback) {
         serverClient.updateGroup(groupKey, updates, new FirebaseServerClient.OperationCallback() {
             @Override
@@ -274,25 +274,25 @@ public class GroupRepository {
                 }
                 
                 callback.onComplete();
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
+          }
+
+          @Override
+          public void onError(String errorMessage) {
                 callback.onError(errorMessage);
-            }
+          }
         });
-    }
-    
-    /**
+  }
+
+  /**
      * Deletes a group.
-     *
+   *
      * @param groupKey The group key
-     * @param callback Callback for operation result
-     */
+   * @param callback Callback for operation result
+   */
     public void deleteGroup(String groupKey, final OperationCallback callback) {
         serverClient.deleteGroup(groupKey, new FirebaseServerClient.OperationCallback() {
-            @Override
-            public void onSuccess() {
+          @Override
+          public void onSuccess() {
                 // Delete from cache
                 if (database != null) {
                     executor.execute(() -> {
@@ -302,16 +302,16 @@ public class GroupRepository {
                 }
                 
                 callback.onComplete();
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
+          }
+
+          @Override
+          public void onError(String errorMessage) {
                 callback.onError(errorMessage);
-            }
+          }
         });
-    }
-    
-    /**
+  }
+
+  /**
      * Gets a LiveData object for observing a group.
      *
      * @param groupKey The group key
@@ -364,9 +364,9 @@ public class GroupRepository {
         if (database == null) {
             Log.e(TAG, "Database not initialized. Call initialize() first.");
             getUserGroupsFromServer(userKey, callback);
-            return;
-        }
-        
+      return;
+    }
+
         executor.execute(() -> {
             // Try to get from cache first
             List<Group> cachedGroups = database.groupDao().getAllGroups();
@@ -494,5 +494,5 @@ public class GroupRepository {
         default void onError(String error) {
             // Default implementation does nothing
         }
-    }
+  }
 }

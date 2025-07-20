@@ -50,21 +50,21 @@ public class ChatMessage {
 
     // Legacy fields to maintain compatibility with existing code
     private String messageUser;
-    private String messageText;
-    private String messageTime;
-    private String groupId;
-    private HashMap<String, Object> messageContent;
+  private String messageText;
+  private String messageTime;
+  private String groupId;
+  private HashMap<String, Object> messageContent;
 
-    /** Default constructor. */
+  /** Default constructor. */
     public ChatMessage() {
         this.timestamp = System.currentTimeMillis();
         this.metadata = new HashMap<>();
         this.messageContent = new HashMap<>();
     }
 
-    /**
+  /**
      * Constructs a chat message with basic fields.
-     *
+   *
      * @param groupKey The key of the group
      * @param senderKey The key of the sender
      * @param senderName The name of the sender
@@ -97,7 +97,7 @@ public class ChatMessage {
      * @param metadata Additional metadata
      */
     @Ignore
-    public ChatMessage(
+  public ChatMessage(
             @NonNull String messageKey,
             String groupKey,
             String senderKey,
@@ -138,8 +138,8 @@ public class ChatMessage {
      * @param messageKey The message key
      */
     public void setMessageKey(@NonNull String messageKey) {
-        this.messageKey = messageKey;
-    }
+    this.messageKey = messageKey;
+  }
 
     /**
      * Gets the group key.
@@ -204,7 +204,7 @@ public class ChatMessage {
      */
     public String getMessage() {
         return message;
-    }
+  }
 
     /**
      * Sets the message content.
@@ -278,17 +278,17 @@ public class ChatMessage {
      * 
      * @return The sender name
      */
-    public String getMessageUser() {
+  public String getMessageUser() {
         return senderName;
-    }
-    
+  }
+
     /**
      * Sets the message user (legacy).
      * 
      * @param messageUser The message user
      */
-    public void setMessageUser(String messageUser) {
-        this.messageUser = messageUser;
+  public void setMessageUser(String messageUser) {
+    this.messageUser = messageUser;
         this.senderName = messageUser;
     }
     
@@ -316,35 +316,35 @@ public class ChatMessage {
      * 
      * @return The message time as string
      */
-    public String getMessageTime() {
-        return messageTime;
-    }
-    
+  public String getMessageTime() {
+    return messageTime;
+  }
+
     /**
      * Sets the message time (legacy).
      * 
      * @param messageTime The message time
      */
-    public void setMessageTime(String messageTime) {
-        this.messageTime = messageTime;
-    }
-    
+  public void setMessageTime(String messageTime) {
+    this.messageTime = messageTime;
+  }
+
     /**
      * Gets the group ID (legacy).
      * 
      * @return The group key
      */
-    public String getGroupId() {
+  public String getGroupId() {
         return groupKey;
-    }
-    
+  }
+
     /**
      * Sets the group ID (legacy).
      * 
      * @param groupId The group ID
      */
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
+  public void setGroupId(String groupId) {
+    this.groupId = groupId;
         this.groupKey = groupId;
     }
     
@@ -353,20 +353,20 @@ public class ChatMessage {
      * 
      * @return The message content as a map
      */
-    public HashMap<String, Object> getMessageContent() {
+  public HashMap<String, Object> getMessageContent() {
         if (messageContent == null) {
             messageContent = new HashMap<>();
         }
-        return messageContent;
-    }
-    
+    return messageContent;
+  }
+
     /**
      * Sets the message content (legacy).
      * 
      * @param messageContent The message content
      */
-    public void setMessageContent(HashMap<String, Object> messageContent) {
-        this.messageContent = messageContent;
+  public void setMessageContent(HashMap<String, Object> messageContent) {
+    this.messageContent = messageContent;
         this.metadata = messageContent;
-    }
+  }
 }

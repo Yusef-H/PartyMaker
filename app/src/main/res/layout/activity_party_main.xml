@@ -124,7 +124,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-                        
+
                     <!-- Compact payment button -->
                     <LinearLayout
                         android:id="@+id/paymentPullUpContainer"
@@ -135,7 +135,6 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="2dp"
-                        android:visibility="gone"
                         android:elevation="4dp">
 
                         <ImageView

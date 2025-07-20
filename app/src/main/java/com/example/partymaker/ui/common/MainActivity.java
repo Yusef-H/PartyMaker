@@ -83,11 +83,8 @@ public class MainActivity extends AppCompatActivity {
       // Observe group data from ViewModel
       observeViewModel();
 
-      // Check if we're coming from another screen (not first launch)
-      boolean isFirstLaunch = getIntent().getBooleanExtra("isFirstLaunch", true);
-      
-      // Show loading indicator but only show toast on first launch
-      showLoading(true, isFirstLaunch);
+      // Show loading indicator without toast
+      showLoading(true, false);
 
       // Load groups for current user
       viewModel.loadUserGroups(UserKey, true);
