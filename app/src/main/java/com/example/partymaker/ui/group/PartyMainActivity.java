@@ -147,10 +147,10 @@ public class PartyMainActivity extends AppCompatActivity {
       // Load group data
       loadGroupData();
 
-      // Show a toast message about the payment option
-      new Handler().postDelayed(() -> {
-        Toast.makeText(this, "Swipe down from top to see payment options", Toast.LENGTH_LONG).show();
-      }, 1500);
+      // Remove the toast message about payment option
+      // new Handler().postDelayed(() -> {
+      //   Toast.makeText(this, "Swipe down from top to see payment options", Toast.LENGTH_LONG).show();
+      // }, 1500);
 
     } catch (Exception e) {
       Log.e(TAG, "Unexpected error in onCreate", e);
@@ -376,10 +376,102 @@ public class PartyMainActivity extends AppCompatActivity {
       Log.e(TAG, "Share button not found in layout");
     }
 
+    // Initialize pencil icon for group name edit
+    ImageView imgEditGroupName = findViewById(R.id.imgEditGroupName);
+    if (imgEditGroupName != null) {
+      imgEditGroupName.setOnClickListener(v -> showEditGroupNameDialog());
+    }
+
     // Initialize MessageKeys
     MessageKeys = new HashMap<>();
 
     Log.d(TAG, "Views initialized successfully");
+  }
+
+  /**
+   * Shows a dialog for editing the group name
+   */
+  private void showEditGroupNameDialog() {
+    try {
+      // Create an EditText for user input
+      final android.widget.EditText input = new android.widget.EditText(this);
+      input.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+      input.setText(currentGroup != null ? currentGroup.getGroupName() : "");
+      input.setSelectAllOnFocus(true);
+      
+      // Add padding to the EditText
+      int paddingPx = (int) (16 * getResources().getDisplayMetrics().density);
+      input.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+      
+      // Create the AlertDialog
+      new android.app.AlertDialog.Builder(this)
+          .setTitle("Edit Group Name")
+          .setView(input)
+          .setPositiveButton("Save", (dialog, which) -> {
+              String newName = input.getText().toString().trim();
+              if (!newName.isEmpty()) {
+                  updateGroupName(newName);
+              } else {
+                  Toast.makeText(this, "Group name cannot be empty", Toast.LENGTH_SHORT).show();
+              }
+          })
+          .setNegativeButton("Cancel", null)
+          .show();
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing edit group name dialog", e);
+      Toast.makeText(this, "Error opening edit dialog", Toast.LENGTH_SHORT).show();
+    }
+  }
+  
+  /**
+   * Updates the group name in Firebase through the server
+   * 
+   * @param newName The new group name
+   */
+  private void updateGroupName(String newName) {
+    if (currentGroup == null || GroupKey == null || GroupKey.isEmpty()) {
+      Toast.makeText(this, "Group data not available", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    
+    // Show loading indicator
+    showLoading(true);
+    
+    // Create updates map
+    Map<String, Object> updates = new HashMap<>();
+    updates.put("groupName", newName);
+    
+    // Update the group name through FirebaseServerClient
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    serverClient.updateGroup(
+        GroupKey, 
+        updates, 
+        new FirebaseServerClient.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                // Update UI
+                tvGroupName.setText(newName);
+                
+                // Update local group object
+                currentGroup.setGroupName(newName);
+                
+                // Hide loading indicator and show success message
+                showLoading(false);
+                Toast.makeText(PartyMainActivity.this, "Group name updated successfully", Toast.LENGTH_SHORT).show();
+            }
+            
+            @Override
+            public void onError(String errorMessage) {
+                // Hide loading indicator and show error message
+                showLoading(false);
+                Toast.makeText(
+                    PartyMainActivity.this, 
+                    "Failed to update group name: " + errorMessage, 
+                    Toast.LENGTH_SHORT
+                ).show();
+            }
+        }
+    );
   }
 
   /**
@@ -608,6 +700,42 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Update payment button visibility based on price
     updatePaymentButtonVisibility(price);
+
+    // Load group image
+    ImageView groupImage = findViewById(R.id.imgGroupPicture);
+    if (groupImage != null) {
+      // Try to load from new path first
+      com.example.partymaker.data.firebase.DBRef.refStorage
+          .child("UsersImageProfile/Groups/" + GroupKey)
+          .getDownloadUrl()
+          .addOnSuccessListener(uri -> {
+            com.squareup.picasso.Picasso.get()
+                .load(uri)
+                .placeholder(R.drawable.default_group_image)
+                .error(R.drawable.default_group_image)
+                .into(groupImage);
+            Log.d(TAG, "Loaded group image from new path");
+          })
+          .addOnFailureListener(e -> {
+            // Try old path as fallback
+            com.example.partymaker.data.firebase.DBRef.refStorage
+                .child("Groups/" + GroupKey)
+                .getDownloadUrl()
+                .addOnSuccessListener(uri -> {
+                  com.squareup.picasso.Picasso.get()
+                      .load(uri)
+                      .placeholder(R.drawable.default_group_image)
+                      .error(R.drawable.default_group_image)
+                      .into(groupImage);
+                  Log.d(TAG, "Loaded group image from old path");
+                })
+                .addOnFailureListener(e2 -> {
+                  // Set default image if both paths fail
+                  groupImage.setImageResource(R.drawable.default_group_image);
+                  Log.d(TAG, "Failed to load group image from either path");
+                });
+          });
+    }
 
     // Update location
     String location = group.getGroupLocation();
