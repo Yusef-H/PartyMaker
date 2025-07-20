@@ -18,7 +18,6 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <LinearLayout
-        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
@@ -59,7 +58,6 @@
             android:textColor="@android:color/white" />
 
         <TextView
-            android:id="@+id/tvFriendsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -78,7 +76,6 @@
 
     <!-- Hidden elements for help system -->
     <Button
-        android:id="@+id/btnHelp3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -89,7 +86,6 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/tvHelp3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -100,7 +96,6 @@
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/btnHide3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -111,7 +106,6 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/tvHide3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -123,7 +117,6 @@
 
     <!-- Back button is no longer needed since we'll use the toolbar's back button -->
     <ImageButton
-        android:id="@+id/btnBack4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />

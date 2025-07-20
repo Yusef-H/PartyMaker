@@ -91,7 +91,6 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/imgLocation1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -99,7 +98,6 @@
                     android:src="@drawable/ic_party_location" />
 
                 <TextView
-                    android:id="@+id/tvLocation1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="45dp"
@@ -112,7 +110,6 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/tvGroupLocation1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"

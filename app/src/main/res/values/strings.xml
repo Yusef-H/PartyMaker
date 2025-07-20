@@ -7,14 +7,6 @@
     <!-- Login Screen -->
     <string name="password">Password</string>
     <string name="stay_connected">Stay connected!</string>
-    <string name="login_input_required">Please enter both email and password</string>
-    <string name="login_invalid_email">Please enter a valid email address</string>
-    <string name="login_connecting">Connecting</string>
-    <string name="login_please_wait">Please wait...</string>
-    <string name="login_connected">Connected successfully</string>
-    <string name="login_invalid_credentials">Invalid email or password</string>
-    <string name="login_google_signin_failed">Google sign in failed</string>
-    <string name="login_google_token_error">Failed to get Google authentication token</string>
 
     <!-- Google Auth -->
     <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
@@ -34,7 +26,6 @@
     <string name="title_slide3">About the app</string>
     <string name="desc_slide3">The app was made by Nati Fishman as a final project</string>
     <string name="group_s_picture">Group Picture</string>
-    <string name="your_party_s_name">Your Party Name</string>
     <string name="private_party">Private Party</string>
     <string name="name">Name</string>
     <string name="create_party">Create Party</string>
@@ -59,8 +50,6 @@
     <string name="date">Date</string>
     <string name="press_to_see_time">press to see time</string>
     <string name="press_to_see_date">press to see date</string>
-    <string name="invited">invited</string>
-    <string name="delete_people">Delete People</string>
     <string name="entry">entry</string>
     <string name="group_options">Group Options</string>
     <string name="change_price">Change Price</string>
@@ -69,7 +58,6 @@
     <string name="options">options</string>
     <string name="leave">leave</string>
     <string name="input_your_friend_s_email">Input your friend email</string>
-    <string name="type_in_your_friend_s_email_above_and_press_delete_friend_to_delete_him_from_current_group">Type in your friend email above and press delete Friend to delete him from current group</string>
     <string name="register_cake">Register Cake</string>
     <string name="register">Register</string>
     <string name="have_an_account">Have an account?</string>
@@ -78,9 +66,6 @@
     <string name="by_signing_up_you_agree_to_our_terms_of_service_and_privacy_policy">By signing up, you agree to our Terms of Service and Privacy Policy</string>
     <string name="or">or</string>
     <string name="edit_profile">Edit Profile</string>
-    <string name="add_party">Add Party</string>
-    <string name="your_parties">Your Parties</string>
-    <string name="public_parties">Public Parties</string>
     <string name="logout">Logout</string>
 
     <!-- Username Input -->
@@ -91,7 +76,6 @@
     <string name="minimum_6_characters">Minimum 6 characters</string>
     <string name="enter_secure_password">Enter secure password</string>
     <string name="save_location">Save Location</string>
-    <string name="users_list">Users List</string>
     <string name="Chat">Chat</string>
     <string name="pick_a_date">Pick a date:</string>
     <string name="tap_to_select_date">Tap to select date</string>
@@ -100,12 +84,6 @@
     <string name="public_group">Public Group</string>
     <string name="admin_add">Admin Add</string>
     <string name="delete_group">Delete Group</string>
-    <string name="days">Days</string>
-    <string name="month">Month</string>
-    <string name="months">Months</string>
-    <string name="year">Year</string>
-    <string name="years">Years</string>
-    <string name="hours">Hours</string>
     <string name="choose_a_new_date_above">Choose a new date above</string>
     <string name="type_message">type message</string>
     <string name="press_on_your_profile_picture_to_change_it">press on your profile picture to change it</string>
@@ -130,7 +108,6 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="fast">Fast ⚡</string>
     <string name="fun">Fun 🎉</string>
-    <string name="delete_friend">Delete Friend</string>
     <string name="need_help">Need Help?</string>
     <string name="hide_it">Hide it</string>
     <string name="got_help">Got Help?</string>
@@ -142,36 +119,24 @@
     <string name="_12_34">12:34</string>
     <string name="message_content">message content</string>
     <string name="sender_name">Sender Name</string>
-    <string name="email">email</string>
     <string name="friends_list">Friends List</string>
     <string name="i_dont_know">I dont know</string>
     <string name="type_in_your_friend_s_email_above_and_press_add_friend_to_add_him_to_the_current_group">Type in your friend email above and press Add Friend to add him to the current group</string>
     <string name="is_he_coming_to_the_party">Is he coming to the party?</string>
     <string name="yes">Yes</string>
     <string name="add_friend">Add Friend</string>
-    <string name="day">Day</string>
     <string name="change_date">Change Date</string>
     <string name="secure">Secure 🔒</string>
     <string name="remove_friend">Remove Friend</string>
     <string name="info_button">Info button</string>
-    <string name="type_your_message_here">Type your message here</string>
-    <string name="send_message">Send message</string>
-    <string name="search_error">Search Error</string>
     <string name="new_party_title">New Party</string>
     <string name="error_place_selection">Error Place Selection</string>
-    <string name="new_party">New Party</string>
-    <string name="my_parties">My Parties</string>
     <string name="create_group_logo">Create Group Logo</string>
     <string name="input_party_name">Input Party Name</string>
     <string name="select_date">Select Date</string>
     <string name="select_time">Select Time</string>
     <string name="choose_date">Choose Date</string>
     <string name="choose_time">Choose Time</string>
-    <string name="close">Close</string>
-    <string name="ok">OK</string>
-    <string name="party_date_time">Party Date &amp; Time</string>
-    <string name="only_admin_can_change_date">Only admin can change the date</string>
-    <string name="time">Time</string>
 
     <!-- Chatbot -->
     <string name="chatgpt_icon">ChatGPT Icon</string>
@@ -179,7 +144,6 @@
     <string name="send">Send</string>
 
     <!-- Friends -->
-    <string name="remove_friends">Remove Friends</string>
     <string name="help">Help</string>
     <string name="hide">Hide</string>
     <string name="hide_instructions">Hide instructions</string>
@@ -188,12 +152,8 @@
     <string name="friends_in_group">Friends in group:</string>
 
     <!-- Group Details -->
-    <string name="edit">Edit</string>
-    <string name="delete">Delete</string>
-    <string name="invited_members">Invited Members</string>
 
     <!-- Party -->
-    <string name="tap_to_open_maps">Tap to open in Maps</string>
 
     <!-- Server Settings -->
     <string name="server_mode_settings">Server Mode Settings</string>
@@ -204,8 +164,6 @@
     <string name="save_settings">Save Settings</string>
 
     <!-- Dialog -->
-    <string name="date_example">31/December/2024</string>
-    <string name="time_example">20:00</string>
     <string name="map_will_open">Map will open in Google Maps app</string>
     <string name="close_map">Close Map</string>
     <string name="open_in_google_maps">Open in Google Maps</string>
@@ -216,11 +174,6 @@
     <string name="email_example">email@example.com</string>
     <string name="admin_flag">Admin Flag</string>
     <string name="share_party">Share Party</string>
-
-    <string-array name="languages_array">
-        <item>English</item>
-        <item>עברית</item>
-    </string-array>
 
     <!-- Arrays for date/time pickers -->
     <string-array name="array_hours">
@@ -277,17 +230,7 @@
     <!-- Payment strings -->
     <string name="pay_now">Pay Now</string>
     <string name="payment_success">Payment successful!</string>
-    <string name="payment_failed">Payment failed. Please try again.</string>
     <string name="payment_processing">Processing payment…</string>
     <string name="payment_for_party">Payment for %1$s</string>
     <string name="pull_to_pay">Swipe down to pay</string>
-    <string name="back_button">Back</string>
-    <string name="menu">Menu</string>
-    <string name="price">Price</string>
-    <string name="description">Description</string>
-    <string name="attendees">Attendees</string>
-    <string name="no_attendees_yet">No attendees yet</string>
-    <string name="chat">Chat</string>
-    <string name="no_messages_yet">No messages yet</string>
-    <string name="loading">Loading…</string>
 </resources>

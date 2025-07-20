@@ -23,7 +23,6 @@
             android:src="@drawable/ic_menu_back" />
 
         <ImageView
-            android:id="@+id/imgAddFriend"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
