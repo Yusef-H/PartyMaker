@@ -34,6 +34,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -145,9 +147,13 @@ public class LoginActivity extends AppCompatActivity {
                         createTask -> {
                           if (createTask.isSuccessful()) {
                             Log.d("LoginActivity", "Test user created successfully");
-                            // Create user in database
-                            User testUser = new User("Test User", testEmail);
-                            DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
+                            // Create user in database using Map instead of User object
+                            Map<String, Object> testUserData = new HashMap<>();
+                            testUserData.put("username", "Test User");
+                            testUserData.put("email", testEmail);
+                            testUserData.put("userKey", java.util.UUID.randomUUID().toString());
+                            
+                            DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUserData);
                           } else {
                             Log.d(
                                 "LoginActivity",
@@ -333,11 +339,15 @@ public class LoginActivity extends AppCompatActivity {
                   String email = firebaseUser.getEmail();
                   String username = firebaseUser.getDisplayName();
 
-                  User u = new User(username, email);
+                  // Use a Map instead of User object to avoid Firebase serialization issues
+                  Map<String, Object> userData = new HashMap<>();
+                  userData.put("username", username);
+                  userData.put("email", email);
+                  userData.put("userKey", java.util.UUID.randomUUID().toString());
 
                   // Replace dots with spaces in the email to make it a valid key in Firebase
                   assert email != null;
-                  DBRef.refUsers.child(email.replace('.', ' ')).setValue(u);
+                  DBRef.refUsers.child(email.replace('.', ' ')).setValue(userData);
                 }
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);

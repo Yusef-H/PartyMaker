@@ -716,7 +716,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
           ((ImageView) findViewById(R.id.imgGroupPicture)).setImageURI(uri);
 
           DBRef.refStorage
-              .child("Groups/" + GroupKey1)
+              .child("UsersImageProfile/Groups/" + GroupKey1)
               .putFile(uri)
               .addOnSuccessListener(
                   taskSnapshot ->

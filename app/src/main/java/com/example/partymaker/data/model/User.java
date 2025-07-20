@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.room.Ignore;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.PropertyName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -101,6 +103,7 @@ public class User {
      *
      * @return The username
      */
+    @PropertyName("username")
     public String getUsername() {
         return username;
     }
@@ -110,8 +113,31 @@ public class User {
      *
      * @param username The username
      */
+    @PropertyName("username")
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    /**
+     * Gets the user's display name (alternative field name).
+     * This is for backward compatibility with existing data.
+     *
+     * @return The username
+     */
+    @PropertyName("userName")
+    public String getUserName() {
+        return username;
+    }
+
+    /**
+     * Sets the user's display name (alternative field name).
+     * This is for backward compatibility with existing data.
+     *
+     * @param userName The username
+     */
+    @PropertyName("userName")
+    public void setUserName(String userName) {
+        this.username = userName;
     }
 
     /**

@@ -81,7 +81,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
     // Only try to load image if Firebase Auth is available
     if (AuthHelper.isFirebaseAuthAvailable(context)) {
       DBRef.refStorage
-          .child("Groups/" + GroupKey)
+          .child("UsersImageProfile/Groups/" + GroupKey)
           .getDownloadUrl()
           .addOnSuccessListener(
               uri ->
@@ -92,8 +92,22 @@ public class GroupAdapter extends ArrayAdapter<Group> {
                       .into(imageView))
           .addOnFailureListener(
               exception -> {
-                // Set default image on failure
-                imageView.setImageResource(R.drawable.ic_group);
+                // Try the old path if the new path fails
+                DBRef.refStorage
+                    .child("Groups/" + GroupKey)
+                    .getDownloadUrl()
+                    .addOnSuccessListener(
+                        uri ->
+                            Picasso.get()
+                                .load(uri)
+                                .fit()
+                                .centerCrop()
+                                .into(imageView))
+                    .addOnFailureListener(
+                        e -> {
+                          // Set default image if both paths fail
+                          imageView.setImageResource(R.drawable.ic_group);
+                        });
               });
     } else {
       // Set default image when Firebase Auth is not available

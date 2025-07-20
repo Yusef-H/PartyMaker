@@ -191,9 +191,16 @@ public class EditProfileActivity extends AppCompatActivity {
         .observe(
             this,
             isAvailable -> {
-              if (isAvailable) {
-                // Network is back, show a message
+              // Only show network restored message if:
+              // 1. Network is available now
+              // 2. We're not in the onResume method
+              // 3. We previously had a network outage
+              if (isAvailable && !isResuming && wasOffline) {
                 showNetworkRestored();
+                wasOffline = false;
+              } else if (!isAvailable) {
+                // Mark that we were offline
+                wasOffline = true;
               }
             });
   }
@@ -257,10 +264,21 @@ public class EditProfileActivity extends AppCompatActivity {
             .addOnSuccessListener(
                 dataSnapshot -> {
                   if (dataSnapshot.exists()) {
-                    User user = dataSnapshot.getValue(User.class);
-                    if (user != null) {
+                    // Use Map instead of User.class to avoid Firebase serialization issues
+                    Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
+                    if (userData != null) {
                       // Update UI with user data
-                      etUsername.setText(user.getUsername());
+                      String username = "";
+                      // Check for both username and userName fields
+                      if (userData.containsKey("username")) {
+                        username = (String) userData.get("username");
+                      } else if (userData.containsKey("userName")) {
+                        username = (String) userData.get("userName");
+                      }
+                      
+                      if (username != null && !username.isEmpty()) {
+                        etUsername.setText(username);
+                      }
 
                       // Load profile image
                       loadProfileImageFromStorage(userKey);
@@ -418,16 +436,18 @@ public class EditProfileActivity extends AppCompatActivity {
   private void tryLoadImageFromPath(String userKey, String localCachePath, int pathIndex) {
     // Define possible paths
     String[] paths = new String[] {
-        // Path 1: UsersImageProfile/Users/[userKey].jpg
+        // Path 1: UsersImageProfile/Users/[userKey] (without extension)
+        "UsersImageProfile/Users/" + userKey,
+        // Path 2: UsersImageProfile/Users/[userKey].jpg
         "UsersImageProfile/Users/" + userKey + ".jpg",
-        // Path 2: Users/[userKey].jpg
+        // Path 3: Users/[userKey] (without extension)
+        "Users/" + userKey,
+        // Path 4: Users/[userKey].jpg
         "Users/" + userKey + ".jpg",
-        // Path 3: [userKey].jpg (root level)
-        userKey + ".jpg",
-        // Path 4: Try with email format (dots instead of spaces)
-        "UsersImageProfile/Users/" + userKey.replace(' ', '.') + ".jpg",
-        // Path 5: Try with email format at root level
-        userKey.replace(' ', '.') + ".jpg"
+        // Path 5: [userKey] (root level, without extension)
+        userKey,
+        // Path 6: [userKey].jpg (root level)
+        userKey + ".jpg"
     };
     
     // If we've tried all paths, give up
@@ -538,8 +558,8 @@ public class EditProfileActivity extends AppCompatActivity {
     // Set the image immediately for better UX
     imgProfile.setImageURI(uri);
 
-    // Use the correct path for the image
-    String imagePath = "UsersImageProfile/Users/" + userKey + ".jpg";
+    // Use the correct path for the image - without extension
+    String imagePath = "UsersImageProfile/Users/" + userKey;
     Log.d(TAG, "Uploading to Firebase Storage at path: " + imagePath);
     
     FirebaseStorage.getInstance().getReference()
@@ -612,8 +632,8 @@ public class EditProfileActivity extends AppCompatActivity {
    * @param userKey The user key
    */
   private void tryAlternativePath(Uri uri, String userKey) {
-    // Try a simpler path
-    String alternativePath = "Users/" + userKey + ".jpg";
+    // Try a simpler path without extension
+    String alternativePath = "Users/" + userKey;
     Log.d(TAG, "Trying alternative upload path: " + alternativePath);
     
     // Show loading indicator again
@@ -713,9 +733,41 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void showNetworkRestored() {
-    if (rootLayout != null) {
+    // Only show network restored message if we're not in onResume
+    // to avoid showing it every time the activity resumes
+    if (rootLayout != null && !isResuming) {
       Snackbar.make(rootLayout, "Network connection restored", Snackbar.LENGTH_SHORT).show();
     }
+  }
+
+  // Flag to track if we're in onResume
+  private boolean isResuming = false;
+  
+  // Flag to track if we were previously offline
+  private boolean wasOffline = false;
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    
+    isResuming = true;
+    
+    // Force refresh network status when activity resumes
+    ConnectivityManager.getInstance().refreshNetworkStatus();
+    
+    // Add a small delay to allow the network status to update
+    new Handler().postDelayed(() -> {
+      // Check if we need to reload user data based on network availability
+      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
+                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+      
+      if (isNetworkAvailable) {
+        Log.d(TAG, "Network is available, refreshing user data");
+        loadUserData();
+      }
+      
+      isResuming = false;
+    }, 1000);
   }
 
   @Override
@@ -738,25 +790,5 @@ public class EditProfileActivity extends AppCompatActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    
-    // Force refresh network status when activity resumes
-    ConnectivityManager.getInstance().refreshNetworkStatus();
-    
-    // Add a small delay to allow the network status to update
-    new Handler().postDelayed(() -> {
-      // Check if we need to reload user data based on network availability
-      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
-                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
-      
-      if (isNetworkAvailable) {
-        Log.d(TAG, "Network is available, refreshing user data");
-        loadUserData();
-      }
-    }, 1000);
   }
 }

@@ -101,8 +101,33 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
                     group.getGroupHours());
             groupDateTextView.setText(date);
             
-            // Load group image if available (placeholder for now)
-            GlideImageLoader.loadImage(context, null, groupImageView, R.drawable.default_group_image);
+            // Load group image from Firebase Storage
+            String groupKey = group.getGroupKey();
+            if (groupKey != null && !groupKey.isEmpty()) {
+                // Try to load from new path first
+                com.example.partymaker.data.firebase.DBRef.refStorage
+                    .child("UsersImageProfile/Groups/" + groupKey)
+                    .getDownloadUrl()
+                    .addOnSuccessListener(uri -> 
+                        GlideImageLoader.loadImage(context, uri.toString(), groupImageView, R.drawable.default_group_image)
+                    )
+                    .addOnFailureListener(e -> {
+                        // Try old path as fallback
+                        com.example.partymaker.data.firebase.DBRef.refStorage
+                            .child("Groups/" + groupKey)
+                            .getDownloadUrl()
+                            .addOnSuccessListener(uri -> 
+                                GlideImageLoader.loadImage(context, uri.toString(), groupImageView, R.drawable.default_group_image)
+                            )
+                            .addOnFailureListener(e2 -> {
+                                // Use default image if both paths fail
+                                groupImageView.setImageResource(R.drawable.default_group_image);
+                            });
+                    });
+            } else {
+                // No group key, use default image
+                groupImageView.setImageResource(R.drawable.default_group_image);
+            }
         }
     }
     
