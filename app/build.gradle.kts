@@ -178,7 +178,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     
     // Concurrent programming
-    implementation("androidx.concurrent:concurrent-futures:1.1.0")
+    implementation(libs.androidx.concurrent.futures)
 }
 
 // Secrets plugin configuration
