@@ -233,7 +233,7 @@ public class EditProfileActivity extends AppCompatActivity {
       // Try to load from local cache
       try {
         String userKey = AuthHelper.getCurrentUserKey(this);
-        if (userKey != null && !userKey.isEmpty()) {
+        if (!userKey.isEmpty()) {
           // Load profile image from cache if available
           loadProfileImageFromStorage(userKey);
 
@@ -257,7 +257,7 @@ public class EditProfileActivity extends AppCompatActivity {
     // Direct load from Firebase as backup
     try {
       String userKey = AuthHelper.getCurrentUserKey(this);
-      if (userKey != null && !userKey.isEmpty()) {
+      if (!userKey.isEmpty()) {
         DBRef.refUsers
             .child(userKey)
             .get()
@@ -563,7 +563,7 @@ public class EditProfileActivity extends AppCompatActivity {
     try {
       // Get user key directly from AuthHelper instead of relying on ViewModel
       userKey = AuthHelper.getCurrentUserKey(this);
-      if (userKey == null || userKey.isEmpty()) {
+      if (userKey.isEmpty()) {
         showError("Authentication error. Please login again.");
         progressBar.setVisibility(View.GONE);
         return;

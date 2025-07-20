@@ -876,7 +876,6 @@ public class PartyMainActivity extends AppCompatActivity {
               // gateway)
               boolean paymentSuccessful = true;
 
-              if (paymentSuccessful) {
                 // Update payment status in database
                 updatePaymentInDatabase();
 
@@ -891,10 +890,6 @@ public class PartyMainActivity extends AppCompatActivity {
                   tvPayNow.setEnabled(false);
                   tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
                 }
-              } else {
-                // Show failure message
-                Toast.makeText(this, R.string.payment_failed, Toast.LENGTH_LONG).show();
-              }
             },
             2000); // Simulate 2 second processing time
   }

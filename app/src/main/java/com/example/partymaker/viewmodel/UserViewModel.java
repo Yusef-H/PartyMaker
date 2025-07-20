@@ -353,7 +353,7 @@ public class UserViewModel extends ViewModel {
     }
 
     String userId = user.getUserKey();
-    if (userId == null || userId.isEmpty()) {
+    if (userId.isEmpty()) {
       Log.e(TAG, "Cannot update current user: Invalid user key");
       errorMessage.setValue("Invalid user key");
       return;

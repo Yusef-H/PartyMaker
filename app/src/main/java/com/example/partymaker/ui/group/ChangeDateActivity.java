@@ -61,11 +61,6 @@ public class ChangeDateActivity extends AppCompatActivity {
     // Get current user key for admin verification
     try {
       UserKey = AuthHelper.getCurrentUserKey(this);
-      if (UserKey == null) {
-        Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
-        finish();
-        return;
-      }
     } catch (Exception e) {
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
       finish();

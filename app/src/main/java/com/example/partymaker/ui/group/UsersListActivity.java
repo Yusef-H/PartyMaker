@@ -147,7 +147,7 @@ public class UsersListActivity extends AppCompatActivity {
     String userKey = user.getUserKey();
 
     // If userKey is null or empty, try to get it from email
-    if (userKey == null || userKey.isEmpty()) {
+    if (userKey.isEmpty()) {
       try {
         // Get current user key for comparison
         String currentUserKey = AuthHelper.getCurrentUserKey(this);
@@ -169,7 +169,7 @@ public class UsersListActivity extends AppCompatActivity {
     }
 
     // Ensure we have a valid user key
-    if (userKey == null || userKey.isEmpty()) {
+    if (userKey.isEmpty()) {
       Toast.makeText(this, "Could not determine user key", Toast.LENGTH_SHORT).show();
       return;
     }

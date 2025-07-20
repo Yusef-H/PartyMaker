@@ -232,11 +232,7 @@ public class FirebaseServerClient {
             }
           }
 
-          if (groupJson == null) {
-            throw new IOException("Failed to fetch group");
-          }
-
-          Group group = gson.fromJson(groupJson, Group.class);
+            Group group = gson.fromJson(groupJson, Group.class);
           if (group == null) {
             throw new IOException("Failed to parse group data");
           }
@@ -508,10 +504,7 @@ public class FirebaseServerClient {
             String key = keys.next();
             JSONObject userJson = jsonObject.getJSONObject(key);
             User user = gson.fromJson(userJson.toString(), User.class);
-            if (user.getUserKey() == null) {
-              user.setUserKey(key);
-            }
-            users.put(key, user);
+              users.put(key, user);
           }
 
           Log.d(TAG, "Successfully parsed " + users.size() + " users");
@@ -882,11 +875,7 @@ public class FirebaseServerClient {
             }
           }
 
-          if (groupJson == null) {
-            throw new IOException("Failed to fetch group");
-          }
-
-          // Parse the group
+            // Parse the group
           JSONObject groupObj = new JSONObject(groupJson);
           Map<String, Boolean> messageKeys = new HashMap<>();
 
@@ -934,7 +923,7 @@ public class FirebaseServerClient {
                   ChatMessage message = gson.fromJson(messageJson, ChatMessage.class);
                   if (message != null) {
                     // Ensure the message has the key set
-                    if (message.getMessageKey() == null || message.getMessageKey().isEmpty()) {
+                    if (message.getMessageKey().isEmpty()) {
                       message.setMessageKey(messageKey);
                     }
                     messages.add(message);
@@ -1064,7 +1053,7 @@ public class FirebaseServerClient {
     // Set the groupId in the message object
     message.setGroupId(groupId);
     // Set the messageKey in the message object if not already set
-    if (message.getMessageKey() == null || message.getMessageKey().isEmpty()) {
+    if (message.getMessageKey().isEmpty()) {
       message.setMessageKey(messageId);
     }
 
@@ -1175,7 +1164,7 @@ public class FirebaseServerClient {
                           + " with error: "
                           + finalErrorMessage);
                   callback.onError(
-                      finalErrorMessage != null ? finalErrorMessage : "Failed to save message");
+                          finalErrorMessage);
                 }
               });
         });
@@ -1198,7 +1187,7 @@ public class FirebaseServerClient {
       return;
     }
 
-    if (messageKey == null || messageKey.isEmpty()) {
+    if (messageKey.isEmpty()) {
       Log.e(TAG, "saveMessage: messageKey is null or empty");
       callback.onError("Missing messageKey in message");
       return;

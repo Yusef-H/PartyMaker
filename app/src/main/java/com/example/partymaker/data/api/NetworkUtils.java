@@ -105,9 +105,7 @@ public class NetworkUtils {
           try {
             T result =
                 executeWithRetryInternal(operation, callback, attempts, maxRetries, retryDelayMs);
-            if (result != null) {
               mainHandler.post(() -> callback.onSuccess(result));
-            }
           } catch (Exception e) {
             Log.e(TAG, "Operation failed after " + attempts.get() + " attempts", e);
             ErrorType errorType = categorizeError(e);
