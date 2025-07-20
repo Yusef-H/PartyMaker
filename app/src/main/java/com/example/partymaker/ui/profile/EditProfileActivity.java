@@ -60,7 +60,7 @@ public class EditProfileActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_edit_profile);
+    setContentView(R.layout.activity_main_edit_profile);
 
     // Initialize ViewModel
     userViewModel = new ViewModelProvider(this).get(UserViewModel.class);

@@ -52,7 +52,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_friends_remove);
+    setContentView(R.layout.activity_party_friends_remove);
 
     // Set up the toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);

@@ -100,7 +100,7 @@
     <!-- Bottom Navigation -->
     <include
         android:id="@+id/bottomNavigationInclude"
-        layout="@layout/bottom_navigation"
+        layout="@layout/helper_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />

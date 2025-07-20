@@ -26,7 +26,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_server_settings);
+    setContentView(R.layout.activity_main_server_settings);
 
     // Set up the action bar
     ActionBar actionBar = getSupportActionBar();

@@ -45,7 +45,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_public_parties);
+    setContentView(R.layout.activity_main_public_parties);
 
     // Set up toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);

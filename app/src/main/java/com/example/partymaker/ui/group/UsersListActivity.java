@@ -50,7 +50,7 @@ public class UsersListActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_friend_list);
+    setContentView(R.layout.list_party_friends);
     contextOfApplication = getApplicationContext();
 
     // Initialize server client

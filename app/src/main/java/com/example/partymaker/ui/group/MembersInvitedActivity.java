@@ -33,7 +33,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_members_invited);
+    setContentView(R.layout.list_party_invited);
 
     // Set up the toolbar/action bar
     ActionBar actionBar = getSupportActionBar();

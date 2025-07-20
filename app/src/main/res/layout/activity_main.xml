@@ -34,7 +34,7 @@
         </FrameLayout>
 
         <!-- Bottom Navigation -->
-        <include layout="@layout/bottom_navigation" />
+        <include layout="@layout/helper_bottom_navigation" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
