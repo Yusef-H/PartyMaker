@@ -233,4 +233,8 @@
     <string name="payment_processing">Processing payment…</string>
     <string name="payment_for_party">Payment for %1$s</string>
     <string name="pull_to_pay">Swipe down to pay</string>
+    <string name="group_settings">Group Settings</string>
+    <string name="my_parties">My Parties</string>
+    <string name="public_parties">Public Parties</string>
+    <string name="profile">Profile</string>
 </resources>
