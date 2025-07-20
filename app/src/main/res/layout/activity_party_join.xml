@@ -41,7 +41,7 @@
 
         <TextView
             android:id="@+id/tvYourEntry1"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_below="@id/tvGroupName1"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -51,10 +51,11 @@
 
         <TextView
             android:id="@+id/tvEntryPrice1"
-            android:layout_width="220dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvGroupName1"
             android:layout_toRightOf="@id/tvYourEntry1"
+            android:layout_marginStart="5dp"
             android:text="@string/free"
             android:textColor="@android:color/white" />
 
@@ -283,7 +284,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_margin="16dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -322,7 +324,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_margin="16dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="wrap_content"

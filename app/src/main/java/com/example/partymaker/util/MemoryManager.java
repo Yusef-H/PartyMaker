@@ -79,19 +79,17 @@ public class MemoryManager {
         .append(")\n");
     sb.append("- Free: ").append(FileManager.formatSize(freeMemory)).append("\n");
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       sb.append("- PSS Total: ")
-          .append(FileManager.formatSize(memoryInfo.getTotalPss() * 1024L))
-          .append("\n");
+              .append(FileManager.formatSize(memoryInfo.getTotalPss() * 1024L))
+              .append("\n");
       sb.append("- Private Dirty: ")
           .append(FileManager.formatSize(memoryInfo.getTotalPrivateDirty() * 1024L))
           .append("\n");
       sb.append("- Shared Dirty: ")
           .append(FileManager.formatSize(memoryInfo.getTotalSharedDirty() * 1024L))
           .append("\n");
-    }
 
-    return sb.toString();
+      return sb.toString();
   }
 
   /**

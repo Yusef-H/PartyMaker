@@ -145,7 +145,6 @@ public class NetworkManager {
       return false;
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       Network activeNetwork = connectivityManager.getActiveNetwork();
       if (activeNetwork == null) {
         return false;
@@ -155,10 +154,6 @@ public class NetworkManager {
       return capabilities != null
           && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
           && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
-    } else {
-      NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-      return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
   }
 
   /** Checks network availability and updates the LiveData. */

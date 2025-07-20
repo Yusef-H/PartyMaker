@@ -40,9 +40,8 @@ public class NotificationHelper {
    */
   public static void createNotificationChannels(Context context) {
     // Only needed for Android O and above
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationManager notificationManager =
-          (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+              (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
       // Party updates channel
       NotificationChannel partyChannel =
@@ -72,7 +71,6 @@ public class NotificationHelper {
       notificationManager.createNotificationChannel(updatesChannel);
 
       Log.d(TAG, "Notification channels created");
-    }
   }
 
   /**
