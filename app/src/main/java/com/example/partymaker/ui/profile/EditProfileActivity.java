@@ -36,6 +36,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
+import com.google.firebase.storage.FirebaseStorage;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -357,12 +358,18 @@ public class EditProfileActivity extends AppCompatActivity {
         return;
       }
       
-      // Try to load from Firebase Storage
-      DBRef.refStorage
+      // Try to load from Firebase Storage - fix the path to match the correct path
+      // The correct path should be: "UsersImageProfile/Users/[userKey].jpg"
+      Log.d(TAG, "Attempting to load profile image from Firebase Storage at path: UsersImageProfile/Users/" + userKey + ".jpg");
+      
+      FirebaseStorage.getInstance().getReference()
+          .child("UsersImageProfile")
+          .child("Users")
           .child(userKey + ".jpg")
           .getDownloadUrl()
           .addOnSuccessListener(
               uri -> {
+                Log.d(TAG, "Successfully got download URL: " + uri);
                 // Load with Picasso
                 Picasso.get()
                     .load(uri)
@@ -377,13 +384,49 @@ public class EditProfileActivity extends AppCompatActivity {
               })
           .addOnFailureListener(
               e -> {
-                Log.w(TAG, "Profile image not found in storage", e);
+                Log.w(TAG, "Profile image not found in storage: " + e.getMessage(), e);
                 imgProfile.setImageResource(R.drawable.default_profile_image);
               });
     } catch (Exception e) {
       Log.e(TAG, "Error loading profile image", e);
       imgProfile.setImageResource(R.drawable.default_profile_image);
     }
+  }
+  
+  /**
+   * Try loading the profile image from an alternative path
+   * 
+   * @param emailKey The user key with dots instead of spaces
+   * @param localCachePath The local cache path to save the image to
+   */
+  private void tryAlternativeImagePath(String emailKey, String localCachePath) {
+    Log.d(TAG, "Trying alternative path with email format: UsersImageProfile/Users/" + emailKey + ".jpg");
+    
+    DBRef.Storage.getReference()
+        .child("UsersImageProfile")
+        .child("Users")
+        .child(emailKey + ".jpg")
+        .getDownloadUrl()
+        .addOnSuccessListener(
+            uri -> {
+              Log.d(TAG, "Successfully got download URL from alternative path: " + uri);
+              // Load with Picasso
+              Picasso.get()
+                  .load(uri)
+                  .placeholder(R.drawable.default_profile_image)
+                  .error(R.drawable.default_profile_image)
+                  .into(imgProfile);
+              
+              // Save to local cache for offline use
+              downloadAndSaveImage(uri.toString(), localCachePath);
+              
+              Log.d(TAG, "Loaded profile image from Firebase Storage (alternative path)");
+            })
+        .addOnFailureListener(
+            e -> {
+              Log.w(TAG, "Profile image not found in storage (alternative path): " + e.getMessage(), e);
+              imgProfile.setImageResource(R.drawable.default_profile_image);
+            });
   }
   
   /**
@@ -456,20 +499,26 @@ public class EditProfileActivity extends AppCompatActivity {
     // Set the image immediately for better UX
     imgProfile.setImageURI(uri);
 
-    // Create the directory structure if it doesn't exist
-    DBRef.refStorage
+    // Create the directory structure if it doesn't exist - fix the path
+    // The correct path is: "UsersImageProfile/Users/[userKey].jpg"
+    Log.d(TAG, "Uploading to Firebase Storage at path: UsersImageProfile/Users/" + userKey + ".jpg");
+    
+    FirebaseStorage.getInstance().getReference()
+        .child("UsersImageProfile")
         .child("Users")
-        .child(userKey)
+        .child(userKey + ".jpg")
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot -> {
               // Get the download URL and update the user profile
-              DBRef.refStorage
+              FirebaseStorage.getInstance().getReference()
+                  .child("UsersImageProfile")
                   .child("Users")
-                  .child(userKey)
+                  .child(userKey + ".jpg")
                   .getDownloadUrl()
                   .addOnSuccessListener(
                       downloadUri -> {
+                        Log.d(TAG, "Successfully uploaded image and got download URL: " + downloadUri);
                         // Update the profile image URL in the database
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("profileImageUrl", downloadUri.toString());
@@ -488,6 +537,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                   // Also update in ViewModel to keep UI in sync
                                   userViewModel.updateCurrentUser(updates);
+                                  
+                                  // Save to local cache for offline use
+                                  String localCachePath = getFilesDir() + "/profile_" + userKey + ".jpg";
+                                  downloadAndSaveImage(downloadUri.toString(), localCachePath);
                                 })
                             .addOnFailureListener(
                                 e -> {
