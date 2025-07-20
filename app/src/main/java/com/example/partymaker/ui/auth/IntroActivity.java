@@ -81,7 +81,7 @@ public class IntroActivity extends Activity {
     }
   }
 
-  ViewPager.OnPageChangeListener viewPagerPageChangeListener =
+  final ViewPager.OnPageChangeListener viewPagerPageChangeListener =
       new ViewPager.OnPageChangeListener() {
 
         @Override

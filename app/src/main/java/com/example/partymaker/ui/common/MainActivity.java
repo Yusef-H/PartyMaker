@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
   // Data Components
   private GroupViewModel viewModel;
-  private ArrayList<Group> groupList = new ArrayList<>();
+  private final ArrayList<Group> groupList = new ArrayList<>();
   private String UserKey;
   private GroupAdapter groupAdapter;
 

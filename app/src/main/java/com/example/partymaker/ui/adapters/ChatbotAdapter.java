@@ -61,7 +61,7 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
 
   /** ViewHolder for chatbot messages. */
   static class MessageViewHolder extends RecyclerView.ViewHolder {
-    TextView messageText;
+    final TextView messageText;
 
     MessageViewHolder(View itemView) {
       super(itemView);

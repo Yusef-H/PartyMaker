@@ -8,7 +8,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 
 public class FirebaseAccessManager {
   private static final String TAG = "FirebaseAccessManager";
-  private Context context;
+  private final Context context;
 
   public FirebaseAccessManager(Context context) {
     this.context = context;

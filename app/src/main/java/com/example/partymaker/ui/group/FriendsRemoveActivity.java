@@ -44,8 +44,8 @@ public class FriendsRemoveActivity extends AppCompatActivity {
       GroupPrice;
   private int GroupType;
   private boolean CanAdd;
-  private ArrayList<User> usersList = new ArrayList<>();
-  private ArrayList<String> userKeys = new ArrayList<>();
+  private final ArrayList<User> usersList = new ArrayList<>();
+  private final ArrayList<String> userKeys = new ArrayList<>();
   private UserAdapter adapter;
   private FirebaseServerClient serverClient;
 

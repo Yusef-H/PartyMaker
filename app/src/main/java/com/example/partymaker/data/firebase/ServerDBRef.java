@@ -14,9 +14,9 @@ public class ServerDBRef {
 
   // Keep Firebase Auth and Storage for now as they're not part of our server implementation
   public static FirebaseAuth Auth = FirebaseAuth.getInstance();
-  public static FirebaseStorage Storage = FirebaseStorage.getInstance();
+  public static final FirebaseStorage Storage = FirebaseStorage.getInstance();
   public static String CurrentUser;
-  public static StorageReference refStorage = Storage.getReference("UsersImageProfile");
+  public static final StorageReference refStorage = Storage.getReference("UsersImageProfile");
 
   // Our server client instance
   private static final FirebaseServerClient serverClient = FirebaseServerClient.getInstance();

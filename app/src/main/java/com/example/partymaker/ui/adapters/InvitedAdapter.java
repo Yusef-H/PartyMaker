@@ -22,11 +22,11 @@ import java.util.List;
 /** Adapter for displaying invited users in a ListView. Shows user details and admin flag. */
 public class InvitedAdapter extends ArrayAdapter<User> {
   /** The context in which the adapter is used. */
-  Context context;
+  final Context context;
   /** The list of invited users to display. */
-  List<User> invitedList;
+  final List<User> invitedList;
   /** The admin key for identifying admin users. */
-  String adminKey;
+  final String adminKey;
 
   /**
    * Constructor for InvitedAdapter.

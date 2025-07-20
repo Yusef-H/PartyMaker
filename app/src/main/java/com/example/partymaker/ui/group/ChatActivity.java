@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity {
   private String UserKey;
 
   private static final int MAX_RETRY_ATTEMPTS = 3;
-  private Handler retryHandler = new Handler(Looper.getMainLooper());
+  private final Handler retryHandler = new Handler(Looper.getMainLooper());
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
