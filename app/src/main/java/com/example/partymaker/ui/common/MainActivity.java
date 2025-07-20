@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
   private String UserKey;
   private GroupAdapter groupAdapter;
 
+  // Variable to track if we've shown the loading toast already
+  private boolean loadingToastShown = false;
+
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +106,10 @@ public class MainActivity extends AppCompatActivity {
         lv1.setVisibility(show ? View.GONE : View.VISIBLE);
       }
 
-      // Show a toast if loading starts
-      if (show) {
+      // Show a toast only on initial load
+      if (show && !loadingToastShown) {
         Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
+        loadingToastShown = true;
       }
     } catch (Exception e) {
       Log.e(TAG, "Error toggling loading state", e);
@@ -427,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
               TextView emptyView = findViewById(R.id.emptyGroupsView);
               if (emptyView != null) {
                 emptyView.setVisibility(View.VISIBLE);
-                emptyView.setText("No groups found");
+                emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
               }
             } else {
               // Hide empty view if we have groups
