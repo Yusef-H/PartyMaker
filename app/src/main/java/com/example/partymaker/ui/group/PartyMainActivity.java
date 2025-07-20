@@ -148,9 +148,12 @@ public class PartyMainActivity extends AppCompatActivity {
       loadGroupData();
       
       // Show a toast message about the payment option
+      // Removing this toast message about payment options
+      /* 
       new Handler().postDelayed(() -> {
         Toast.makeText(this, "Swipe down from top to see payment options", Toast.LENGTH_LONG).show();
       }, 1500);
+      */
 
     } catch (Exception e) {
       Log.e(TAG, "Unexpected error in onCreate", e);
@@ -384,7 +387,9 @@ public class PartyMainActivity extends AppCompatActivity {
   
   /**
    * Sets up the pull-up gesture for the payment panel
+   * Removing this method as we don't want the swipe down functionality
    */
+  /*
   private void setupPullUpGesture() {
     paymentPullUpContainer.setOnTouchListener(new View.OnTouchListener() {
       @Override
@@ -434,6 +439,7 @@ public class PartyMainActivity extends AppCompatActivity {
       }
     });
   }
+  */
   
   /**
    * Toggles the payment panel between expanded and collapsed states

@@ -31,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -415,7 +416,21 @@ public class MainActivity extends AppCompatActivity {
       runOnUiThread(
           () -> {
             if (lv1 != null && groupList != null && groupList.isEmpty()) {
-              Toast.makeText(this, "No groups found", Toast.LENGTH_LONG).show();
+              // Show a Snackbar with a retry button instead of a Toast
+              Snackbar snackbar = Snackbar.make(
+                  findViewById(android.R.id.content),
+                  "No groups found",
+                  Snackbar.LENGTH_INDEFINITE);
+              
+              snackbar.setAction("Refresh", view -> {
+                // Try to load groups again
+                if (UserKey != null) {
+                  viewModel.loadUserGroups(UserKey, true);
+                  showLoading(true);
+                }
+              });
+              
+              snackbar.show();
             }
           });
     } catch (Exception e) {

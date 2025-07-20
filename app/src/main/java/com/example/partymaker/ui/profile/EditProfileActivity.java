@@ -300,46 +300,93 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void loadProfileImageFromStorage(String userKey) {
-    if (userKey == null || userKey.isEmpty()) {
-      Log.e(TAG, "Invalid user key");
-      imgProfile.setImageResource(R.drawable.ic_profile);
-      return;
-    }
-
     Log.d(TAG, "Loading profile image from storage for key: " + userKey);
-
-    // Check network availability
-    if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
-      // Just use default image if network is not available
-      imgProfile.setImageResource(R.drawable.ic_profile);
-      return;
+    
+    // Try to load from local cache first
+    try {
+      // Check if we have a locally cached image
+      String localCachePath = getFilesDir() + "/profile_" + userKey + ".jpg";
+      java.io.File localFile = new java.io.File(localCachePath);
+      
+      if (localFile.exists()) {
+        // Load from local cache
+        Picasso.get()
+            .load(localFile)
+            .placeholder(R.drawable.default_profile_image)
+            .error(R.drawable.default_profile_image)
+            .into(imgProfile);
+        Log.d(TAG, "Loaded profile image from local cache");
+      } else {
+        // No local cache, try to load from Firebase Storage
+        if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+          // If offline, just use the default image
+          imgProfile.setImageResource(R.drawable.default_profile_image);
+          Log.d(TAG, "Using default profile image (offline mode)");
+          return;
+        }
+        
+        // Try to load from Firebase Storage
+        DBRef.storageRef
+            .child("profile_images")
+            .child(userKey + ".jpg")
+            .getDownloadUrl()
+            .addOnSuccessListener(
+                uri -> {
+                  // Load with Picasso
+                  Picasso.get()
+                      .load(uri)
+                      .placeholder(R.drawable.default_profile_image)
+                      .error(R.drawable.default_profile_image)
+                      .into(imgProfile);
+                  
+                  // Save to local cache for offline use
+                  downloadAndSaveImage(uri.toString(), localCachePath);
+                  
+                  Log.d(TAG, "Loaded profile image from Firebase Storage");
+                })
+            .addOnFailureListener(
+                e -> {
+                  Log.w(TAG, "Profile image not found in storage", e);
+                  imgProfile.setImageResource(R.drawable.default_profile_image);
+                });
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error loading profile image", e);
+      imgProfile.setImageResource(R.drawable.default_profile_image);
     }
-
-    DBRef.refStorage
-        .child("Users/" + userKey)
-        .getDownloadUrl()
-        .addOnSuccessListener(
-            uri -> {
-              Log.d(TAG, "Successfully loaded profile image: " + uri);
-
-              // Update the user's profile image URL in the database
-              Map<String, Object> updates = new HashMap<>();
-              updates.put("profileImageUrl", uri.toString());
-              userViewModel.updateCurrentUser(updates);
-
-              // Display the image
-              Picasso.get()
-                  .load(uri)
-                  .placeholder(R.drawable.ic_profile)
-                  .error(R.drawable.ic_profile)
-                  .into(imgProfile);
-            })
-        .addOnFailureListener(
-            e -> {
-              Log.d(TAG, "No profile image found, using default image", e);
-              // Just use the default image without showing an error
-              imgProfile.setImageResource(R.drawable.ic_profile);
-            });
+  }
+  
+  /**
+   * Downloads and saves an image to local storage for offline use
+   * 
+   * @param imageUrl The URL of the image to download
+   * @param localPath The local path to save the image to
+   */
+  private void downloadAndSaveImage(String imageUrl, String localPath) {
+    new Thread(() -> {
+      try {
+        // Download the image
+        java.net.URL url = new java.net.URL(imageUrl);
+        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+        connection.setDoInput(true);
+        connection.connect();
+        java.io.InputStream input = connection.getInputStream();
+        
+        // Save to local file
+        java.io.FileOutputStream output = new java.io.FileOutputStream(localPath);
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+          output.write(buffer, 0, bytesRead);
+        }
+        output.close();
+        input.close();
+        
+        Log.d(TAG, "Profile image saved to local cache: " + localPath);
+      } catch (Exception e) {
+        Log.e(TAG, "Error saving image to local cache", e);
+      }
+    }).start();
   }
 
   private void uploadImageToFirebase(Uri uri) {
