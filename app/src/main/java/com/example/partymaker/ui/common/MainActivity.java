@@ -83,8 +83,11 @@ public class MainActivity extends AppCompatActivity {
       // Observe group data from ViewModel
       observeViewModel();
 
-      // Show loading indicator
-      showLoading(true);
+      // Check if we're coming from another screen (not first launch)
+      boolean isFirstLaunch = getIntent().getBooleanExtra("isFirstLaunch", true);
+      
+      // Show loading indicator but only show toast on first launch
+      showLoading(true, isFirstLaunch);
 
       // Load groups for current user
       viewModel.loadUserGroups(UserKey, true);
@@ -98,22 +101,32 @@ public class MainActivity extends AppCompatActivity {
    * Shows or hides a loading indicator
    *
    * @param show True to show loading, false to hide
+   * @param showToast True to show a toast message, false to hide
    */
-  private void showLoading(boolean show) {
+  private void showLoading(boolean show, boolean showToast) {
     try {
       // Simple implementation without dedicated loading view
       if (lv1 != null) {
         lv1.setVisibility(show ? View.GONE : View.VISIBLE);
       }
 
-      // Show a toast only on initial load
-      if (show && !loadingToastShown) {
+      // Show a toast only if requested and if we haven't shown it already
+      if (show && showToast && !loadingToastShown) {
         Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
         loadingToastShown = true;
       }
     } catch (Exception e) {
       Log.e(TAG, "Error toggling loading state", e);
     }
+  }
+  
+  /**
+   * Overloaded method for backward compatibility
+   * 
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    showLoading(show, false);
   }
 
   /** Forces the server URL to be set to Render */

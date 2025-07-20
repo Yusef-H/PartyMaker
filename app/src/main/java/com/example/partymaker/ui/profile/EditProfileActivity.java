@@ -346,39 +346,40 @@ public class EditProfileActivity extends AppCompatActivity {
             .error(R.drawable.default_profile_image)
             .into(imgProfile);
         Log.d(TAG, "Loaded profile image from local cache");
-      } else {
-        // No local cache, try to load from Firebase Storage
-        if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
-          // If offline, just use the default image
-          imgProfile.setImageResource(R.drawable.default_profile_image);
-          Log.d(TAG, "Using default profile image (offline mode)");
-          return;
-        }
-        
-        // Try to load from Firebase Storage
-        DBRef.refStorage
-            .child(userKey + ".jpg")
-            .getDownloadUrl()
-            .addOnSuccessListener(
-                uri -> {
-                  // Load with Picasso
-                  Picasso.get()
-                      .load(uri)
-                      .placeholder(R.drawable.default_profile_image)
-                      .error(R.drawable.default_profile_image)
-                      .into(imgProfile);
-                  
-                  // Save to local cache for offline use
-                  downloadAndSaveImage(uri.toString(), localCachePath);
-                  
-                  Log.d(TAG, "Loaded profile image from Firebase Storage");
-                })
-            .addOnFailureListener(
-                e -> {
-                  Log.w(TAG, "Profile image not found in storage", e);
-                  imgProfile.setImageResource(R.drawable.default_profile_image);
-                });
+        return; // Exit early if we loaded from cache
       }
+      
+      // No local cache, try to load from Firebase Storage
+      if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+        // If offline, just use the default image without showing error
+        imgProfile.setImageResource(R.drawable.default_profile_image);
+        Log.d(TAG, "Using default profile image (offline mode)");
+        return;
+      }
+      
+      // Try to load from Firebase Storage
+      DBRef.refStorage
+          .child(userKey + ".jpg")
+          .getDownloadUrl()
+          .addOnSuccessListener(
+              uri -> {
+                // Load with Picasso
+                Picasso.get()
+                    .load(uri)
+                    .placeholder(R.drawable.default_profile_image)
+                    .error(R.drawable.default_profile_image)
+                    .into(imgProfile);
+                
+                // Save to local cache for offline use
+                downloadAndSaveImage(uri.toString(), localCachePath);
+                
+                Log.d(TAG, "Loaded profile image from Firebase Storage");
+              })
+          .addOnFailureListener(
+              e -> {
+                Log.w(TAG, "Profile image not found in storage", e);
+                imgProfile.setImageResource(R.drawable.default_profile_image);
+              });
     } catch (Exception e) {
       Log.e(TAG, "Error loading profile image", e);
       imgProfile.setImageResource(R.drawable.default_profile_image);
@@ -524,17 +525,21 @@ public class EditProfileActivity extends AppCompatActivity {
   private void handleNetworkError(NetworkUtils.ErrorType errorType) {
     if (errorType == NetworkUtils.ErrorType.NO_NETWORK) {
       // Don't show error toast for no network, just show a small indicator
-      Snackbar snackbar = Snackbar.make(
-          rootLayout,
-          "Offline mode - limited functionality",
-          Snackbar.LENGTH_SHORT);
-      snackbar.show();
+      // Use a snackbar instead of a toast to be less intrusive
+      View view = findViewById(android.R.id.content);
+      if (view != null) {
+        Snackbar snackbar = Snackbar.make(
+            view,
+            "Offline mode - limited functionality",
+            Snackbar.LENGTH_SHORT);
+        snackbar.show();
+      }
       
       // Disable save button in offline mode
       btnSaveProfile.setEnabled(false);
     } else {
-      // For other errors, use the standard error handler
-      AppNetworkError.handleNetworkError(this, null, errorType, false);
+      // For other errors, use the standard error handler but with minimal UI
+      AppNetworkError.handleNetworkError(this, null, errorType, true);
     }
   }
 
