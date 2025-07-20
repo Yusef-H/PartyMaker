@@ -1325,6 +1325,20 @@ public class FirebaseServerClient {
 
   @SuppressWarnings("unchecked")
   public void getUserGroups(String userId, final DataCallback<Map<String, Group>> callback) {
+    // Check network availability first
+    Context context = getContext();
+    if (context == null) {
+      Log.e(TAG, "Context is null");
+      mainHandler.post(() -> callback.onError("Internal error: Context is null"));
+      return;
+    }
+
+    if (!NetworkUtils.isNetworkAvailable(context)) {
+      Log.e(TAG, "Network not available");
+      mainHandler.post(() -> callback.onError(NetworkUtils.getErrorMessage(NetworkUtils.ErrorType.NO_NETWORK)));
+      return;
+    }
+
     new AsyncTask<String, Void, Map<String, Group>>() {
       private String errorMessage = null;
 
@@ -1362,18 +1376,22 @@ public class FirebaseServerClient {
           } catch (JSONException e) {
             Log.e(TAG, "Error parsing groups", e);
             errorMessage = e.getMessage();
-            return new HashMap<>(); // Return empty map instead of null
+            return null; // Return null to indicate error
           }
         } else {
           Log.w(TAG, "Failed to fetch groups, server may be down");
-          return new HashMap<>(); // Return empty map instead of null
+          errorMessage = "Failed to connect to server. Please check your internet connection.";
+          return null; // Return null to indicate error
         }
       }
 
       @Override
       protected void onPostExecute(Map<String, Group> groups) {
-        // Always return success, even with an empty map
-        callback.onSuccess(groups != null ? groups : new HashMap<>());
+        if (groups != null) {
+          callback.onSuccess(groups);
+        } else {
+          callback.onError(errorMessage != null ? errorMessage : "Unknown error occurred");
+        }
       }
     }.execute(userId);
   }
