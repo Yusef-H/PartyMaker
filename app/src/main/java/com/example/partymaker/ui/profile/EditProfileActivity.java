@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -33,11 +34,10 @@ import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.BottomNavigationHelper;
 import com.example.partymaker.viewmodel.UserViewModel;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
-import com.google.firebase.storage.FirebaseStorage;
-import android.os.Handler;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -227,7 +227,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Check if we're offline
     boolean isOffline = !ConnectivityManager.getInstance().getNetworkAvailability().getValue();
-    
+
     // If offline, don't show error messages
     if (isOffline) {
       // Try to load from local cache
@@ -236,7 +236,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (userKey != null && !userKey.isEmpty()) {
           // Load profile image from cache if available
           loadProfileImageFromStorage(userKey);
-          
+
           // Try to get cached user data
           User cachedUser = userViewModel.getCurrentUser().getValue();
           if (cachedUser != null) {
@@ -275,7 +275,7 @@ public class EditProfileActivity extends AppCompatActivity {
                       } else if (userData.containsKey("userName")) {
                         username = (String) userData.get("userName");
                       }
-                      
+
                       if (username != null && !username.isEmpty()) {
                         etUsername.setText(username);
                       }
@@ -341,61 +341,74 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Force refresh network status before checking
     ConnectivityManager.getInstance().refreshNetworkStatus();
-    
+
     // Add a small delay to allow the network status to update
-    new Handler().postDelayed(() -> {
-      // Check network availability again after refresh
-      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
-                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
-      
-      if (!isNetworkAvailable) {
-        Log.e(TAG, "Network not available when trying to save profile");
-        progressBar.setVisibility(View.GONE);
-        
-        // Show a more helpful error message
-        Snackbar.make(
-            findViewById(android.R.id.content),
-            "Cannot save profile while offline. Please check your internet connection.",
-            Snackbar.LENGTH_LONG)
-            .show();
-        return;
-      }
-      
-      // Create updates map
-      Map<String, Object> updates = new HashMap<>();
-      updates.put("username", username);
-      
-      // Update the user profile
-      userViewModel.updateCurrentUser(updates);
-      
-      // Observe the loading state to hide progress when done
-      userViewModel.getIsLoading().observe(this, isLoading -> {
-        if (!isLoading) {
-          progressBar.setVisibility(View.GONE);
-        }
-      });
-      
-      // Show success message when no error
-      userViewModel.getErrorMessage().observe(this, errorMsg -> {
-        if (errorMsg == null || errorMsg.isEmpty()) {
-          Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-        }
-      });
-    }, 500); // 500ms delay to allow network status to update
+    new Handler()
+        .postDelayed(
+            () -> {
+              // Check network availability again after refresh
+              boolean isNetworkAvailable =
+                  ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
+                      && ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+
+              if (!isNetworkAvailable) {
+                Log.e(TAG, "Network not available when trying to save profile");
+                progressBar.setVisibility(View.GONE);
+
+                // Show a more helpful error message
+                Snackbar.make(
+                        findViewById(android.R.id.content),
+                        "Cannot save profile while offline. Please check your internet connection.",
+                        Snackbar.LENGTH_LONG)
+                    .show();
+                return;
+              }
+
+              // Create updates map
+              Map<String, Object> updates = new HashMap<>();
+              updates.put("username", username);
+
+              // Update the user profile
+              userViewModel.updateCurrentUser(updates);
+
+              // Observe the loading state to hide progress when done
+              userViewModel
+                  .getIsLoading()
+                  .observe(
+                      this,
+                      isLoading -> {
+                        if (!isLoading) {
+                          progressBar.setVisibility(View.GONE);
+                        }
+                      });
+
+              // Show success message when no error
+              userViewModel
+                  .getErrorMessage()
+                  .observe(
+                      this,
+                      errorMsg -> {
+                        if (errorMsg == null || errorMsg.isEmpty()) {
+                          Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT)
+                              .show();
+                        }
+                      });
+            },
+            500); // 500ms delay to allow network status to update
   }
 
   private void loadProfileImageFromStorage(String userKey) {
     Log.d(TAG, "Loading profile image from storage for key: " + userKey);
-    
+
     // Force refresh network status
     ConnectivityManager.getInstance().refreshNetworkStatus();
-    
+
     // Try to load from local cache first
     try {
       // Check if we have a locally cached image
       String localCachePath = getFilesDir() + "/profile_" + userKey + ".jpg";
       java.io.File localFile = new java.io.File(localCachePath);
-      
+
       if (localFile.exists()) {
         // Load from local cache
         Picasso.get()
@@ -406,61 +419,64 @@ public class EditProfileActivity extends AppCompatActivity {
         Log.d(TAG, "Loaded profile image from local cache");
         return; // Exit early if we loaded from cache
       }
-      
+
       // No local cache, try to load from Firebase Storage
-      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
-                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+      boolean isNetworkAvailable =
+          ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
+              && ConnectivityManager.getInstance().getNetworkAvailability().getValue();
       if (!isNetworkAvailable) {
         // If offline, just use the default image without showing error
         imgProfile.setImageResource(R.drawable.default_profile_image);
         Log.d(TAG, "Using default profile image (offline mode)");
         return;
       }
-      
+
       // Try multiple possible paths for the image
       tryLoadImageFromPath(userKey, localCachePath, 0);
-      
+
     } catch (Exception e) {
       Log.e(TAG, "Error loading profile image", e);
       imgProfile.setImageResource(R.drawable.default_profile_image);
     }
   }
-  
+
   /**
    * Try loading the profile image from different paths
-   * 
+   *
    * @param userKey The user key
    * @param localCachePath The local cache path
    * @param pathIndex The index of the path to try
    */
   private void tryLoadImageFromPath(String userKey, String localCachePath, int pathIndex) {
     // Define possible paths
-    String[] paths = new String[] {
-        // Path 1: UsersImageProfile/Users/[userKey] (without extension)
-        "UsersImageProfile/Users/" + userKey,
-        // Path 2: UsersImageProfile/Users/[userKey].jpg
-        "UsersImageProfile/Users/" + userKey + ".jpg",
-        // Path 3: Users/[userKey] (without extension)
-        "Users/" + userKey,
-        // Path 4: Users/[userKey].jpg
-        "Users/" + userKey + ".jpg",
-        // Path 5: [userKey] (root level, without extension)
-        userKey,
-        // Path 6: [userKey].jpg (root level)
-        userKey + ".jpg"
-    };
-    
+    String[] paths =
+        new String[] {
+          // Path 1: UsersImageProfile/Users/[userKey] (without extension)
+          "UsersImageProfile/Users/" + userKey,
+          // Path 2: UsersImageProfile/Users/[userKey].jpg
+          "UsersImageProfile/Users/" + userKey + ".jpg",
+          // Path 3: Users/[userKey] (without extension)
+          "Users/" + userKey,
+          // Path 4: Users/[userKey].jpg
+          "Users/" + userKey + ".jpg",
+          // Path 5: [userKey] (root level, without extension)
+          userKey,
+          // Path 6: [userKey].jpg (root level)
+          userKey + ".jpg"
+        };
+
     // If we've tried all paths, give up
     if (pathIndex >= paths.length) {
       Log.w(TAG, "All image paths failed, using default image");
       imgProfile.setImageResource(R.drawable.default_profile_image);
       return;
     }
-    
+
     String currentPath = paths[pathIndex];
     Log.d(TAG, "Trying to load image from path: " + currentPath);
-    
-    FirebaseStorage.getInstance().getReference()
+
+    FirebaseStorage.getInstance()
+        .getReference()
         .child(currentPath)
         .getDownloadUrl()
         .addOnSuccessListener(
@@ -472,59 +488,65 @@ public class EditProfileActivity extends AppCompatActivity {
                   .placeholder(R.drawable.default_profile_image)
                   .error(R.drawable.default_profile_image)
                   .into(imgProfile);
-              
+
               // Save to local cache for offline use
               downloadAndSaveImage(uri.toString(), localCachePath);
-              
+
               Log.d(TAG, "Loaded profile image from Firebase Storage");
             })
         .addOnFailureListener(
             e -> {
-              Log.w(TAG, "Failed to load image from path: " + currentPath + ", error: " + e.getMessage());
+              Log.w(
+                  TAG,
+                  "Failed to load image from path: " + currentPath + ", error: " + e.getMessage());
               // Try the next path
               tryLoadImageFromPath(userKey, localCachePath, pathIndex + 1);
             });
   }
-  
+
   /**
    * Downloads and saves an image to local storage for offline use
-   * 
+   *
    * @param imageUrl The URL of the image to download
    * @param localPath The local path to save the image to
    */
   private void downloadAndSaveImage(String imageUrl, String localPath) {
-    new Thread(() -> {
-      try {
-        // Download the image
-        java.net.URL url = new java.net.URL(imageUrl);
-        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
-        connection.setDoInput(true);
-        connection.connect();
-        java.io.InputStream input = connection.getInputStream();
-        
-        // Save to local file
-        java.io.FileOutputStream output = new java.io.FileOutputStream(localPath);
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = input.read(buffer)) != -1) {
-          output.write(buffer, 0, bytesRead);
-        }
-        output.close();
-        input.close();
-        
-        Log.d(TAG, "Profile image saved to local cache: " + localPath);
-      } catch (Exception e) {
-        Log.e(TAG, "Error saving image to local cache", e);
-      }
-    }).start();
+    new Thread(
+            () -> {
+              try {
+                // Download the image
+                java.net.URL url = new java.net.URL(imageUrl);
+                java.net.HttpURLConnection connection =
+                    (java.net.HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                java.io.InputStream input = connection.getInputStream();
+
+                // Save to local file
+                java.io.FileOutputStream output = new java.io.FileOutputStream(localPath);
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                  output.write(buffer, 0, bytesRead);
+                }
+                output.close();
+                input.close();
+
+                Log.d(TAG, "Profile image saved to local cache: " + localPath);
+              } catch (Exception e) {
+                Log.e(TAG, "Error saving image to local cache", e);
+              }
+            })
+        .start();
   }
 
   private void uploadImageToFirebase(Uri uri) {
     if (uri == null) return;
 
     // Check network availability
-    boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
-                                ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+    boolean isNetworkAvailable =
+        ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
+            && ConnectivityManager.getInstance().getNetworkAvailability().getValue();
     if (!isNetworkAvailable) {
       AppNetworkError.showErrorMessage(
           this,
@@ -561,22 +583,26 @@ public class EditProfileActivity extends AppCompatActivity {
     // Use the correct path for the image - without extension
     String imagePath = "UsersImageProfile/Users/" + userKey;
     Log.d(TAG, "Uploading to Firebase Storage at path: " + imagePath);
-    
-    FirebaseStorage.getInstance().getReference()
+
+    FirebaseStorage.getInstance()
+        .getReference()
         .child(imagePath)
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot -> {
               Log.d(TAG, "Image uploaded successfully to path: " + imagePath);
-              
+
               // Get the download URL and update the user profile
-              FirebaseStorage.getInstance().getReference()
+              FirebaseStorage.getInstance()
+                  .getReference()
                   .child(imagePath)
                   .getDownloadUrl()
                   .addOnSuccessListener(
                       downloadUri -> {
-                        Log.d(TAG, "Successfully uploaded image and got download URL: " + downloadUri);
-                        
+                        Log.d(
+                            TAG,
+                            "Successfully uploaded image and got download URL: " + downloadUri);
+
                         // Update the profile image URL in the database
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("profileImageUrl", downloadUri.toString());
@@ -595,9 +621,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                   // Also update in ViewModel to keep UI in sync
                                   userViewModel.updateCurrentUser(updates);
-                                  
+
                                   // Save to local cache for offline use
-                                  String localCachePath = getFilesDir() + "/profile_" + userKey + ".jpg";
+                                  String localCachePath =
+                                      getFilesDir() + "/profile_" + userKey + ".jpg";
                                   downloadAndSaveImage(downloadUri.toString(), localCachePath);
                                 })
                             .addOnFailureListener(
@@ -619,15 +646,15 @@ public class EditProfileActivity extends AppCompatActivity {
               Log.e(TAG, "Error uploading image: " + e.getMessage(), e);
               progressBar.setVisibility(View.GONE);
               showError("Error uploading image: " + e.getMessage());
-              
+
               // Try alternative path if the first one fails
               tryAlternativePath(uri, userKey);
             });
   }
-  
+
   /**
    * Try uploading the image to an alternative path
-   * 
+   *
    * @param uri The image URI
    * @param userKey The user key
    */
@@ -635,25 +662,29 @@ public class EditProfileActivity extends AppCompatActivity {
     // Try a simpler path without extension
     String alternativePath = "Users/" + userKey;
     Log.d(TAG, "Trying alternative upload path: " + alternativePath);
-    
+
     // Show loading indicator again
     progressBar.setVisibility(View.VISIBLE);
-    
-    FirebaseStorage.getInstance().getReference()
+
+    FirebaseStorage.getInstance()
+        .getReference()
         .child(alternativePath)
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot -> {
               Log.d(TAG, "Image uploaded successfully to alternative path: " + alternativePath);
-              
+
               // Get the download URL and update the user profile
-              FirebaseStorage.getInstance().getReference()
+              FirebaseStorage.getInstance()
+                  .getReference()
                   .child(alternativePath)
                   .getDownloadUrl()
                   .addOnSuccessListener(
                       downloadUri -> {
-                        Log.d(TAG, "Successfully got download URL from alternative path: " + downloadUri);
-                        
+                        Log.d(
+                            TAG,
+                            "Successfully got download URL from alternative path: " + downloadUri);
+
                         // Update the profile image URL in the database
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("profileImageUrl", downloadUri.toString());
@@ -672,9 +703,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                   // Also update in ViewModel to keep UI in sync
                                   userViewModel.updateCurrentUser(updates);
-                                  
+
                                   // Save to local cache for offline use
-                                  String localCachePath = getFilesDir() + "/profile_" + userKey + ".jpg";
+                                  String localCachePath =
+                                      getFilesDir() + "/profile_" + userKey + ".jpg";
                                   downloadAndSaveImage(downloadUri.toString(), localCachePath);
                                 })
                             .addOnFailureListener(
@@ -686,7 +718,10 @@ public class EditProfileActivity extends AppCompatActivity {
                       })
                   .addOnFailureListener(
                       e -> {
-                        Log.e(TAG, "Error getting download URL from alternative path: " + e.getMessage(), e);
+                        Log.e(
+                            TAG,
+                            "Error getting download URL from alternative path: " + e.getMessage(),
+                            e);
                         progressBar.setVisibility(View.GONE);
                         showError("Error getting download URL: " + e.getMessage());
                       });
@@ -717,13 +752,11 @@ public class EditProfileActivity extends AppCompatActivity {
       // Use a snackbar instead of a toast to be less intrusive
       View view = findViewById(android.R.id.content);
       if (view != null) {
-        Snackbar snackbar = Snackbar.make(
-            view,
-            "Offline mode - limited functionality",
-            Snackbar.LENGTH_SHORT);
+        Snackbar snackbar =
+            Snackbar.make(view, "Offline mode - limited functionality", Snackbar.LENGTH_SHORT);
         snackbar.show();
       }
-      
+
       // Disable save button in offline mode
       btnSaveProfile.setEnabled(false);
     } else {
@@ -742,32 +775,36 @@ public class EditProfileActivity extends AppCompatActivity {
 
   // Flag to track if we're in onResume
   private boolean isResuming = false;
-  
+
   // Flag to track if we were previously offline
   private boolean wasOffline = false;
 
   @Override
   protected void onResume() {
     super.onResume();
-    
+
     isResuming = true;
-    
+
     // Force refresh network status when activity resumes
     ConnectivityManager.getInstance().refreshNetworkStatus();
-    
+
     // Add a small delay to allow the network status to update
-    new Handler().postDelayed(() -> {
-      // Check if we need to reload user data based on network availability
-      boolean isNetworkAvailable = ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null && 
-                                  ConnectivityManager.getInstance().getNetworkAvailability().getValue();
-      
-      if (isNetworkAvailable) {
-        Log.d(TAG, "Network is available, refreshing user data");
-        loadUserData();
-      }
-      
-      isResuming = false;
-    }, 1000);
+    new Handler()
+        .postDelayed(
+            () -> {
+              // Check if we need to reload user data based on network availability
+              boolean isNetworkAvailable =
+                  ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
+                      && ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+
+              if (isNetworkAvailable) {
+                Log.d(TAG, "Network is available, refreshing user data");
+                loadUserData();
+              }
+
+              isResuming = false;
+            },
+            1000);
   }
 
   @Override

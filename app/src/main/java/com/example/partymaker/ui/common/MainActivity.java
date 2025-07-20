@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,8 +32,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import com.google.android.material.snackbar.Snackbar;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
       Log.e(TAG, "Error toggling loading state", e);
     }
   }
-  
+
   /**
    * Overloaded method for backward compatibility
-   * 
+   *
    * @param show True to show loading, false to hide
    */
   private void showLoading(boolean show) {
@@ -432,11 +431,12 @@ public class MainActivity extends AppCompatActivity {
           () -> {
             if (lv1 != null && groupList != null && groupList.isEmpty()) {
               // Check if we're still loading
-              if (viewModel.getIsLoading().getValue() != null && viewModel.getIsLoading().getValue()) {
+              if (viewModel.getIsLoading().getValue() != null
+                  && viewModel.getIsLoading().getValue()) {
                 // Don't show empty state while loading
                 return;
               }
-              
+
               // Show a simple text view instead of a Snackbar
               TextView emptyView = findViewById(R.id.emptyGroupsView);
               if (emptyView != null) {

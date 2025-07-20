@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ViewModel for Group data.
- * This class provides a clean API for the UI to interact with Group data.
+ * ViewModel for Group data. This class provides a clean API for the UI to interact with Group data.
  */
 public class GroupViewModel extends ViewModel {
   private static final String TAG = "GroupViewModel";
@@ -36,9 +35,7 @@ public class GroupViewModel extends ViewModel {
   /** Repository for Group data. */
   private final GroupRepository repository;
 
-  /**
-   * Constructor.
-   */
+  /** Constructor. */
   public GroupViewModel() {
     repository = GroupRepository.getInstance();
 
@@ -46,18 +43,19 @@ public class GroupViewModel extends ViewModel {
     LiveData<Result<List<Group>>> repoGroups = repository.getAllGroupsLiveData();
     if (repoGroups != null) {
       // Observe the repository's LiveData
-      repoGroups.observeForever(result -> {
-        if (result.isSuccess()) {
-          List<Group> data = result.getData();
-          if (data != null) {
-            sortGroups(data);
-            groupList.setValue(data);
-          }
-        } else if (result.isError()) {
-          errorMessage.setValue(result.getUserFriendlyError());
-        }
-        isLoading.setValue(result.isLoading());
-      });
+      repoGroups.observeForever(
+          result -> {
+            if (result.isSuccess()) {
+              List<Group> data = result.getData();
+              if (data != null) {
+                sortGroups(data);
+                groupList.setValue(data);
+              }
+            } else if (result.isError()) {
+              errorMessage.setValue(result.getUserFriendlyError());
+            }
+            isLoading.setValue(result.isLoading());
+          });
     }
   }
 
@@ -371,9 +369,7 @@ public class GroupViewModel extends ViewModel {
     loadGroup(groupId, forceRefresh);
   }
 
-  /**
-   * Clears the error message
-   */
+  /** Clears the error message */
   public void clearError() {
     errorMessage.setValue(null);
   }
@@ -388,19 +384,21 @@ public class GroupViewModel extends ViewModel {
       return;
     }
 
-    Collections.sort(groups, new Comparator<Group>() {
-      @Override
-      public int compare(Group g1, Group g2) {
-        if (g1.getGroupName() == null && g2.getGroupName() == null) {
-          return 0;
-        } else if (g1.getGroupName() == null) {
-          return 1;
-        } else if (g2.getGroupName() == null) {
-          return -1;
-        }
-        return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
-      }
-    });
+    Collections.sort(
+        groups,
+        new Comparator<Group>() {
+          @Override
+          public int compare(Group g1, Group g2) {
+            if (g1.getGroupName() == null && g2.getGroupName() == null) {
+              return 0;
+            } else if (g1.getGroupName() == null) {
+              return 1;
+            } else if (g2.getGroupName() == null) {
+              return -1;
+            }
+            return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
+          }
+        });
   }
 
   /**

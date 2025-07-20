@@ -17,7 +17,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utilities.AuthHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -152,8 +151,10 @@ public class LoginActivity extends AppCompatActivity {
                             testUserData.put("username", "Test User");
                             testUserData.put("email", testEmail);
                             testUserData.put("userKey", java.util.UUID.randomUUID().toString());
-                            
-                            DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUserData);
+
+                            DBRef.refUsers
+                                .child(testEmail.replace('.', ' '))
+                                .setValue(testUserData);
                           } else {
                             Log.d(
                                 "LoginActivity",

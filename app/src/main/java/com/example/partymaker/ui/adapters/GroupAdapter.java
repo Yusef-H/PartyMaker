@@ -97,12 +97,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
                     .child("Groups/" + GroupKey)
                     .getDownloadUrl()
                     .addOnSuccessListener(
-                        uri ->
-                            Picasso.get()
-                                .load(uri)
-                                .fit()
-                                .centerCrop()
-                                .into(imageView))
+                        uri -> Picasso.get().load(uri).fit().centerCrop().into(imageView))
                     .addOnFailureListener(
                         e -> {
                           // Set default image if both paths fail

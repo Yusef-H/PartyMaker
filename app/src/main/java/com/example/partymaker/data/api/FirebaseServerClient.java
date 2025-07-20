@@ -1335,7 +1335,8 @@ public class FirebaseServerClient {
 
     if (!NetworkUtils.isNetworkAvailable(context)) {
       Log.e(TAG, "Network not available");
-      mainHandler.post(() -> callback.onError(NetworkUtils.getErrorMessage(NetworkUtils.ErrorType.NO_NETWORK)));
+      mainHandler.post(
+          () -> callback.onError(NetworkUtils.getErrorMessage(NetworkUtils.ErrorType.NO_NETWORK)));
       return;
     }
 

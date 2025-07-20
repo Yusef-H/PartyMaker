@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -88,8 +87,8 @@ public class PartyMainActivity extends AppCompatActivity {
       Intent intent = getIntent();
       Log.d(TAG, "Got intent: " + intent);
       Log.d(
-              TAG,
-              "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
+          TAG,
+          "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
 
       // Try to get GroupKey directly from intent first
       GroupKey = intent.getStringExtra("GroupKey");
@@ -149,7 +148,8 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Remove the toast message about payment option
       // new Handler().postDelayed(() -> {
-      //   Toast.makeText(this, "Swipe down from top to see payment options", Toast.LENGTH_LONG).show();
+      //   Toast.makeText(this, "Swipe down from top to see payment options",
+      // Toast.LENGTH_LONG).show();
       // }, 1500);
 
     } catch (Exception e) {
@@ -176,67 +176,67 @@ public class PartyMainActivity extends AppCompatActivity {
 
       FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
       serverClient.getGroup(
-              GroupKey,
-              new FirebaseServerClient.DataCallback<Group>() {
-                @Override
-                public void onSuccess(Group group) {
-                  try {
-                    if (group == null) {
-                      Log.e(TAG, "Group data is null");
-                      showErrorAndFinish("Failed to load group data");
-                      return;
-                    }
+          GroupKey,
+          new FirebaseServerClient.DataCallback<Group>() {
+            @Override
+            public void onSuccess(Group group) {
+              try {
+                if (group == null) {
+                  Log.e(TAG, "Group data is null");
+                  showErrorAndFinish("Failed to load group data");
+                  return;
+                }
 
-                    currentGroup = group;
+                currentGroup = group;
+                Log.d(
+                    TAG,
+                    "Loaded group data from server: "
+                        + group.getGroupName()
+                        + ", key: "
+                        + GroupKey);
+                Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+
+                // Debug: Log ComingKeys data from server
+                if (group.getComingKeys() != null) {
+                  Log.d(
+                      TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
+                  Log.d(TAG, "ComingKeys details from server:");
+                  for (String key : group.getComingKeys().keySet()) {
                     Log.d(
-                            TAG,
-                            "Loaded group data from server: "
-                                    + group.getGroupName()
-                                    + ", key: "
-                                    + GroupKey);
-                    Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
-
-                    // Debug: Log ComingKeys data from server
-                    if (group.getComingKeys() != null) {
-                      Log.d(
-                              TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
-                      Log.d(TAG, "ComingKeys details from server:");
-                      for (String key : group.getComingKeys().keySet()) {
-                        Log.d(
-                                TAG,
-                                "  ComingKey from server: '"
-                                        + key
-                                        + "' -> "
-                                        + group.getComingKeys().get(key));
-                      }
-                    } else {
-                      Log.e(TAG, "ComingKeys is null in group data from server!");
-                    }
-
-                    // Update UI with group data
-                    runOnUiThread(
-                            () -> {
-                              try {
-                                updateGroupUI(group);
-                                setupClickListeners();
-                                showLoading(false);
-                              } catch (Exception e) {
-                                Log.e(TAG, "Error updating UI with group data", e);
-                                showError("Error displaying group data");
-                              }
-                            });
-                  } catch (Exception e) {
-                    Log.e(TAG, "Error processing group data", e);
-                    showError("Error processing group data");
+                        TAG,
+                        "  ComingKey from server: '"
+                            + key
+                            + "' -> "
+                            + group.getComingKeys().get(key));
                   }
+                } else {
+                  Log.e(TAG, "ComingKeys is null in group data from server!");
                 }
 
-                @Override
-                public void onError(String errorMessage) {
-                  Log.e(TAG, "Failed to get group details: " + errorMessage);
-                  showError("Failed to load group details: " + errorMessage);
-                }
-              });
+                // Update UI with group data
+                runOnUiThread(
+                    () -> {
+                      try {
+                        updateGroupUI(group);
+                        setupClickListeners();
+                        showLoading(false);
+                      } catch (Exception e) {
+                        Log.e(TAG, "Error updating UI with group data", e);
+                        showError("Error displaying group data");
+                      }
+                    });
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing group data", e);
+                showError("Error processing group data");
+              }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to get group details: " + errorMessage);
+              showError("Failed to load group details: " + errorMessage);
+            }
+          });
 
       // Load messages with error handling
       loadMessages();
@@ -252,36 +252,36 @@ public class PartyMainActivity extends AppCompatActivity {
     try {
       FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
       serverClient.getMessages(
-              GroupKey,
-              new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
-                @Override
-                public void onSuccess(
-                        java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
-                  try {
-                    if (messages == null || messages.isEmpty()) {
-                      Log.d(TAG, "No messages found for group");
-                      return;
-                    }
-
-                    // Update message keys
-                    MessageKeys = new HashMap<>();
-                    for (ChatMessage message : messages) {
-                      MessageKeys.put(message.getMessageKey(), "true");
-                    }
-
-                    Log.d(TAG, "Loaded " + messages.size() + " messages for group");
-                  } catch (Exception e) {
-                    Log.e(TAG, "Error processing messages", e);
-                    showError("Error processing messages");
-                  }
+          GroupKey,
+          new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
+            @Override
+            public void onSuccess(
+                java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
+              try {
+                if (messages == null || messages.isEmpty()) {
+                  Log.d(TAG, "No messages found for group");
+                  return;
                 }
 
-                @Override
-                public void onError(String errorMessage) {
-                  Log.e(TAG, "Failed to load messages: " + errorMessage);
-                  // Don't show error to user for messages - non-critical
+                // Update message keys
+                MessageKeys = new HashMap<>();
+                for (ChatMessage message : messages) {
+                  MessageKeys.put(message.getMessageKey(), "true");
                 }
-              });
+
+                Log.d(TAG, "Loaded " + messages.size() + " messages for group");
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing messages", e);
+                showError("Error processing messages");
+              }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to load messages: " + errorMessage);
+              // Don't show error to user for messages - non-critical
+            }
+          });
     } catch (Exception e) {
       Log.e(TAG, "Error loading messages", e);
       // Don't show error to user for messages - non-critical
@@ -295,18 +295,18 @@ public class PartyMainActivity extends AppCompatActivity {
    */
   private void showLoading(boolean show) {
     runOnUiThread(
-            () -> {
-              // You can implement a proper loading indicator here
-              // For now, just disable/enable UI elements
-              if (Card1 != null) Card1.setEnabled(!show);
-              if (Card2 != null) Card2.setEnabled(!show);
-              if (Card3 != null) Card3.setEnabled(!show);
-              if (Card4 != null) Card4.setEnabled(!show);
-              if (Card5 != null) Card5.setEnabled(!show);
-              if (Card6 != null) Card6.setEnabled(!show);
-              if (Card7 != null) Card7.setEnabled(!show);
-              if (Card8 != null) Card8.setEnabled(!show);
-            });
+        () -> {
+          // You can implement a proper loading indicator here
+          // For now, just disable/enable UI elements
+          if (Card1 != null) Card1.setEnabled(!show);
+          if (Card2 != null) Card2.setEnabled(!show);
+          if (Card3 != null) Card3.setEnabled(!show);
+          if (Card4 != null) Card4.setEnabled(!show);
+          if (Card5 != null) Card5.setEnabled(!show);
+          if (Card6 != null) Card6.setEnabled(!show);
+          if (Card7 != null) Card7.setEnabled(!show);
+          if (Card8 != null) Card8.setEnabled(!show);
+        });
   }
 
   /**
@@ -316,14 +316,14 @@ public class PartyMainActivity extends AppCompatActivity {
    */
   private void showError(String message) {
     runOnUiThread(
-            () -> {
-              try {
-                Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_LONG).show();
-                showLoading(false);
-              } catch (Exception e) {
-                Log.e(TAG, "Error showing error message", e);
-              }
-            });
+        () -> {
+          try {
+            Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_LONG).show();
+            showLoading(false);
+          } catch (Exception e) {
+            Log.e(TAG, "Error showing error message", e);
+          }
+        });
   }
 
   private void initializeViews() {
@@ -388,9 +388,7 @@ public class PartyMainActivity extends AppCompatActivity {
     Log.d(TAG, "Views initialized successfully");
   }
 
-  /**
-   * Shows a dialog for editing the group name
-   */
+  /** Shows a dialog for editing the group name */
   private void showEditGroupNameDialog() {
     try {
       // Create an EditText for user input
@@ -398,23 +396,25 @@ public class PartyMainActivity extends AppCompatActivity {
       input.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
       input.setText(currentGroup != null ? currentGroup.getGroupName() : "");
       input.setSelectAllOnFocus(true);
-      
+
       // Add padding to the EditText
       int paddingPx = (int) (16 * getResources().getDisplayMetrics().density);
       input.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
-      
+
       // Create the AlertDialog
       new android.app.AlertDialog.Builder(this)
           .setTitle("Edit Group Name")
           .setView(input)
-          .setPositiveButton("Save", (dialog, which) -> {
-              String newName = input.getText().toString().trim();
-              if (!newName.isEmpty()) {
+          .setPositiveButton(
+              "Save",
+              (dialog, which) -> {
+                String newName = input.getText().toString().trim();
+                if (!newName.isEmpty()) {
                   updateGroupName(newName);
-              } else {
+                } else {
                   Toast.makeText(this, "Group name cannot be empty", Toast.LENGTH_SHORT).show();
-              }
-          })
+                }
+              })
           .setNegativeButton("Cancel", null)
           .show();
     } catch (Exception e) {
@@ -422,10 +422,10 @@ public class PartyMainActivity extends AppCompatActivity {
       Toast.makeText(this, "Error opening edit dialog", Toast.LENGTH_SHORT).show();
     }
   }
-  
+
   /**
    * Updates the group name in Firebase through the server
-   * 
+   *
    * @param newName The new group name
    */
   private void updateGroupName(String newName) {
@@ -433,103 +433,98 @@ public class PartyMainActivity extends AppCompatActivity {
       Toast.makeText(this, "Group data not available", Toast.LENGTH_SHORT).show();
       return;
     }
-    
+
     // Show loading indicator
     showLoading(true);
-    
+
     // Create updates map
     Map<String, Object> updates = new HashMap<>();
     updates.put("groupName", newName);
-    
+
     // Update the group name through FirebaseServerClient
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.updateGroup(
-        GroupKey, 
-        updates, 
+        GroupKey,
+        updates,
         new FirebaseServerClient.OperationCallback() {
-            @Override
-            public void onSuccess() {
-                // Update UI
-                tvGroupName.setText(newName);
-                
-                // Update local group object
-                currentGroup.setGroupName(newName);
-                
-                // Hide loading indicator and show success message
-                showLoading(false);
-                Toast.makeText(PartyMainActivity.this, "Group name updated successfully", Toast.LENGTH_SHORT).show();
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
-                // Hide loading indicator and show error message
-                showLoading(false);
-                Toast.makeText(
-                    PartyMainActivity.this, 
-                    "Failed to update group name: " + errorMessage, 
-                    Toast.LENGTH_SHORT
-                ).show();
-            }
-        }
-    );
+          @Override
+          public void onSuccess() {
+            // Update UI
+            tvGroupName.setText(newName);
+
+            // Update local group object
+            currentGroup.setGroupName(newName);
+
+            // Hide loading indicator and show success message
+            showLoading(false);
+            Toast.makeText(
+                    PartyMainActivity.this, "Group name updated successfully", Toast.LENGTH_SHORT)
+                .show();
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            // Hide loading indicator and show error message
+            showLoading(false);
+            Toast.makeText(
+                    PartyMainActivity.this,
+                    "Failed to update group name: " + errorMessage,
+                    Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 
-  /**
-   * Sets up the pull-up gesture for the payment panel
-   */
+  /** Sets up the pull-up gesture for the payment panel */
   private void setupPullUpGesture() {
-    paymentPullUpContainer.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View view, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-            // Record initial touch position
-            dY = view.getY() - event.getRawY();
-            initialY = view.getY();
-            return true;
+    paymentPullUpContainer.setOnTouchListener(
+        new View.OnTouchListener() {
+          @Override
+          public boolean onTouch(View view, MotionEvent event) {
+            switch (event.getAction()) {
+              case MotionEvent.ACTION_DOWN:
+                // Record initial touch position
+                dY = view.getY() - event.getRawY();
+                initialY = view.getY();
+                return true;
 
-          case MotionEvent.ACTION_MOVE:
-            // Calculate new position with constraints
-            float newY = event.getRawY() + dY;
+              case MotionEvent.ACTION_MOVE:
+                // Calculate new position with constraints
+                float newY = event.getRawY() + dY;
 
-            // Get the height of the container to use as maximum translation
-            int height = view.getHeight();
+                // Get the height of the container to use as maximum translation
+                int height = view.getHeight();
 
-            // For pull down, constraints are different
-            if (newY < -70) newY = -70;
-            if (newY > 0) newY = 0;
+                // For pull down, constraints are different
+                if (newY < -70) newY = -70;
+                if (newY > 0) newY = 0;
 
-            // Update position
-            view.animate()
-                    .y(newY)
-                    .setDuration(0)
-                    .start();
-            return true;
+                // Update position
+                view.animate().y(newY).setDuration(0).start();
+                return true;
 
-          case MotionEvent.ACTION_UP:
-            // Determine if we should expand or collapse based on how far user pulled
-            float pulledDistance = view.getY() - initialY;
-            int containerHeight = view.getHeight();
+              case MotionEvent.ACTION_UP:
+                // Determine if we should expand or collapse based on how far user pulled
+                float pulledDistance = view.getY() - initialY;
+                int containerHeight = view.getHeight();
 
-            if (pulledDistance > containerHeight / 3) {
-              // Expand if pulled more than 1/3 of the height
-              expandPaymentPanel();
-            } else {
-              // Collapse
-              collapsePaymentPanel();
+                if (pulledDistance > containerHeight / 3) {
+                  // Expand if pulled more than 1/3 of the height
+                  expandPaymentPanel();
+                } else {
+                  // Collapse
+                  collapsePaymentPanel();
+                }
+                return true;
+
+              default:
+                return false;
             }
-            return true;
-
-          default:
-            return false;
-        }
-      }
-    });
+          }
+        });
   }
 
-  /**
-   * Toggles the payment panel between expanded and collapsed states
-   */
+  /** Toggles the payment panel between expanded and collapsed states */
   private void togglePaymentPanel() {
     if (isExpanded) {
       collapsePaymentPanel();
@@ -538,25 +533,19 @@ public class PartyMainActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Expands the payment panel with animation
-   */
+  /** Expands the payment panel with animation */
   private void expandPaymentPanel() {
-    ObjectAnimator animation = ObjectAnimator.ofFloat(
-            paymentPullUpContainer, "translationY", 0f);
+    ObjectAnimator animation = ObjectAnimator.ofFloat(paymentPullUpContainer, "translationY", 0f);
     animation.setDuration(300);
     animation.setInterpolator(new DecelerateInterpolator());
     animation.start();
     isExpanded = true;
   }
 
-  /**
-   * Collapses the payment panel with animation
-   */
+  /** Collapses the payment panel with animation */
   private void collapsePaymentPanel() {
     // Collapse to show only the handle (-70dp is set in XML)
-    ObjectAnimator animation = ObjectAnimator.ofFloat(
-            paymentPullUpContainer, "translationY", -70f);
+    ObjectAnimator animation = ObjectAnimator.ofFloat(paymentPullUpContainer, "translationY", -70f);
     animation.setDuration(300);
     animation.setInterpolator(new DecelerateInterpolator());
     animation.start();
@@ -568,14 +557,14 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Back button - navigate to MainActivity instead of just finishing
     back5.setOnClickListener(
-            v -> {
-              Log.d(TAG, "Back button clicked, navigating to MainActivity");
-              Intent intent =
-                      new Intent(
-                              PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
-              startActivity(intent);
-              finish();
-            });
+        v -> {
+          Log.d(TAG, "Back button clicked, navigating to MainActivity");
+          Intent intent =
+              new Intent(
+                  PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
+          startActivity(intent);
+          finish();
+        });
 
     // Check if Card6 is null
     if (Card6 == null) {
@@ -584,104 +573,104 @@ public class PartyMainActivity extends AppCompatActivity {
       Log.d(TAG, "Card6 is not null");
 
       Card6.setOnClickListener(
-              v -> {
-                Log.d(TAG, "Card6 (Chat button) clicked");
-                navigateToChatActivity();
-              });
+          v -> {
+            Log.d(TAG, "Card6 (Chat button) clicked");
+            navigateToChatActivity();
+          });
     }
 
     // Remove test button code
 
     Card1.setOnClickListener(
-            v -> {
-              if (currentGroup != null && currentGroup.getGroupLocation() != null) {
-                String location = currentGroup.getGroupLocation();
-                if (location.contains(",")) {
-                  // It's coordinates, show map
-                  showMapDialog(location);
-                } else {
-                  // It's a text location, show in toast
-                  Toast.makeText(PartyMainActivity.this, "Location: " + location, Toast.LENGTH_LONG)
-                          .show();
-                }
-              } else {
-                Toast.makeText(PartyMainActivity.this, "No location available", Toast.LENGTH_SHORT)
-                        .show();
-              }
-            });
+        v -> {
+          if (currentGroup != null && currentGroup.getGroupLocation() != null) {
+            String location = currentGroup.getGroupLocation();
+            if (location.contains(",")) {
+              // It's coordinates, show map
+              showMapDialog(location);
+            } else {
+              // It's a text location, show in toast
+              Toast.makeText(PartyMainActivity.this, "Location: " + location, Toast.LENGTH_LONG)
+                  .show();
+            }
+          } else {
+            Toast.makeText(PartyMainActivity.this, "No location available", Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
 
     Card2.setOnClickListener(
-            v -> {
-              if (currentGroup != null) {
-                // Show date information only - no editing allowed
-                String date =
-                        currentGroup.getGroupDays()
-                                + "/"
-                                + currentGroup.getGroupMonths()
-                                + "/"
-                                + currentGroup.getGroupYears();
-                String time = currentGroup.getGroupHours();
-                Toast.makeText(
-                                PartyMainActivity.this,
-                                "Party Date: " + date + " at " + time + "\n\nOnly admin can change the date.",
-                                Toast.LENGTH_LONG)
-                        .show();
-              }
-            });
+        v -> {
+          if (currentGroup != null) {
+            // Show date information only - no editing allowed
+            String date =
+                currentGroup.getGroupDays()
+                    + "/"
+                    + currentGroup.getGroupMonths()
+                    + "/"
+                    + currentGroup.getGroupYears();
+            String time = currentGroup.getGroupHours();
+            Toast.makeText(
+                    PartyMainActivity.this,
+                    "Party Date: " + date + " at " + time + "\n\nOnly admin can change the date.",
+                    Toast.LENGTH_LONG)
+                .show();
+          }
+        });
 
     Card3.setOnClickListener(
-            v -> {
-              if (currentGroup != null && currentGroup.getFriendKeys() != null) {
-                navigateToMembersInvitedActivity();
-              } else {
-                Toast.makeText(PartyMainActivity.this, "No invited people", Toast.LENGTH_SHORT).show();
-              }
-            });
+        v -> {
+          if (currentGroup != null && currentGroup.getFriendKeys() != null) {
+            navigateToMembersInvitedActivity();
+          } else {
+            Toast.makeText(PartyMainActivity.this, "No invited people", Toast.LENGTH_SHORT).show();
+          }
+        });
 
     Card4.setOnClickListener(
-            v -> {
-              if (currentGroup != null && currentGroup.getComingKeys() != null) {
-                navigateToMembersComingActivity();
-              } else {
-                Toast.makeText(PartyMainActivity.this, "No people coming", Toast.LENGTH_SHORT).show();
-              }
-            });
+        v -> {
+          if (currentGroup != null && currentGroup.getComingKeys() != null) {
+            navigateToMembersComingActivity();
+          } else {
+            Toast.makeText(PartyMainActivity.this, "No people coming", Toast.LENGTH_SHORT).show();
+          }
+        });
 
     // Card5 - Admin options OR Coming/Not coming toggle
     Card5.setOnClickListener(
-            v -> {
-              Log.d(
-                      TAG,
-                      "Card5 clicked - isUserAdmin: " + isUserAdmin + ", isUserComing: " + isUserComing);
+        v -> {
+          Log.d(
+              TAG,
+              "Card5 clicked - isUserAdmin: " + isUserAdmin + ", isUserComing: " + isUserComing);
 
-              // Double check admin status
-              boolean isAdmin = false;
-              if (currentGroup != null && currentGroup.getAdminKey() != null && UserKey != null) {
-                isAdmin = currentGroup.getAdminKey().equals(UserKey);
-                Log.d(TAG, "Card5 click - Rechecked admin status: " + isAdmin);
-              }
+          // Double check admin status
+          boolean isAdmin = false;
+          if (currentGroup != null && currentGroup.getAdminKey() != null && UserKey != null) {
+            isAdmin = currentGroup.getAdminKey().equals(UserKey);
+            Log.d(TAG, "Card5 click - Rechecked admin status: " + isAdmin);
+          }
 
-              if (isAdmin) {
-                Log.d(TAG, "Navigating to admin options as user is admin");
-                navigateToAdminOptionsActivity();
-              } else {
-                Log.d(TAG, "Toggling coming status as user is not admin");
-                toggleComingStatus();
-              }
-            });
+          if (isAdmin) {
+            Log.d(TAG, "Navigating to admin options as user is admin");
+            navigateToAdminOptionsActivity();
+          } else {
+            Log.d(TAG, "Toggling coming status as user is not admin");
+            toggleComingStatus();
+          }
+        });
 
     Card7.setOnClickListener(v -> navigateToAddFriendsActivity());
 
     Card8.setOnClickListener(
-            v -> {
-              // Show confirmation dialog for leaving group
-              new android.app.AlertDialog.Builder(this)
-                      .setTitle("Leave Group")
-                      .setMessage("Are you sure you want to leave this group?")
-                      .setPositiveButton("Yes", (dialog, which) -> leaveGroup())
-                      .setNegativeButton("No", null)
-                      .show();
-            });
+        v -> {
+          // Show confirmation dialog for leaving group
+          new android.app.AlertDialog.Builder(this)
+              .setTitle("Leave Group")
+              .setMessage("Are you sure you want to leave this group?")
+              .setPositiveButton("Yes", (dialog, which) -> leaveGroup())
+              .setNegativeButton("No", null)
+              .show();
+        });
   }
 
   @SuppressLint("SetTextI18n")
@@ -708,33 +697,37 @@ public class PartyMainActivity extends AppCompatActivity {
       com.example.partymaker.data.firebase.DBRef.refStorage
           .child("UsersImageProfile/Groups/" + GroupKey)
           .getDownloadUrl()
-          .addOnSuccessListener(uri -> {
-            com.squareup.picasso.Picasso.get()
-                .load(uri)
-                .placeholder(R.drawable.default_group_image)
-                .error(R.drawable.default_group_image)
-                .into(groupImage);
-            Log.d(TAG, "Loaded group image from new path");
-          })
-          .addOnFailureListener(e -> {
-            // Try old path as fallback
-            com.example.partymaker.data.firebase.DBRef.refStorage
-                .child("Groups/" + GroupKey)
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                  com.squareup.picasso.Picasso.get()
-                      .load(uri)
-                      .placeholder(R.drawable.default_group_image)
-                      .error(R.drawable.default_group_image)
-                      .into(groupImage);
-                  Log.d(TAG, "Loaded group image from old path");
-                })
-                .addOnFailureListener(e2 -> {
-                  // Set default image if both paths fail
-                  groupImage.setImageResource(R.drawable.default_group_image);
-                  Log.d(TAG, "Failed to load group image from either path");
-                });
-          });
+          .addOnSuccessListener(
+              uri -> {
+                com.squareup.picasso.Picasso.get()
+                    .load(uri)
+                    .placeholder(R.drawable.default_group_image)
+                    .error(R.drawable.default_group_image)
+                    .into(groupImage);
+                Log.d(TAG, "Loaded group image from new path");
+              })
+          .addOnFailureListener(
+              e -> {
+                // Try old path as fallback
+                com.example.partymaker.data.firebase.DBRef.refStorage
+                    .child("Groups/" + GroupKey)
+                    .getDownloadUrl()
+                    .addOnSuccessListener(
+                        uri -> {
+                          com.squareup.picasso.Picasso.get()
+                              .load(uri)
+                              .placeholder(R.drawable.default_group_image)
+                              .error(R.drawable.default_group_image)
+                              .into(groupImage);
+                          Log.d(TAG, "Loaded group image from old path");
+                        })
+                    .addOnFailureListener(
+                        e2 -> {
+                          // Set default image if both paths fail
+                          groupImage.setImageResource(R.drawable.default_group_image);
+                          Log.d(TAG, "Failed to load group image from either path");
+                        });
+              });
     }
 
     // Update location
@@ -828,9 +821,7 @@ public class PartyMainActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Checks if the user has already paid for the event
-   */
+  /** Checks if the user has already paid for the event */
   private void checkPaymentStatus() {
     if (currentGroup == null || UserKey == null) {
       return;
@@ -854,9 +845,7 @@ public class PartyMainActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Handles the payment process when the user clicks the payment button
-   */
+  /** Handles the payment process when the user clicks the payment button */
   private void handlePayment() {
     if (currentGroup == null) {
       Toast.makeText(this, "Error: Group data not available", Toast.LENGTH_SHORT).show();
@@ -878,37 +867,39 @@ public class PartyMainActivity extends AppCompatActivity {
     processingDialog.show();
 
     // Simulate payment processing
-    new android.os.Handler().postDelayed(() -> {
-      processingDialog.dismiss();
+    new android.os.Handler()
+        .postDelayed(
+            () -> {
+              processingDialog.dismiss();
 
-      // Simulate successful payment (in a real app, this would be an actual payment gateway)
-      boolean paymentSuccessful = true;
+              // Simulate successful payment (in a real app, this would be an actual payment
+              // gateway)
+              boolean paymentSuccessful = true;
 
-      if (paymentSuccessful) {
-        // Update payment status in database
-        updatePaymentInDatabase();
+              if (paymentSuccessful) {
+                // Update payment status in database
+                updatePaymentInDatabase();
 
-        // Show success message
-        Toast.makeText(this, R.string.payment_success, Toast.LENGTH_LONG).show();
+                // Show success message
+                Toast.makeText(this, R.string.payment_success, Toast.LENGTH_LONG).show();
 
-        // Update UI
-        hasUserPaid = true;
-        TextView tvPayNow = findViewById(R.id.tvPayNow);
-        if (tvPayNow != null) {
-          tvPayNow.setText(R.string.payment_success);
-          tvPayNow.setEnabled(false);
-          tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
-        }
-      } else {
-        // Show failure message
-        Toast.makeText(this, R.string.payment_failed, Toast.LENGTH_LONG).show();
-      }
-    }, 2000); // Simulate 2 second processing time
+                // Update UI
+                hasUserPaid = true;
+                TextView tvPayNow = findViewById(R.id.tvPayNow);
+                if (tvPayNow != null) {
+                  tvPayNow.setText(R.string.payment_success);
+                  tvPayNow.setEnabled(false);
+                  tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                }
+              } else {
+                // Show failure message
+                Toast.makeText(this, R.string.payment_failed, Toast.LENGTH_LONG).show();
+              }
+            },
+            2000); // Simulate 2 second processing time
   }
 
-  /**
-   * Updates the payment status in the database
-   */
+  /** Updates the payment status in the database */
   private void updatePaymentInDatabase() {
     if (currentGroup == null || UserKey == null) {
       return;
@@ -924,33 +915,38 @@ public class PartyMainActivity extends AppCompatActivity {
     paymentData.put(UserKey, true);
 
     // Update the database
-    serverClient.updateData(paymentPath, paymentData, new FirebaseServerClient.OperationCallback() {
-      @Override
-      public void onSuccess() {
-        Log.d(TAG, "Payment recorded successfully");
-        hasUserPaid = true;
-      }
+    serverClient.updateData(
+        paymentPath,
+        paymentData,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "Payment recorded successfully");
+            hasUserPaid = true;
+          }
 
-      @Override
-      public void onError(String errorMessage) {
-        Log.e(TAG, "Error recording payment: " + errorMessage);
-        Toast.makeText(PartyMainActivity.this,
-                "Payment recorded but failed to update database. Please contact support.",
-                Toast.LENGTH_LONG).show();
-      }
-    });
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error recording payment: " + errorMessage);
+            Toast.makeText(
+                    PartyMainActivity.this,
+                    "Payment recorded but failed to update database. Please contact support.",
+                    Toast.LENGTH_LONG)
+                .show();
+          }
+        });
   }
 
   private void updateCard5UI() {
     // Log the admin status for debugging
     Log.d(
-            TAG,
-            "updateCard5UI - isUserAdmin: "
-                    + isUserAdmin
-                    + ", UserKey: "
-                    + UserKey
-                    + ", Admin key: "
-                    + (currentGroup != null ? currentGroup.getAdminKey() : "null"));
+        TAG,
+        "updateCard5UI - isUserAdmin: "
+            + isUserAdmin
+            + ", UserKey: "
+            + UserKey
+            + ", Admin key: "
+            + (currentGroup != null ? currentGroup.getAdminKey() : "null"));
 
     // Double check admin status to ensure it's correct
     if (currentGroup != null && currentGroup.getAdminKey() != null) {
@@ -1035,36 +1031,39 @@ public class PartyMainActivity extends AppCompatActivity {
     updates.put("ComingKeys", updatedComingKeys);
 
     serverClient.updateGroup(
-            GroupKey,
-            updates,
-            new FirebaseServerClient.OperationCallback() {
-              @Override
-              public void onSuccess() {
-                Log.d(TAG, "Coming status updated successfully to: " + isUserComing);
+        GroupKey,
+        updates,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "Coming status updated successfully to: " + isUserComing);
 
-                // Update UI to reflect the change
-                updateCard5UI();
+            // Update UI to reflect the change
+            updateCard5UI();
 
-                // Update payment button visibility
-                if (currentGroup.getGroupPrice() != null) {
-                  updatePaymentButtonVisibility(currentGroup.getGroupPrice());
-                }
+            // Update payment button visibility
+            if (currentGroup.getGroupPrice() != null) {
+              updatePaymentButtonVisibility(currentGroup.getGroupPrice());
+            }
 
-                // Show toast message
-                String message = isUserComing ? "You are now coming to this party!" : "You are not coming to this party.";
-                Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_SHORT).show();
-              }
+            // Show toast message
+            String message =
+                isUserComing
+                    ? "You are now coming to this party!"
+                    : "You are not coming to this party.";
+            Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_SHORT).show();
+          }
 
-              @Override
-              public void onError(String errorMessage) {
-                Log.e(TAG, "Failed to update coming status on server: " + errorMessage);
-                // Revert the UI change on error
-                isUserComing = !isUserComing;
-                updateCard5UI();
-                Toast.makeText(PartyMainActivity.this, "שגיאה בעדכון הסטטוס", Toast.LENGTH_SHORT)
-                        .show();
-              }
-            });
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Failed to update coming status on server: " + errorMessage);
+            // Revert the UI change on error
+            isUserComing = !isUserComing;
+            updateCard5UI();
+            Toast.makeText(PartyMainActivity.this, "שגיאה בעדכון הסטטוס", Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 
   private void navigateToChatActivity() {
@@ -1088,21 +1087,21 @@ public class PartyMainActivity extends AppCompatActivity {
       intent.putExtra("GroupKey", GroupKey);
       intent.putExtra("UserKey", UserKey);
       Log.d(
-              TAG,
-              "Adding extras to ChatActivity intent: GroupKey=" + GroupKey + ", UserKey=" + UserKey);
+          TAG,
+          "Adding extras to ChatActivity intent: GroupKey=" + GroupKey + ", UserKey=" + UserKey);
 
       // Add additional debug info
       if (currentGroup != null) {
         Log.d(
-                TAG,
-                "Current group info: name="
-                        + currentGroup.getGroupName()
-                        + ", adminKey="
-                        + currentGroup.getAdminKey()
-                        + ", messageKeys size="
-                        + (currentGroup.getMessageKeys() != null
-                        ? currentGroup.getMessageKeys().size()
-                        : "null"));
+            TAG,
+            "Current group info: name="
+                + currentGroup.getGroupName()
+                + ", adminKey="
+                + currentGroup.getAdminKey()
+                + ", messageKeys size="
+                + (currentGroup.getMessageKeys() != null
+                    ? currentGroup.getMessageKeys().size()
+                    : "null"));
       } else {
         Log.w(TAG, "Current group is null when navigating to ChatActivity");
       }
@@ -1142,22 +1141,22 @@ public class PartyMainActivity extends AppCompatActivity {
       // Create ExtrasMetadata with current group data
       if (currentGroup != null) {
         ExtrasMetadata extras =
-                new ExtrasMetadata(
-                        currentGroup.getGroupName(),
-                        GroupKey,
-                        currentGroup.getGroupDays(),
-                        currentGroup.getGroupMonths(),
-                        currentGroup.getGroupYears(),
-                        currentGroup.getGroupHours(),
-                        currentGroup.getGroupLocation(),
-                        currentGroup.getAdminKey(),
-                        currentGroup.getCreatedAt(),
-                        currentGroup.getGroupPrice(),
-                        currentGroup.getGroupType(),
-                        true, // CanAdd
-                        (HashMap<String, Object>) currentGroup.getFriendKeys(),
-                        (HashMap<String, Object>) currentGroup.getComingKeys(),
-                        (HashMap<String, Object>) currentGroup.getMessageKeys());
+            new ExtrasMetadata(
+                currentGroup.getGroupName(),
+                GroupKey,
+                currentGroup.getGroupDays(),
+                currentGroup.getGroupMonths(),
+                currentGroup.getGroupYears(),
+                currentGroup.getGroupHours(),
+                currentGroup.getGroupLocation(),
+                currentGroup.getAdminKey(),
+                currentGroup.getCreatedAt(),
+                currentGroup.getGroupPrice(),
+                currentGroup.getGroupType(),
+                true, // CanAdd
+                (HashMap<String, Object>) currentGroup.getFriendKeys(),
+                (HashMap<String, Object>) currentGroup.getComingKeys(),
+                (HashMap<String, Object>) currentGroup.getMessageKeys());
         Common.addExtrasToIntent(intent, extras);
         startActivity(intent);
       } else {
@@ -1176,42 +1175,42 @@ public class PartyMainActivity extends AppCompatActivity {
       // Create ExtrasMetadata with current group data
       if (currentGroup != null) {
         Log.d(
-                TAG, "Navigating to MembersInvitedActivity with group: " + currentGroup.getGroupName());
+            TAG, "Navigating to MembersInvitedActivity with group: " + currentGroup.getGroupName());
         Log.d(
-                TAG,
-                "FriendKeys size: "
-                        + (currentGroup.getFriendKeys() != null
-                        ? currentGroup.getFriendKeys().size()
-                        : "null"));
+            TAG,
+            "FriendKeys size: "
+                + (currentGroup.getFriendKeys() != null
+                    ? currentGroup.getFriendKeys().size()
+                    : "null"));
         Log.d(
-                TAG,
-                "ComingKeys size: "
-                        + (currentGroup.getComingKeys() != null
-                        ? currentGroup.getComingKeys().size()
-                        : "null"));
+            TAG,
+            "ComingKeys size: "
+                + (currentGroup.getComingKeys() != null
+                    ? currentGroup.getComingKeys().size()
+                    : "null"));
         Log.d(TAG, "AdminKey: " + currentGroup.getAdminKey());
 
         ExtrasMetadata extras =
-                new ExtrasMetadata(
-                        currentGroup.getGroupName(),
-                        GroupKey,
-                        currentGroup.getGroupDays(),
-                        currentGroup.getGroupMonths(),
-                        currentGroup.getGroupYears(),
-                        currentGroup.getGroupHours(),
-                        currentGroup.getGroupLocation(),
-                        currentGroup.getAdminKey(),
-                        currentGroup.getCreatedAt(),
-                        currentGroup.getGroupPrice(),
-                        currentGroup.getGroupType(),
-                        currentGroup.isCanAdd(),
-                        currentGroup.getFriendKeys() != null
-                                ? new HashMap<>(currentGroup.getFriendKeys())
-                                : new HashMap<>(),
-                        currentGroup.getComingKeys() != null
-                                ? new HashMap<>(currentGroup.getComingKeys())
-                                : new HashMap<>(),
-                        new HashMap<>(MessageKeys));
+            new ExtrasMetadata(
+                currentGroup.getGroupName(),
+                GroupKey,
+                currentGroup.getGroupDays(),
+                currentGroup.getGroupMonths(),
+                currentGroup.getGroupYears(),
+                currentGroup.getGroupHours(),
+                currentGroup.getGroupLocation(),
+                currentGroup.getAdminKey(),
+                currentGroup.getCreatedAt(),
+                currentGroup.getGroupPrice(),
+                currentGroup.getGroupType(),
+                currentGroup.isCanAdd(),
+                currentGroup.getFriendKeys() != null
+                    ? new HashMap<>(currentGroup.getFriendKeys())
+                    : new HashMap<>(),
+                currentGroup.getComingKeys() != null
+                    ? new HashMap<>(currentGroup.getComingKeys())
+                    : new HashMap<>(),
+                new HashMap<>(MessageKeys));
 
         Common.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
@@ -1233,19 +1232,19 @@ public class PartyMainActivity extends AppCompatActivity {
       // Create ExtrasMetadata with current group data
       if (currentGroup != null) {
         Log.d(
-                TAG, "Navigating to MembersComingActivity with group: " + currentGroup.getGroupName());
+            TAG, "Navigating to MembersComingActivity with group: " + currentGroup.getGroupName());
         Log.d(
-                TAG,
-                "FriendKeys size: "
-                        + (currentGroup.getFriendKeys() != null
-                        ? currentGroup.getFriendKeys().size()
-                        : "null"));
+            TAG,
+            "FriendKeys size: "
+                + (currentGroup.getFriendKeys() != null
+                    ? currentGroup.getFriendKeys().size()
+                    : "null"));
         Log.d(
-                TAG,
-                "ComingKeys size: "
-                        + (currentGroup.getComingKeys() != null
-                        ? currentGroup.getComingKeys().size()
-                        : "null"));
+            TAG,
+            "ComingKeys size: "
+                + (currentGroup.getComingKeys() != null
+                    ? currentGroup.getComingKeys().size()
+                    : "null"));
         Log.d(TAG, "AdminKey: " + currentGroup.getAdminKey());
 
         // Debug: Print detailed ComingKeys information
@@ -1259,30 +1258,30 @@ public class PartyMainActivity extends AppCompatActivity {
         }
 
         HashMap<String, Object> comingKeysToPass =
-                currentGroup.getComingKeys() != null
-                        ? new HashMap<>(currentGroup.getComingKeys())
-                        : new HashMap<>();
+            currentGroup.getComingKeys() != null
+                ? new HashMap<>(currentGroup.getComingKeys())
+                : new HashMap<>();
         Log.d(TAG, "ComingKeys to pass size: " + comingKeysToPass.size());
 
         ExtrasMetadata extras =
-                new ExtrasMetadata(
-                        currentGroup.getGroupName(),
-                        GroupKey,
-                        currentGroup.getGroupDays(),
-                        currentGroup.getGroupMonths(),
-                        currentGroup.getGroupYears(),
-                        currentGroup.getGroupHours(),
-                        currentGroup.getGroupLocation(),
-                        currentGroup.getAdminKey(),
-                        currentGroup.getCreatedAt(),
-                        currentGroup.getGroupPrice(),
-                        currentGroup.getGroupType(),
-                        currentGroup.isCanAdd(),
-                        currentGroup.getFriendKeys() != null
-                                ? new HashMap<>(currentGroup.getFriendKeys())
-                                : new HashMap<>(),
-                        comingKeysToPass,
-                        new HashMap<>(MessageKeys));
+            new ExtrasMetadata(
+                currentGroup.getGroupName(),
+                GroupKey,
+                currentGroup.getGroupDays(),
+                currentGroup.getGroupMonths(),
+                currentGroup.getGroupYears(),
+                currentGroup.getGroupHours(),
+                currentGroup.getGroupLocation(),
+                currentGroup.getAdminKey(),
+                currentGroup.getCreatedAt(),
+                currentGroup.getGroupPrice(),
+                currentGroup.getGroupType(),
+                currentGroup.isCanAdd(),
+                currentGroup.getFriendKeys() != null
+                    ? new HashMap<>(currentGroup.getFriendKeys())
+                    : new HashMap<>(),
+                comingKeysToPass,
+                new HashMap<>(MessageKeys));
 
         Common.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
@@ -1320,43 +1319,43 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Update friend keys
     serverClient.updateGroup(
-            GroupKey,
-            "FriendKeys",
-            updatedFriendKeys,
-            new FirebaseServerClient.DataCallback<Void>() {
-              @Override
-              public void onSuccess(Void result) {
-                // Update coming keys
-                serverClient.updateGroup(
-                        GroupKey,
-                        "ComingKeys",
-                        updatedComingKeys,
-                        new FirebaseServerClient.DataCallback<Void>() {
-                          @Override
-                          public void onSuccess(Void result) {
-                            Toast.makeText(
-                                            PartyMainActivity.this, "Left group successfully", Toast.LENGTH_SHORT)
-                                    .show();
-                            finish(); // Close this activity
-                          }
-
-                          @Override
-                          public void onError(String errorMessage) {
-                            Log.e(TAG, "Failed to update coming keys: " + errorMessage);
-                            Toast.makeText(
-                                            PartyMainActivity.this, "Failed to leave group", Toast.LENGTH_SHORT)
-                                    .show();
-                          }
-                        });
-              }
-
-              @Override
-              public void onError(String errorMessage) {
-                Log.e(TAG, "Failed to update friend keys: " + errorMessage);
-                Toast.makeText(PartyMainActivity.this, "Failed to leave group", Toast.LENGTH_SHORT)
+        GroupKey,
+        "FriendKeys",
+        updatedFriendKeys,
+        new FirebaseServerClient.DataCallback<Void>() {
+          @Override
+          public void onSuccess(Void result) {
+            // Update coming keys
+            serverClient.updateGroup(
+                GroupKey,
+                "ComingKeys",
+                updatedComingKeys,
+                new FirebaseServerClient.DataCallback<Void>() {
+                  @Override
+                  public void onSuccess(Void result) {
+                    Toast.makeText(
+                            PartyMainActivity.this, "Left group successfully", Toast.LENGTH_SHORT)
                         .show();
-              }
-            });
+                    finish(); // Close this activity
+                  }
+
+                  @Override
+                  public void onError(String errorMessage) {
+                    Log.e(TAG, "Failed to update coming keys: " + errorMessage);
+                    Toast.makeText(
+                            PartyMainActivity.this, "Failed to leave group", Toast.LENGTH_SHORT)
+                        .show();
+                  }
+                });
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Failed to update friend keys: " + errorMessage);
+            Toast.makeText(PartyMainActivity.this, "Failed to leave group", Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 
   private void showMapDialog(String locationStr) {
@@ -1375,7 +1374,7 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Create a dialog to show the map
       Dialog dialog =
-              new Dialog(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+          new Dialog(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
       dialog.setContentView(R.layout.dialog_map_view);
 
@@ -1386,58 +1385,58 @@ public class PartyMainActivity extends AppCompatActivity {
       // Set up the open in Google Maps button
       Button btnOpenGoogleMaps = dialog.findViewById(R.id.btnOpenGoogleMaps);
       btnOpenGoogleMaps.setOnClickListener(
-              v -> {
-                try {
-                  // Create a URI for Google Maps with the coordinates
-                  Uri gmmIntentUri =
-                          Uri.parse(
-                                  "geo:"
-                                          + latitude
-                                          + ","
-                                          + longitude
-                                          + "?q="
-                                          + latitude
-                                          + ","
-                                          + longitude
-                                          + "("
-                                          + Uri.encode(locationName)
-                                          + ")&z=16");
-                  Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                  mapIntent.setPackage("com.google.android.apps.maps");
+          v -> {
+            try {
+              // Create a URI for Google Maps with the coordinates
+              Uri gmmIntentUri =
+                  Uri.parse(
+                      "geo:"
+                          + latitude
+                          + ","
+                          + longitude
+                          + "?q="
+                          + latitude
+                          + ","
+                          + longitude
+                          + "("
+                          + Uri.encode(locationName)
+                          + ")&z=16");
+              Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+              mapIntent.setPackage("com.google.android.apps.maps");
 
-                  // Check if Google Maps is installed
-                  if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(mapIntent);
-                    Log.d(
-                            TAG,
-                            "Successfully opened Google Maps with coordinates: "
-                                    + latitude
-                                    + ","
-                                    + longitude);
-                  } else {
-                    // If Google Maps is not installed, open in browser
-                    Uri browserUri =
-                            Uri.parse(
-                                    "https://www.google.com/maps/search/?api=1&query="
-                                            + latitude
-                                            + ","
-                                            + longitude);
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserUri);
-                    startActivity(browserIntent);
-                    Log.d(TAG, "Opened maps in browser");
-                  }
+              // Check if Google Maps is installed
+              if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(mapIntent);
+                Log.d(
+                    TAG,
+                    "Successfully opened Google Maps with coordinates: "
+                        + latitude
+                        + ","
+                        + longitude);
+              } else {
+                // If Google Maps is not installed, open in browser
+                Uri browserUri =
+                    Uri.parse(
+                        "https://www.google.com/maps/search/?api=1&query="
+                            + latitude
+                            + ","
+                            + longitude);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserUri);
+                startActivity(browserIntent);
+                Log.d(TAG, "Opened maps in browser");
+              }
 
-                  // Close the dialog
-                  dialog.dismiss();
-                } catch (Exception e) {
-                  Log.e(TAG, "Error opening Google Maps", e);
-                  Toast.makeText(
-                                  PartyMainActivity.this,
-                                  "Could not open Google Maps: " + e.getMessage(),
-                                  Toast.LENGTH_SHORT)
-                          .show();
-                }
-              });
+              // Close the dialog
+              dialog.dismiss();
+            } catch (Exception e) {
+              Log.e(TAG, "Error opening Google Maps", e);
+              Toast.makeText(
+                      PartyMainActivity.this,
+                      "Could not open Google Maps: " + e.getMessage(),
+                      Toast.LENGTH_SHORT)
+                  .show();
+            }
+          });
 
       // Show the dialog
       dialog.show();
@@ -1501,32 +1500,32 @@ public class PartyMainActivity extends AppCompatActivity {
     }
 
     final String[] options = {
-            "Share via Text", "Share to WhatsApp", "Share to Facebook", "Share via SMS", "Share via Email"
+      "Share via Text", "Share to WhatsApp", "Share to Facebook", "Share via SMS", "Share via Email"
     };
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle("Share Party");
     builder.setItems(
-            options,
-            (dialog, which) -> {
-              switch (which) {
-                case 0: // Share via Text
-                  ShareHelper.sharePartyText(PartyMainActivity.this, currentGroup);
-                  break;
-                case 1: // Share to WhatsApp
-                  ShareHelper.shareToWhatsApp(PartyMainActivity.this, currentGroup);
-                  break;
-                case 2: // Share to Facebook
-                  ShareHelper.shareToFacebook(PartyMainActivity.this, currentGroup);
-                  break;
-                case 3: // Share via SMS
-                  ShareHelper.shareViaSMS(PartyMainActivity.this, currentGroup);
-                  break;
-                case 4: // Share via Email
-                  ShareHelper.shareViaEmail(PartyMainActivity.this, currentGroup);
-                  break;
-              }
-            });
+        options,
+        (dialog, which) -> {
+          switch (which) {
+            case 0: // Share via Text
+              ShareHelper.sharePartyText(PartyMainActivity.this, currentGroup);
+              break;
+            case 1: // Share to WhatsApp
+              ShareHelper.shareToWhatsApp(PartyMainActivity.this, currentGroup);
+              break;
+            case 2: // Share to Facebook
+              ShareHelper.shareToFacebook(PartyMainActivity.this, currentGroup);
+              break;
+            case 3: // Share via SMS
+              ShareHelper.shareViaSMS(PartyMainActivity.this, currentGroup);
+              break;
+            case 4: // Share via Email
+              ShareHelper.shareViaEmail(PartyMainActivity.this, currentGroup);
+              break;
+          }
+        });
 
     builder.show();
 
@@ -1540,7 +1539,7 @@ public class PartyMainActivity extends AppCompatActivity {
     super.onBackPressed();
     Log.d(TAG, "Back button pressed, navigating to MainActivity");
     Intent intent =
-            new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
+        new Intent(PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
     startActivity(intent);
     finish();
   }

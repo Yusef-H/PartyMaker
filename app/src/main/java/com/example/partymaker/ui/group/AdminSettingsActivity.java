@@ -105,17 +105,19 @@ public class AdminSettingsActivity extends AppCompatActivity {
         .child("UsersImageProfile/Groups/" + GroupKey)
         .getDownloadUrl()
         .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgEditGroup))
-        .addOnFailureListener(exception -> {
-            // If image not found in new path, try the old path
-            DBRef.refStorage
-                .child("Groups/" + GroupKey)
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgEditGroup))
-                .addOnFailureListener(e -> {
-                    // Set default image if both paths fail
-                    imgEditGroup.setImageResource(R.drawable.default_group_image);
-                });
-        });
+        .addOnFailureListener(
+            exception -> {
+              // If image not found in new path, try the old path
+              DBRef.refStorage
+                  .child("Groups/" + GroupKey)
+                  .getDownloadUrl()
+                  .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgEditGroup))
+                  .addOnFailureListener(
+                      e -> {
+                        // Set default image if both paths fail
+                        imgEditGroup.setImageResource(R.drawable.default_group_image);
+                      });
+            });
 
     // set Group Name
     tvNameGroup.setText(GroupName);

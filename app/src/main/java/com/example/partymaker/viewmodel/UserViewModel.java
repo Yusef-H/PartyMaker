@@ -266,64 +266,66 @@ public class UserViewModel extends ViewModel {
         isLoading.setValue(false);
         return;
       }
-      
+
       String userKey = userEmail.replace('.', ' ');
-      
+
       com.example.partymaker.data.firebase.DBRef.refUsers
           .child(userKey)
           .get()
-          .addOnSuccessListener(dataSnapshot -> {
-            if (dataSnapshot.exists()) {
-              // Use Map instead of User.class to avoid Firebase serialization issues
-              Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
-              if (userData != null) {
-                // Create a User object manually from the Map
-                User user = new User();
-                
-                // Set the userKey
-                user.setUserKey(userKey);
-                
-                // Set email
-                if (userData.containsKey("email")) {
-                  user.setEmail((String) userData.get("email"));
+          .addOnSuccessListener(
+              dataSnapshot -> {
+                if (dataSnapshot.exists()) {
+                  // Use Map instead of User.class to avoid Firebase serialization issues
+                  Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
+                  if (userData != null) {
+                    // Create a User object manually from the Map
+                    User user = new User();
+
+                    // Set the userKey
+                    user.setUserKey(userKey);
+
+                    // Set email
+                    if (userData.containsKey("email")) {
+                      user.setEmail((String) userData.get("email"));
+                    } else {
+                      user.setEmail(userEmail); // Use the email we already have
+                    }
+
+                    // Set username - check both possible field names
+                    if (userData.containsKey("username")) {
+                      user.setUsername((String) userData.get("username"));
+                    } else if (userData.containsKey("userName")) {
+                      user.setUsername((String) userData.get("userName"));
+                    }
+
+                    // Set profile image URL
+                    if (userData.containsKey("profileImageUrl")) {
+                      user.setProfileImageUrl((String) userData.get("profileImageUrl"));
+                    }
+
+                    // Update the LiveData
+                    currentUser.setValue(user);
+                  }
                 } else {
-                  user.setEmail(userEmail); // Use the email we already have
+                  Log.w(TAG, "No user data found for key: " + userKey);
+                  errorMessage.setValue("User data not found");
                 }
-                
-                // Set username - check both possible field names
-                if (userData.containsKey("username")) {
-                  user.setUsername((String) userData.get("username"));
-                } else if (userData.containsKey("userName")) {
-                  user.setUsername((String) userData.get("userName"));
+                isLoading.setValue(false);
+              })
+          .addOnFailureListener(
+              e -> {
+                Log.e(TAG, "Error loading user data", e);
+                errorMessage.setValue("Failed to load user data: " + e.getMessage());
+                isLoading.setValue(false);
+
+                // Determine error type and handle it
+                NetworkUtils.ErrorType type = determineErrorType(e.getMessage());
+                networkErrorType.setValue(type);
+
+                if (appContext != null) {
+                  AppNetworkError.handleNetworkError(appContext, e.getMessage(), type, false);
                 }
-                
-                // Set profile image URL
-                if (userData.containsKey("profileImageUrl")) {
-                  user.setProfileImageUrl((String) userData.get("profileImageUrl"));
-                }
-                
-                // Update the LiveData
-                currentUser.setValue(user);
-              }
-            } else {
-              Log.w(TAG, "No user data found for key: " + userKey);
-              errorMessage.setValue("User data not found");
-            }
-            isLoading.setValue(false);
-          })
-          .addOnFailureListener(e -> {
-            Log.e(TAG, "Error loading user data", e);
-            errorMessage.setValue("Failed to load user data: " + e.getMessage());
-            isLoading.setValue(false);
-            
-            // Determine error type and handle it
-            NetworkUtils.ErrorType type = determineErrorType(e.getMessage());
-            networkErrorType.setValue(type);
-            
-            if (appContext != null) {
-              AppNetworkError.handleNetworkError(appContext, e.getMessage(), type, false);
-            }
-          });
+              });
     } catch (Exception e) {
       Log.e(TAG, "Error in loadCurrentUser", e);
       errorMessage.setValue("Error: " + e.getMessage());
@@ -560,4 +562,4 @@ public class UserViewModel extends ViewModel {
     super.onCleared();
     // Clean up resources if needed
   }
-} 
+}
