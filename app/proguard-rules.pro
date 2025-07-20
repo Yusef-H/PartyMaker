@@ -1,130 +1,91 @@
-# PartyMaker - ProGuard Rules
+# Add project specific ProGuard rules here.
+# You can control the set of applied configuration files using the
+# proguardFiles setting in build.gradle.
+#
+# For more details, see
+# http://developer.android.com/guide/developing/tools/proguard.html
 
-# =================================
-# BASIC ANDROID RULES
-# =================================
--keepattributes *Annotation*
--keepattributes Signature
--keepattributes EnclosingMethod
--keepattributes InnerClasses
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
 
-# Keep Activities, Services, Receivers
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends androidx.fragment.app.Fragment
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+#-keepattributes SourceFile,LineNumberTable
 
-# Keep Google Play Services Location classes
--keep class com.google.android.gms.** { *; }
--dontwarn com.google.android.gms.**
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+#-renamesourcefileattribute SourceFile
 
-# Keep SLF4J classes
--keep class org.slf4j.** { *; }
--dontwarn org.slf4j.**
+# Optimization level
+-optimizationpasses 5
 
-# Keep companion objects
--keepclassmembers class * {
-    ** Companion;
-}
+# Keep the application class and its methods
+-keep public class com.example.partymaker.PartyApplication { *; }
 
-# Keep all companion object methods
--keepclassmembers class * {
-    public static final ** Companion;
-}
+# Keep model classes
+-keep class com.example.partymaker.data.model.** { *; }
 
-# =================================
-# JETPACK COMPOSE
-# =================================
--keep class androidx.compose.** { *; }
--keep class androidx.compose.runtime.** { *; }
--keep class androidx.compose.ui.** { *; }
--dontwarn androidx.compose.**
-
-# =================================
-# FIREBASE
-# =================================
+# Keep Firebase related classes
 -keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.** { *; }
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
-# Firebase Firestore specific
--keep class com.google.firebase.firestore.** { *; }
--keepnames class com.google.firebase.firestore.** { *; }
+# Keep Room Database classes
+-keep class androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
+-dontwarn androidx.room.**
 
-# Firebase Auth
--keep class com.google.firebase.auth.** { *; }
--keep class com.google.android.gms.auth.** { *; }
-
-# =================================
-# YOUR APP MODELS & DATA
-# =================================
-# Keep all your data classes (very important!)
--keep class com.example.partymaker.models.** { *; }
--keep class com.example.partymaker.data.** { *; }
--keep class com.example.partymaker.entities.** { *; }
-
-# Keep classes with @Serializable annotation (if using)
--keep @kotlinx.serialization.Serializable class **
-
-# =================================
-# GOOGLE MAPS & LOCATION
-# =================================
--keep class com.google.android.gms.maps.** { *; }
--keep class com.google.android.gms.location.** { *; }
--keep class com.google.android.libraries.places.** { *; }
--dontwarn com.google.android.gms.**
-
-# =================================
-# OPENAI & HTTP CLIENTS
-# =================================
--keep class com.aallam.openai.** { *; }
--dontwarn com.aallam.openai.**
-
-# OkHttp
--keep class okhttp3.** { *; }
--keep class okio.** { *; }
--dontwarn okhttp3.**
--dontwarn okio.**
-
-# Ktor
--keep class io.ktor.** { *; }
--dontwarn io.ktor.**
-
-# JSON handling
--keep class org.json.** { *; }
-
-# =================================
-# PICASSO & IMAGE LOADING
-# =================================
--keep class com.squareup.picasso.** { *; }
--dontwarn com.squareup.picasso.**
-
-# CircleImageView
--keep class de.hdodenhof.circleimageview.** { *; }
-
-# =================================
-# KOTLIN SPECIFIC
-# =================================
--keep class kotlin.** { *; }
--keep class kotlin.Metadata { *; }
--dontwarn kotlin.**
--keepclassmembers class **$WhenMappings {
-    <fields>;
+# Keep Glide related classes
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
 }
+-dontwarn com.bumptech.glide.**
 
-# Kotlin Coroutines
--keep class kotlinx.coroutines.** { *; }
--dontwarn kotlinx.coroutines.**
+# Keep Gson related classes
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+-dontwarn com.google.gson.**
 
-# =================================
-# ENUMS & SERIALIZATION
-# =================================
+# Keep AndroidX classes
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
+-dontwarn androidx.**
+
+# Keep Material Design classes
+-keep class com.google.android.material.** { *; }
+-dontwarn com.google.android.material.**
+
+# Keep enum classes
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
 
+# Keep native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Keep Parcelable classes
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator CREATOR;
+}
+
+# Keep Serializable classes
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
@@ -134,27 +95,49 @@
     java.lang.Object readResolve();
 }
 
-# =================================
-# REFLECTION SUPPORT
-# =================================
--keepattributes RuntimeVisibleAnnotations
--keepattributes RuntimeInvisibleAnnotations
--keepattributes RuntimeVisibleParameterAnnotations
--keepattributes RuntimeInvisibleParameterAnnotations
-
-# =================================
-# REMOVE LOGS IN RELEASE
-# =================================
--assumenosideeffects class android.util.Log {
-    public static boolean isLoggable(java.lang.String, int);
-    public static int d(...);
-    public static int w(...);
-    public static int v(...);
-    public static int i(...);
+# Keep R classes
+-keepclassmembers class **.R$* {
+    public static <fields>;
 }
 
-# =================================
-# CRASHLYTICS (if we add it later)
-# =================================
-# -keep class com.google.firebase.crashlytics.** { *; }
-# -dontwarn com.google.firebase.crashlytics.**
+# Remove logging in release builds
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+}
+
+# Keep custom views
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
+    *** get*();
+}
+
+# Keep ViewHolder classes
+-keepclassmembers class * extends androidx.recyclerview.widget.RecyclerView$ViewHolder {
+   public <init>(android.view.View);
+}
+
+# Keep ViewModel classes
+-keep class * extends androidx.lifecycle.ViewModel {
+    <init>();
+}
+-keep class * extends androidx.lifecycle.AndroidViewModel {
+    <init>(android.app.Application);
+}
+
+# Keep LiveData classes
+-keep class * extends androidx.lifecycle.LiveData {
+    <init>();
+}
+
+# Keep annotation classes
+-keep class * extends java.lang.annotation.Annotation { *; }
+-keep interface * extends java.lang.annotation.Annotation { *; }
+
+# Keep lambda expressions
+-dontwarn java.lang.invoke.**
+-dontwarn **$$Lambda$*
