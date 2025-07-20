@@ -222,16 +222,21 @@ public class EditProfileActivity extends AppCompatActivity {
     // If offline, don't show error messages
     if (isOffline) {
       // Try to load from local cache
-      String userKey = AuthHelper.getCurrentUserKey(this);
-      if (userKey != null && !userKey.isEmpty()) {
-        // Load profile image from cache if available
-        loadProfileImageFromStorage(userKey);
-        
-        // Try to get cached user data
-        User cachedUser = userViewModel.getCurrentUser().getValue();
-        if (cachedUser != null) {
-          updateUI(cachedUser);
+      try {
+        String userKey = AuthHelper.getCurrentUserKey(this);
+        if (userKey != null && !userKey.isEmpty()) {
+          // Load profile image from cache if available
+          loadProfileImageFromStorage(userKey);
+          
+          // Try to get cached user data
+          User cachedUser = userViewModel.getCurrentUser().getValue();
+          if (cachedUser != null) {
+            updateUI(cachedUser);
+          }
         }
+      } catch (AuthHelper.AuthException e) {
+        Log.e(TAG, "Authentication error in offline mode", e);
+        // Don't show error in offline mode
       }
       progressBar.setVisibility(View.GONE);
       return;
@@ -265,9 +270,13 @@ public class EditProfileActivity extends AppCompatActivity {
                   Log.e(TAG, "Error loading user data directly", e);
                 });
       }
+    } catch (AuthHelper.AuthException e) {
+      Log.e(TAG, "Authentication error", e);
+      showError("Authentication error: " + e.getMessage());
+      progressBar.setVisibility(View.GONE);
     } catch (Exception e) {
       Log.e(TAG, "Error getting current user key", e);
-      showError("Authentication error: " + e.getMessage());
+      showError("Error: " + e.getMessage());
       progressBar.setVisibility(View.GONE);
     }
   }
