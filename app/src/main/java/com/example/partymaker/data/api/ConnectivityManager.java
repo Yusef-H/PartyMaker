@@ -65,11 +65,54 @@ public class ConnectivityManager {
     // Check initial network state
     boolean hasNetwork = NetworkUtils.isNetworkAvailable(context);
     isNetworkAvailable.postValue(hasNetwork);
+    
+    // Log initial state
+    Log.d(TAG, "Initial network availability: " + hasNetwork);
 
     // Register network callback
     registerNetworkCallback();
 
     Log.d(TAG, "ConnectivityManager initialized, initial network state: " + hasNetwork);
+    
+    // Perform an active network check to ensure we have the correct state
+    performActiveNetworkCheck(context);
+  }
+  
+  /**
+   * Performs an active check of the network connectivity
+   * 
+   * @param context The application context
+   */
+  private void performActiveNetworkCheck(Context context) {
+    new Thread(() -> {
+      try {
+        // Try to connect to a known server
+        java.net.URL url = new java.net.URL("https://www.google.com");
+        java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+        connection.setConnectTimeout(3000);
+        connection.connect();
+        boolean isConnected = connection.getResponseCode() == 200;
+        connection.disconnect();
+        
+        Log.d(TAG, "Active network check result: " + isConnected);
+        
+        // Update the network availability on the main thread
+        new Handler(Looper.getMainLooper()).post(() -> {
+          isNetworkAvailable.setValue(isConnected);
+          if (!isConnected) {
+            lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
+          }
+        });
+      } catch (Exception e) {
+        Log.e(TAG, "Error performing active network check", e);
+        
+        // If we can't connect, assume no network
+        new Handler(Looper.getMainLooper()).post(() -> {
+          isNetworkAvailable.setValue(false);
+          lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
+        });
+      }
+    }).start();
   }
 
   /** Registers a callback for network changes */
