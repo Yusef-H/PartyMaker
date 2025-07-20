@@ -326,8 +326,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
         
         // Try to load from Firebase Storage
-        DBRef.storageRef
-            .child("profile_images")
+        DBRef.refStorage
             .child(userKey + ".jpg")
             .getDownloadUrl()
             .addOnSuccessListener(
