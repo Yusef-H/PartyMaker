@@ -22,7 +22,7 @@ public interface GroupDao {
    * @param groupKey The group key
    * @return The group
    */
-  @Query("SELECT * FROM `Group` WHERE groupKey = :groupKey")
+  @Query("SELECT * FROM `groups` WHERE groupKey = :groupKey")
   Group getGroupByKey(String groupKey);
 
   /**
@@ -31,7 +31,7 @@ public interface GroupDao {
    * @param groupKey The group key
    * @return LiveData containing the group
    */
-  @Query("SELECT * FROM `Group` WHERE groupKey = :groupKey")
+  @Query("SELECT * FROM `groups` WHERE groupKey = :groupKey")
   LiveData<Group> observeGroupByKey(String groupKey);
 
   /**
@@ -39,7 +39,7 @@ public interface GroupDao {
    *
    * @return List of all groups
    */
-  @Query("SELECT * FROM `Group`")
+  @Query("SELECT * FROM `groups`")
   List<Group> getAllGroups();
 
   /**
@@ -47,7 +47,7 @@ public interface GroupDao {
    *
    * @return LiveData containing list of all groups
    */
-  @Query("SELECT * FROM `Group`")
+  @Query("SELECT * FROM `groups`")
   LiveData<List<Group>> observeAllGroups();
 
   /**
@@ -56,7 +56,7 @@ public interface GroupDao {
    *
    * @return List of groups
    */
-  @Query("SELECT * FROM `Group`")
+  @Query("SELECT * FROM `groups`")
   List<Group> getGroupsForUser();
 
   /**
@@ -88,10 +88,10 @@ public interface GroupDao {
    *
    * @param groupKey The group key
    */
-  @Query("DELETE FROM `Group` WHERE groupKey = :groupKey")
+  @Query("DELETE FROM `groups` WHERE groupKey = :groupKey")
   void deleteGroupByKey(String groupKey);
 
   /** Deletes all groups */
-  @Query("DELETE FROM `Group`")
+  @Query("DELETE FROM `groups`")
   void deleteAllGroups();
 }
