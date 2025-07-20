@@ -53,7 +53,7 @@
 
             <!-- Edit Name Button -->
             <ImageButton
-                android:id="@+id/btnEditName"
+                android:id="@+id/imgEditGroupName"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_alignBottom="@+id/tvGroupName"
@@ -124,7 +124,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-                        
+
                     <!-- Compact payment button -->
                     <LinearLayout
                         android:id="@+id/paymentPullUpContainer"

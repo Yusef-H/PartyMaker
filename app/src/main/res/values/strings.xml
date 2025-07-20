@@ -281,4 +281,13 @@
     <string name="payment_processing">Processing payment…</string>
     <string name="payment_for_party">Payment for %1$s</string>
     <string name="pull_to_pay">Swipe down to pay</string>
+    <string name="back_button">Back</string>
+    <string name="menu">Menu</string>
+    <string name="price">Price</string>
+    <string name="description">Description</string>
+    <string name="attendees">Attendees</string>
+    <string name="no_attendees_yet">No attendees yet</string>
+    <string name="chat">Chat</string>
+    <string name="no_messages_yet">No messages yet</string>
+    <string name="loading">Loading…</string>
 </resources>

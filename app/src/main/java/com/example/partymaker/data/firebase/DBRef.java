@@ -44,9 +44,12 @@ public class DBRef {
 
       // Initialize Firebase Storage
       Storage = FirebaseStorage.getInstance();
-      refStorage = Storage.getReference("UsersImageProfile");
+
+      // Fix: Use the root reference instead of a specific path
+      refStorage = Storage.getReference();
 
       Log.d(TAG, "Firebase references initialized successfully");
+      Log.d(TAG, "Storage reference path: " + refStorage.getPath());
     } catch (Exception e) {
       Log.e(TAG, "Error initializing Firebase references", e);
       throw new RuntimeException("Failed to initialize Firebase references", e);

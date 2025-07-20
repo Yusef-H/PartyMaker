@@ -25,6 +25,14 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -145,6 +153,10 @@ dependencies {
     // --- Media & UI ---
     implementation(libs.picasso)
     implementation(libs.circleimageview)
+    
+    // Glide for efficient image loading
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
     // --- OpenAI & HTTP ---
     implementation(libs.openai.client)
@@ -159,6 +171,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
+    
+    // Room components
+    val roomVersion = "2.5.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    
+    // Concurrent programming
+    implementation("androidx.concurrent:concurrent-futures:1.1.0")
 }
 
 // Secrets plugin configuration

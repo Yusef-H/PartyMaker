@@ -25,6 +25,7 @@ public class ConnectivityManager {
   private android.net.ConnectivityManager connectivityManager;
   private android.net.ConnectivityManager.NetworkCallback networkCallback;
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  private Context appContext;
 
   /** Private constructor to enforce singleton pattern */
   private ConnectivityManager() {
@@ -54,6 +55,9 @@ public class ConnectivityManager {
       return;
     }
 
+    // Save application context for later use
+    this.appContext = context.getApplicationContext();
+
     connectivityManager =
         (android.net.ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -66,10 +70,92 @@ public class ConnectivityManager {
     boolean hasNetwork = NetworkUtils.isNetworkAvailable(context);
     isNetworkAvailable.postValue(hasNetwork);
 
+    // Log initial state
+    Log.d(TAG, "Initial network availability: " + hasNetwork);
+
     // Register network callback
     registerNetworkCallback();
 
     Log.d(TAG, "ConnectivityManager initialized, initial network state: " + hasNetwork);
+
+    // Perform an active network check to ensure we have the correct state
+    performActiveNetworkCheck(context);
+
+    // Schedule periodic network checks
+    schedulePeriodicNetworkChecks();
+  }
+
+  /** Schedules periodic network checks to ensure connectivity status is accurate */
+  private void schedulePeriodicNetworkChecks() {
+    // Run a check every 30 seconds
+    mainHandler.postDelayed(
+        new Runnable() {
+          @Override
+          public void run() {
+            if (appContext != null) {
+              performActiveNetworkCheck(appContext);
+            }
+            // Schedule the next check
+            mainHandler.postDelayed(this, 30000);
+          }
+        },
+        30000);
+  }
+
+  /** Forces a refresh of the network connectivity status */
+  public void refreshNetworkStatus() {
+    if (appContext != null) {
+      performActiveNetworkCheck(appContext);
+    } else {
+      Log.e(TAG, "Cannot refresh network status: appContext is null");
+    }
+  }
+
+  /**
+   * Performs an active check of the network connectivity
+   *
+   * @param context The application context
+   */
+  private void performActiveNetworkCheck(Context context) {
+    new Thread(
+            () -> {
+              try {
+                // Try to connect to a known server
+                java.net.URL url = new java.net.URL("https://www.google.com");
+                java.net.HttpURLConnection connection =
+                    (java.net.HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(3000);
+                connection.connect();
+                boolean isConnected = connection.getResponseCode() == 200;
+                connection.disconnect();
+
+                Log.d(TAG, "Active network check result: " + isConnected);
+
+                // Update the network availability on the main thread
+                new Handler(Looper.getMainLooper())
+                    .post(
+                        () -> {
+                          isNetworkAvailable.setValue(isConnected);
+                          if (!isConnected) {
+                            lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
+                          } else {
+                            // Clear error if we're now connected
+                            lastNetworkError.setValue(null);
+                          }
+                        });
+              } catch (Exception e) {
+                Log.e(TAG, "Error performing active network check", e);
+
+                // If we can't connect, assume no network
+                new Handler(Looper.getMainLooper())
+                    .post(
+                        () -> {
+                          isNetworkAvailable.setValue(false);
+                          lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
+                        });
+              }
+            })
+        .start();
   }
 
   /** Registers a callback for network changes */
@@ -89,7 +175,14 @@ public class ConnectivityManager {
           @Override
           public void onAvailable(@NonNull Network network) {
             Log.d(TAG, "Network available");
-            mainHandler.post(() -> isNetworkAvailable.setValue(true));
+            mainHandler.post(
+                () -> {
+                  isNetworkAvailable.setValue(true);
+                  // Verify with an active check
+                  if (appContext != null) {
+                    performActiveNetworkCheck(appContext);
+                  }
+                });
           }
 
           @Override

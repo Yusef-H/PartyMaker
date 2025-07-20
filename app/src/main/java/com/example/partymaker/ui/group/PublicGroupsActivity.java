@@ -173,9 +173,6 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   public void loadPublicGroups() {
-    // Show loading indicator
-    Toast.makeText(this, "Loading public parties...", Toast.LENGTH_SHORT).show();
-
     // Initialize groupsRef if not already done
     if (groupsRef == null) {
       FirebaseAccessManager accessManager = new FirebaseAccessManager(this);

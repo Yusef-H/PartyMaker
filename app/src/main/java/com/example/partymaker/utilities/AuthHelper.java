@@ -76,7 +76,10 @@ public class AuthHelper {
       throw new AuthException("User not authenticated");
     }
 
-    return email.replace('.', ' ');
+    // Make sure we replace dots with spaces correctly
+    String key = email.replace('.', ' ');
+    Log.d(TAG, "getCurrentUserKey: Email: " + email + " -> Key: " + key);
+    return key;
   }
 
   /**

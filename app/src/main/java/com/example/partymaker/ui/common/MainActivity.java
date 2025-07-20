@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
   private String UserKey;
   private GroupAdapter groupAdapter;
 
+  // Variable to track if we've shown the loading toast already
+  private boolean loadingToastShown = false;
+
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
       // Observe group data from ViewModel
       observeViewModel();
 
-      // Show loading indicator
-      showLoading(true);
+      // Show loading indicator without toast
+      showLoading(true, false);
 
       // Load groups for current user
       viewModel.loadUserGroups(UserKey, true);
@@ -93,21 +97,32 @@ public class MainActivity extends AppCompatActivity {
    * Shows or hides a loading indicator
    *
    * @param show True to show loading, false to hide
+   * @param showToast True to show a toast message, false to hide
    */
-  private void showLoading(boolean show) {
+  private void showLoading(boolean show, boolean showToast) {
     try {
       // Simple implementation without dedicated loading view
       if (lv1 != null) {
         lv1.setVisibility(show ? View.GONE : View.VISIBLE);
       }
 
-      // Show a toast if loading starts
-      if (show) {
+      // Show a toast only if requested and if we haven't shown it already
+      if (show && showToast && !loadingToastShown) {
         Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
+        loadingToastShown = true;
       }
     } catch (Exception e) {
       Log.e(TAG, "Error toggling loading state", e);
     }
+  }
+
+  /**
+   * Overloaded method for backward compatibility
+   *
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    showLoading(show, false);
   }
 
   /** Forces the server URL to be set to Render */
@@ -415,7 +430,25 @@ public class MainActivity extends AppCompatActivity {
       runOnUiThread(
           () -> {
             if (lv1 != null && groupList != null && groupList.isEmpty()) {
-              Toast.makeText(this, "No groups found", Toast.LENGTH_LONG).show();
+              // Check if we're still loading
+              if (viewModel.getIsLoading().getValue() != null
+                  && viewModel.getIsLoading().getValue()) {
+                // Don't show empty state while loading
+                return;
+              }
+
+              // Show a simple text view instead of a Snackbar
+              TextView emptyView = findViewById(R.id.emptyGroupsView);
+              if (emptyView != null) {
+                emptyView.setVisibility(View.VISIBLE);
+                emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+              }
+            } else {
+              // Hide empty view if we have groups
+              TextView emptyView = findViewById(R.id.emptyGroupsView);
+              if (emptyView != null) {
+                emptyView.setVisibility(View.GONE);
+              }
             }
           });
     } catch (Exception e) {
