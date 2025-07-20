@@ -216,6 +216,27 @@ public class EditProfileActivity extends AppCompatActivity {
     // Show loading indicator
     progressBar.setVisibility(View.VISIBLE);
 
+    // Check if we're offline
+    boolean isOffline = !ConnectivityManager.getInstance().getNetworkAvailability().getValue();
+    
+    // If offline, don't show error messages
+    if (isOffline) {
+      // Try to load from local cache
+      String userKey = AuthHelper.getCurrentUserKey(this);
+      if (userKey != null && !userKey.isEmpty()) {
+        // Load profile image from cache if available
+        loadProfileImageFromStorage(userKey);
+        
+        // Try to get cached user data
+        User cachedUser = userViewModel.getCurrentUser().getValue();
+        if (cachedUser != null) {
+          updateUI(cachedUser);
+        }
+      }
+      progressBar.setVisibility(View.GONE);
+      return;
+    }
+
     // Force refresh from server to ensure we have the latest data
     userViewModel.loadCurrentUser(this, true);
 
@@ -492,24 +513,19 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void handleNetworkError(NetworkUtils.ErrorType errorType) {
-    String message = NetworkUtils.getErrorMessage(errorType);
-
-    if (rootLayout != null) {
-      Snackbar snackbar = Snackbar.make(rootLayout, message, Snackbar.LENGTH_LONG);
-
-      // For server errors, add action to go to server settings
-      if (errorType == NetworkUtils.ErrorType.SERVER_ERROR) {
-        snackbar.setAction(
-            "Server Settings",
-            v -> {
-              Intent intent = new Intent(this, ServerSettingsActivity.class);
-              startActivity(intent);
-            });
-      }
-
+    if (errorType == NetworkUtils.ErrorType.NO_NETWORK) {
+      // Don't show error toast for no network, just show a small indicator
+      Snackbar snackbar = Snackbar.make(
+          rootLayout,
+          "Offline mode - limited functionality",
+          Snackbar.LENGTH_SHORT);
       snackbar.show();
+      
+      // Disable save button in offline mode
+      btnSaveProfile.setEnabled(false);
     } else {
-      Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+      // For other errors, use the standard error handler
+      AppNetworkError.handleNetworkError(this, null, errorType, false);
     }
   }
 

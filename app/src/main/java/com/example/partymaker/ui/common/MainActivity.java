@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import com.google.android.material.snackbar.Snackbar;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -416,21 +417,24 @@ public class MainActivity extends AppCompatActivity {
       runOnUiThread(
           () -> {
             if (lv1 != null && groupList != null && groupList.isEmpty()) {
-              // Show a Snackbar with a retry button instead of a Toast
-              Snackbar snackbar = Snackbar.make(
-                  findViewById(android.R.id.content),
-                  "No groups found",
-                  Snackbar.LENGTH_INDEFINITE);
+              // Check if we're still loading
+              if (viewModel.getIsLoading().getValue() != null && viewModel.getIsLoading().getValue()) {
+                // Don't show empty state while loading
+                return;
+              }
               
-              snackbar.setAction("Refresh", view -> {
-                // Try to load groups again
-                if (UserKey != null) {
-                  viewModel.loadUserGroups(UserKey, true);
-                  showLoading(true);
-                }
-              });
-              
-              snackbar.show();
+              // Show a simple text view instead of a Snackbar
+              TextView emptyView = findViewById(R.id.emptyGroupsView);
+              if (emptyView != null) {
+                emptyView.setVisibility(View.VISIBLE);
+                emptyView.setText("No groups found");
+              }
+            } else {
+              // Hide empty view if we have groups
+              TextView emptyView = findViewById(R.id.emptyGroupsView);
+              if (emptyView != null) {
+                emptyView.setVisibility(View.GONE);
+              }
             }
           });
     } catch (Exception e) {

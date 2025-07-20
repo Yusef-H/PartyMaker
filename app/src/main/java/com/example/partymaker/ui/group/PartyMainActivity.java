@@ -478,124 +478,107 @@ public class PartyMainActivity extends AppCompatActivity {
   }
 
   private void setupClickListeners() {
-    Log.d(TAG, "Setting up click listeners");
+    try {
+      // Set up back button
+      back5.setOnClickListener(v -> finish());
 
-    // Back button - navigate to MainActivity instead of just finishing
-    back5.setOnClickListener(
-        v -> {
-          Log.d(TAG, "Back button clicked, navigating to MainActivity");
-          Intent intent =
-              new Intent(
-                  PartyMainActivity.this, com.example.partymaker.ui.common.MainActivity.class);
-          startActivity(intent);
-          finish();
+      // Set up location card click
+      Card1.setOnClickListener(v -> showMapDialog(currentGroup.getGroupLocation()));
+
+      // Set up Card5 click listeners for coming/not coming
+      if (Card5 != null) {
+        imgThumbUp.setOnClickListener(v -> toggleComingStatus());
+        imgThumbDown.setOnClickListener(v -> toggleComingStatus());
+        tvComing.setOnClickListener(v -> toggleComingStatus());
+        tvNotComing.setOnClickListener(v -> toggleComingStatus());
+      }
+
+      // Set up Card6 click for chat
+      if (Card6 != null) {
+        Card6.setOnClickListener(v -> navigateToChatActivity());
+      }
+
+      // Set up Card7 click for admin options
+      if (Card7 != null && isUserAdmin) {
+        Card7.setOnClickListener(v -> navigateToAdminOptionsActivity());
+      }
+
+      // Set up Card8 click for members
+      if (Card8 != null) {
+        Card8.setOnClickListener(v -> navigateToMembersInvitedActivity());
+      }
+      
+      // Set up edit name button click
+      ImageView btnEditName = findViewById(R.id.btnEditName);
+      if (btnEditName != null) {
+        btnEditName.setOnClickListener(v -> {
+          // Only allow admin to edit group name
+          if (isUserAdmin) {
+            showEditNameDialog();
+          } else {
+            Toast.makeText(this, "Only the admin can edit the group name", Toast.LENGTH_SHORT).show();
+          }
         });
+      }
 
-    // Check if Card6 is null
-    if (Card6 == null) {
-      Log.e(TAG, "Card6 is null! Cannot set up click listener");
-    } else {
-      Log.d(TAG, "Card6 is not null");
-
-      Card6.setOnClickListener(
-          v -> {
-            Log.d(TAG, "Card6 (Chat button) clicked");
-            navigateToChatActivity();
-          });
+      Log.d(TAG, "Click listeners set up successfully");
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up click listeners", e);
     }
-
-    // Remove test button code
-
-    Card1.setOnClickListener(
-        v -> {
-          if (currentGroup != null && currentGroup.getGroupLocation() != null) {
-            String location = currentGroup.getGroupLocation();
-            if (location.contains(",")) {
-              // It's coordinates, show map
-              showMapDialog(location);
-            } else {
-              // It's a text location, show in toast
-              Toast.makeText(PartyMainActivity.this, "Location: " + location, Toast.LENGTH_LONG)
-                  .show();
-            }
-          } else {
-            Toast.makeText(PartyMainActivity.this, "No location available", Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
-
-    Card2.setOnClickListener(
-        v -> {
-          if (currentGroup != null) {
-            // Show date information only - no editing allowed
-            String date =
-                currentGroup.getGroupDays()
-                    + "/"
-                    + currentGroup.getGroupMonths()
-                    + "/"
-                    + currentGroup.getGroupYears();
-            String time = currentGroup.getGroupHours();
-            Toast.makeText(
-                    PartyMainActivity.this,
-                    "Party Date: " + date + " at " + time + "\n\nOnly admin can change the date.",
-                    Toast.LENGTH_LONG)
-                .show();
-          }
-        });
-
-    Card3.setOnClickListener(
-        v -> {
-          if (currentGroup != null && currentGroup.getFriendKeys() != null) {
-            navigateToMembersInvitedActivity();
-          } else {
-            Toast.makeText(PartyMainActivity.this, "No invited people", Toast.LENGTH_SHORT).show();
-          }
-        });
-
-    Card4.setOnClickListener(
-        v -> {
-          if (currentGroup != null && currentGroup.getComingKeys() != null) {
-            navigateToMembersComingActivity();
-          } else {
-            Toast.makeText(PartyMainActivity.this, "No people coming", Toast.LENGTH_SHORT).show();
-          }
-        });
-
-    // Card5 - Admin options OR Coming/Not coming toggle
-    Card5.setOnClickListener(
-        v -> {
-          Log.d(
-              TAG,
-              "Card5 clicked - isUserAdmin: " + isUserAdmin + ", isUserComing: " + isUserComing);
-
-          // Double check admin status
-          boolean isAdmin = false;
-          if (currentGroup != null && currentGroup.getAdminKey() != null && UserKey != null) {
-            isAdmin = currentGroup.getAdminKey().equals(UserKey);
-            Log.d(TAG, "Card5 click - Rechecked admin status: " + isAdmin);
-          }
-
-          if (isAdmin) {
-            Log.d(TAG, "Navigating to admin options as user is admin");
-            navigateToAdminOptionsActivity();
-          } else {
-            Log.d(TAG, "Toggling coming status as user is not admin");
-            toggleComingStatus();
-          }
-        });
-
-    Card7.setOnClickListener(v -> navigateToAddFriendsActivity());
-
-    Card8.setOnClickListener(
-        v -> {
-          // Show confirmation dialog for leaving group
-          new android.app.AlertDialog.Builder(this)
-              .setTitle("Leave Group")
-              .setMessage("Are you sure you want to leave this group?")
-              .setPositiveButton("Yes", (dialog, which) -> leaveGroup())
-              .setNegativeButton("No", null)
-              .show();
-        });
+  }
+  
+  /**
+   * Shows a dialog to edit the group name
+   */
+  private void showEditNameDialog() {
+    try {
+      // Create an EditText for the dialog
+      android.widget.EditText editText = new android.widget.EditText(this);
+      editText.setText(currentGroup.getGroupName());
+      editText.setSelection(editText.getText().length()); // Place cursor at the end
+      
+      // Create the AlertDialog
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle("Edit Group Name");
+      builder.setView(editText);
+      
+      // Add the buttons
+      builder.setPositiveButton("Save", (dialog, which) -> {
+        String newName = editText.getText().toString().trim();
+        if (!newName.isEmpty()) {
+          // Update the group name in Firebase
+          Map<String, Object> updates = new HashMap<>();
+          updates.put("groupName", newName);
+          
+          FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+          serverClient.updateGroup(
+              GroupKey,
+              updates,
+              new FirebaseServerClient.OperationCallback() {
+                @Override
+                public void onSuccess() {
+                  // Update UI
+                  tvGroupName.setText(newName);
+                  currentGroup.setGroupName(newName);
+                  Toast.makeText(PartyMainActivity.this, "Group name updated", Toast.LENGTH_SHORT).show();
+                }
+                
+                @Override
+                public void onError(String errorMessage) {
+                  Toast.makeText(PartyMainActivity.this, "Error updating group name: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+              });
+        }
+      });
+      
+      builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+      
+      // Show the dialog
+      builder.show();
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing edit name dialog", e);
+      Toast.makeText(this, "Error opening edit dialog", Toast.LENGTH_SHORT).show();
+    }
   }
 
   @SuppressLint("SetTextI18n")
