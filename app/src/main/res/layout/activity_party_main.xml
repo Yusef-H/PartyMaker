@@ -12,8 +12,6 @@
         android:background="@drawable/bg_party_screen"
         android:orientation="vertical">
 
-
-
         <!-- Header Section -->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,7 +44,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/group_name"
+                android:text="@string/space"
                 android:textColor="@android:color/white"
                 android:textSize="34sp" />
 
@@ -227,7 +225,7 @@
                         android:ellipsize="end"
                         android:gravity="center"
                         android:maxLines="2"
-                        android:text="@string/location"
+                        android:text="@string/location_pin"
                         android:textColor="#1986ed"
                         android:textSize="14sp" />
 

@@ -47,6 +47,7 @@
     <string name="admin_options">Admin Options</string>
     <string name="admin_email">Admin Email</string>
     <string name="location">Location</string>
+    <string name="location_pin">📍 Location</string>
     <string name="date">Date</string>
     <string name="press_to_see_time">press to see time</string>
     <string name="press_to_see_date">press to see date</string>
@@ -237,4 +238,5 @@
     <string name="my_parties">My Parties</string>
     <string name="public_parties">Public Parties</string>
     <string name="profile">Profile</string>
+    <string name="space" />
 </resources>
