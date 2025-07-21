@@ -27,10 +27,8 @@ public class MembersInvitedActivity extends AppCompatActivity {
   private ListView lv2;
   private HashMap<String, Object> FriendKeys;
   private String adminKey;
-  private String GroupKey;
-  private String UserKey;
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_invited);
@@ -49,13 +47,13 @@ public class MembersInvitedActivity extends AppCompatActivity {
     if (extras != null) {
       FriendKeys = extras.getFriendKeys();
       adminKey = extras.getAdminKey();
-      GroupKey = extras.getGroupKey();
+        String groupKey = extras.getGroupKey();
 
       Log.d(
           TAG,
           "Received extras - FriendKeys: " + (FriendKeys != null ? FriendKeys.size() : "null"));
       Log.d(TAG, "AdminKey: " + adminKey);
-      Log.d(TAG, "GroupKey: " + GroupKey);
+      Log.d(TAG, "GroupKey: " + groupKey);
     } else {
       Log.e(TAG, "No extras received from intent");
       Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
@@ -64,12 +62,13 @@ public class MembersInvitedActivity extends AppCompatActivity {
     }
 
     // Get UserKey from AuthHelper instead of Firebase Auth
-    try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+        String userKey;
+        try {
+      userKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {
-      UserKey = intent.getStringExtra("UserKey");
-      Log.d(TAG, "UserKey from Intent: " + UserKey);
+      userKey = intent.getStringExtra("UserKey");
+      Log.d(TAG, "UserKey from Intent: " + userKey);
     }
 
     lv2 = findViewById(R.id.lv2);

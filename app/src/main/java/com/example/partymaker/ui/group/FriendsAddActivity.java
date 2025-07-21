@@ -39,8 +39,7 @@ public class FriendsAddActivity extends AppCompatActivity {
       CreatedAt,
       GroupPrice;
   private int GroupType;
-  private ImageButton btnBack;
-  private boolean CanAdd;
+    private boolean CanAdd;
   private FirebaseServerClient serverClient;
 
   @Override
@@ -93,7 +92,7 @@ public class FriendsAddActivity extends AppCompatActivity {
     tvAddMore = findViewById(R.id.tvAddMore);
     tvInstructions1 = findViewById(R.id.tvInstructions1);
     etFriendEmail = findViewById(R.id.etFriendEmail);
-    btnBack = findViewById(R.id.btnBack3);
+      ImageButton btnBack = findViewById(R.id.btnBack3);
 
     // Set up back button
     btnBack.setOnClickListener(v -> navigateBack());

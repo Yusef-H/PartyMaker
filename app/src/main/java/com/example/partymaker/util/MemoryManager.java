@@ -7,6 +7,7 @@ import android.os.Debug;
 import android.os.Process;
 import android.util.Log;
 import java.io.File;
+import java.util.Locale;
 
 /**
  * Utility class for managing memory. Provides methods for checking memory usage and clearing
@@ -74,7 +75,7 @@ public class MemoryManager {
               "- Used: " +
               FileManager.formatSize(usedMemory) +
               " (" +
-              String.format("%.1f%%", 100.0f * usedMemory / maxMemory) +
+              String.format(Locale.ROOT, "%.1f%%", 100.0f * usedMemory / maxMemory) +
               ")\n" +
               "- Free: " + FileManager.formatSize(freeMemory) + "\n" +
               "- PSS Total: " +

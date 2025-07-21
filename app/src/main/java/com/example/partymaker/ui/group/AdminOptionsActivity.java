@@ -62,9 +62,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   private Button saveLocationButton;
   private FrameLayout mapContainer;
   private boolean isAdminVerified = false; // Track admin verification status
-  private ImageButton btnBack; // Added back button
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_options);
@@ -194,9 +193,10 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     CardLocation = findViewById(R.id.CardLocation);
     saveLocationButton = findViewById(R.id.saveLocation);
     mapContainer = findViewById(R.id.mapContainer);
-    btnBack = findViewById(R.id.btnBack); // Initialize back button
+      // Added back button
+      ImageButton btnBack = findViewById(R.id.btnBack); // Initialize back button
 
-    // Set up back button click listener
+      // Set up back button click listener
     if (btnBack != null) {
       btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }

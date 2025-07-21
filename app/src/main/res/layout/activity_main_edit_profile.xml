@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:autofillHints=""
-                    android:hint="Username"
+                    android:hint="@string/username"
                     android:inputType="textPersonName"
                     android:maxLines="1"
                     android:textSize="16sp" />
@@ -82,7 +82,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:background="@drawable/button_rounded_primary"
-                android:text="Save Profile"
+                android:text="@string/save_profile"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
