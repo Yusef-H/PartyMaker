@@ -25,10 +25,8 @@ public class MembersComingActivity extends AppCompatActivity {
   private ListView lv3;
   private HashMap<String, Object> ComingKeys;
   private String adminKey;
-  private String GroupKey;
-  private String UserKey;
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_coming);
@@ -52,12 +50,12 @@ public class MembersComingActivity extends AppCompatActivity {
     // connection between intent from GroupScreen and InvitedList
     ComingKeys = extras.getComingKeys();
     adminKey = extras.getAdminKey();
-    GroupKey = extras.getGroupKey();
+      String groupKey = extras.getGroupKey();
 
     Log.d(
         TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
     Log.d(TAG, "AdminKey: " + adminKey);
-    Log.d(TAG, "GroupKey: " + GroupKey);
+    Log.d(TAG, "GroupKey: " + groupKey);
 
     // Debug: Print detailed ComingKeys information
     if (ComingKeys != null) {
@@ -82,12 +80,13 @@ public class MembersComingActivity extends AppCompatActivity {
     }
 
     // Get UserKey from AuthHelper instead of Firebase Auth
-    try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+        String userKey;
+        try {
+      userKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {
-      UserKey = getIntent().getStringExtra("UserKey");
-      Log.d(TAG, "UserKey from Intent: " + UserKey);
+      userKey = getIntent().getStringExtra("UserKey");
+      Log.d(TAG, "UserKey from Intent: " + userKey);
     }
 
     lv3 = findViewById(R.id.lv3);

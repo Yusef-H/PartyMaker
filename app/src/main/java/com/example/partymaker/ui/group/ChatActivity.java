@@ -272,7 +272,7 @@ public class ChatActivity extends AppCompatActivity {
     ChatMessage botMsg = new ChatMessage();
     botMsg.setMessageUser("PartyBot");
     Calendar c = Calendar.getInstance();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     String strDate = sdf.format(c.getTime());
 
     // Generate a unique key for the bot message

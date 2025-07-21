@@ -45,8 +45,7 @@ public class JoinGroupActivity extends AppCompatActivity {
   private String CurrentUser;
   private int IsClicked = 1;
   private HashMap<String, Object> FriendKeys;
-  private String UserKey;
-  private static final String TAG = "JoinGroupActivity";
+    private static final String TAG = "JoinGroupActivity";
 
   @SuppressLint("SetTextI18n")
   @Override
@@ -79,9 +78,10 @@ public class JoinGroupActivity extends AppCompatActivity {
     FriendKeys = extras.getFriendKeys();
 
     // Get UserKey from AuthHelper instead of Firebase Auth
-    try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+      String userKey;
+      try {
+      userKey = AuthHelper.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
@@ -107,7 +107,7 @@ public class JoinGroupActivity extends AppCompatActivity {
     TextView tvYourEntry = findViewById(R.id.tvYourEntry1);
 
     // get current account's email - use the UserKey that was already obtained from AuthHelper
-    CurrentUser = UserKey;
+    CurrentUser = userKey;
 
     // setting of GroupScreen for all users(not in buttons)
     tvGroupName.setText(groupName);

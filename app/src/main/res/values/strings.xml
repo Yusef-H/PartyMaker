@@ -239,4 +239,7 @@
     <string name="public_parties">Public Parties</string>
     <string name="profile">Profile</string>
     <string name="space" />
+    <string name="remove_friend_button">Remove Friend Button</string>
+    <string name="no_groups_found">No groups found</string>
+    <string name="save_profile">Save Profile</string>
 </resources>

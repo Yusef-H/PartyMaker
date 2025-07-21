@@ -28,26 +28,15 @@ public class UsersListActivity extends AppCompatActivity {
   private static final String TAG = "UsersListActivity";
   private ListView lv;
   public static Context contextOfApplication;
-  private Object usersRef;
-  private FirebaseServerClient serverClient;
+    private FirebaseServerClient serverClient;
   private ArrayList<User> usersList;
 
   // Group data
-  private String GroupKey,
-      GroupName,
-      GroupDay,
-      GroupMonth,
-      GroupYear,
-      GroupHour,
-      GroupLocation,
-      AdminKey,
-      CreatedAt,
-      GroupPrice;
-  private int GroupType;
-  private boolean CanAdd;
-  private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
+  private String GroupKey;
+    private HashMap<String, Object> FriendKeys;
+    private HashMap<String, Object> ComingKeys;
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_friends);
@@ -59,24 +48,13 @@ public class UsersListActivity extends AppCompatActivity {
     // Get group data from intent
     ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
     if (extras != null) {
-      GroupName = extras.getGroupName();
       GroupKey = extras.getGroupKey();
-      GroupDay = extras.getGroupDays();
-      GroupMonth = extras.getGroupMonths();
-      GroupYear = extras.getGroupYears();
-      GroupHour = extras.getGroupHours();
-      GroupLocation = extras.getGroupLocation();
-      AdminKey = extras.getAdminKey();
-      CreatedAt = extras.getCreatedAt();
-      GroupPrice = extras.getGroupPrice();
-      GroupType = extras.getGroupType();
-      CanAdd = extras.isCanAdd();
+        String adminKey = extras.getAdminKey();
       FriendKeys = extras.getFriendKeys();
       ComingKeys = extras.getComingKeys();
-      MessageKeys = extras.getMessageKeys();
 
       Log.d(TAG, "Received GroupKey: " + GroupKey);
-      Log.d(TAG, "Received AdminKey: " + AdminKey);
+      Log.d(TAG, "Received AdminKey: " + adminKey);
       if (FriendKeys != null) {
         Log.d(TAG, "Received FriendKeys: " + FriendKeys.size());
       } else {
@@ -98,7 +76,7 @@ public class UsersListActivity extends AppCompatActivity {
 
     // Get users reference using FirebaseAccessManager
     FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-    usersRef = accessManager.getUsersRef();
+      Object usersRef = accessManager.getUsersRef();
 
     ShowData();
     setupEventHandlers();

@@ -28,8 +28,7 @@ import java.util.Map;
 public class FriendsRemoveActivity extends AppCompatActivity {
   private static final String TAG = "FriendsRemoveActivity";
   private Button btnDeleteFriend;
-  private TextView tvInstructions1;
-  private EditText etFriendEmail;
+    private EditText etFriendEmail;
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
   private String GroupKey,
       CurrentFriend,
@@ -88,7 +87,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
 
     // Initialize UI elements
     btnDeleteFriend = findViewById(R.id.btnDeleteFriend);
-    tvInstructions1 = findViewById(R.id.tvInstructions3);
+      TextView tvInstructions1 = findViewById(R.id.tvInstructions3);
     etFriendEmail = findViewById(R.id.etDeleteEmail);
 
     ListView listView = findViewById(R.id.friends_remove_list);
