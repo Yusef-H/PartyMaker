@@ -116,7 +116,6 @@ public class PublicGroupsActivity extends AppCompatActivity {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
       finish();
-      return;
     }
   }
 

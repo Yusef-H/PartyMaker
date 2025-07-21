@@ -68,28 +68,26 @@ public class MemoryManager {
     Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
     Debug.getMemoryInfo(memoryInfo);
 
-    StringBuilder sb = new StringBuilder();
-    sb.append("Memory Info:\n");
-    sb.append("- Max: ").append(FileManager.formatSize(maxMemory)).append("\n");
-    sb.append("- Total: ").append(FileManager.formatSize(totalMemory)).append("\n");
-    sb.append("- Used: ")
-        .append(FileManager.formatSize(usedMemory))
-        .append(" (")
-        .append(String.format("%.1f%%", 100.0f * usedMemory / maxMemory))
-        .append(")\n");
-    sb.append("- Free: ").append(FileManager.formatSize(freeMemory)).append("\n");
+      String sb = "Memory Info:\n" +
+              "- Max: " + FileManager.formatSize(maxMemory) + "\n" +
+              "- Total: " + FileManager.formatSize(totalMemory) + "\n" +
+              "- Used: " +
+              FileManager.formatSize(usedMemory) +
+              " (" +
+              String.format("%.1f%%", 100.0f * usedMemory / maxMemory) +
+              ")\n" +
+              "- Free: " + FileManager.formatSize(freeMemory) + "\n" +
+              "- PSS Total: " +
+              FileManager.formatSize(memoryInfo.getTotalPss() * 1024L) +
+              "\n" +
+              "- Private Dirty: " +
+              FileManager.formatSize(memoryInfo.getTotalPrivateDirty() * 1024L) +
+              "\n" +
+              "- Shared Dirty: " +
+              FileManager.formatSize(memoryInfo.getTotalSharedDirty() * 1024L) +
+              "\n";
 
-      sb.append("- PSS Total: ")
-              .append(FileManager.formatSize(memoryInfo.getTotalPss() * 1024L))
-              .append("\n");
-      sb.append("- Private Dirty: ")
-          .append(FileManager.formatSize(memoryInfo.getTotalPrivateDirty() * 1024L))
-          .append("\n");
-      sb.append("- Shared Dirty: ")
-          .append(FileManager.formatSize(memoryInfo.getTotalSharedDirty() * 1024L))
-          .append("\n");
-
-      return sb.toString();
+      return sb;
   }
 
   /**

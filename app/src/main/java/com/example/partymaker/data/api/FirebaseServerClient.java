@@ -883,7 +883,7 @@ public class FirebaseServerClient {
           if (groupObj.has("MessageKeys")) {
             Log.d(TAG, "Group has MessageKeys");
             JSONObject messageKeysObj = groupObj.getJSONObject("MessageKeys");
-            Log.d(TAG, "MessageKeys structure: " + messageKeysObj.toString());
+            Log.d(TAG, "MessageKeys structure: " + messageKeysObj);
 
             // Use the recursive method to extract message keys
             extractMessageKeys(messageKeysObj, messageKeys);
@@ -1105,7 +1105,7 @@ public class FirebaseServerClient {
                   // Check if the group already has message keys
                   if (groupObj.has("MessageKeys")) {
                     messageKeysObj = groupObj.getJSONObject("MessageKeys");
-                    Log.d(TAG, "Group already has MessageKeys: " + messageKeysObj.toString());
+                    Log.d(TAG, "Group already has MessageKeys: " + messageKeysObj);
                   } else {
                     messageKeysObj = new JSONObject();
                     Log.d(TAG, "Creating new MessageKeys object for group");
@@ -1398,16 +1398,16 @@ public class FirebaseServerClient {
 
     try {
       URL url = new URL(serverUrl + "/api/firebase/" + path);
-      Log.d(TAG, "Making GET request to URL: " + url.toString());
+      Log.d(TAG, "Making GET request to URL: " + url);
 
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.setConnectTimeout(timeout);
       connection.setReadTimeout(timeout);
 
-      Log.d(TAG, "Executing GET request to " + url.toString() + " with timeout: " + timeout + "ms");
+      Log.d(TAG, "Executing GET request to " + url + " with timeout: " + timeout + "ms");
       int responseCode = connection.getResponseCode();
-      Log.d(TAG, "GET response code: " + responseCode + " for URL: " + url.toString());
+      Log.d(TAG, "GET response code: " + responseCode + " for URL: " + url);
 
       if (responseCode == HttpURLConnection.HTTP_OK) {
         reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -1419,10 +1419,10 @@ public class FirebaseServerClient {
         }
 
         String result = response.toString();
-        Log.d(TAG, "GET response length: " + result.length() + " chars for URL: " + url.toString());
+        Log.d(TAG, "GET response length: " + result.length() + " chars for URL: " + url);
         return result;
       } else if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) {
-        Log.e(TAG, "GET request returned 404 Not Found for URL: " + url.toString());
+        Log.e(TAG, "GET request returned 404 Not Found for URL: " + url);
         return null;
       } else {
         Log.e(
@@ -1430,7 +1430,7 @@ public class FirebaseServerClient {
             "GET request failed with response code: "
                 + responseCode
                 + " for URL: "
-                + url.toString());
+                + url);
 
         // Try to read error stream if available
         try {
@@ -1443,7 +1443,7 @@ public class FirebaseServerClient {
           }
 
           if (errorResponse.length() > 0) {
-            Log.e(TAG, "Error response: " + errorResponse.toString());
+            Log.e(TAG, "Error response: " + errorResponse);
           }
         } catch (Exception e) {
           Log.e(TAG, "Could not read error stream", e);
@@ -1478,7 +1478,7 @@ public class FirebaseServerClient {
 
     try {
       URL url = new URL(serverUrl + "/api/firebase/" + path);
-      Log.d(TAG, "Making POST request to URL: " + url.toString() + " with body: " + jsonBody);
+      Log.d(TAG, "Making POST request to URL: " + url + " with body: " + jsonBody);
 
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("POST");
@@ -1493,7 +1493,7 @@ public class FirebaseServerClient {
       }
 
       int responseCode = connection.getResponseCode();
-      Log.d(TAG, "POST response code: " + responseCode + " for URL: " + url.toString());
+      Log.d(TAG, "POST response code: " + responseCode + " for URL: " + url);
 
       if (responseCode != HttpURLConnection.HTTP_OK
           && responseCode != HttpURLConnection.HTTP_CREATED) {
@@ -1509,7 +1509,7 @@ public class FirebaseServerClient {
           }
 
           if (errorResponse.length() > 0) {
-            Log.e(TAG, "Error response: " + errorResponse.toString());
+            Log.e(TAG, "Error response: " + errorResponse);
           }
         } catch (Exception e) {
           Log.e(TAG, "Could not read error stream", e);
@@ -1539,7 +1539,7 @@ public class FirebaseServerClient {
           }
 
           if (response.length() > 0) {
-            Log.d(TAG, "Success response: " + response.toString());
+            Log.d(TAG, "Success response: " + response);
           }
         } catch (Exception e) {
           Log.e(TAG, "Could not read response", e);

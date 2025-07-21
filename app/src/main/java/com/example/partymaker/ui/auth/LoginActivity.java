@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                   }
                   reader.close();
 
-                  Log.d("LoginActivity", "Server response: " + response.toString());
+                  Log.d("LoginActivity", "Server response: " + response);
                 }
               } catch (Exception e) {
                 Log.e("LoginActivity", "Error checking server connectivity", e);

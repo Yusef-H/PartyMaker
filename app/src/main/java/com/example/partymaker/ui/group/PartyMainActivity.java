@@ -1149,9 +1149,9 @@ public class PartyMainActivity extends AppCompatActivity {
                 currentGroup.getGroupPrice(),
                 currentGroup.getGroupType(),
                 true, // CanAdd
-                (HashMap<String, Object>) currentGroup.getFriendKeys(),
-                (HashMap<String, Object>) currentGroup.getComingKeys(),
-                (HashMap<String, Object>) currentGroup.getMessageKeys());
+                    currentGroup.getFriendKeys(),
+                    currentGroup.getComingKeys(),
+                    currentGroup.getMessageKeys());
         Common.addExtrasToIntent(intent, extras);
         startActivity(intent);
       } else {
