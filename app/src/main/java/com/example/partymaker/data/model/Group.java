@@ -122,7 +122,9 @@ public class Group {
   }
 
   /** Default constructor. */
-  public Group() {}
+  public Group() {
+    this.groupKey = "";
+  }
 
   /**
    * Constructs a group with all fields.
@@ -209,11 +211,12 @@ public class Group {
     this.groupName = groupName;
   }
 
+  @NonNull
   public String getGroupKey() {
     return groupKey;
   }
 
-  public void setGroupKey(String groupKey) {
+  public void setGroupKey(@NonNull String groupKey) {
     this.groupKey = groupKey;
   }
 

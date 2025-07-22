@@ -1,5 +1,6 @@
 package com.example.partymaker.data.api;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -1083,7 +1084,6 @@ public class FirebaseServerClient {
             if (!messageSaved) {
               Log.e(TAG, "Failed to save message: " + messageId);
               errorMessage = "Failed to save message";
-              success = false;
             } else {
               Log.d(TAG, "Message saved successfully: " + messageId);
               // Then update the group's message keys
@@ -1143,8 +1143,6 @@ public class FirebaseServerClient {
           } catch (Exception e) {
             Log.e(TAG, "Error saving message", e);
             errorMessage = "Error saving message: " + e.getMessage();
-            e.printStackTrace();
-            success = false;
           }
 
           // Post the result back to the main thread
@@ -1312,6 +1310,7 @@ public class FirebaseServerClient {
         });
   }
 
+  @SuppressLint("StaticFieldLeak")
   @SuppressWarnings("unchecked")
   public void getUserGroups(String userId, final DataCallback<Map<String, Group>> callback) {
     // Check network availability first

@@ -189,10 +189,6 @@ public class UsersListActivity extends AppCompatActivity {
               return;
             }
 
-            // Add user to FriendKeys
-            Map<String, Object> updates = new HashMap<>();
-            updates.put(userEmail, finalUserKey);
-
             Log.d(TAG, "Updating FriendKeys at path: Groups/" + GroupKey + "/FriendKeys");
             Log.d(TAG, "Adding: " + userEmail + " -> " + finalUserKey);
 
