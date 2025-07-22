@@ -13,8 +13,10 @@ import org.json.JSONObject;
 public class OpenAiApi {
   /** The base URL for the OpenAI API. */
   private static final String API_URL = "https://api.openai.com/v1/chat/completions";
+
   /** The API key for authentication. */
   private final String apiKey;
+
   /** OkHttp client for HTTP requests. */
   private final OkHttpClient client = new OkHttpClient();
 

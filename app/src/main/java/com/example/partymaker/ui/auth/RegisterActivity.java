@@ -54,36 +54,52 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends AppCompatActivity {
   /** TextInputLayouts for validation. */
   private TextInputLayout tilEmail, tilUsername, tilPassword;
+
   /** Email input field. */
   private TextInputEditText etEmail;
+
   /** Username input field. */
   private TextInputEditText etUsername;
+
   /** Password input field. */
   private TextInputEditText etPassword;
+
   /** Register button. */
   private MaterialButton btnRegister;
+
   /** Go to login button. */
   private MaterialButton btnPress;
+
   /** Register image. */
   private ImageView imgRegister;
+
   /** Header card view. */
   private MaterialCardView headerCard;
+
   /** Form card view. */
   private MaterialCardView formCard;
+
   /** Celebration layout. */
   private LinearLayout celebrationLayout;
+
   /** Password strength progress bar. */
   private ProgressBar passwordStrengthBar;
+
   /** Password strength text. */
   private TextView passwordStrengthText;
+
   /** Form progress text. */
   private TextView formProgressText;
+
   /** Progress indicator view. */
   private View progressIndicator;
+
   /** Notification channel ID. */
   private static final String CHANNEL_ID = "registration_channel";
+
   /** Animation state flag. */
   private boolean isAnimating = false;
+
   /** Number of completed fields. */
   private int completedFields = 0;
 

@@ -38,22 +38,29 @@ import org.json.JSONObject;
 public class FirebaseServerClient {
   /** Tag for logging. */
   private static final String TAG = "FirebaseServerClient";
+
   /** Singleton instance. */
   private static FirebaseServerClient instance;
+
   /** Default server URL (for emulator). */
   private static final String DEFAULT_SERVER_URL =
       "https://partymaker.onrender.com"; // Changed to Render URL
+
   /** SharedPreferences key for server URL. */
   private static final String PREF_SERVER_URL = "server_url";
 
   /** The current server URL. */
   private String serverUrl = DEFAULT_SERVER_URL;
+
   /** Gson instance for JSON serialization. */
   private final Gson gson = new Gson();
+
   /** Application context - using WeakReference to prevent memory leaks. */
   private WeakReference<Context> contextRef;
+
   /** ExecutorService for background tasks. */
   private final ExecutorService executor = Executors.newCachedThreadPool();
+
   /** Handler for posting to main thread. */
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
 

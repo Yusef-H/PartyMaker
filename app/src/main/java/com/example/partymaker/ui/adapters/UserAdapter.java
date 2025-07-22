@@ -25,6 +25,7 @@ import java.util.List;
 public class UserAdapter extends ArrayAdapter<User> {
   /** The context in which the adapter is used. */
   final Context context;
+
   /** The list of users to display. */
   final List<User> userList;
 

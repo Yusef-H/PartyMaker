@@ -23,8 +23,10 @@ import java.util.List;
 public class InvitedAdapter extends ArrayAdapter<User> {
   /** The context in which the adapter is used. */
   final Context context;
+
   /** The list of invited users to display. */
   final List<User> invitedList;
+
   /** The admin key for identifying admin users. */
   final String adminKey;
 

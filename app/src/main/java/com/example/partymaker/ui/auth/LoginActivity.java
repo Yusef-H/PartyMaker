@@ -44,24 +44,34 @@ import java.util.Objects;
 public class LoginActivity extends AppCompatActivity {
   /** Email input field. */
   private TextInputEditText etEmail;
+
   /** Password input field. */
   private TextInputEditText etPassword;
+
   /** About button. */
   private ImageButton btnAbout;
+
   /** Login button. */
   private MaterialButton btnLogin;
+
   /** Register button. */
   private MaterialButton btnPress;
+
   /** Reset password button. */
   private MaterialButton btnResetPass;
+
   /** Remember me checkbox. */
   private MaterialCheckBox cbRememberMe;
+
   /** Google sign-in button. */
   private SignInButton btnGoogleSignIn;
+
   /** Google sign-in client. */
   private GoogleSignInClient mGoogleSignInClient;
+
   /** Request code for Google sign-in. */
   private static final int RC_SIGN_IN = 9001;
+
   /** Firebase authentication instance. */
   private FirebaseAuth mAuth;
 
