@@ -24,8 +24,10 @@ import java.util.List;
 public class GroupAdapter extends ArrayAdapter<Group> {
   /** The context in which the adapter is used. */
   final Context context;
+
   /** The list of groups to display. */
   final List<Group> groupList;
+
   /** Application context for image loading. */
   final Context applicationContext;
 

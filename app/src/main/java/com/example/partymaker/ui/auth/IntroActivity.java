@@ -26,10 +26,13 @@ public class IntroActivity extends Activity {
 
   /** The ViewPager for intro slides. */
   private ViewPager viewPager;
+
   /** The layout for the bottom dots indicator. */
   private LinearLayout dotsLayout;
+
   /** The layouts for each intro slide. */
   private int[] layouts;
+
   /** Skip and Next buttons. */
   private Button btnSkip, btnNext;
 

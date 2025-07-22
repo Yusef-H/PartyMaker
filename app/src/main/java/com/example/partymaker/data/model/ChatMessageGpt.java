@@ -4,6 +4,7 @@ package com.example.partymaker.data.model;
 public class ChatMessageGpt {
   /** The role of the message (e.g., user, assistant). */
   public final String role;
+
   /** The content of the message. */
   public final String content;
 

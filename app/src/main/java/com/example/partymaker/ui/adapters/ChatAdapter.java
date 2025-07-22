@@ -27,6 +27,7 @@ import java.util.List;
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
   /** The context in which the adapter is used. */
   final Context context;
+
   /** The list of chat messages to display. */
   final List<ChatMessage> messageList;
 

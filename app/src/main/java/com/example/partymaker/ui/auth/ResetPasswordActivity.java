@@ -24,26 +24,37 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ResetPasswordActivity extends AppCompatActivity {
   /** White theme button. */
   private Button btnWhite;
+
   /** Black theme button. */
   private Button btnBlack;
+
   /** Reset password button. */
   private Button btnReset;
+
   /** Help button. */
   private Button btnHelp;
+
   /** Hide instructions button. */
   private Button btnHide;
+
   /** Reset layout. */
   private RelativeLayout rltReset;
+
   /** Forgot password text. */
   private TextView tvForgotPass;
+
   /** Help text. */
   private TextView tvHelp;
+
   /** Instructions text. */
   private TextView tvInstructions;
+
   /** Hide instructions text. */
   private TextView tvHide;
+
   /** Email input field. */
   private EditText etInputEmail;
+
   /** Cake image view. */
   private ImageView imgWhiteCake;
 
