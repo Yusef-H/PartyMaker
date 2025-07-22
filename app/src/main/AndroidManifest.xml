@@ -67,7 +67,7 @@
         <activity android:name=".ui.group.JoinGroupActivity" />
         <activity android:name=".ui.group.AdminSettingsActivity" />
         <activity android:name=".ui.group.PartyMainActivity" />
-        <activity 
+        <activity
             android:name=".ui.group.PublicGroupsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.settings.ServerSettingsActivity" />

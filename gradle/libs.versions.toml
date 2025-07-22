@@ -49,6 +49,7 @@ circleimageview = "3.1.0"
 
 # --- Testing ---
 preference = "1.2.1"
+junitKtx = "1.2.1"
 
 [libraries]
 # --- AndroidX Core ---
@@ -112,6 +113,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
