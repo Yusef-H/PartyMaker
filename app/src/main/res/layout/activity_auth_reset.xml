@@ -139,4 +139,3 @@
         android:textColor="@color/black"
         android:visibility="invisible"/>
 </RelativeLayout>
-

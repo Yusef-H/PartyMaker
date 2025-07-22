@@ -122,4 +122,4 @@
         android:contentDescription="@string/remove_friend_button"
         android:visibility="gone" />
 
-</RelativeLayout> 
+</RelativeLayout>
