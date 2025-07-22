@@ -29,14 +29,14 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -97,17 +97,42 @@ tasks.named("build") {
     setDependsOn(
         dependsOn.filterNot {
             it.toString().contains("test", ignoreCase = true) ||
-                    it.toString().contains("androidTest", ignoreCase = true) ||
-                    it.toString().contains("lint", ignoreCase = true)
-        }
+                it.toString().contains("androidTest", ignoreCase = true) ||
+                it.toString().contains("lint", ignoreCase = true)
+        },
     )
 }
 
-// Spotless – Java code formatting
+// Spotless – Code formatting for Java, Kotlin and XML
 spotless {
     java {
         target("src/**/*.java")
-        googleJavaFormat("1.17.0")
+        googleJavaFormat("1.17.0") // required for JVM 21/24+
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    // Kotlin support
+    kotlin {
+        target("src/**/*.kt")
+        ktlint("1.2.1")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    // Kotlin Gradle scripts (build.gradle.kts, etc.)
+    kotlinGradle {
+        target("*.gradle.kts", "buildSrc/**/*.kt")
+        ktlint("1.2.1")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    // Format XML layout/resources
+    format("xml") {
+        target("src/**/*.xml")
+        leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -155,6 +180,7 @@ dependencies {
 
     // --- Room Database ---
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.junit.ktx)
     annotationProcessor(libs.androidx.room.compiler)
 
     // --- Media & Image Loading ---
