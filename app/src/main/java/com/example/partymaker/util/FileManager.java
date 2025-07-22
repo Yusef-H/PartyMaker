@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -164,7 +165,7 @@ public class FileManager {
     // Don't delete the cache directory itself, just its contents
     if (!fileOrDirectory
         .getAbsolutePath()
-        .equals(fileOrDirectory.getParentFile().getAbsolutePath())) {
+        .equals(Objects.requireNonNull(fileOrDirectory.getParentFile()).getAbsolutePath())) {
       fileOrDirectory.delete();
     }
   }

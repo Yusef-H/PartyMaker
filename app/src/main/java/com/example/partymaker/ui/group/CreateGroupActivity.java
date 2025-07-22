@@ -145,7 +145,11 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
       }
 
       try {
-        Places.initialize(getApplicationContext(), apiKey);
+        if(apiKey != null) {
+          Places.initialize(getApplicationContext(), apiKey);
+        } else {
+          Log.d(TAG, "Null API Key");
+        }
       } catch (IllegalArgumentException e) {
         Toast.makeText(this, "Error initializing Google Maps: " + e.getMessage(), Toast.LENGTH_LONG)
             .show();

@@ -3,6 +3,7 @@ package com.example.partymaker.ui.group;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,7 +93,11 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     if (!Places.isInitialized()) {
       try {
-        Places.initialize(getApplicationContext(), apiKey);
+          if(apiKey != null) {
+              Places.initialize(getApplicationContext(), apiKey);
+          } else {
+              Log.d(TAG, "Null API Key");
+          }
       } catch (IllegalArgumentException e) {
         Toast.makeText(this, "Error initializing Google Maps: " + e.getMessage(), Toast.LENGTH_LONG)
             .show();

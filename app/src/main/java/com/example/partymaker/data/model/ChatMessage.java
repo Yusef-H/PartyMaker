@@ -60,6 +60,7 @@ public class ChatMessage {
     this.timestamp = System.currentTimeMillis();
     this.metadata = new HashMap<>();
     this.messageContent = new HashMap<>();
+    this.messageKey = "";
   }
 
   /**

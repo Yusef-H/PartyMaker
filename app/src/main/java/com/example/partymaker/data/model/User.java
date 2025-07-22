@@ -41,6 +41,7 @@ public class User {
   /** Default constructor. */
   public User() {
     this.friendKeys = new HashMap<>();
+    this.userKey = "";
   }
 
   /**

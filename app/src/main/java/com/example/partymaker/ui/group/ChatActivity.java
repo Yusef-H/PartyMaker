@@ -27,7 +27,6 @@ import com.example.partymaker.utilities.AuthHelper;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -207,19 +206,19 @@ public class ChatActivity extends AppCompatActivity {
         v -> {
           android.app.AlertDialog.Builder builder =
               new android.app.AlertDialog.Builder(ChatActivity.this);
-          builder.setTitle("שאל את GPT");
+          builder.setTitle("Ask GPT");
           final EditText input = new EditText(ChatActivity.this);
-          input.setHint("כתוב את השאלה שלך כאן...");
+          input.setHint("Type your question here...");
           builder.setView(input);
           builder.setPositiveButton(
-              "שלח",
+              "Send",
               (dialog, which) -> {
                 String gptQuestion = input.getText().toString();
                 if (!gptQuestion.isEmpty()) {
                   // Show loading message
                   runOnUiThread(
                       () -> {
-                        Toast.makeText(ChatActivity.this, "שולח שאלה ל-GPT...", Toast.LENGTH_SHORT)
+                        Toast.makeText(ChatActivity.this, "Sending question to ChatGPT", Toast.LENGTH_SHORT)
                             .show();
                       });
 
@@ -238,32 +237,31 @@ public class ChatActivity extends AppCompatActivity {
                                   () -> {
                                     Toast.makeText(
                                             ChatActivity.this,
-                                            "שגיאת חיבור לאינטרנט. בדוק את החיבור ונסה שוב.",
+                                            "Internet connection error, check your connection and try again.",
                                             Toast.LENGTH_LONG)
                                         .show();
                                     // Send a fallback message
                                     sendBotMessage(
-                                        "מצטער, אני לא יכול להתחבר לאינטרנט כרגע. אנא בדוק את החיבור ונסה שוב מאוחר יותר.");
+                                        "Sorry I can not connect to the internet at the moment, check your connection and try again.");
                                   });
                             } catch (Exception e) {
                               runOnUiThread(
                                   () -> {
                                     Toast.makeText(
                                             ChatActivity.this,
-                                            "שגיאה בשירות GPT: " + e.getMessage(),
+                                            "GPT Service Error: " + e.getMessage(),
                                             Toast.LENGTH_LONG)
                                         .show();
                                     // Send a fallback message
                                     sendBotMessage(
-                                        "מצטער, אירעה שגיאה בשירות. אנא נסה שוב מאוחר יותר.");
+                                        "Internal Service Error, try again later.");
                                   });
-                              e.printStackTrace();
                             }
                           })
                       .start();
                 }
               });
-          builder.setNegativeButton("ביטול", (dialog, which) -> dialog.cancel());
+          builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
           builder.show();
         });
   }
@@ -333,14 +331,12 @@ public class ChatActivity extends AppCompatActivity {
               Log.d(TAG, "ShowData: Received " + messages.size() + " messages from server");
 
               // Sort messages by timestamp
-              Collections.sort(
-                  messages,
-                  (m1, m2) -> {
-                    if (m1.getMessageTime() == null || m2.getMessageTime() == null) {
+              messages.sort((m1, m2) -> {
+                  if (m1.getMessageTime() == null || m2.getMessageTime() == null) {
                       return 0;
-                    }
-                    return m1.getMessageTime().compareTo(m2.getMessageTime());
-                  });
+                  }
+                  return m1.getMessageTime().compareTo(m2.getMessageTime());
+              });
 
               // Update the adapter
               runOnUiThread(
@@ -618,7 +614,6 @@ public class ChatActivity extends AppCompatActivity {
       Log.d(TAG, "AUTO TEST: serverClient.saveMessage call completed");
     } catch (Exception e) {
       Log.e(TAG, "AUTO TEST: Exception when calling serverClient.saveMessage", e);
-      e.printStackTrace();
     }
   }
 
