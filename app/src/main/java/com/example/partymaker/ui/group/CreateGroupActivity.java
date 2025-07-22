@@ -145,7 +145,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
       }
 
       try {
-        if(apiKey != null) {
+        if (apiKey != null) {
           Places.initialize(getApplicationContext(), apiKey);
         } else {
           Log.d(TAG, "Null API Key");

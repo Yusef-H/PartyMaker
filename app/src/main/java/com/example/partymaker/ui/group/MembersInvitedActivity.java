@@ -28,7 +28,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
   private HashMap<String, Object> FriendKeys;
   private String adminKey;
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_invited);
@@ -47,7 +47,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
     if (extras != null) {
       FriendKeys = extras.getFriendKeys();
       adminKey = extras.getAdminKey();
-        String groupKey = extras.getGroupKey();
+      String groupKey = extras.getGroupKey();
 
       Log.d(
           TAG,
@@ -62,8 +62,8 @@ public class MembersInvitedActivity extends AppCompatActivity {
     }
 
     // Get UserKey from AuthHelper instead of Firebase Auth
-        String userKey;
-        try {
+    String userKey;
+    try {
       userKey = AuthHelper.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {

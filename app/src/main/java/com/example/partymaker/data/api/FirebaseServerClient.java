@@ -233,7 +233,7 @@ public class FirebaseServerClient {
             }
           }
 
-            Group group = gson.fromJson(groupJson, Group.class);
+          Group group = gson.fromJson(groupJson, Group.class);
           if (group == null) {
             throw new IOException("Failed to parse group data");
           }
@@ -505,7 +505,7 @@ public class FirebaseServerClient {
             String key = keys.next();
             JSONObject userJson = jsonObject.getJSONObject(key);
             User user = gson.fromJson(userJson.toString(), User.class);
-              users.put(key, user);
+            users.put(key, user);
           }
 
           Log.d(TAG, "Successfully parsed " + users.size() + " users");
@@ -876,7 +876,7 @@ public class FirebaseServerClient {
             }
           }
 
-            // Parse the group
+          // Parse the group
           JSONObject groupObj = new JSONObject(groupJson);
           Map<String, Boolean> messageKeys = new HashMap<>();
 
@@ -1161,8 +1161,7 @@ public class FirebaseServerClient {
                           + messageId
                           + " with error: "
                           + finalErrorMessage);
-                  callback.onError(
-                          finalErrorMessage);
+                  callback.onError(finalErrorMessage);
                 }
               });
         });
@@ -1424,12 +1423,7 @@ public class FirebaseServerClient {
         Log.e(TAG, "GET request returned 404 Not Found for URL: " + url);
         return null;
       } else {
-        Log.e(
-            TAG,
-            "GET request failed with response code: "
-                + responseCode
-                + " for URL: "
-                + url);
+        Log.e(TAG, "GET request failed with response code: " + responseCode + " for URL: " + url);
 
         // Try to read error stream if available
         try {

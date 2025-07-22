@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import com.example.partymaker.R;
@@ -40,37 +39,36 @@ public class NotificationHelper {
    */
   public static void createNotificationChannels(Context context) {
     // Only needed for Android O and above
-      NotificationManager notificationManager =
-              (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    NotificationManager notificationManager =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-      // Party updates channel
-      NotificationChannel partyChannel =
-          new NotificationChannel(
-              CHANNEL_PARTIES, "Party Updates", NotificationManager.IMPORTANCE_HIGH);
-      partyChannel.setDescription("Notifications about party updates");
-      partyChannel.enableLights(true);
-      partyChannel.setLightColor(Color.BLUE);
-      partyChannel.enableVibration(true);
-      notificationManager.createNotificationChannel(partyChannel);
+    // Party updates channel
+    NotificationChannel partyChannel =
+        new NotificationChannel(
+            CHANNEL_PARTIES, "Party Updates", NotificationManager.IMPORTANCE_HIGH);
+    partyChannel.setDescription("Notifications about party updates");
+    partyChannel.enableLights(true);
+    partyChannel.setLightColor(Color.BLUE);
+    partyChannel.enableVibration(true);
+    notificationManager.createNotificationChannel(partyChannel);
 
-      // Messages channel
-      NotificationChannel messagesChannel =
-          new NotificationChannel(
-              CHANNEL_MESSAGES, "Messages", NotificationManager.IMPORTANCE_HIGH);
-      messagesChannel.setDescription("Notifications about new messages");
-      messagesChannel.enableLights(true);
-      messagesChannel.setLightColor(Color.GREEN);
-      messagesChannel.enableVibration(true);
-      notificationManager.createNotificationChannel(messagesChannel);
+    // Messages channel
+    NotificationChannel messagesChannel =
+        new NotificationChannel(CHANNEL_MESSAGES, "Messages", NotificationManager.IMPORTANCE_HIGH);
+    messagesChannel.setDescription("Notifications about new messages");
+    messagesChannel.enableLights(true);
+    messagesChannel.setLightColor(Color.GREEN);
+    messagesChannel.enableVibration(true);
+    notificationManager.createNotificationChannel(messagesChannel);
 
-      // General updates channel
-      NotificationChannel updatesChannel =
-          new NotificationChannel(
-              CHANNEL_UPDATES, "General Updates", NotificationManager.IMPORTANCE_DEFAULT);
-      updatesChannel.setDescription("General app updates and announcements");
-      notificationManager.createNotificationChannel(updatesChannel);
+    // General updates channel
+    NotificationChannel updatesChannel =
+        new NotificationChannel(
+            CHANNEL_UPDATES, "General Updates", NotificationManager.IMPORTANCE_DEFAULT);
+    updatesChannel.setDescription("General app updates and announcements");
+    notificationManager.createNotificationChannel(updatesChannel);
 
-      Log.d(TAG, "Notification channels created");
+    Log.d(TAG, "Notification channels created");
   }
 
   /**

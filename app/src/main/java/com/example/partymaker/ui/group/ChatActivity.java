@@ -218,7 +218,10 @@ public class ChatActivity extends AppCompatActivity {
                   // Show loading message
                   runOnUiThread(
                       () -> {
-                        Toast.makeText(ChatActivity.this, "Sending question to ChatGPT", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                                ChatActivity.this,
+                                "Sending question to ChatGPT",
+                                Toast.LENGTH_SHORT)
                             .show();
                       });
 
@@ -253,8 +256,7 @@ public class ChatActivity extends AppCompatActivity {
                                             Toast.LENGTH_LONG)
                                         .show();
                                     // Send a fallback message
-                                    sendBotMessage(
-                                        "Internal Service Error, try again later.");
+                                    sendBotMessage("Internal Service Error, try again later.");
                                   });
                             }
                           })
@@ -331,12 +333,13 @@ public class ChatActivity extends AppCompatActivity {
               Log.d(TAG, "ShowData: Received " + messages.size() + " messages from server");
 
               // Sort messages by timestamp
-              messages.sort((m1, m2) -> {
-                  if (m1.getMessageTime() == null || m2.getMessageTime() == null) {
+              messages.sort(
+                  (m1, m2) -> {
+                    if (m1.getMessageTime() == null || m2.getMessageTime() == null) {
                       return 0;
-                  }
-                  return m1.getMessageTime().compareTo(m2.getMessageTime());
-              });
+                    }
+                    return m1.getMessageTime().compareTo(m2.getMessageTime());
+                  });
 
               // Update the adapter
               runOnUiThread(

@@ -64,7 +64,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
   private FrameLayout mapContainer;
   private boolean isAdminVerified = false; // Track admin verification status
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_options);
@@ -93,11 +93,11 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     if (!Places.isInitialized()) {
       try {
-          if(apiKey != null) {
-              Places.initialize(getApplicationContext(), apiKey);
-          } else {
-              Log.d(TAG, "Null API Key");
-          }
+        if (apiKey != null) {
+          Places.initialize(getApplicationContext(), apiKey);
+        } else {
+          Log.d(TAG, "Null API Key");
+        }
       } catch (IllegalArgumentException e) {
         Toast.makeText(this, "Error initializing Google Maps: " + e.getMessage(), Toast.LENGTH_LONG)
             .show();
@@ -198,10 +198,10 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     CardLocation = findViewById(R.id.CardLocation);
     saveLocationButton = findViewById(R.id.saveLocation);
     mapContainer = findViewById(R.id.mapContainer);
-      // Added back button
-      ImageButton btnBack = findViewById(R.id.btnBack); // Initialize back button
+    // Added back button
+    ImageButton btnBack = findViewById(R.id.btnBack); // Initialize back button
 
-      // Set up back button click listener
+    // Set up back button click listener
     if (btnBack != null) {
       btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }

@@ -28,15 +28,15 @@ public class UsersListActivity extends AppCompatActivity {
   private static final String TAG = "UsersListActivity";
   private ListView lv;
   public static Context contextOfApplication;
-    private FirebaseServerClient serverClient;
+  private FirebaseServerClient serverClient;
   private ArrayList<User> usersList;
 
   // Group data
   private String GroupKey;
-    private HashMap<String, Object> FriendKeys;
-    private HashMap<String, Object> ComingKeys;
+  private HashMap<String, Object> FriendKeys;
+  private HashMap<String, Object> ComingKeys;
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_friends);
@@ -49,7 +49,7 @@ public class UsersListActivity extends AppCompatActivity {
     ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
     if (extras != null) {
       GroupKey = extras.getGroupKey();
-        String adminKey = extras.getAdminKey();
+      String adminKey = extras.getAdminKey();
       FriendKeys = extras.getFriendKeys();
       ComingKeys = extras.getComingKeys();
 
@@ -76,7 +76,7 @@ public class UsersListActivity extends AppCompatActivity {
 
     // Get users reference using FirebaseAccessManager
     FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-      Object usersRef = accessManager.getUsersRef();
+    Object usersRef = accessManager.getUsersRef();
 
     ShowData();
     setupEventHandlers();

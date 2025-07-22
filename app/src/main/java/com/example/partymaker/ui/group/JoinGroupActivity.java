@@ -45,7 +45,7 @@ public class JoinGroupActivity extends AppCompatActivity {
   private String CurrentUser;
   private int IsClicked = 1;
   private HashMap<String, Object> FriendKeys;
-    private static final String TAG = "JoinGroupActivity";
+  private static final String TAG = "JoinGroupActivity";
 
   @SuppressLint("SetTextI18n")
   @Override
@@ -78,8 +78,8 @@ public class JoinGroupActivity extends AppCompatActivity {
     FriendKeys = extras.getFriendKeys();
 
     // Get UserKey from AuthHelper instead of Firebase Auth
-      String userKey;
-      try {
+    String userKey;
+    try {
       userKey = AuthHelper.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {

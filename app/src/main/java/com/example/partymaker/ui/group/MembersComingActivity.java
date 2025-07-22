@@ -26,7 +26,7 @@ public class MembersComingActivity extends AppCompatActivity {
   private HashMap<String, Object> ComingKeys;
   private String adminKey;
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_coming);
@@ -50,7 +50,7 @@ public class MembersComingActivity extends AppCompatActivity {
     // connection between intent from GroupScreen and InvitedList
     ComingKeys = extras.getComingKeys();
     adminKey = extras.getAdminKey();
-      String groupKey = extras.getGroupKey();
+    String groupKey = extras.getGroupKey();
 
     Log.d(
         TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
@@ -80,8 +80,8 @@ public class MembersComingActivity extends AppCompatActivity {
     }
 
     // Get UserKey from AuthHelper instead of Firebase Auth
-        String userKey;
-        try {
+    String userKey;
+    try {
       userKey = AuthHelper.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {

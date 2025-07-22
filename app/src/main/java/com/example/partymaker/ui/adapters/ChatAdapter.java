@@ -94,9 +94,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     String currentUser = AuthHelper.getCurrentUserEmail(context);
     // Convert to the same format as messageUser (dots replaced with spaces)
     String currentUserKey = currentUser != null ? currentUser.replace('.', ' ') : null;
-    boolean isMine =
-            temp.getMessageUser() != null
-                    && temp.getMessageUser().equals(currentUserKey);
+    boolean isMine = temp.getMessageUser() != null && temp.getMessageUser().equals(currentUserKey);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);

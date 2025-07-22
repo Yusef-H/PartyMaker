@@ -209,7 +209,8 @@ public class EditProfileActivity extends AppCompatActivity {
     imgProfile.setOnClickListener(
         v -> {
           // Check network availability before launching image picker
-          if (Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
+          if (Boolean.FALSE.equals(
+              ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
             AppNetworkError.showErrorMessage(
                 this, NetworkUtils.ErrorType.NO_NETWORK, "Network not available", false);
             return;
@@ -226,7 +227,8 @@ public class EditProfileActivity extends AppCompatActivity {
     progressBar.setVisibility(View.VISIBLE);
 
     // Check if we're offline
-    boolean isOffline = Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue());
+    boolean isOffline =
+        Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue());
 
     // If offline, don't show error messages
     if (isOffline) {

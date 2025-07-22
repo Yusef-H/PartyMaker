@@ -479,47 +479,47 @@ public class PartyMainActivity extends AppCompatActivity {
   @SuppressLint("ClickableViewAccessibility")
   private void setupPullUpGesture() {
     paymentPullUpContainer.setOnTouchListener(
-            (view, event) -> {
-              switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                  // Record initial touch position
-                  dY = view.getY() - event.getRawY();
-                  initialY = view.getY();
-                  return true;
+        (view, event) -> {
+          switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+              // Record initial touch position
+              dY = view.getY() - event.getRawY();
+              initialY = view.getY();
+              return true;
 
-                case MotionEvent.ACTION_MOVE:
-                  // Calculate new position with constraints
-                  float newY = event.getRawY() + dY;
+            case MotionEvent.ACTION_MOVE:
+              // Calculate new position with constraints
+              float newY = event.getRawY() + dY;
 
-                  // Get the height of the container to use as maximum translation
-                  int height = view.getHeight();
+              // Get the height of the container to use as maximum translation
+              int height = view.getHeight();
 
-                  // For pull down, constraints are different
-                  if (newY < -70) newY = -70;
-                  if (newY > 0) newY = 0;
+              // For pull down, constraints are different
+              if (newY < -70) newY = -70;
+              if (newY > 0) newY = 0;
 
-                  // Update position
-                  view.animate().y(newY).setDuration(0).start();
-                  return true;
+              // Update position
+              view.animate().y(newY).setDuration(0).start();
+              return true;
 
-                case MotionEvent.ACTION_UP:
-                  // Determine if we should expand or collapse based on how far user pulled
-                  float pulledDistance = view.getY() - initialY;
-                  int containerHeight = view.getHeight();
+            case MotionEvent.ACTION_UP:
+              // Determine if we should expand or collapse based on how far user pulled
+              float pulledDistance = view.getY() - initialY;
+              int containerHeight = view.getHeight();
 
-                  if (pulledDistance > (float) containerHeight / 3) {
-                    // Expand if pulled more than 1/3 of the height
-                    expandPaymentPanel();
-                  } else {
-                    // Collapse
-                    collapsePaymentPanel();
-                  }
-                  return true;
-
-                default:
-                  return false;
+              if (pulledDistance > (float) containerHeight / 3) {
+                // Expand if pulled more than 1/3 of the height
+                expandPaymentPanel();
+              } else {
+                // Collapse
+                collapsePaymentPanel();
               }
-            });
+              return true;
+
+            default:
+              return false;
+          }
+        });
   }
 
   /** Toggles the payment panel between expanded and collapsed states */
@@ -874,20 +874,20 @@ public class PartyMainActivity extends AppCompatActivity {
               // gateway)
               boolean paymentSuccessful = true;
 
-                // Update payment status in database
-                updatePaymentInDatabase();
+              // Update payment status in database
+              updatePaymentInDatabase();
 
-                // Show success message
-                Toast.makeText(this, R.string.payment_success, Toast.LENGTH_LONG).show();
+              // Show success message
+              Toast.makeText(this, R.string.payment_success, Toast.LENGTH_LONG).show();
 
-                // Update UI
-                hasUserPaid = true;
-                TextView tvPayNow = findViewById(R.id.tvPayNow);
-                if (tvPayNow != null) {
-                  tvPayNow.setText(R.string.payment_success);
-                  tvPayNow.setEnabled(false);
-                  tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
-                }
+              // Update UI
+              hasUserPaid = true;
+              TextView tvPayNow = findViewById(R.id.tvPayNow);
+              if (tvPayNow != null) {
+                tvPayNow.setText(R.string.payment_success);
+                tvPayNow.setEnabled(false);
+                tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
+              }
             },
             2000); // Simulate 2 second processing time
   }
@@ -1147,9 +1147,9 @@ public class PartyMainActivity extends AppCompatActivity {
                 currentGroup.getGroupPrice(),
                 currentGroup.getGroupType(),
                 true, // CanAdd
-                    currentGroup.getFriendKeys(),
-                    currentGroup.getComingKeys(),
-                    currentGroup.getMessageKeys());
+                currentGroup.getFriendKeys(),
+                currentGroup.getComingKeys(),
+                currentGroup.getMessageKeys());
         Common.addExtrasToIntent(intent, extras);
         startActivity(intent);
       } else {

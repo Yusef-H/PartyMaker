@@ -33,7 +33,7 @@ import java.util.HashMap;
 public class AdminSettingsActivity extends AppCompatActivity {
   private ImageView imgCanAdd, imgType, imgEditGroup;
   private ImageButton btnEditName;
-    private String AdminKey,
+  private String AdminKey,
       GroupKey,
       GroupName,
       GroupDay,
@@ -93,9 +93,9 @@ public class AdminSettingsActivity extends AppCompatActivity {
     imgType = findViewById(R.id.imgType);
     imgEditGroup = findViewById(R.id.imgEditGroup);
     btnEditName = findViewById(R.id.btnEditName1);
-      ImageButton btnBack = findViewById(R.id.btnBack); // Initialize back button
+    ImageButton btnBack = findViewById(R.id.btnBack); // Initialize back button
 
-      // Set up back button click listener
+    // Set up back button click listener
     if (btnBack != null) {
       btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }

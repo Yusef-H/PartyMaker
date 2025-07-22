@@ -2,7 +2,6 @@ package com.example.partymaker.util;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Debug;
 import android.os.Process;
 import android.util.Log;
@@ -69,26 +68,33 @@ public class MemoryManager {
     Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
     Debug.getMemoryInfo(memoryInfo);
 
-      String sb = "Memory Info:\n" +
-              "- Max: " + FileManager.formatSize(maxMemory) + "\n" +
-              "- Total: " + FileManager.formatSize(totalMemory) + "\n" +
-              "- Used: " +
-              FileManager.formatSize(usedMemory) +
-              " (" +
-              String.format(Locale.ROOT, "%.1f%%", 100.0f * usedMemory / maxMemory) +
-              ")\n" +
-              "- Free: " + FileManager.formatSize(freeMemory) + "\n" +
-              "- PSS Total: " +
-              FileManager.formatSize(memoryInfo.getTotalPss() * 1024L) +
-              "\n" +
-              "- Private Dirty: " +
-              FileManager.formatSize(memoryInfo.getTotalPrivateDirty() * 1024L) +
-              "\n" +
-              "- Shared Dirty: " +
-              FileManager.formatSize(memoryInfo.getTotalSharedDirty() * 1024L) +
-              "\n";
+    String sb =
+        "Memory Info:\n"
+            + "- Max: "
+            + FileManager.formatSize(maxMemory)
+            + "\n"
+            + "- Total: "
+            + FileManager.formatSize(totalMemory)
+            + "\n"
+            + "- Used: "
+            + FileManager.formatSize(usedMemory)
+            + " ("
+            + String.format(Locale.ROOT, "%.1f%%", 100.0f * usedMemory / maxMemory)
+            + ")\n"
+            + "- Free: "
+            + FileManager.formatSize(freeMemory)
+            + "\n"
+            + "- PSS Total: "
+            + FileManager.formatSize(memoryInfo.getTotalPss() * 1024L)
+            + "\n"
+            + "- Private Dirty: "
+            + FileManager.formatSize(memoryInfo.getTotalPrivateDirty() * 1024L)
+            + "\n"
+            + "- Shared Dirty: "
+            + FileManager.formatSize(memoryInfo.getTotalSharedDirty() * 1024L)
+            + "\n";
 
-      return sb;
+    return sb;
   }
 
   /**
