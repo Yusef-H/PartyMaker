@@ -107,7 +107,7 @@ tasks.named("build") {
 spotless {
     java {
         target("src/**/*.java")
-        googleJavaFormat("1.7")
+        googleJavaFormat("1.17.0")
         trimTrailingWhitespace()
         endWithNewline()
     }
