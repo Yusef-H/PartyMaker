@@ -2,30 +2,9 @@
 
 ![Project Views](https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square)
 
-A comprehensive social event planning platform with a modern Android client and Spring Boot server architecture. PartyMaker enables users to create, manage, and participate in social events with real-time communication, group management, and AI-powered features.
-
-## 🆕 Recent Updates & Improvements
-
-### 🚀 Performance & Stability Enhancements (May 2023)
-- **Firebase Compatibility Fixes**: Resolved data serialization conflicts between `username` and `userName` fields
-- **Image Path Standardization**: Unified image storage paths to `/UsersImageProfile/Groups/` with backward compatibility
-- **Memory Optimization**: Reduced memory usage by 15% through improved image loading and caching
-- **Network Efficiency**: Decreased data usage by implementing proper image fallback mechanisms
-- **Error Handling**: Enhanced error recovery for network operations and Firebase interactions
-
-### 🎨 UI/UX Improvements
-- **Group Name Editing**: Added direct group name editing for all users with real-time updates
-- **Profile Image Handling**: Fixed profile image loading and storage path issues
-- **Toast Notifications**: Removed unnecessary notifications and improved user feedback
-- **Dialog Improvements**: Enhanced input dialogs with proper padding and focus handling
-- **Visual Consistency**: Standardized button behaviors across all screens
-
-### 🔧 Technical Debt Reduction
-- **Code Organization**: Improved structure with consistent naming conventions
-- **Error Handling**: Enhanced error recovery for network operations
-- **Duplicate Code Elimination**: Consolidated redundant image loading logic
-- **Standardized Paths**: Unified storage path conventions for all user and group assets
-- **Firebase Integration**: Improved interaction with Firebase through server-side operations
+A comprehensive social event planning platform with a modern Android client and Spring Boot server
+architecture. PartyMaker enables users to create, manage, and participate in social events with
+real-time communication, group management, and AI-powered features.
 
 ## 🏗️ Architecture Overview
 
@@ -39,6 +18,7 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 ## 🛠️ Technology Stack
 
 ### 📱 Android Client
+
 - **Language**: Kotlin & Java
 - **Minimum SDK**: API 33 (Android 13)
 - **Target SDK**: API 35 (Android 15)
@@ -47,23 +27,27 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Build System**: Gradle with Version Catalogs
 
 ### 🖥️ Spring Boot Server
+
 - **Framework**: Spring Boot 2.7.5
 - **Language**: Java 11
 - **Architecture**: RESTful API with Service Layer
 - **Database**: Firebase Realtime Database (via Admin SDK)
 
 ### 🔥 Firebase Services
+
 - **Authentication**: User registration, login, and session management
 - **Realtime Database**: Real-time data synchronization
 - **Cloud Storage**: File and image storage
 
 ### 🎨 UI & Design
+
 - **Material Design**: Modern UI components and theming
 - **Custom Animations**: Smooth transitions and loading effects
 - **Responsive Layout**: Adaptive design for different screen sizes
 - **Consistent Toolbars**: Professional UI across all screens
 
 ### 🤖 AI & External Services
+
 - **OpenAI Integration**: Intelligent chatbot using GPT models
 - **Google Maps**: Location services and mapping
 - **Google Places**: Location search and autocomplete
@@ -71,35 +55,41 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 ## ✨ Key Features
 
 ### 🔐 User Management
+
 - **Secure Authentication**: Firebase Auth with email/password and Google Sign-In
 - **Profile Management**: Complete user profile creation and editing
 - **Friend System**: Add, remove, and manage friends
 - **User Discovery**: Browse and connect with other users
 
 ### 👥 Group & Community
+
 - **Group Creation**: Public and private group management
 - **Membership Control**: Join, leave, and admin group operations
 - **Group Administration**: Advanced admin tools and settings
 - **Group Activities**: Dedicated group interaction screens
 
 ### 🎊 Event Planning
+
 - **Event Creation**: Comprehensive event setup with date/time management
 - **Invitation System**: Send and track event invitations
 - **Attendance Tracking**: Monitor event participation
 - **Event Administration**: Tools for event organizers
 
 ### 💬 Real-time Communication
+
 - **In-app Messaging**: Real-time chat within groups
 - **Message History**: Persistent conversation storage
 - **AI Chatbot**: Intelligent assistant for user support
 - **Local Notifications**: App-level notification system for party updates
 
 ### 🗺️ Location Services
+
 - **Google Maps Integration**: Interactive maps for event locations
 - **Location Search**: Google Places integration for venue discovery
 - **Geolocation**: User location tracking and sharing
 
 ### 🔄 Social Sharing
+
 - **Party Sharing**: Share party details via multiple channels
 - **WhatsApp Integration**: Direct sharing to WhatsApp
 - **Facebook Integration**: Share parties on Facebook
@@ -107,6 +97,7 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Text-based Sharing**: Generate shareable party descriptions
 
 ### 🔔 Notifications
+
 - **Real-time Notifications**: Get notified about party updates
 - **Customizable Channels**: Separate channels for parties, messages, and updates
 - **Subscription Management**: Subscribe/unsubscribe to specific party notifications
@@ -268,6 +259,7 @@ PartyMaker/
 ## 🧪 Testing
 
 ### Android Testing
+
 ```bash
 # Unit tests
 ./gradlew test
@@ -277,6 +269,7 @@ PartyMaker/
 ```
 
 ### Server Testing
+
 ```bash
 # Run server tests
 cd app/server
@@ -286,10 +279,12 @@ cd app/server
 ## 📦 Build Variants
 
 ### Android
+
 - **Debug**: Development build with debugging enabled
 - **Release**: Production build with optimizations
 
 ### Server
+
 - **Development**: Local development with hot reload
 - **Production**: Optimized for deployment
 
@@ -304,6 +299,7 @@ cd app/server
 ## 🐞 Bug Fixes & Improvements
 
 ### Recent Fixes (May 2023)
+
 - **Firebase Serialization**: Fixed conflicts between `username` and `userName` fields
 - **Image Path Handling**: Standardized image paths with backward compatibility
 - **Group Name Editing**: Added user-friendly editing dialog with server-side updates
@@ -311,6 +307,7 @@ cd app/server
 - **Error Handling**: Enhanced recovery from network and Firebase errors
 
 ### Previous Fixes
+
 - **Back Navigation**: Fixed navigation flow between activities
 - **UI Consistency**: Standardized toolbars and backgrounds across all screens
 - **Memory Leaks**: Fixed memory leaks in AsyncTask operations
@@ -322,11 +319,13 @@ cd app/server
 ## 🚀 Deployment
 
 ### Android App
+
 1. Generate signed APK/AAB
 2. Upload to Google Play Console
 3. Configure Firebase for production
 
 ### Spring Boot Server
+
 1. Build JAR file: `./gradlew bootJar`
 2. Deploy to cloud platform (AWS, GCP, Azure)
 3. Configure environment variables
@@ -339,9 +338,9 @@ We welcome contributions! Please follow these guidelines:
 1. **Fork the repository**
 2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
 3. **Follow coding standards**:
-   - Use consistent naming conventions
-   - Add JavaDoc comments for public methods
-   - Follow MVVM architecture patterns
+    - Use consistent naming conventions
+    - Add JavaDoc comments for public methods
+    - Follow MVVM architecture patterns
 4. **Test your changes**: Ensure all tests pass
 5. **Commit with clear messages**: Use conventional commit format
 6. **Create a Pull Request**: Provide detailed description
