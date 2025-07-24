@@ -51,6 +51,9 @@
             android:name=".ui.auth.RegisterActivity"
             android:theme="@style/Theme.Material3.Register" />
 
+        <activity android:name=".ui.auth.ResetPasswordActivity"
+            android:exported="false" />
+
         <activity android:name=".ui.common.MainActivity" />
         <activity android:name=".ui.group.FriendsAddActivity" />
         <activity android:name=".ui.group.CreateGroupActivity" />
