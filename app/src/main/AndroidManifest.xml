@@ -2,19 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Network permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Location permissions -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Storage & media permissions -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!-- Camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Notifications (required for Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- app doesn't require camera to run -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -31,27 +41,31 @@
         android:theme="@style/Theme.PartyMaker"
         android:usesCleartextTraffic="true">
 
-        <!-- Activity settings -->
+        <!-- Launcher activity (entry point) -->
         <activity
             android:name=".ui.common.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Authentication activities -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:theme="@style/Theme.Material3.Login" />
-
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:theme="@style/Theme.Material3.Register" />
+        <activity android:name=".ui.auth.ResetPasswordActivity"
+            android:exported="false" />
 
+        <!-- Main screen -->
         <activity android:name=".ui.common.MainActivity" />
+
+        <!-- Group-related screens -->
         <activity android:name=".ui.group.FriendsAddActivity" />
         <activity android:name=".ui.group.CreateGroupActivity" />
         <activity android:name=".ui.group.AdminOptionsActivity" />
@@ -62,7 +76,6 @@
         <activity
             android:name=".ui.group.FriendsRemoveActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.profile.EditProfileActivity" />
         <activity android:name=".ui.group.UsersListActivity" />
         <activity android:name=".ui.group.JoinGroupActivity" />
         <activity android:name=".ui.group.AdminSettingsActivity" />
@@ -70,12 +83,22 @@
         <activity
             android:name=".ui.group.PublicGroupsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- Profile screen -->
+        <activity android:name=".ui.profile.EditProfileActivity" />
+
+        <!-- Settings -->
         <activity android:name=".ui.settings.ServerSettingsActivity" />
+
+        <!-- AI chatbot -->
         <activity android:name=".ui.chatbot.GptChatActivity" />
 
+        <!-- Google Maps API key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDummyKeyForTesting" />
+
+        <!-- Google Play Services version -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
