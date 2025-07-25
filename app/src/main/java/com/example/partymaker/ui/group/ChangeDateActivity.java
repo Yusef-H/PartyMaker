@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class ChangeDateActivity extends AppCompatActivity {
-  private static final String TAG = "ChangeDateActivity";
   private Button btnHide, btnHelp, btnChangeDate, btnSelectDate, btnSelectTime;
   private TextView tvHide, tvHelp, tvInstructions1, tvSelectedDate, tvSelectedTime;
   private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
@@ -102,7 +101,7 @@ public class ChangeDateActivity extends AppCompatActivity {
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
             if (group != null

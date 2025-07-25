@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
   private static final String ACTION_BAR_END_COLOR = "#0E81D1";
   private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
   private static final float ACTION_BAR_ELEVATION = 15f;
-  private static final String GROUPS_DB_PATH = "Groups";
 
   // UI Components
   private ListView lv1;

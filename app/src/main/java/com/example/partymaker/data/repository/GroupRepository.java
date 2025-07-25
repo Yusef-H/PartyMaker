@@ -90,7 +90,7 @@ public class GroupRepository {
           // Otherwise, get from server
           getGroupFromServer(
               groupKey,
-              new DataCallback<Group>() {
+              new DataCallback<>() {
                 @Override
                 public void onDataLoaded(Group group) {
                   // Cache the group
@@ -129,7 +129,7 @@ public class GroupRepository {
   private void getGroupFromServer(String groupKey, final DataCallback<Group> callback) {
     serverClient.getGroup(
         groupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
             callback.onDataLoaded(group);
@@ -168,7 +168,7 @@ public class GroupRepository {
 
           // Otherwise, get from server
           getAllGroupsFromServer(
-              new DataCallback<List<Group>>() {
+              new DataCallback<>() {
                 @Override
                 public void onDataLoaded(List<Group> groups) {
                   // Cache the groups
@@ -206,7 +206,7 @@ public class GroupRepository {
    */
   private void getAllGroupsFromServer(final DataCallback<List<Group>> callback) {
     serverClient.getGroups(
-        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Map<String, Group> groupMap) {
             List<Group> groups = new java.util.ArrayList<>(groupMap.values());
@@ -431,7 +431,7 @@ public class GroupRepository {
 
     serverClient.getUserGroups(
         userKey,
-        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Map<String, Group> groupMap) {
             List<Group> groups = new ArrayList<>(groupMap.values());

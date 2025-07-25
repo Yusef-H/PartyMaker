@@ -18,7 +18,6 @@ public class AuthHelper {
   private static final String KEY_LAST_LOGIN_TIME = "last_login_time";
   private static final String KEY_SERVER_MODE_EMAIL = "server_mode_email";
   private static final String KEY_SERVER_MODE_ACTIVE = "server_mode_active";
-  private static final int MAX_RETRY_COUNT = 2;
 
   /**
    * Gets the current user's email from Firebase Auth or SharedPreferences as fallback

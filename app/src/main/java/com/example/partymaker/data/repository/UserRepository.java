@@ -60,7 +60,7 @@ public class UserRepository {
 
     Log.d(TAG, "Fetching all users from server");
     serverClient.getUsers(
-        new FirebaseServerClient.DataCallback<Map<String, User>>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Map<String, User> users) {
             if (users == null) {
@@ -120,7 +120,7 @@ public class UserRepository {
     Log.d(TAG, "Fetching user from server: " + userId);
     serverClient.getUser(
         userId,
-        new FirebaseServerClient.DataCallback<User>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(User user) {
             if (user == null) {
@@ -187,7 +187,7 @@ public class UserRepository {
       // Fetch from server
       getUser(
           userKey,
-          new DataCallback<User>() {
+          new DataCallback<>() {
             @Override
             public void onDataLoaded(User user) {
               currentUser.postValue(user);

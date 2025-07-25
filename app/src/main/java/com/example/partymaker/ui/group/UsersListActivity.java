@@ -76,7 +76,6 @@ public class UsersListActivity extends AppCompatActivity {
 
     // Get users reference using FirebaseAccessManager
     FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
-    Object usersRef = accessManager.getUsersRef();
 
     ShowData();
     setupEventHandlers();

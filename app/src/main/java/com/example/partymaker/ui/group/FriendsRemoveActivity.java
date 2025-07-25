@@ -87,7 +87,6 @@ public class FriendsRemoveActivity extends AppCompatActivity {
 
     // Initialize UI elements
     btnDeleteFriend = findViewById(R.id.btnDeleteFriend);
-    TextView tvInstructions1 = findViewById(R.id.tvInstructions3);
     etFriendEmail = findViewById(R.id.etDeleteEmail);
 
     ListView listView = findViewById(R.id.friends_remove_list);
@@ -235,14 +234,12 @@ public class FriendsRemoveActivity extends AppCompatActivity {
             }
 
             boolean isInGroup = false;
-            String friendKeyInGroup = null;
 
             // Check if user is in FriendKeys
             if (group.getFriendKeys() != null) {
               for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
                 if (entry.getValue().equals(finalFriendKey)) {
                   isInGroup = true;
-                  friendKeyInGroup = entry.getKey();
                   break;
                 }
               }

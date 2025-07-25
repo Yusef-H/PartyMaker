@@ -320,7 +320,6 @@ public class FriendsAddActivity extends AppCompatActivity {
   private void processServerUserData(Map<String, User> userData) {
     boolean userFound = false;
     String friendKey = null;
-    User foundUser = null;
 
     // Find the user by email
     for (Map.Entry<String, User> entry : userData.entrySet()) {
@@ -330,7 +329,6 @@ public class FriendsAddActivity extends AppCompatActivity {
         if (userEmail.equals(CurrentFriend)) {
           userFound = true;
           friendKey = entry.getKey();
-          foundUser = user;
           break;
         }
       }

@@ -135,7 +135,7 @@ public class UserViewModel extends ViewModel {
     Log.d(TAG, "Loading all users, forceRefresh: " + forceRefresh);
 
     // Check network availability
-    if (!forceRefresh && !ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+    if (!forceRefresh && Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
       Log.w(TAG, "Network not available, using cached data");
       errorMessage.setValue("Network not available. Using cached data.");
       networkErrorType.setValue(NetworkUtils.ErrorType.NO_NETWORK);
@@ -188,7 +188,7 @@ public class UserViewModel extends ViewModel {
     Log.d(TAG, "Loading user with ID: " + userId);
 
     // Check network availability for forced refresh
-    if (forceRefresh && !ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+    if (forceRefresh && Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
       Log.w(TAG, "Network not available for forced refresh");
       errorMessage.setValue("Network not available. Using cached data.");
       networkErrorType.setValue(NetworkUtils.ErrorType.NO_NETWORK);
@@ -245,7 +245,7 @@ public class UserViewModel extends ViewModel {
     }
 
     // Check network availability for forced refresh
-    if (forceRefresh && !ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+    if (forceRefresh && Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
       Log.w(TAG, "Network not available for forced refresh");
       errorMessage.setValue("Network not available. Using cached data.");
       networkErrorType.setValue(NetworkUtils.ErrorType.NO_NETWORK);
@@ -276,6 +276,7 @@ public class UserViewModel extends ViewModel {
               dataSnapshot -> {
                 if (dataSnapshot.exists()) {
                   // Use Map instead of User.class to avoid Firebase serialization issues
+                  @SuppressWarnings("unchecked")
                   Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
                   if (userData != null) {
                     // Create a User object manually from the Map
@@ -360,7 +361,7 @@ public class UserViewModel extends ViewModel {
     }
 
     // Check network availability
-    if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+    if (Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
       Log.e(TAG, "Network not available for update");
       errorMessage.setValue("Network not available. Cannot update profile.");
       networkErrorType.setValue(NetworkUtils.ErrorType.NO_NETWORK);
@@ -430,7 +431,7 @@ public class UserViewModel extends ViewModel {
     }
 
     // Check network availability
-    if (!ConnectivityManager.getInstance().getNetworkAvailability().getValue()) {
+    if (Boolean.FALSE.equals(ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
       Log.e(TAG, "Network not available for creating user");
       errorMessage.setValue("Network not available. Cannot create user.");
       networkErrorType.setValue(NetworkUtils.ErrorType.NO_NETWORK);

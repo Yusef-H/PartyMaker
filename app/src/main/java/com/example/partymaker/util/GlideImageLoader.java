@@ -52,7 +52,7 @@ public class GlideImageLoader {
             .load(imageUrl)
             .apply(getDefaultRequestOptions(placeholderResId))
             .listener(
-                new RequestListener<Drawable>() {
+                new RequestListener<>() {
                   @Override
                   public boolean onLoadFailed(
                       @Nullable GlideException e,
@@ -140,9 +140,7 @@ public class GlideImageLoader {
     }
 
     new Thread(
-            () -> {
-              Glide.get(context).clearDiskCache();
-            })
+            () -> Glide.get(context).clearDiskCache())
         .start();
   }
 
