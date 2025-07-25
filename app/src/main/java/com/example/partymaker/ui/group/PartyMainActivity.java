@@ -28,10 +28,8 @@ import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import com.example.partymaker.utilities.NotificationHelper;
 import com.example.partymaker.utilities.ShareHelper;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PartyMainActivity extends AppCompatActivity {
@@ -51,15 +49,12 @@ public class PartyMainActivity extends AppCompatActivity {
   private TextView tvDateHours;
   private CardView Card1, Card2, Card3, Card4, Card5, Card6, Card7, Card8;
   private Group currentGroup;
-  private MaterialButton btnPayNow;
   private LinearLayout paymentPullUpContainer;
-  private ImageView pullHandle;
 
   // Variables for pull-up animation
   private float dY;
   private float initialY;
   private boolean isExpanded = false;
-  private static final float PULL_THRESHOLD = 100f;
 
   // Add UI elements for coming/not coming toggle
   private ImageView imgThumbUp, imgThumbDown, imgOptions;
@@ -146,12 +141,6 @@ public class PartyMainActivity extends AppCompatActivity {
       // Load group data
       loadGroupData();
 
-      // Remove the toast message about payment option
-      // new Handler().postDelayed(() -> {
-      //   Toast.makeText(this, "Swipe down from top to see payment options",
-      // Toast.LENGTH_LONG).show();
-      // }, 1500);
-
     } catch (Exception e) {
       Log.e(TAG, "Unexpected error in onCreate", e);
       showErrorAndFinish("An unexpected error occurred. Please try again.");
@@ -177,7 +166,7 @@ public class PartyMainActivity extends AppCompatActivity {
       FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
       serverClient.getGroup(
           GroupKey,
-          new FirebaseServerClient.DataCallback<Group>() {
+          new FirebaseServerClient.DataCallback<>() {
             @Override
             public void onSuccess(Group group) {
               try {
@@ -253,7 +242,7 @@ public class PartyMainActivity extends AppCompatActivity {
       FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
       serverClient.getMessages(
           GroupKey,
-          new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
+          new FirebaseServerClient.DataCallback<>() {
             @Override
             public void onSuccess(
                 java.util.List<com.example.partymaker.data.model.ChatMessage> messages) {
@@ -490,9 +479,6 @@ public class PartyMainActivity extends AppCompatActivity {
             case MotionEvent.ACTION_MOVE:
               // Calculate new position with constraints
               float newY = event.getRawY() + dY;
-
-              // Get the height of the container to use as maximum translation
-              int height = view.getHeight();
 
               // For pull down, constraints are different
               if (newY < -70) newY = -70;
@@ -825,22 +811,11 @@ public class PartyMainActivity extends AppCompatActivity {
       return;
     }
 
-    // In a real app, this would check a payments collection in the database
-    // For now, we'll simulate this with a simple check
-    // This should be replaced with actual database query
-    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
-
-    // Example of how this might be implemented:
-    // Path would be something like "Payments/{groupKey}/{userKey}"
-    String paymentPath = "Payments/" + GroupKey + "/" + UserKey;
-
     // For demo purposes, we'll just set this to false
     hasUserPaid = false;
 
     // Update the payment button based on this status
-    if (currentGroup != null) {
       updatePaymentButtonVisibility(currentGroup.getGroupPrice());
-    }
   }
 
   /** Handles the payment process when the user clicks the payment button */
@@ -869,10 +844,6 @@ public class PartyMainActivity extends AppCompatActivity {
         .postDelayed(
             () -> {
               processingDialog.dismiss();
-
-              // Simulate successful payment (in a real app, this would be an actual payment
-              // gateway)
-              boolean paymentSuccessful = true;
 
               // Update payment status in database
               updatePaymentInDatabase();
@@ -1315,7 +1286,7 @@ public class PartyMainActivity extends AppCompatActivity {
         GroupKey,
         "FriendKeys",
         updatedFriendKeys,
-        new FirebaseServerClient.DataCallback<Void>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Void result) {
             // Update coming keys
@@ -1323,7 +1294,7 @@ public class PartyMainActivity extends AppCompatActivity {
                 GroupKey,
                 "ComingKeys",
                 updatedComingKeys,
-                new FirebaseServerClient.DataCallback<Void>() {
+                new FirebaseServerClient.DataCallback<>() {
                   @Override
                   public void onSuccess(Void result) {
                     Toast.makeText(

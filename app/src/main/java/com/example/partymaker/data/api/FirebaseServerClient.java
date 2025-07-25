@@ -121,7 +121,6 @@ public class FirebaseServerClient {
   }
 
   // Groups methods
-  @SuppressWarnings("unchecked")
   public void getGroups(final DataCallback<Map<String, Group>> callback) {
     Log.d(TAG, "getGroups called");
     logApiCall("GET", "Groups");
@@ -157,16 +156,13 @@ public class FirebaseServerClient {
             String key = keys.next();
             JSONObject groupJson = jsonObject.getJSONObject(key);
             Group group = gson.fromJson(groupJson.toString(), Group.class);
-            if (group.getGroupKey() == null) {
-              group.setGroupKey(key);
-            }
-            groups.put(key, group);
+              groups.put(key, group);
           }
 
           Log.d(TAG, "Successfully parsed " + groups.size() + " groups");
           return groups;
         },
-        new NetworkUtils.RetryCallback<Map<String, Group>>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Map<String, Group> result) {
             Log.d(TAG, "getGroups completed successfully with " + result.size() + " groups");
@@ -246,13 +242,13 @@ public class FirebaseServerClient {
           }
 
           // Set the group key if it's not already set
-          if (group.getGroupKey() == null || group.getGroupKey().isEmpty()) {
+          if (group.getGroupKey().isEmpty()) {
             group.setGroupKey(groupId);
           }
 
           return group;
         },
-        new NetworkUtils.RetryCallback<Group>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Group result) {
             Log.d(TAG, "getGroup completed successfully: " + result.getGroupName());
@@ -308,7 +304,7 @@ public class FirebaseServerClient {
           }
           return true;
         },
-        new NetworkUtils.RetryCallback<Boolean>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Boolean result) {
             Log.d(TAG, "saveGroup completed successfully");
@@ -364,7 +360,7 @@ public class FirebaseServerClient {
           }
           return true;
         },
-        new NetworkUtils.RetryCallback<Boolean>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Boolean result) {
             Log.d(TAG, "updateGroup completed successfully");
@@ -418,7 +414,7 @@ public class FirebaseServerClient {
           }
           return true;
         },
-        new NetworkUtils.RetryCallback<Boolean>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Boolean result) {
             Log.d(TAG, "deleteGroup completed successfully");
@@ -476,7 +472,6 @@ public class FirebaseServerClient {
   }
 
   // Users methods
-  @SuppressWarnings("unchecked")
   public void getUsers(final DataCallback<Map<String, User>> callback) {
     Log.d(TAG, "getUsers called");
     logApiCall("GET", "Users");
@@ -518,7 +513,7 @@ public class FirebaseServerClient {
           Log.d(TAG, "Successfully parsed " + users.size() + " users");
           return users;
         },
-        new NetworkUtils.RetryCallback<Map<String, User>>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Map<String, User> result) {
             Log.d(TAG, "getUsers completed successfully with " + result.size() + " users");
@@ -675,7 +670,7 @@ public class FirebaseServerClient {
     @Override
     protected void onPostExecute(Boolean success) {
       if (success) {
-        mainHandler.post(() -> callback.onSuccess());
+        mainHandler.post(callback::onSuccess);
       } else {
         mainHandler.post(() -> callback.onError("Failed to save user"));
       }
@@ -744,6 +739,7 @@ public class FirebaseServerClient {
     @Override
     protected Boolean doInBackground(Object... params) {
       String path = "Users/" + params[0];
+      @SuppressWarnings("unchecked")
       Map<String, Object> updatesObj = (Map<String, Object>) params[1];
       return makePutRequest(path, gson.toJson(updatesObj));
     }
@@ -751,7 +747,7 @@ public class FirebaseServerClient {
     @Override
     protected void onPostExecute(Boolean success) {
       if (success) {
-        mainHandler.post(() -> callback.onSuccess());
+        mainHandler.post(callback::onSuccess);
       } else {
         mainHandler.post(() -> callback.onError("Failed to update user"));
       }
@@ -813,7 +809,7 @@ public class FirebaseServerClient {
         // This is a message key, add it to the map
         try {
           Object value = obj.get(key);
-          if (value instanceof String && ("true".equals(value) || "false".equals(value))) {
+          if (("true".equals(value) || "false".equals(value))) {
             messageKeys.put(key, Boolean.parseBoolean((String) value));
             Log.d(TAG, "Extracted message key: " + key + " = " + value);
           } else if (value instanceof Boolean) {
@@ -1217,6 +1213,7 @@ public class FirebaseServerClient {
         });
   }
 
+  @SuppressLint("StaticFieldLeak")
   public void deleteData(String path, final OperationCallback callback) {
     // Check if path is null or empty
     if (path == null || path.isEmpty()) {
@@ -1291,7 +1288,7 @@ public class FirebaseServerClient {
           }
           return true;
         },
-        new NetworkUtils.RetryCallback<Boolean>() {
+        new NetworkUtils.RetryCallback<>() {
           @Override
           public void onSuccess(Boolean result) {
             Log.d(TAG, "updateData completed successfully for path: " + path);
@@ -1317,7 +1314,6 @@ public class FirebaseServerClient {
   }
 
   @SuppressLint("StaticFieldLeak")
-  @SuppressWarnings("unchecked")
   public void getUserGroups(String userId, final DataCallback<Map<String, Group>> callback) {
     // Check network availability first
     Context context = getContext();
@@ -1550,7 +1546,6 @@ public class FirebaseServerClient {
           || responseCode == HttpURLConnection.HTTP_CREATED;
     } catch (Exception e) {
       Log.e(TAG, "Error making POST request to path: " + path, e);
-      e.printStackTrace();
       return false;
     } finally {
       if (connection != null) {

@@ -8,8 +8,6 @@ import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.repository.GroupRepository;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -384,21 +382,16 @@ public class GroupViewModel extends ViewModel {
       return;
     }
 
-    Collections.sort(
-        groups,
-        new Comparator<Group>() {
-          @Override
-          public int compare(Group g1, Group g2) {
-            if (g1.getGroupName() == null && g2.getGroupName() == null) {
-              return 0;
-            } else if (g1.getGroupName() == null) {
-              return 1;
-            } else if (g2.getGroupName() == null) {
-              return -1;
-            }
-            return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
-          }
-        });
+    groups.sort((g1, g2) -> {
+        if (g1.getGroupName() == null && g2.getGroupName() == null) {
+            return 0;
+        } else if (g1.getGroupName() == null) {
+            return 1;
+        } else if (g2.getGroupName() == null) {
+            return -1;
+        }
+        return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
+    });
   }
 
   /**

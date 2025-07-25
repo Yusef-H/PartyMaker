@@ -217,13 +217,11 @@ public class ChatActivity extends AppCompatActivity {
                 if (!gptQuestion.isEmpty()) {
                   // Show loading message
                   runOnUiThread(
-                      () -> {
-                        Toast.makeText(
-                                ChatActivity.this,
-                                "Sending question to ChatGPT",
-                                Toast.LENGTH_SHORT)
-                            .show();
-                      });
+                      () -> Toast.makeText(
+                              ChatActivity.this,
+                              "Sending question to ChatGPT",
+                              Toast.LENGTH_SHORT)
+                          .show());
 
                   new Thread(
                           () -> {
@@ -323,7 +321,7 @@ public class ChatActivity extends AppCompatActivity {
 
     serverClient.getMessages(
         GroupKey,
-        new FirebaseServerClient.DataCallback<List<ChatMessage>>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(List<ChatMessage> messages) {
             // Show the ListView
@@ -388,7 +386,7 @@ public class ChatActivity extends AppCompatActivity {
 
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
             if (group != null) {
@@ -466,7 +464,7 @@ public class ChatActivity extends AppCompatActivity {
       Log.d(TAG, "About to call serverClient.saveMessage");
       serverClient.saveMessage(
           message,
-          new FirebaseServerClient.DataCallback<Boolean>() {
+          new FirebaseServerClient.DataCallback<>() {
             @Override
             public void onSuccess(Boolean success) {
               Log.d(TAG, "Message saved successfully: " + success);
@@ -579,9 +577,7 @@ public class ChatActivity extends AppCompatActivity {
                         + ")");
 
                 retryHandler.postDelayed(
-                    () -> {
-                      sendMessageWithRetry(messageId, message, retryCount + 1);
-                    },
+                    () -> sendMessageWithRetry(messageId, message, retryCount + 1),
                     delayMillis);
               } else {
                 // Max retries reached, show error to user
@@ -626,7 +622,7 @@ public class ChatActivity extends AppCompatActivity {
     // Get the current group
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
+        new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
             if (group == null) {
@@ -690,9 +686,7 @@ public class ChatActivity extends AppCompatActivity {
                       + ")");
 
               retryHandler.postDelayed(
-                  () -> {
-                    updateGroupWithRetry(group, retryCount + 1);
-                  },
+                  () -> updateGroupWithRetry(group, retryCount + 1),
                   delayMillis);
             }
           }
