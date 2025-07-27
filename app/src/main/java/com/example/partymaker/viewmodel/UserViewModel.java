@@ -39,6 +39,9 @@ public class UserViewModel extends ViewModel {
   // LiveData for network error type
   private final MutableLiveData<NetworkUtils.ErrorType> networkErrorType = new MutableLiveData<>();
 
+  // LiveData for success messages
+  private final MutableLiveData<String> successMessage = new MutableLiveData<>();
+
   // Repository instance
   private final UserRepository repository;
 
@@ -124,6 +127,15 @@ public class UserViewModel extends ViewModel {
    */
   public LiveData<NetworkUtils.ErrorType> getNetworkErrorType() {
     return networkErrorType;
+  }
+
+  /**
+   * Gets the success message as LiveData
+   *
+   * @return LiveData containing the success message
+   */
+  public LiveData<String> getSuccessMessage() {
+    return successMessage;
   }
 
   /**
@@ -392,6 +404,7 @@ public class UserViewModel extends ViewModel {
             currentUser.setValue(user);
             isLoading.setValue(false);
             networkErrorType.setValue(null); // Clear any network error
+            successMessage.setValue("Username updated successfully");
           }
 
           @Override
@@ -517,6 +530,11 @@ public class UserViewModel extends ViewModel {
   /** Clears the error message */
   public void clearError() {
     errorMessage.setValue(null);
+  }
+
+  /** Clears the success message */
+  public void clearSuccess() {
+    successMessage.setValue(null);
   }
 
   /**

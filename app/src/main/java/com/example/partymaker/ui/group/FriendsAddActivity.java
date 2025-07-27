@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
+import com.example.partymaker.ui.group.MembersComingActivity;
+import com.example.partymaker.ui.group.MembersInvitedActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.HashMap;
@@ -102,6 +104,54 @@ public class FriendsAddActivity extends AppCompatActivity {
 
   private void navigateBack() {
     Intent intent = new Intent(this, PartyMainActivity.class);
+    ExtrasMetadata extras =
+        new ExtrasMetadata(
+            GroupName,
+            GroupKey,
+            GroupDay,
+            GroupMonth,
+            GroupYear,
+            GroupHour,
+            GroupLocation,
+            AdminKey,
+            CreatedAt,
+            GroupPrice,
+            GroupType,
+            CanAdd,
+            FriendKeys,
+            ComingKeys,
+            MessageKeys);
+    Common.addExtrasToIntent(intent, extras);
+    startActivity(intent);
+    finish(); // Close this activity
+  }
+
+  private void navigateToMembersInvitedActivity() {
+    Intent intent = new Intent(this, MembersInvitedActivity.class);
+    ExtrasMetadata extras =
+        new ExtrasMetadata(
+            GroupName,
+            GroupKey,
+            GroupDay,
+            GroupMonth,
+            GroupYear,
+            GroupHour,
+            GroupLocation,
+            AdminKey,
+            CreatedAt,
+            GroupPrice,
+            GroupType,
+            CanAdd,
+            FriendKeys,
+            ComingKeys,
+            MessageKeys);
+    Common.addExtrasToIntent(intent, extras);
+    startActivity(intent);
+    finish(); // Close this activity
+  }
+
+  private void navigateToMembersComingActivity() {
+    Intent intent = new Intent(this, MembersComingActivity.class);
     ExtrasMetadata extras =
         new ExtrasMetadata(
             GroupName,
@@ -261,9 +311,8 @@ public class FriendsAddActivity extends AppCompatActivity {
                               }
                               ComingKeys.put(finalFriendKey, "true");
 
-                              showViews(
-                                  etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
-                              hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
+                              // Navigate to MembersComingActivity to show the newly added member in coming list
+                              navigateToMembersComingActivity();
                             }
 
                             @Override
@@ -312,8 +361,8 @@ public class FriendsAddActivity extends AppCompatActivity {
 
     btnNo.setOnClickListener(
         v -> {
-          showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
-          hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
+          // Navigate to MembersInvitedActivity to show the newly added member in invited list
+          navigateToMembersInvitedActivity();
         });
   }
 

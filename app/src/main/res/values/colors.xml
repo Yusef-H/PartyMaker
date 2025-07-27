@@ -25,6 +25,7 @@
 
     <!-- Additional colors -->
     <color name="green">#4CAF50</color>
+    <color name="darkSlate">#455A64</color>
 
     <!-- Screens background -->
     <color name="bg_screen1">#4f8500fa</color>
