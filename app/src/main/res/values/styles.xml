@@ -20,4 +20,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <!-- Custom style for AutocompleteSupportFragment to improve readability -->
+    <style name="AutocompleteStyle">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray_medium</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:elevation">4dp</item>
+    </style>
 </resources>

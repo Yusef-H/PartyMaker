@@ -367,9 +367,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:background="@color/transparent"
+            android:background="@drawable/rounded_button"
             android:text="@string/save_location"
             android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:elevation="4dp"
             android:visibility="visible" />
     </FrameLayout>
 </merge>
