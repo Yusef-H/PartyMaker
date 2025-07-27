@@ -286,6 +286,25 @@ public class FirebaseController {
     }
     
     /**
+     * Deletes a group from Firebase.
+     * @param groupId The group ID.
+     * @return 200 OK on success, 404 if not found, 500 on error.
+     */
+    @DeleteMapping("/Groups/{groupId}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable String groupId) {
+        try {
+            System.out.println("DEBUG: Deleting group with ID: " + groupId);
+            firebaseService.deleteData("Groups/" + groupId).get();
+            System.out.println("DEBUG: Group " + groupId + " deleted successfully");
+            return ResponseEntity.ok().build();
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("DEBUG: Failed to delete group " + groupId + ": " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    /**
      * Retrieves all users from Firebase.
      * @return Map of all users, or 500 on error.
      */
