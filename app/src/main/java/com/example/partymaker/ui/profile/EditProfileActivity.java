@@ -174,6 +174,18 @@ public class EditProfileActivity extends AppCompatActivity {
               }
             });
 
+    // Observe success messages
+    userViewModel
+        .getSuccessMessage()
+        .observe(
+            this,
+            success -> {
+              if (success != null && !success.isEmpty()) {
+                showSuccess(success);
+                userViewModel.clearSuccess();
+              }
+            });
+
     // Observe network error type
     userViewModel
         .getNetworkErrorType()
@@ -372,29 +384,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
               // Update the user profile
               userViewModel.updateCurrentUser(updates);
-
-              // Observe the loading state to hide progress when done
-              userViewModel
-                  .getIsLoading()
-                  .observe(
-                      this,
-                      isLoading -> {
-                        if (!isLoading) {
-                          progressBar.setVisibility(View.GONE);
-                        }
-                      });
-
-              // Show success message when no error
-              userViewModel
-                  .getErrorMessage()
-                  .observe(
-                      this,
-                      errorMsg -> {
-                        if (errorMsg == null || errorMsg.isEmpty()) {
-                          Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT)
-                              .show();
-                        }
-                      });
             },
             500); // 500ms delay to allow network status to update
   }
@@ -745,6 +734,14 @@ public class EditProfileActivity extends AppCompatActivity {
       Snackbar.make(rootLayout, message, Snackbar.LENGTH_LONG).show();
     } else {
       Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+  }
+
+  private void showSuccess(String message) {
+    if (rootLayout != null) {
+      Snackbar.make(rootLayout, message, Snackbar.LENGTH_SHORT).show();
+    } else {
+      Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
   }
 
