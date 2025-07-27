@@ -66,15 +66,18 @@
         android:textSize="25sp"
         android:visibility="invisible" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
         <Button
             android:id="@+id/btnYes"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
+            android:layout_weight="1"
             android:background="#640081d1"
             android:text="@string/yes"
             android:textAllCaps="false"
@@ -82,15 +85,14 @@
 
         <Button
             android:id="@+id/btnNo"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
+            android:layout_weight="1"
             android:background="#64af0707"
             android:text="@string/i_dont_know"
             android:textAllCaps="false"
             android:visibility="invisible" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         style="?android:attr/buttonBarStyle"
