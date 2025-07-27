@@ -1271,6 +1271,31 @@ public class PartyMainActivity extends AppCompatActivity {
       return;
     }
 
+    // Check if current user is admin
+    boolean isCurrentUserAdmin =
+        currentGroup.getAdminKey() != null && currentGroup.getAdminKey().equals(UserKey);
+
+    if (isCurrentUserAdmin) {
+      handleAdminLeavingGroup();
+    } else {
+      handleRegularUserLeavingGroup();
+    }
+  }
+
+  private void handleAdminLeavingGroup() {
+    // Get the current friend keys
+    HashMap<String, Object> friendKeys = currentGroup.getFriendKeys();
+
+    if (friendKeys == null || friendKeys.size() <= 1) {
+      // Admin is the only member - delete the group completely
+      deleteGroupCompletely();
+    } else {
+      // Transfer admin to another user randomly
+      transferAdminAndLeave();
+    }
+  }
+
+  private void handleRegularUserLeavingGroup() {
     // Remove user from friend keys and coming keys
     HashMap<String, Object> updatedFriendKeys = new HashMap<>(currentGroup.getFriendKeys());
     HashMap<String, Object> updatedComingKeys = new HashMap<>(currentGroup.getComingKeys());
@@ -1297,6 +1322,28 @@ public class PartyMainActivity extends AppCompatActivity {
                 new FirebaseServerClient.DataCallback<>() {
                   @Override
                   public void onSuccess(Void result) {
+                    // Remove group from local cache since user is no longer part of it
+                    try {
+                      java.util.concurrent.Executor executor =
+                          java.util.concurrent.Executors.newSingleThreadExecutor();
+                      executor.execute(
+                          () -> {
+                            try {
+                              com.example.partymaker.data.local.AppDatabase database =
+                                  com.example.partymaker.data.local.AppDatabase.getInstance(
+                                      getApplicationContext());
+                              if (database != null) {
+                                database.groupDao().deleteGroupByKey(GroupKey);
+                                Log.d(TAG, "Group removed from local cache after user left");
+                              }
+                            } catch (Exception e) {
+                              Log.e(TAG, "Error removing group from local cache", e);
+                            }
+                          });
+                    } catch (Exception e) {
+                      Log.e(TAG, "Error accessing local database", e);
+                    }
+
                     Toast.makeText(
                             PartyMainActivity.this, "Left group successfully", Toast.LENGTH_SHORT)
                         .show();
@@ -1317,6 +1364,138 @@ public class PartyMainActivity extends AppCompatActivity {
           public void onError(String errorMessage) {
             Log.e(TAG, "Failed to update friend keys: " + errorMessage);
             Toast.makeText(PartyMainActivity.this, "Failed to leave group", Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
+  }
+
+  private void deleteGroupCompletely() {
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+
+    serverClient.deleteGroup(
+        GroupKey,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            // Delete from local cache directly using database
+            try {
+              com.example.partymaker.data.repository.GroupRepository repository =
+                  com.example.partymaker.data.repository.GroupRepository.getInstance();
+
+              // Use executor to delete from local database directly
+              java.util.concurrent.Executor executor =
+                  java.util.concurrent.Executors.newSingleThreadExecutor();
+              executor.execute(
+                  () -> {
+                    try {
+                      com.example.partymaker.data.local.AppDatabase database =
+                          com.example.partymaker.data.local.AppDatabase.getInstance(
+                              getApplicationContext());
+                      if (database != null) {
+                        database.groupDao().deleteGroupByKey(GroupKey);
+                        Log.d(TAG, "Group deleted from local cache directly");
+                      }
+                    } catch (Exception e) {
+                      Log.e(TAG, "Error deleting group from local cache", e);
+                    }
+                  });
+            } catch (Exception e) {
+              Log.e(TAG, "Error accessing local database", e);
+            }
+
+            Toast.makeText(PartyMainActivity.this, "Group deleted successfully", Toast.LENGTH_SHORT)
+                .show();
+            finish(); // Close this activity
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Failed to delete group: " + errorMessage);
+            Toast.makeText(PartyMainActivity.this, "Failed to delete group", Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
+  }
+
+  private void transferAdminAndLeave() {
+    HashMap<String, Object> friendKeys = currentGroup.getFriendKeys();
+
+    // Find a random user to transfer admin to (excluding current admin)
+    String newAdminKey = null;
+    for (Map.Entry<String, Object> entry : friendKeys.entrySet()) {
+      String userKey = entry.getValue().toString();
+      if (!userKey.equals(UserKey)) {
+        newAdminKey = userKey;
+        break; // Take the first non-admin user (pseudo-random since HashMap iteration order is not
+        // guaranteed)
+      }
+    }
+
+    if (newAdminKey == null) {
+      Toast.makeText(this, "Failed to find new admin", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    final String finalNewAdminKey = newAdminKey;
+
+    // Remove current admin from friend keys and coming keys
+    HashMap<String, Object> updatedFriendKeys = new HashMap<>(friendKeys);
+    HashMap<String, Object> updatedComingKeys = new HashMap<>(currentGroup.getComingKeys());
+
+    updatedFriendKeys.remove(UserKey);
+    updatedComingKeys.remove(UserKey);
+
+    // Create the update map with all changes
+    Map<String, Object> groupUpdates = new HashMap<>();
+    groupUpdates.put("adminKey", finalNewAdminKey);
+    groupUpdates.put("FriendKeys", updatedFriendKeys);
+    groupUpdates.put("ComingKeys", updatedComingKeys);
+
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+
+    serverClient.updateGroup(
+        GroupKey,
+        groupUpdates,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            // Delete from local cache directly since user is no longer part of the group
+            try {
+              java.util.concurrent.Executor executor =
+                  java.util.concurrent.Executors.newSingleThreadExecutor();
+              executor.execute(
+                  () -> {
+                    try {
+                      com.example.partymaker.data.local.AppDatabase database =
+                          com.example.partymaker.data.local.AppDatabase.getInstance(
+                              getApplicationContext());
+                      if (database != null) {
+                        database.groupDao().deleteGroupByKey(GroupKey);
+                        Log.d(TAG, "Group removed from local cache after admin transfer");
+                      }
+                    } catch (Exception e) {
+                      Log.e(TAG, "Error removing group from local cache", e);
+                    }
+                  });
+            } catch (Exception e) {
+              Log.e(TAG, "Error accessing local database", e);
+            }
+
+            Toast.makeText(
+                    PartyMainActivity.this,
+                    "Admin transferred and left group successfully",
+                    Toast.LENGTH_SHORT)
+                .show();
+            finish(); // Close this activity
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Failed to transfer admin and leave: " + errorMessage);
+            Toast.makeText(
+                    PartyMainActivity.this,
+                    "Failed to transfer admin and leave group",
+                    Toast.LENGTH_SHORT)
                 .show();
           }
         });
