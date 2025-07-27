@@ -41,10 +41,10 @@
 
     <EditText
         android:id="@+id/etFriendEmail"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/gmp_ref_measurement_spacing_20"
+        android:layout_marginTop="40dp"
         android:autofillHints=""
         android:background="@drawable/et_background"
         android:drawableStart="@drawable/ic_email"
@@ -136,49 +136,72 @@
 
     </LinearLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <Button
-            android:id="@+id/btnHelp1"
-            android:layout_width="75dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="210dp"
-            android:background="#0000ffff"
-            android:text="@string/press_here"
-            android:textAllCaps="false"
-            android:textColor="#0081d1" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
 
         <TextView
             android:id="@+id/tvHelp1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="5dp"
             android:text="@string/need_help"
-            android:textColor="#0081d1" />
+            android:textColor="#0081d1"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnHelp1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed" />
 
         <Button
-            android:id="@+id/btnHide1"
-            android:layout_width="75dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="200dp"
+            android:id="@+id/btnHelp1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:background="#0000ffff"
-            android:text="@string/hide_it"
+            android:text="@string/press_here"
             android:textAllCaps="false"
             android:textColor="#0081d1"
-            android:visibility="invisible" />
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/tvHelp1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed" />
 
         <TextView
             android:id="@+id/tvHide1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="5dp"
             android:text="@string/got_help"
             android:textColor="#0081d1"
-            android:visibility="invisible" />
-    </RelativeLayout>
+            android:textSize="15sp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnHide1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/btnHide1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="#0000ffff"
+            android:text="@string/hide_it"
+            android:textAllCaps="false"
+            android:textColor="#0081d1"
+            android:textSize="15sp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toEndOf="@id/tvHide1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
