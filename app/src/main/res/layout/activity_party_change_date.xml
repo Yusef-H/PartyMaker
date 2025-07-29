@@ -7,11 +7,12 @@
     android:background="@drawable/bg_party_screen"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:padding="20dp"
     tools:context="com.example.partymaker.ui.group.ChangeDateActivity">
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_gravity="center"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/ic_cake_black" />
@@ -43,6 +44,7 @@
             android:text="@string/select_date"
             android:textColor="@color/black"
             android:textSize="18sp"
+            android:gravity="center"
             android:textAlignment="center"
             android:background="@drawable/rounded_border"
             android:padding="15dp"
@@ -89,6 +91,7 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textAlignment="center"
+            android:gravity="center"
             android:background="@drawable/rounded_border"
             android:padding="15dp"
             android:layout_marginBottom="10dp" />
@@ -120,7 +123,7 @@
 
     <Button
         android:id="@+id/btnChangeDate"
-        android:layout_width="160dp"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
@@ -138,9 +141,10 @@
 
         <Button
             android:id="@+id/btnHelp2"
-            android:layout_width="75dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="210dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="180dp"
+
             android:background="#0000ffff"
             android:text="@string/press_here"
             android:textAllCaps="false"
@@ -150,16 +154,16 @@
             android:id="@+id/tvHelp2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="15dp"
             android:text="@string/need_help"
             android:textColor="#0081d1" />
 
         <Button
             android:id="@+id/btnHide2"
-            android:layout_width="75dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="200dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="180dp"
             android:background="#0000ffff"
             android:text="@string/hide_it"
             android:textAllCaps="false"
@@ -170,8 +174,8 @@
             android:id="@+id/tvHide2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="15dp"
             android:text="@string/got_help"
             android:textColor="#0081d1"
             android:visibility="invisible" />
