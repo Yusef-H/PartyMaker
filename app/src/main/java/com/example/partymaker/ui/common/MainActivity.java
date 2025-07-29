@@ -24,8 +24,8 @@ import com.example.partymaker.ui.group.PartyMainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
-import com.example.partymaker.utils.ui.Common;
-import com.example.partymaker.utils.ui.ExtrasMetadata;
+import com.example.partymaker.utils.data.Common;
+import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.viewmodel.GroupViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

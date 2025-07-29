@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.ui.Common.hideViews;
-import static com.example.partymaker.utils.ui.Common.showViews;
+import static com.example.partymaker.utils.data.Common.hideViews;
+import static com.example.partymaker.utils.data.Common.showViews;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -46,7 +46,7 @@ import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
-import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.ui.MapUtilities;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;

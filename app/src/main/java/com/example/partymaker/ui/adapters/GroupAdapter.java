@@ -96,7 +96,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       // Format date
       String date =
           String.format(
-              "%s/%s/%s %s",
+              "%s %s %s    %s",
               group.getGroupDays(),
               group.getGroupMonths(),
               group.getGroupYears(),
@@ -105,7 +105,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
       // Load group image from Firebase Storage
       String groupKey = group.getGroupKey();
-      if (groupKey != null && !groupKey.isEmpty()) {
+      if (!groupKey.isEmpty()) {
         // Try to load from new path first
         com.example.partymaker.data.firebase.DBRef.refStorage
             .child("UsersImageProfile/Groups/" + groupKey)
