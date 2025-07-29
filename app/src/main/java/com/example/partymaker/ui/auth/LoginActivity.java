@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.auth;
 
-import static com.example.partymaker.utils.Constants.IS_CHECKED;
-import static com.example.partymaker.utils.Constants.PREFS_NAME;
+import static com.example.partymaker.utils.data.Constants.IS_CHECKED;
+import static com.example.partymaker.utils.data.Constants.PREFS_NAME;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

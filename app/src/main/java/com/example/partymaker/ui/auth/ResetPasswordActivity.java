@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.auth;
 
-import static com.example.partymaker.utils.ui.Common.hideViews;
-import static com.example.partymaker.utils.ui.Common.showViews;
+import static com.example.partymaker.utils.data.Common.hideViews;
+import static com.example.partymaker.utils.data.Common.showViews;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
