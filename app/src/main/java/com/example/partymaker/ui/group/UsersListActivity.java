@@ -103,9 +103,7 @@ public class UsersListActivity extends AppCompatActivity {
               .setMessage("Add " + selectedUser.getEmail() + " to the group?")
               .setPositiveButton(
                   "Add",
-                  (dialog, which) -> {
-                    addUserToGroup(selectedUser);
-                  })
+                  (dialog, which) -> addUserToGroup(selectedUser))
               .setNegativeButton("Cancel", null)
               .show();
         });
@@ -219,9 +217,7 @@ public class UsersListActivity extends AppCompatActivity {
                                                 .setMessage("Add " + user.getEmail() + " to the coming list?")
                                                 .setPositiveButton(
                                                         "Yes",
-                                                        (dialog, which) -> {
-                                                            addUserToComingList(userEmail);
-                                                        })
+                                                        (dialog, which) -> addUserToComingList(userEmail))
                                                 .setNegativeButton("No", null)
                                                 .show();
                                     }

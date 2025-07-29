@@ -103,9 +103,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
           builder.setMessage("Are you sure you want to remove " + selectedUser.getEmail() + "?");
           builder.setPositiveButton(
               "Yes",
-              (dialog, which) -> {
-                removeFriend(selectedKey);
-              });
+              (dialog, which) -> removeFriend(selectedKey));
           builder.setNegativeButton("No", null);
           builder.show();
         });

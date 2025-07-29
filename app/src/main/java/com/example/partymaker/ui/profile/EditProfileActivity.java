@@ -300,9 +300,7 @@ public class EditProfileActivity extends AppCompatActivity {
                   }
                 })
             .addOnFailureListener(
-                e -> {
-                  Log.e(TAG, "Error loading user data directly", e);
-                });
+                e -> Log.e(TAG, "Error loading user data directly", e));
       }
     } catch (AuthHelper.AuthException e) {
       Log.e(TAG, "Authentication error", e);

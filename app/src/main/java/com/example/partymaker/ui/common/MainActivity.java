@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     // RecyclerView setup
     lv1.setLayoutManager(new LinearLayoutManager(this));
-    groupAdapter = new GroupAdapter(this, group -> navigateToGroupScreen(group));
+    groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
     lv1.setAdapter(groupAdapter);
   }
 
