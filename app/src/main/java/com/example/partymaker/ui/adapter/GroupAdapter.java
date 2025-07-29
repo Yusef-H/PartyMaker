@@ -113,7 +113,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
             .addOnSuccessListener(
                 uri ->
                     GlideImageLoader.loadImage(
-                        context, uri.toString(), groupImageView, R.drawable.default_group_image))
+                        context, uri.toString(), groupImageView, R.drawable.ic_launcher))
             .addOnFailureListener(
                 e -> {
                   // Try old path as fallback
@@ -126,16 +126,16 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
                                   context,
                                   uri.toString(),
                                   groupImageView,
-                                  R.drawable.default_group_image))
+                                  R.drawable.ic_launcher))
                       .addOnFailureListener(
                           e2 -> {
                             // Use default image if both paths fail
-                            groupImageView.setImageResource(R.drawable.default_group_image);
+                            groupImageView.setImageResource(R.drawable.ic_launcher);
                           });
                 });
       } else {
         // No group key, use default image
-        groupImageView.setImageResource(R.drawable.default_group_image);
+        groupImageView.setImageResource(R.drawable.ic_launcher);
       }
     }
   }
