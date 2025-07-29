@@ -979,13 +979,13 @@ public class PartyMainActivity extends AppCompatActivity {
       updatedComingKeys.put(UserKey, true);
       currentGroup.setComingKeys(updatedComingKeys);
 
-      Toast.makeText(this, "מסומן כמגיע", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, "Marked as coming", Toast.LENGTH_SHORT).show();
     } else {
       // Remove user from ComingKeys
       updatedComingKeys.remove(UserKey);
       currentGroup.setComingKeys(updatedComingKeys);
 
-      Toast.makeText(this, "מסומן כלא מגיע", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, "Marked as not coming", Toast.LENGTH_SHORT).show();
     }
 
     // Update server with new ComingKeys
@@ -1022,7 +1022,7 @@ public class PartyMainActivity extends AppCompatActivity {
             // Revert the UI change on error
             isUserComing = !isUserComing;
             updateCard5UI();
-            Toast.makeText(PartyMainActivity.this, "שגיאה בעדכון הסטטוס", Toast.LENGTH_SHORT)
+            Toast.makeText(PartyMainActivity.this, "Error updating status", Toast.LENGTH_SHORT)
                 .show();
           }
         });
