@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities.groupBuilder;
+package com.example.partymaker.utils.groupBuilder;
 
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.group.CreateGroupActivity;

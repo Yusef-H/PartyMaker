@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities;
+package com.example.partymaker.utils.ui;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

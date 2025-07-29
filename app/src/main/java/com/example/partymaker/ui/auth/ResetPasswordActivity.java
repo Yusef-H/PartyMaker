@@ -1,14 +1,12 @@
 package com.example.partymaker.ui.auth;
 
-import static com.example.partymaker.utilities.Common.hideViews;
-import static com.example.partymaker.utilities.Common.showViews;
+import static com.example.partymaker.utils.ui.Common.hideViews;
+import static com.example.partymaker.utils.ui.Common.showViews;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;

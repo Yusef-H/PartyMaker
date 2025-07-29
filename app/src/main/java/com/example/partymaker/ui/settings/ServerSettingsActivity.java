@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
 import com.example.partymaker.R;
-import com.example.partymaker.utilities.ServerModeHelper;
+import com.example.partymaker.utils.server.ServerModeHelper;
 
 public class ServerSettingsActivity extends AppCompatActivity {
 

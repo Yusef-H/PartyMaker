@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities;
+package com.example.partymaker.utils;
 
 /**
  * Constants used throughout the PartyMaker application. Includes keys for SharedPreferences, Intent

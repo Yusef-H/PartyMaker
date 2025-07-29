@@ -1,4 +1,4 @@
-package com.example.partymaker.utils;
+package com.example.partymaker.utils.media;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

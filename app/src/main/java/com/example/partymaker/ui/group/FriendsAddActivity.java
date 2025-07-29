@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Common.hideViews;
-import static com.example.partymaker.utilities.Common.showViews;
+import static com.example.partymaker.utils.ui.Common.hideViews;
+import static com.example.partymaker.utils.ui.Common.showViews;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.ui.ExtrasMetadata;
 import java.util.HashMap;
 import java.util.Map;
 

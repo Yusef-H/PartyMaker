@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities;
+package com.example.partymaker.utils.sharing;
 
 import android.content.Context;
 import android.content.Intent;

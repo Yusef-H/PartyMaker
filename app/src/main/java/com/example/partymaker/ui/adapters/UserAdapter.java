@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utils.auth.AuthHelper;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 

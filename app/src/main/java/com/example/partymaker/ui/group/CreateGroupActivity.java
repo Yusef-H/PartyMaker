@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Common.hideViews;
-import static com.example.partymaker.utilities.Common.showViews;
+import static com.example.partymaker.utils.ui.Common.hideViews;
+import static com.example.partymaker.utils.ui.Common.showViews;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -44,12 +44,12 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utilities.AuthHelper;
-import com.example.partymaker.utilities.BottomNavigationHelper;
-import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.MapUtilities;
-import com.example.partymaker.utilities.groupBuilder.GroupBuilder;
-import com.example.partymaker.utilities.groupBuilder.GroupDateTime;
+import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.ui.MapUtilities;
+import com.example.partymaker.utils.groupBuilder.GroupBuilder;
+import com.example.partymaker.utils.groupBuilder.GroupDateTime;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;

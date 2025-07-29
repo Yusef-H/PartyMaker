@@ -1,10 +1,10 @@
-package com.example.partymaker.utils;
+package com.example.partymaker.utils.media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;

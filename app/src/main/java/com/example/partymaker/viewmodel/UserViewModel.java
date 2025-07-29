@@ -10,6 +10,8 @@ import com.example.partymaker.data.api.ConnectivityManager;
 import com.example.partymaker.data.api.NetworkUtils;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.data.repository.UserRepository;
+import com.example.partymaker.utils.auth.AuthHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -278,7 +280,7 @@ public class UserViewModel extends ViewModel {
 
     // Use direct Firebase access instead of repository to avoid User class serialization issues
     try {
-      String userEmail = com.example.partymaker.utilities.AuthHelper.getCurrentUserEmail(context);
+      String userEmail = AuthHelper.getCurrentUserEmail(context);
       if (userEmail == null || userEmail.isEmpty()) {
         errorMessage.setValue("No current user found");
         isLoading.setValue(false);

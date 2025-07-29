@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.ChatMessage;
-import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utils.auth.AuthHelper;
 import java.util.HashMap;
 import java.util.List;
 
