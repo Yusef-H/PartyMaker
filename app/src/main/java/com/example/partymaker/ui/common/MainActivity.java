@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.adapters.GroupAdapter;
+import com.example.partymaker.ui.adapter.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.group.PartyMainActivity;
@@ -32,6 +32,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,12 +45,11 @@ public class MainActivity extends AppCompatActivity {
   private static final float ACTION_BAR_ELEVATION = 15f;
 
   // UI Components
-  private ListView lv1;
+  private RecyclerView lv1;
   private FloatingActionButton fabChat;
 
   // Data Components
   private GroupViewModel viewModel;
-  private final ArrayList<Group> groupList = new ArrayList<>();
   private String UserKey;
   private GroupAdapter groupAdapter;
 
@@ -178,8 +179,9 @@ public class MainActivity extends AppCompatActivity {
       return;
     }
 
-    // Initialize the adapter with the groupList
-    groupAdapter = new GroupAdapter(MainActivity.this, 0, 0, groupList);
+    // RecyclerView setup
+    lv1.setLayoutManager(new LinearLayoutManager(this));
+    groupAdapter = new GroupAdapter(this, group -> navigateToGroupScreen(group));
     lv1.setAdapter(groupAdapter);
   }
 
@@ -243,9 +245,7 @@ public class MainActivity extends AppCompatActivity {
               groups -> {
                 try {
                   if (groups != null) {
-                    groupList.clear();
-                    groupList.addAll(groups);
-                    groupAdapter.notifyDataSetChanged();
+                    groupAdapter.updateItems(groups);
                     Log.d(TAG, "Group list updated with " + groups.size() + " groups");
 
                     // Hide loading indicator
@@ -304,38 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
   // Sets up all event handlers for UI components.
   private void setupEventHandlers() {
-    try {
-      if (lv1 != null) {
-        lv1.setOnItemClickListener(
-            (parent, view, position, id) -> {
-              try {
-                if (isValidPosition(position)) {
-                  Group selectedGroup = groupList.get(position);
-                  Log.d(
-                      TAG,
-                      "Group clicked: "
-                          + selectedGroup.getGroupName()
-                          + ", key: "
-                          + selectedGroup.getGroupKey()
-                          + ", adminKey: "
-                          + selectedGroup.getAdminKey()
-                          + ", messageKeys size: "
-                          + (selectedGroup.getMessageKeys() != null
-                              ? selectedGroup.getMessageKeys().size()
-                              : "null"));
-                  navigateToGroupScreen(selectedGroup);
-                } else {
-                  Log.w(TAG, "Invalid position clicked: " + position);
-                }
-              } catch (Exception e) {
-                Log.e(TAG, "Error handling item click", e);
-                showError("Error opening group");
-              }
-            });
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "Error setting up event handlers", e);
-    }
+    // אין צורך ב-setOnItemClickListener, הכל עובר דרך ה-Listener של GroupAdapter החדש
   }
 
   // Sets up the floating chat button with click and touch handlers.
@@ -428,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
     try {
       runOnUiThread(
           () -> {
-            if (lv1 != null && groupList != null && groupList.isEmpty()) {
+            if (lv1 != null && groupAdapter != null && groupAdapter.getItemCount() == 0) {
               // Check if we're still loading
               if (viewModel.getIsLoading().getValue() != null
                   && viewModel.getIsLoading().getValue()) {
@@ -467,20 +436,12 @@ public class MainActivity extends AppCompatActivity {
 
   // Sorts groups by creation date and updates the adapter.
   private void sortAndDisplayGroups() {
-    if (groupList != null) {
-      // Filter out groups with null createdAt and sort the rest
-      groupList.removeIf(group -> group.getCreatedAt() == null);
-      if (!groupList.isEmpty()) {
-        groupList.sort(Comparator.comparing(Group::getCreatedAt));
-      }
-      GroupAdapter allGroupsAdapter = new GroupAdapter(MainActivity.this, 0, 0, groupList);
-      lv1.setAdapter(allGroupsAdapter);
-    }
+    // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
   }
 
   // Validates if the given position is within bounds.
   private boolean isValidPosition(int position) {
-    return groupList != null && position >= 0 && position < groupList.size();
+    return groupAdapter != null && position >= 0 && position < groupAdapter.getItemCount();
   }
 
   @Override
@@ -548,14 +509,6 @@ public class MainActivity extends AppCompatActivity {
 
   // Update the UI with the current group list
   private void updateUI() {
-    if (groupList != null) {
-      // Filter out groups with null createdAt and sort the rest
-      groupList.removeIf(group -> group.getCreatedAt() == null);
-      if (!groupList.isEmpty()) {
-        groupList.sort(Comparator.comparing(Group::getCreatedAt));
-      }
-      GroupAdapter allGroupsAdapter = new GroupAdapter(MainActivity.this, 0, 0, groupList);
-      lv1.setAdapter(allGroupsAdapter);
-    }
+    // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
   }
 }
