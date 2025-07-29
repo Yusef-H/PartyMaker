@@ -128,8 +128,6 @@ public class ChatActivity extends AppCompatActivity {
     ShowData();
     eventHandler();
     setupGptButton();
-
-    Log.d(TAG, "ChatActivity onCreate completed");
   }
 
   private void eventHandler() {
