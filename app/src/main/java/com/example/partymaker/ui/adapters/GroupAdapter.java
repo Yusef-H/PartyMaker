@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.util.GlideImageLoader;
+import com.example.partymaker.utils.GlideImageLoader;
 import java.util.Objects;
 
 /**

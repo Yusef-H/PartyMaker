@@ -7,7 +7,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.repository.GroupRepository;
-import com.example.partymaker.util.MemoryManager;
+import com.example.partymaker.utils.MemoryManager;
 import com.example.partymaker.utilities.NotificationHelper;
 import com.google.firebase.FirebaseApp;
 

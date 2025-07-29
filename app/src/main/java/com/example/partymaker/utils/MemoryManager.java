@@ -1,4 +1,4 @@
-package com.example.partymaker.util;
+package com.example.partymaker.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
