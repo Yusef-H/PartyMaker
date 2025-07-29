@@ -139,9 +139,7 @@ public class GlideImageLoader {
       return;
     }
 
-    new Thread(
-            () -> Glide.get(context).clearDiskCache())
-        .start();
+    new Thread(() -> Glide.get(context).clearDiskCache()).start();
   }
 
   /**

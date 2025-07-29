@@ -156,7 +156,7 @@ public class FirebaseServerClient {
             String key = keys.next();
             JSONObject groupJson = jsonObject.getJSONObject(key);
             Group group = gson.fromJson(groupJson.toString(), Group.class);
-              groups.put(key, group);
+            groups.put(key, group);
           }
 
           Log.d(TAG, "Successfully parsed " + groups.size() + " groups");

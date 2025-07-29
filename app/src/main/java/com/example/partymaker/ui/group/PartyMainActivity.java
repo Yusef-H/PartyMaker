@@ -815,7 +815,7 @@ public class PartyMainActivity extends AppCompatActivity {
     hasUserPaid = false;
 
     // Update the payment button based on this status
-      updatePaymentButtonVisibility(currentGroup.getGroupPrice());
+    updatePaymentButtonVisibility(currentGroup.getGroupPrice());
   }
 
   /** Handles the payment process when the user clicks the payment button */

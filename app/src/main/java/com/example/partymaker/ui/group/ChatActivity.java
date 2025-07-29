@@ -217,11 +217,12 @@ public class ChatActivity extends AppCompatActivity {
                 if (!gptQuestion.isEmpty()) {
                   // Show loading message
                   runOnUiThread(
-                      () -> Toast.makeText(
-                              ChatActivity.this,
-                              "Sending question to ChatGPT",
-                              Toast.LENGTH_SHORT)
-                          .show());
+                      () ->
+                          Toast.makeText(
+                                  ChatActivity.this,
+                                  "Sending question to ChatGPT",
+                                  Toast.LENGTH_SHORT)
+                              .show());
 
                   new Thread(
                           () -> {
@@ -577,8 +578,7 @@ public class ChatActivity extends AppCompatActivity {
                         + ")");
 
                 retryHandler.postDelayed(
-                    () -> sendMessageWithRetry(messageId, message, retryCount + 1),
-                    delayMillis);
+                    () -> sendMessageWithRetry(messageId, message, retryCount + 1), delayMillis);
               } else {
                 // Max retries reached, show error to user
                 Log.e(TAG, "AUTO TEST: Max retry attempts reached for message ID: " + messageId);
@@ -686,8 +686,7 @@ public class ChatActivity extends AppCompatActivity {
                       + ")");
 
               retryHandler.postDelayed(
-                  () -> updateGroupWithRetry(group, retryCount + 1),
-                  delayMillis);
+                  () -> updateGroupWithRetry(group, retryCount + 1), delayMillis);
             }
           }
         });

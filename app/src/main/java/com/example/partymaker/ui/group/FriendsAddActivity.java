@@ -16,8 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.ui.group.MembersComingActivity;
-import com.example.partymaker.ui.group.MembersInvitedActivity;
 import com.example.partymaker.utilities.Common;
 import com.example.partymaker.utilities.ExtrasMetadata;
 import java.util.HashMap;
@@ -311,7 +309,8 @@ public class FriendsAddActivity extends AppCompatActivity {
                               }
                               ComingKeys.put(finalFriendKey, "true");
 
-                              // Navigate to MembersComingActivity to show the newly added member in coming list
+                              // Navigate to MembersComingActivity to show the newly added member in
+                              // coming list
                               navigateToMembersComingActivity();
                             }
 

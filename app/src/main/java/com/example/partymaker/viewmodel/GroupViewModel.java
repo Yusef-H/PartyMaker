@@ -382,16 +382,17 @@ public class GroupViewModel extends ViewModel {
       return;
     }
 
-    groups.sort((g1, g2) -> {
-        if (g1.getGroupName() == null && g2.getGroupName() == null) {
+    groups.sort(
+        (g1, g2) -> {
+          if (g1.getGroupName() == null && g2.getGroupName() == null) {
             return 0;
-        } else if (g1.getGroupName() == null) {
+          } else if (g1.getGroupName() == null) {
             return 1;
-        } else if (g2.getGroupName() == null) {
+          } else if (g2.getGroupName() == null) {
             return -1;
-        }
-        return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
-    });
+          }
+          return g1.getGroupName().compareToIgnoreCase(g2.getGroupName());
+        });
   }
 
   /**
