@@ -1,6 +1,6 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Constants.GROUP_NAME;
+import static com.example.partymaker.utils.Constants.GROUP_NAME;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,8 +22,8 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.ui.ExtrasMetadata;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;

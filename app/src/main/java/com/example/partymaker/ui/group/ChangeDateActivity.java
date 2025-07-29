@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utilities.Common.hideViews;
-import static com.example.partymaker.utilities.Common.showViews;
+import static com.example.partymaker.utils.ui.Common.hideViews;
+import static com.example.partymaker.utils.ui.Common.showViews;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -16,9 +16,9 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.utilities.AuthHelper;
-import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.ui.ExtrasMetadata;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;

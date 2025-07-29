@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utils.auth.AuthHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

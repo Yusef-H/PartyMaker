@@ -1,4 +1,4 @@
-package com.example.partymaker.ui.adapter;
+package com.example.partymaker.ui.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;

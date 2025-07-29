@@ -1,10 +1,14 @@
-package com.example.partymaker.util;
+package com.example.partymaker.utils.system;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Debug;
 import android.os.Process;
 import android.util.Log;
+
+import com.example.partymaker.utils.media.FileManager;
+import com.example.partymaker.utils.media.GlideImageLoader;
+
 import java.io.File;
 import java.util.Locale;
 

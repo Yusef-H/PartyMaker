@@ -30,8 +30,8 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utilities.AuthHelper;
-import com.example.partymaker.utilities.BottomNavigationHelper;
+import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.viewmodel.UserViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.storage.FirebaseStorage;
@@ -300,9 +300,7 @@ public class EditProfileActivity extends AppCompatActivity {
                   }
                 })
             .addOnFailureListener(
-                e -> {
-                  Log.e(TAG, "Error loading user data directly", e);
-                });
+                e -> Log.e(TAG, "Error loading user data directly", e));
       }
     } catch (AuthHelper.AuthException e) {
       Log.e(TAG, "Authentication error", e);

@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities;
+package com.example.partymaker.utils.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.common;
 
-import static com.example.partymaker.utilities.Constants.IS_CHECKED;
-import static com.example.partymaker.utilities.Constants.PREFS_NAME;
+import static com.example.partymaker.utils.Constants.IS_CHECKED;
+import static com.example.partymaker.utils.Constants.PREFS_NAME;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.auth.LoginActivity;
-import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utils.auth.AuthHelper;
 
 /**
  * SplashActivity displays the initial splash screen with animations, then navigates the user to the

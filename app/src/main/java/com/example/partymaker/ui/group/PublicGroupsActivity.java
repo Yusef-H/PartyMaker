@@ -8,12 +8,13 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
@@ -22,19 +23,18 @@ import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utilities.AuthHelper;
-import com.example.partymaker.utilities.BottomNavigationHelper;
-import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.ExtrasMetadata;
+import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.ui.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PublicGroupsActivity extends AppCompatActivity {
-  private ListView lv1;
-  private Object groupsRef;
+    private Object groupsRef;
   ArrayList<Group> group;
-  GroupAdapter allGroupsAdapter;
+  private GroupAdapter allGroupsAdapter;
   String UserKey;
   private static final String TAG = "PublicGroupsActivity";
   private static final String ACTION_BAR_START_COLOR = "#0E81D1";
@@ -120,51 +120,52 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   private void initializeViews() {
-    // connection
-    lv1 = findViewById(R.id.lv5);
+      RecyclerView lv1 = findViewById(R.id.lv5);
+    if (lv1 != null) {
+      lv1.setLayoutManager(new LinearLayoutManager(this));
+      allGroupsAdapter = new GroupAdapter(this, group -> {
+        // intent Value
+        String groupName = group.getGroupName();
+        String groupKey = group.getGroupKey();
+        String groupDays = group.getGroupDays();
+        String groupMonths = group.getGroupMonths();
+        String groupYears = group.getGroupYears();
+        String groupHours = group.getGroupHours();
+        String groupLocation = group.getGroupLocation();
+        String adminKey = group.getAdminKey();
+        String createdAt = group.getCreatedAt();
+        String GroupPrice = group.getGroupPrice();
+        int GroupType = group.getGroupType();
+        boolean CanAdd = group.isCanAdd();
+        HashMap<String, Object> FriendKeys = group.getFriendKeys();
+        HashMap<String, Object> ComingKeys = group.getComingKeys();
+        HashMap<String, Object> MessageKeys = group.getMessageKeys();
+        Intent intent = new Intent(getBaseContext(), JoinGroupActivity.class);
+        ExtrasMetadata extras = new ExtrasMetadata(
+            groupName,
+            groupKey,
+            groupDays,
+            groupMonths,
+            groupYears,
+            groupHours,
+            groupLocation,
+            adminKey,
+            createdAt,
+            GroupPrice,
+            GroupType,
+            CanAdd,
+            FriendKeys,
+            ComingKeys,
+            MessageKeys);
+        Common.addExtrasToIntent(intent, extras);
+        startActivity(intent);
+      });
+      lv1.setAdapter(allGroupsAdapter);
+    }
   }
 
   private void setupEventHandlers() {
-    lv1.setOnItemClickListener(
-        (parent, view, position, id) -> {
-          // intent Value
-          String groupName = group.get(position).getGroupName();
-          String groupKey = group.get(position).getGroupKey();
-          String groupDays = group.get(position).getGroupDays();
-          String groupMonths = group.get(position).getGroupMonths();
-          String groupYears = group.get(position).getGroupYears();
-          String groupHours = group.get(position).getGroupHours();
-          String groupLocation = group.get(position).getGroupLocation();
-          String adminKey = group.get(position).getAdminKey();
-          String createdAt = group.get(position).getCreatedAt();
-          String GroupPrice = group.get(position).getGroupPrice();
-          int GroupType = group.get(position).getGroupType();
-          boolean CanAdd = group.get(position).isCanAdd();
-          HashMap<String, Object> FriendKeys = group.get(position).getFriendKeys();
-          HashMap<String, Object> ComingKeys = group.get(position).getComingKeys();
-          HashMap<String, Object> MessageKeys = group.get(position).getMessageKeys();
-          Intent intent = new Intent(getBaseContext(), JoinGroupActivity.class);
-          ExtrasMetadata extras =
-              new ExtrasMetadata(
-                  groupName,
-                  groupKey,
-                  groupDays,
-                  groupMonths,
-                  groupYears,
-                  groupHours,
-                  groupLocation,
-                  adminKey,
-                  createdAt,
-                  GroupPrice,
-                  GroupType,
-                  CanAdd,
-                  FriendKeys,
-                  ComingKeys,
-                  MessageKeys);
-          Common.addExtrasToIntent(intent, extras);
-          startActivity(intent);
-        });
-    lv1.setOnItemLongClickListener((parent, view, position, id) -> false);
+    // אין צורך ב-setOnItemClickListener, הכל עובר דרך ה-Listener של GroupAdapter החדש
   }
 
   private void setupBottomNavigation() {
@@ -181,27 +182,25 @@ public class PublicGroupsActivity extends AppCompatActivity {
     // Always use server mode
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroups(
-        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
-          @Override
-          public void onSuccess(Map<String, Group> data) {
-            processServerGroupData(data);
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Map<String, Group> data) {
+                    processServerGroupData(data);
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(
+                                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
   }
 
   private void processServerGroupData(Map<String, Group> groupData) {
-    group = new ArrayList<>();
-
+    ArrayList<Group> groupList = new ArrayList<>();
     for (Group p : groupData.values()) {
       HashMap<String, Object> UserKeys = p.getFriendKeys();
-
       if (p.getGroupType() == 0) { // if group is public
         boolean flag = false;
         if (UserKeys != null) {
@@ -213,15 +212,14 @@ public class PublicGroupsActivity extends AppCompatActivity {
           }
         }
         if (!flag) {
-          group.add(p);
+          groupList.add(p);
         }
       }
     }
-
-    allGroupsAdapter = new GroupAdapter(PublicGroupsActivity.this, 0, 0, group);
-    lv1.setAdapter(allGroupsAdapter);
-
-    if (group.isEmpty()) {
+    if (allGroupsAdapter != null) {
+      allGroupsAdapter.updateItems(groupList);
+    }
+    if (groupList.isEmpty()) {
       Toast.makeText(this, "No public parties available", Toast.LENGTH_SHORT).show();
     }
   }
@@ -262,3 +260,4 @@ public class PublicGroupsActivity extends AppCompatActivity {
     finish();
   }
 }
+

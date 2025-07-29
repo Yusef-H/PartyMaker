@@ -1,4 +1,4 @@
-package com.example.partymaker.utilities;
+package com.example.partymaker.utils.ui;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -99,7 +99,7 @@ public class NotificationHelper {
    */
   public static boolean isSubscribedToGroup(String groupId) {
     Boolean isSubscribed = groupSubscriptions.get(groupId);
-    return isSubscribed != null && isSubscribed;
+    return isSubscribed == null || !isSubscribed;
   }
 
   /** Subscribe to global announcements */
@@ -134,7 +134,7 @@ public class NotificationHelper {
   public static void showPartyNotification(
       Context context, String title, String message, Group group) {
     // Only show notification if subscribed to this group
-    if (!isSubscribedToGroup(group.getGroupKey())) {
+    if (isSubscribedToGroup(group.getGroupKey())) {
       Log.d(TAG, "Not showing notification for group " + group.getGroupKey() + " - not subscribed");
       return;
     }
@@ -156,7 +156,7 @@ public class NotificationHelper {
   public static void showMessageNotification(
       Context context, String title, String message, String groupId) {
     // Only show notification if subscribed to this group
-    if (!isSubscribedToGroup(groupId)) {
+    if (isSubscribedToGroup(groupId)) {
       Log.d(TAG, "Not showing message notification for group " + groupId + " - not subscribed");
       return;
     }

@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.auth;
 
-import static com.example.partymaker.utilities.Constants.IS_CHECKED;
-import static com.example.partymaker.utilities.Constants.PREFS_NAME;
+import static com.example.partymaker.utils.Constants.IS_CHECKED;
+import static com.example.partymaker.utils.Constants.PREFS_NAME;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.utilities.AuthHelper;
+import com.example.partymaker.utils.auth.AuthHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

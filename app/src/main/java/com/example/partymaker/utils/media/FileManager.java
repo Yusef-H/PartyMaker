@@ -1,4 +1,4 @@
-package com.example.partymaker.util;
+package com.example.partymaker.utils.media;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -22,10 +22,10 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.utilities.AuthHelper;
-import com.example.partymaker.utilities.Common;
-import com.example.partymaker.utilities.ExtrasMetadata;
-import com.example.partymaker.utilities.MapUtilities;
+import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.ui.Common;
+import com.example.partymaker.utils.ui.ExtrasMetadata;
+import com.example.partymaker.utils.ui.MapUtilities;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -154,39 +154,39 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group != null
-                && group.getAdminKey() != null
-                && group.getAdminKey().equals(UserKey)) {
-              // User is verified as admin
-              isAdminVerified = true;
-              // Update local admin key to match server data
-              AdminKey = group.getAdminKey();
-              // Initialize UI after verification
-              initializeUI();
-            } else {
-              // User is not admin - deny access
-              Toast.makeText(
-                      AdminOptionsActivity.this,
-                      "Access denied. Only group admin can access this page.",
-                      Toast.LENGTH_LONG)
-                  .show();
-              finish();
-            }
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Group group) {
+                    if (group != null
+                            && group.getAdminKey() != null
+                            && group.getAdminKey().equals(UserKey)) {
+                        // User is verified as admin
+                        isAdminVerified = true;
+                        // Update local admin key to match server data
+                        AdminKey = group.getAdminKey();
+                        // Initialize UI after verification
+                        initializeUI();
+                    } else {
+                        // User is not admin - deny access
+                        Toast.makeText(
+                                        AdminOptionsActivity.this,
+                                        "Access denied. Only group admin can access this page.",
+                                        Toast.LENGTH_LONG)
+                                .show();
+                        finish();
+                    }
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    AdminOptionsActivity.this,
-                    "Failed to verify admin status: " + errorMessage,
-                    Toast.LENGTH_LONG)
-                .show();
-            finish();
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(
+                                    AdminOptionsActivity.this,
+                                    "Failed to verify admin status: " + errorMessage,
+                                    Toast.LENGTH_LONG)
+                            .show();
+                    finish();
+                }
+            });
   }
 
   private void initializeUI() {

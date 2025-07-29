@@ -1,4 +1,4 @@
-package com.example.partymaker.util;
+package com.example.partymaker.utils.media;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.partymaker.R;
 
 /**
@@ -46,11 +47,12 @@ public class GlideImageLoader {
       return;
     }
 
-    // Create request with error handling and caching
+    // Create request with error handling, caching, and crossfade
     RequestBuilder<Drawable> requestBuilder =
         Glide.with(context)
             .load(imageUrl)
             .apply(getDefaultRequestOptions(placeholderResId))
+            .transition(DrawableTransitionOptions.withCrossFade(300))
             .listener(
                 new RequestListener<>() {
                   @Override
@@ -59,7 +61,6 @@ public class GlideImageLoader {
                       Object model,
                       Target<Drawable> target,
                       boolean isFirstResource) {
-                    // Log error but don't block placeholder from being shown
                     if (e != null) {
                       e.logRootCauses("GlideImageLoader");
                     }
