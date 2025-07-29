@@ -32,8 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PublicGroupsActivity extends AppCompatActivity {
-  private RecyclerView lv1;
-  private Object groupsRef;
+    private Object groupsRef;
   ArrayList<Group> group;
   private GroupAdapter allGroupsAdapter;
   String UserKey;
@@ -121,7 +120,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   private void initializeViews() {
-    lv1 = findViewById(R.id.lv5);
+      RecyclerView lv1 = findViewById(R.id.lv5);
     if (lv1 != null) {
       lv1.setLayoutManager(new LinearLayoutManager(this));
       allGroupsAdapter = new GroupAdapter(this, group -> {
