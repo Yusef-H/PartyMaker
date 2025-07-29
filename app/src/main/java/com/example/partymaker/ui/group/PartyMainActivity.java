@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
@@ -1434,20 +1436,7 @@ public class PartyMainActivity extends AppCompatActivity {
       return;
     }
 
-    final String finalNewAdminKey = newAdminKey;
-
-    // Remove current admin from friend keys and coming keys
-    HashMap<String, Object> updatedFriendKeys = new HashMap<>(friendKeys);
-    HashMap<String, Object> updatedComingKeys = new HashMap<>(currentGroup.getComingKeys());
-
-    updatedFriendKeys.remove(UserKey);
-    updatedComingKeys.remove(UserKey);
-
-    // Create the update map with all changes
-    Map<String, Object> groupUpdates = new HashMap<>();
-    groupUpdates.put("adminKey", finalNewAdminKey);
-    groupUpdates.put("FriendKeys", updatedFriendKeys);
-    groupUpdates.put("ComingKeys", updatedComingKeys);
+    Map<String, Object> groupUpdates = getStringObjectMap(newAdminKey, friendKeys);
 
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
@@ -1497,6 +1486,25 @@ public class PartyMainActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+
+  @NonNull
+  private Map<String, Object> getStringObjectMap(String newAdminKey, HashMap<String, Object> friendKeys) {
+    final String finalNewAdminKey = newAdminKey;
+
+    // Remove current admin from friend keys and coming keys
+    HashMap<String, Object> updatedFriendKeys = new HashMap<>(friendKeys);
+    HashMap<String, Object> updatedComingKeys = new HashMap<>(currentGroup.getComingKeys());
+
+    updatedFriendKeys.remove(UserKey);
+    updatedComingKeys.remove(UserKey);
+
+    // Create the update map with all changes
+    Map<String, Object> groupUpdates = new HashMap<>();
+    groupUpdates.put("adminKey", finalNewAdminKey);
+    groupUpdates.put("FriendKeys", updatedFriendKeys);
+    groupUpdates.put("ComingKeys", updatedComingKeys);
+    return groupUpdates;
   }
 
   private void showMapDialog(String locationStr) {

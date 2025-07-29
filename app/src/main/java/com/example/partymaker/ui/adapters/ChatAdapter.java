@@ -105,22 +105,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     Space spaceRight = view.findViewById(R.id.spaceRight);
 
     // Handle message text, checking for null or complex content
-    String messageText = temp.getMessageText();
-    if (messageText == null) {
-      // Try to get content from messageContent if available
-      HashMap<String, Object> messageContent = temp.getMessageContent();
-      if (messageContent != null) {
-        // Try to extract text from the HashMap
-        Object textObj = messageContent.get("text");
-        if (textObj instanceof String) {
-          messageText = (String) textObj;
-        } else {
-          messageText = "[Complex message content]";
-        }
-      } else {
-        messageText = "[No message content]";
-      }
-    }
+    String messageText = getString(temp);
     tvMessage.setText(messageText);
 
     // Handle time display with null check
@@ -164,5 +149,26 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     }
 
     return view;
+  }
+
+  @NonNull
+  private String getString(ChatMessage temp) {
+    String messageText = temp.getMessageText();
+    if (messageText == null) {
+      // Try to get content from messageContent if available
+      HashMap<String, Object> messageContent = temp.getMessageContent();
+      if (messageContent != null) {
+        // Try to extract text from the HashMap
+        Object textObj = messageContent.get("text");
+        if (textObj instanceof String) {
+          messageText = (String) textObj;
+        } else {
+          messageText = "[Complex message content]";
+        }
+      } else {
+        messageText = "[No message content]";
+      }
+    }
+    return messageText;
   }
 }
