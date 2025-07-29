@@ -101,97 +101,97 @@ public class MembersInvitedActivity extends AppCompatActivity {
     // Use server mode to get users - same as MembersComingActivity
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getUsers(
-        new FirebaseServerClient.DataCallback<Map<String, User>>() {
-          @Override
-          public void onSuccess(Map<String, User> users) {
-            Log.d(TAG, "Received " + users.size() + " users from server");
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Map<String, User> users) {
+                    Log.d(TAG, "Received " + users.size() + " users from server");
 
-            // Debug: Print FriendKeys
-            if (FriendKeys != null) {
-              Log.d(TAG, "FriendKeys contents:");
-              for (String key : FriendKeys.keySet()) {
-                Log.d(TAG, "  FriendKey: '" + key + "' -> " + FriendKeys.get(key));
-              }
-            } else {
-              Log.e(TAG, "FriendKeys is null!");
-            }
-
-            // Debug: Print all users from server
-            Log.d(TAG, "All users from server:");
-            for (Map.Entry<String, User> entry : users.entrySet()) {
-              User user = entry.getValue();
-              Log.d(
-                  TAG,
-                  "  User key: '"
-                      + entry.getKey()
-                      + "' -> email: '"
-                      + (user != null ? user.getEmail() : "null user")
-                      + "'");
-              if (user != null) {
-                Log.d(
-                    TAG,
-                    "    Full user: name='"
-                        + user.getUsername()
-                        + "', email='"
-                        + user.getEmail()
-                        + "'");
-              }
-            }
-
-            ArrayList<User> ArrUsers = new ArrayList<>();
-            HashMap<String, Object> GroupFriends;
-
-            for (User p : users.values()) {
-              if (p != null && p.getEmail() != null) {
-                String UserMail = p.getEmail().replace('.', ' ');
-                Log.d(
-                    TAG,
-                    "Processing user: '" + p.getEmail() + "' -> normalized: '" + UserMail + "'");
-
-                GroupFriends = FriendKeys;
-                if (GroupFriends != null) {
-                  boolean foundMatch = false;
-                  for (String GroupFriend : GroupFriends.keySet()) {
-                    Log.d(TAG, "  Comparing '" + UserMail + "' with '" + GroupFriend + "'");
-                    if (GroupFriend != null && GroupFriend.equals(UserMail)) {
-                      Log.d(TAG, "Found matching user: " + UserMail);
-                      ArrUsers.add(p);
-                      foundMatch = true;
-                      break;
+                    // Debug: Print FriendKeys
+                    if (FriendKeys != null) {
+                        Log.d(TAG, "FriendKeys contents:");
+                        for (String key : FriendKeys.keySet()) {
+                            Log.d(TAG, "  FriendKey: '" + key + "' -> " + FriendKeys.get(key));
+                        }
+                    } else {
+                        Log.e(TAG, "FriendKeys is null!");
                     }
-                  }
-                  if (!foundMatch) {
-                    Log.d(TAG, "  No match found for user: " + UserMail);
-                  }
+
+                    // Debug: Print all users from server
+                    Log.d(TAG, "All users from server:");
+                    for (Map.Entry<String, User> entry : users.entrySet()) {
+                        User user = entry.getValue();
+                        Log.d(
+                                TAG,
+                                "  User key: '"
+                                        + entry.getKey()
+                                        + "' -> email: '"
+                                        + (user != null ? user.getEmail() : "null user")
+                                        + "'");
+                        if (user != null) {
+                            Log.d(
+                                    TAG,
+                                    "    Full user: name='"
+                                            + user.getUsername()
+                                            + "', email='"
+                                            + user.getEmail()
+                                            + "'");
+                        }
+                    }
+
+                    ArrayList<User> ArrUsers = new ArrayList<>();
+                    HashMap<String, Object> GroupFriends;
+
+                    for (User p : users.values()) {
+                        if (p != null && p.getEmail() != null) {
+                            String UserMail = p.getEmail().replace('.', ' ');
+                            Log.d(
+                                    TAG,
+                                    "Processing user: '" + p.getEmail() + "' -> normalized: '" + UserMail + "'");
+
+                            GroupFriends = FriendKeys;
+                            if (GroupFriends != null) {
+                                boolean foundMatch = false;
+                                for (String GroupFriend : GroupFriends.keySet()) {
+                                    Log.d(TAG, "  Comparing '" + UserMail + "' with '" + GroupFriend + "'");
+                                    if (GroupFriend != null && GroupFriend.equals(UserMail)) {
+                                        Log.d(TAG, "Found matching user: " + UserMail);
+                                        ArrUsers.add(p);
+                                        foundMatch = true;
+                                        break;
+                                    }
+                                }
+                                if (!foundMatch) {
+                                    Log.d(TAG, "  No match found for user: " + UserMail);
+                                }
+                            }
+                        } else {
+                            Log.w(TAG, "Skipping user with null email: " + p);
+                        }
+                    }
+
+                    Log.d(TAG, "Found " + ArrUsers.size() + " invited users");
+
+                    if (ArrUsers.isEmpty()) {
+                        Toast.makeText(
+                                        MembersInvitedActivity.this, "No invited members found", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    InvitedAdapter adapt =
+                            new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers, adminKey);
+                    lv2.setAdapter(adapt);
                 }
-              } else {
-                Log.w(TAG, "Skipping user with null email: " + p);
-              }
-            }
 
-            Log.d(TAG, "Found " + ArrUsers.size() + " invited users");
-
-            if (ArrUsers.isEmpty()) {
-              Toast.makeText(
-                      MembersInvitedActivity.this, "No invited members found", Toast.LENGTH_SHORT)
-                  .show();
-            }
-
-            InvitedAdapter adapt =
-                new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers, adminKey);
-            lv2.setAdapter(adapt);
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Error loading users: " + errorMessage);
-            Toast.makeText(
-                    MembersInvitedActivity.this,
-                    "Error loading users: " + errorMessage,
-                    Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "Error loading users: " + errorMessage);
+                    Toast.makeText(
+                                    MembersInvitedActivity.this,
+                                    "Error loading users: " + errorMessage,
+                                    Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
   }
 
   private void showUserInfo(User user) {

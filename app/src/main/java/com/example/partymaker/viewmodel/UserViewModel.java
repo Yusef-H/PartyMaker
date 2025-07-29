@@ -159,30 +159,30 @@ public class UserViewModel extends ViewModel {
     isLoading.setValue(true);
 
     repository.getAllUsers(
-        new UserRepository.DataCallback<List<User>>() {
-          @Override
-          public void onDataLoaded(List<User> data) {
-            Log.d(TAG, "Users loaded successfully: " + data.size() + " users");
-            userList.setValue(data);
-            isLoading.setValue(false);
-            networkErrorType.setValue(null); // Clear any network error
-          }
+            new UserRepository.DataCallback<>() {
+                @Override
+                public void onDataLoaded(List<User> data) {
+                    Log.d(TAG, "Users loaded successfully: " + data.size() + " users");
+                    userList.setValue(data);
+                    isLoading.setValue(false);
+                    networkErrorType.setValue(null); // Clear any network error
+                }
 
-          @Override
-          public void onError(String error) {
-            Log.e(TAG, "Error loading users: " + error);
-            errorMessage.setValue("Failed to load users: " + error);
-            isLoading.setValue(false);
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "Error loading users: " + error);
+                    errorMessage.setValue("Failed to load users: " + error);
+                    isLoading.setValue(false);
 
-            // Determine error type and handle it
-            NetworkUtils.ErrorType type = determineErrorType(error);
-            networkErrorType.setValue(type);
+                    // Determine error type and handle it
+                    NetworkUtils.ErrorType type = determineErrorType(error);
+                    networkErrorType.setValue(type);
 
-            if (appContext != null) {
-              AppNetworkError.handleNetworkError(appContext, error, type, true);
-            }
-          }
-        },
+                    if (appContext != null) {
+                        AppNetworkError.handleNetworkError(appContext, error, type, true);
+                    }
+                }
+            },
         forceRefresh);
   }
 
@@ -219,30 +219,30 @@ public class UserViewModel extends ViewModel {
 
     repository.getUser(
         userId,
-        new UserRepository.DataCallback<User>() {
-          @Override
-          public void onDataLoaded(User data) {
-            Log.d(TAG, "User loaded successfully: " + data.getUsername());
-            selectedUser.setValue(data);
-            isLoading.setValue(false);
-            networkErrorType.setValue(null); // Clear any network error
-          }
+            new UserRepository.DataCallback<>() {
+                @Override
+                public void onDataLoaded(User data) {
+                    Log.d(TAG, "User loaded successfully: " + data.getUsername());
+                    selectedUser.setValue(data);
+                    isLoading.setValue(false);
+                    networkErrorType.setValue(null); // Clear any network error
+                }
 
-          @Override
-          public void onError(String error) {
-            Log.e(TAG, "Error loading user: " + error);
-            errorMessage.setValue("Failed to load user: " + error);
-            isLoading.setValue(false);
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "Error loading user: " + error);
+                    errorMessage.setValue("Failed to load user: " + error);
+                    isLoading.setValue(false);
 
-            // Determine error type and handle it
-            NetworkUtils.ErrorType type = determineErrorType(error);
-            networkErrorType.setValue(type);
+                    // Determine error type and handle it
+                    NetworkUtils.ErrorType type = determineErrorType(error);
+                    networkErrorType.setValue(type);
 
-            if (appContext != null) {
-              AppNetworkError.handleNetworkError(appContext, error, type, false);
-            }
-          }
-        },
+                    if (appContext != null) {
+                        AppNetworkError.handleNetworkError(appContext, error, type, false);
+                    }
+                }
+            },
         forceRefresh);
   }
 

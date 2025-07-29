@@ -152,117 +152,117 @@ public class JoinGroupActivity extends AppCompatActivity {
                   GroupKey,
                   "FriendKeys",
                   FriendKeys,
-                  new FirebaseServerClient.DataCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                      Log.d(TAG, "Successfully updated FriendKeys");
+                      new FirebaseServerClient.DataCallback<>() {
+                          @Override
+                          public void onSuccess(Void result) {
+                              Log.d(TAG, "Successfully updated FriendKeys");
 
-                      // Now get the current group data to properly update ComingKeys
-                      serverClient.getGroup(
-                          GroupKey,
-                          new FirebaseServerClient.DataCallback<Group>() {
-                            @Override
-                            public void onSuccess(Group group) {
-                              // Get existing ComingKeys or create new HashMap
-                              HashMap<String, Object> comingKeys =
-                                  group.getComingKeys() != null
-                                      ? new HashMap<>(group.getComingKeys())
-                                      : new HashMap<>();
+                              // Now get the current group data to properly update ComingKeys
+                              serverClient.getGroup(
+                                      GroupKey,
+                                      new FirebaseServerClient.DataCallback<>() {
+                                          @Override
+                                          public void onSuccess(Group group) {
+                                              // Get existing ComingKeys or create new HashMap
+                                              HashMap<String, Object> comingKeys =
+                                                      group.getComingKeys() != null
+                                                              ? new HashMap<>(group.getComingKeys())
+                                                              : new HashMap<>();
 
-                              // Add the current user to ComingKeys
-                              comingKeys.put(CurrentUser, "true");
-                              Log.d(TAG, "Adding user to ComingKeys: " + CurrentUser);
-                              Log.d(TAG, "ComingKeys now has " + comingKeys.size() + " users");
+                                              // Add the current user to ComingKeys
+                                              comingKeys.put(CurrentUser, "true");
+                                              Log.d(TAG, "Adding user to ComingKeys: " + CurrentUser);
+                                              Log.d(TAG, "ComingKeys now has " + comingKeys.size() + " users");
 
-                              // Update ComingKeys
-                              serverClient.updateGroup(
-                                  GroupKey,
-                                  "ComingKeys",
-                                  comingKeys,
-                                  new FirebaseServerClient.DataCallback<Void>() {
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                      Log.d(TAG, "Successfully updated ComingKeys");
-                                      Toast.makeText(
-                                              JoinGroupActivity.this,
-                                              "Successfully joined and marked as coming!",
-                                              Toast.LENGTH_SHORT)
-                                          .show();
-                                      Intent i1 =
-                                          new Intent(getBaseContext(), PublicGroupsActivity.class);
-                                      startActivity(i1);
-                                    }
+                                              // Update ComingKeys
+                                              serverClient.updateGroup(
+                                                      GroupKey,
+                                                      "ComingKeys",
+                                                      comingKeys,
+                                                      new FirebaseServerClient.DataCallback<>() {
+                                                          @Override
+                                                          public void onSuccess(Void result) {
+                                                              Log.d(TAG, "Successfully updated ComingKeys");
+                                                              Toast.makeText(
+                                                                              JoinGroupActivity.this,
+                                                                              "Successfully joined and marked as coming!",
+                                                                              Toast.LENGTH_SHORT)
+                                                                      .show();
+                                                              Intent i1 =
+                                                                      new Intent(getBaseContext(), PublicGroupsActivity.class);
+                                                              startActivity(i1);
+                                                          }
 
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                      Log.e(TAG, "Failed to update ComingKeys: " + errorMessage);
-                                      Toast.makeText(
-                                              JoinGroupActivity.this,
-                                              "Joined but failed to mark as coming",
-                                              Toast.LENGTH_SHORT)
-                                          .show();
-                                      Intent i1 =
-                                          new Intent(getBaseContext(), PublicGroupsActivity.class);
-                                      startActivity(i1);
-                                    }
-                                  });
-                            }
+                                                          @Override
+                                                          public void onError(String errorMessage) {
+                                                              Log.e(TAG, "Failed to update ComingKeys: " + errorMessage);
+                                                              Toast.makeText(
+                                                                              JoinGroupActivity.this,
+                                                                              "Joined but failed to mark as coming",
+                                                                              Toast.LENGTH_SHORT)
+                                                                      .show();
+                                                              Intent i1 =
+                                                                      new Intent(getBaseContext(), PublicGroupsActivity.class);
+                                                              startActivity(i1);
+                                                          }
+                                                      });
+                                          }
 
-                            @Override
-                            public void onError(String errorMessage) {
-                              Log.e(
-                                  TAG,
-                                  "Failed to get group for ComingKeys update: " + errorMessage);
-                              // Still try to add user to ComingKeys with a new HashMap
-                              HashMap<String, Object> comingKeys = new HashMap<>();
-                              comingKeys.put(CurrentUser, "true");
+                                          @Override
+                                          public void onError(String errorMessage) {
+                                              Log.e(
+                                                      TAG,
+                                                      "Failed to get group for ComingKeys update: " + errorMessage);
+                                              // Still try to add user to ComingKeys with a new HashMap
+                                              HashMap<String, Object> comingKeys = new HashMap<>();
+                                              comingKeys.put(CurrentUser, "true");
 
-                              serverClient.updateGroup(
-                                  GroupKey,
-                                  "ComingKeys",
-                                  comingKeys,
-                                  new FirebaseServerClient.DataCallback<Void>() {
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                      Log.d(TAG, "Successfully updated ComingKeys (fallback)");
-                                      Toast.makeText(
-                                              JoinGroupActivity.this,
-                                              "Successfully joined and marked as coming!",
-                                              Toast.LENGTH_SHORT)
-                                          .show();
-                                      Intent i1 =
-                                          new Intent(getBaseContext(), PublicGroupsActivity.class);
-                                      startActivity(i1);
-                                    }
+                                              serverClient.updateGroup(
+                                                      GroupKey,
+                                                      "ComingKeys",
+                                                      comingKeys,
+                                                      new FirebaseServerClient.DataCallback<>() {
+                                                          @Override
+                                                          public void onSuccess(Void result) {
+                                                              Log.d(TAG, "Successfully updated ComingKeys (fallback)");
+                                                              Toast.makeText(
+                                                                              JoinGroupActivity.this,
+                                                                              "Successfully joined and marked as coming!",
+                                                                              Toast.LENGTH_SHORT)
+                                                                      .show();
+                                                              Intent i1 =
+                                                                      new Intent(getBaseContext(), PublicGroupsActivity.class);
+                                                              startActivity(i1);
+                                                          }
 
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                      Log.e(
-                                          TAG,
-                                          "Failed to update ComingKeys (fallback): "
-                                              + errorMessage);
-                                      Toast.makeText(
-                                              JoinGroupActivity.this,
-                                              "Joined but failed to mark as coming",
-                                              Toast.LENGTH_SHORT)
-                                          .show();
-                                      Intent i1 =
-                                          new Intent(getBaseContext(), PublicGroupsActivity.class);
-                                      startActivity(i1);
-                                    }
-                                  });
-                            }
-                          });
-                    }
+                                                          @Override
+                                                          public void onError(String errorMessage) {
+                                                              Log.e(
+                                                                      TAG,
+                                                                      "Failed to update ComingKeys (fallback): "
+                                                                              + errorMessage);
+                                                              Toast.makeText(
+                                                                              JoinGroupActivity.this,
+                                                                              "Joined but failed to mark as coming",
+                                                                              Toast.LENGTH_SHORT)
+                                                                      .show();
+                                                              Intent i1 =
+                                                                      new Intent(getBaseContext(), PublicGroupsActivity.class);
+                                                              startActivity(i1);
+                                                          }
+                                                      });
+                                          }
+                                      });
+                          }
 
-                    @Override
-                    public void onError(String errorMessage) {
-                      Log.e(TAG, "Failed to update FriendKeys: " + errorMessage);
-                      Toast.makeText(
-                              JoinGroupActivity.this, "Failed to join group", Toast.LENGTH_SHORT)
-                          .show();
-                    }
-                  });
+                          @Override
+                          public void onError(String errorMessage) {
+                              Log.e(TAG, "Failed to update FriendKeys: " + errorMessage);
+                              Toast.makeText(
+                                              JoinGroupActivity.this, "Failed to join group", Toast.LENGTH_SHORT)
+                                      .show();
+                          }
+                      });
 
             } else if (finalI == 3) // open 2,2 (4) Back
             {

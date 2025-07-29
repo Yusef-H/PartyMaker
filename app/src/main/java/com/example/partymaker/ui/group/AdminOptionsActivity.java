@@ -154,39 +154,39 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group != null
-                && group.getAdminKey() != null
-                && group.getAdminKey().equals(UserKey)) {
-              // User is verified as admin
-              isAdminVerified = true;
-              // Update local admin key to match server data
-              AdminKey = group.getAdminKey();
-              // Initialize UI after verification
-              initializeUI();
-            } else {
-              // User is not admin - deny access
-              Toast.makeText(
-                      AdminOptionsActivity.this,
-                      "Access denied. Only group admin can access this page.",
-                      Toast.LENGTH_LONG)
-                  .show();
-              finish();
-            }
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Group group) {
+                    if (group != null
+                            && group.getAdminKey() != null
+                            && group.getAdminKey().equals(UserKey)) {
+                        // User is verified as admin
+                        isAdminVerified = true;
+                        // Update local admin key to match server data
+                        AdminKey = group.getAdminKey();
+                        // Initialize UI after verification
+                        initializeUI();
+                    } else {
+                        // User is not admin - deny access
+                        Toast.makeText(
+                                        AdminOptionsActivity.this,
+                                        "Access denied. Only group admin can access this page.",
+                                        Toast.LENGTH_LONG)
+                                .show();
+                        finish();
+                    }
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    AdminOptionsActivity.this,
-                    "Failed to verify admin status: " + errorMessage,
-                    Toast.LENGTH_LONG)
-                .show();
-            finish();
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(
+                                    AdminOptionsActivity.this,
+                                    "Failed to verify admin status: " + errorMessage,
+                                    Toast.LENGTH_LONG)
+                            .show();
+                    finish();
+                }
+            });
   }
 
   private void initializeUI() {

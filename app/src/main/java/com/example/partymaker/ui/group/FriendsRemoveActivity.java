@@ -174,21 +174,21 @@ public class FriendsRemoveActivity extends AppCompatActivity {
 
             // Always use server client for consistency
             serverClient.getUsers(
-                new FirebaseServerClient.DataCallback<Map<String, User>>() {
-                  @Override
-                  public void onSuccess(Map<String, User> data) {
-                    processServerUserData(data);
-                  }
+                    new FirebaseServerClient.DataCallback<>() {
+                        @Override
+                        public void onSuccess(Map<String, User> data) {
+                            processServerUserData(data);
+                        }
 
-                  @Override
-                  public void onError(String errorMessage) {
-                    Toast.makeText(
-                            FriendsRemoveActivity.this,
-                            "Server error: " + errorMessage,
-                            Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                });
+                        @Override
+                        public void onError(String errorMessage) {
+                            Toast.makeText(
+                                            FriendsRemoveActivity.this,
+                                            "Server error: " + errorMessage,
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
           } else {
             Toast.makeText(
                     FriendsRemoveActivity.this, "Please enter an email address", Toast.LENGTH_SHORT)
@@ -223,47 +223,47 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     final String finalFriendKey = friendKey;
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group == null) {
-              Toast.makeText(FriendsRemoveActivity.this, "Group not found", Toast.LENGTH_SHORT)
-                  .show();
-              return;
-            }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Group group) {
+                    if (group == null) {
+                        Toast.makeText(FriendsRemoveActivity.this, "Group not found", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
 
-            boolean isInGroup = false;
+                    boolean isInGroup = false;
 
-            // Check if user is in FriendKeys
-            if (group.getFriendKeys() != null) {
-              for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                if (entry.getValue().equals(finalFriendKey)) {
-                  isInGroup = true;
-                  break;
+                    // Check if user is in FriendKeys
+                    if (group.getFriendKeys() != null) {
+                        for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
+                            if (entry.getValue().equals(finalFriendKey)) {
+                                isInGroup = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isInGroup) {
+                        Toast.makeText(
+                                        FriendsRemoveActivity.this, "User is not in this group", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+
+                    // Remove friend using the new method
+                    removeFriend(finalFriendKey);
                 }
-              }
-            }
 
-            if (!isInGroup) {
-              Toast.makeText(
-                      FriendsRemoveActivity.this, "User is not in this group", Toast.LENGTH_SHORT)
-                  .show();
-              return;
-            }
-
-            // Remove friend using the new method
-            removeFriend(finalFriendKey);
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    FriendsRemoveActivity.this,
-                    "Error loading group: " + errorMessage,
-                    Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(
+                                    FriendsRemoveActivity.this,
+                                    "Error loading group: " + errorMessage,
+                                    Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
   }
 
   private void loadFriends() {
@@ -277,159 +277,159 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     // Get the group data
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group == null || group.getFriendKeys() == null || group.getFriendKeys().isEmpty()) {
-              Toast.makeText(
-                      FriendsRemoveActivity.this, "No friends in this group", Toast.LENGTH_SHORT)
-                  .show();
-              adapter.notifyDataSetChanged();
-              return;
-            }
-
-            // Update local data
-            FriendKeys = new HashMap<>(group.getFriendKeys());
-
-            // Load each friend's data
-            for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-              String friendKey = entry.getValue().toString();
-              serverClient.getUser(
-                  friendKey,
-                  new FirebaseServerClient.DataCallback<User>() {
-                    @Override
-                    public void onSuccess(User user) {
-                      if (user != null) {
-                        usersList.add(user);
-                        userKeys.add(friendKey);
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Group group) {
+                    if (group == null || group.getFriendKeys() == null || group.getFriendKeys().isEmpty()) {
+                        Toast.makeText(
+                                        FriendsRemoveActivity.this, "No friends in this group", Toast.LENGTH_SHORT)
+                                .show();
                         adapter.notifyDataSetChanged();
-                      }
+                        return;
                     }
 
-                    @Override
-                    public void onError(String errorMessage) {
-                      Log.e(TAG, "Error loading user: " + errorMessage);
-                    }
-                  });
-            }
-          }
+                    // Update local data
+                    FriendKeys = new HashMap<>(group.getFriendKeys());
 
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    FriendsRemoveActivity.this,
-                    "Error loading group: " + errorMessage,
-                    Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+                    // Load each friend's data
+                    for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
+                        String friendKey = entry.getValue().toString();
+                        serverClient.getUser(
+                                friendKey,
+                                new FirebaseServerClient.DataCallback<>() {
+                                    @Override
+                                    public void onSuccess(User user) {
+                                        if (user != null) {
+                                            usersList.add(user);
+                                            userKeys.add(friendKey);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(String errorMessage) {
+                                        Log.e(TAG, "Error loading user: " + errorMessage);
+                                    }
+                                });
+                    }
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(
+                                    FriendsRemoveActivity.this,
+                                    "Error loading group: " + errorMessage,
+                                    Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
   }
 
   private void removeFriend(String friendKey) {
     // Get the latest group data
     serverClient.getGroup(
         GroupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            if (group == null) {
-              Toast.makeText(FriendsRemoveActivity.this, "Group not found", Toast.LENGTH_SHORT)
-                  .show();
-              return;
-            }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Group group) {
+                    if (group == null) {
+                        Toast.makeText(FriendsRemoveActivity.this, "Group not found", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
 
-            // Find the key in FriendKeys that corresponds to this friend
-            String keyToRemove = null;
-            if (group.getFriendKeys() != null) {
-              for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                if (entry.getValue().equals(friendKey)) {
-                  keyToRemove = entry.getKey();
-                  break;
+                    // Find the key in FriendKeys that corresponds to this friend
+                    String keyToRemove = null;
+                    if (group.getFriendKeys() != null) {
+                        for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
+                            if (entry.getValue().equals(friendKey)) {
+                                keyToRemove = entry.getKey();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (keyToRemove == null) {
+                        Toast.makeText(
+                                        FriendsRemoveActivity.this, "Friend not found in group", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+
+                    final String finalKeyToRemove = keyToRemove;
+                    Log.d(TAG, "Removing friend with key: " + finalKeyToRemove);
+
+                    // Create modified copies of the maps
+                    HashMap<String, Object> updatedFriendKeys = new HashMap<>();
+                    if (group.getFriendKeys() != null) {
+                        updatedFriendKeys.putAll(group.getFriendKeys());
+                        updatedFriendKeys.remove(finalKeyToRemove);
+                    }
+
+                    HashMap<String, Object> updatedComingKeys = new HashMap<>();
+                    if (group.getComingKeys() != null) {
+                        updatedComingKeys.putAll(group.getComingKeys());
+                        // Remove from ComingKeys if present
+                        updatedComingKeys.remove(finalKeyToRemove);
+                    }
+
+                    // Create updates map for the entire group
+                    HashMap<String, Object> groupUpdates = new HashMap<>();
+                    groupUpdates.put("FriendKeys", updatedFriendKeys);
+                    groupUpdates.put("ComingKeys", updatedComingKeys);
+
+                    // Update the group with both changes at once
+                    serverClient.updateGroup(
+                            GroupKey,
+                            groupUpdates,
+                            new FirebaseServerClient.OperationCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.d(TAG, "Friend removed successfully from both FriendKeys and ComingKeys");
+
+                                    // Update local data
+                                    if (FriendKeys != null) {
+                                        FriendKeys = updatedFriendKeys;
+                                    }
+
+                                    if (ComingKeys != null) {
+                                        ComingKeys = updatedComingKeys;
+                                    }
+
+                                    Toast.makeText(
+                                                    FriendsRemoveActivity.this,
+                                                    "Friend removed successfully",
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+
+                                    // Clear the email field
+                                    etFriendEmail.setText("");
+
+                                    // Refresh the list
+                                    loadFriends();
+                                }
+
+                                @Override
+                                public void onError(String errorMessage) {
+                                    Log.e(TAG, "Error removing friend: " + errorMessage);
+                                    Toast.makeText(
+                                                    FriendsRemoveActivity.this,
+                                                    "Error removing friend: " + errorMessage,
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
                 }
-              }
-            }
 
-            if (keyToRemove == null) {
-              Toast.makeText(
-                      FriendsRemoveActivity.this, "Friend not found in group", Toast.LENGTH_SHORT)
-                  .show();
-              return;
-            }
-
-            final String finalKeyToRemove = keyToRemove;
-            Log.d(TAG, "Removing friend with key: " + finalKeyToRemove);
-
-            // Create modified copies of the maps
-            HashMap<String, Object> updatedFriendKeys = new HashMap<>();
-            if (group.getFriendKeys() != null) {
-              updatedFriendKeys.putAll(group.getFriendKeys());
-              updatedFriendKeys.remove(finalKeyToRemove);
-            }
-
-            HashMap<String, Object> updatedComingKeys = new HashMap<>();
-            if (group.getComingKeys() != null) {
-              updatedComingKeys.putAll(group.getComingKeys());
-              // Remove from ComingKeys if present
-              updatedComingKeys.remove(finalKeyToRemove);
-            }
-
-            // Create updates map for the entire group
-            HashMap<String, Object> groupUpdates = new HashMap<>();
-            groupUpdates.put("FriendKeys", updatedFriendKeys);
-            groupUpdates.put("ComingKeys", updatedComingKeys);
-
-            // Update the group with both changes at once
-            serverClient.updateGroup(
-                GroupKey,
-                groupUpdates,
-                new FirebaseServerClient.OperationCallback() {
-                  @Override
-                  public void onSuccess() {
-                    Log.d(TAG, "Friend removed successfully from both FriendKeys and ComingKeys");
-
-                    // Update local data
-                    if (FriendKeys != null) {
-                      FriendKeys = updatedFriendKeys;
-                    }
-
-                    if (ComingKeys != null) {
-                      ComingKeys = updatedComingKeys;
-                    }
-
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "Error loading group: " + errorMessage);
                     Toast.makeText(
-                            FriendsRemoveActivity.this,
-                            "Friend removed successfully",
-                            Toast.LENGTH_SHORT)
-                        .show();
-
-                    // Clear the email field
-                    etFriendEmail.setText("");
-
-                    // Refresh the list
-                    loadFriends();
-                  }
-
-                  @Override
-                  public void onError(String errorMessage) {
-                    Log.e(TAG, "Error removing friend: " + errorMessage);
-                    Toast.makeText(
-                            FriendsRemoveActivity.this,
-                            "Error removing friend: " + errorMessage,
-                            Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                });
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Error loading group: " + errorMessage);
-            Toast.makeText(
-                    FriendsRemoveActivity.this,
-                    "Error loading group: " + errorMessage,
-                    Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+                                    FriendsRemoveActivity.this,
+                                    "Error loading group: " + errorMessage,
+                                    Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
   }
 }

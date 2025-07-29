@@ -183,19 +183,19 @@ public class PublicGroupsActivity extends AppCompatActivity {
     // Always use server mode
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroups(
-        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
-          @Override
-          public void onSuccess(Map<String, Group> data) {
-            processServerGroupData(data);
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Map<String, Group> data) {
+                    processServerGroupData(data);
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(
+                                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
   }
 
   private void processServerGroupData(Map<String, Group> groupData) {
