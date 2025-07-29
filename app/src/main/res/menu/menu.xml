@@ -6,11 +6,11 @@
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/server_settings"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/logout"
-        android:icon="@drawable/ic_party_leave"
+        android:icon="@drawable/ic_toolbar_leave"
         android:title="@string/logout"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>
