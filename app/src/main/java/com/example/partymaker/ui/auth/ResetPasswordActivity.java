@@ -1,5 +1,8 @@
 package com.example.partymaker.ui.auth;
 
+import static com.example.partymaker.utilities.Common.hideViews;
+import static com.example.partymaker.utilities.Common.showViews;
+
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
@@ -109,70 +112,73 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
   /** Handles all button click events and UI theme switching. */
   private void eventHandler() {
-    btnReset.setOnClickListener(v -> ResetPass());
-    btnWhite.setOnClickListener(
-        view -> {
-          // code that invert color(In this case rom White/Black to Black/White)
-          final float[] NEGATIVE = {
-            -1.0f, 0, 0, 0, 255, 0, -1.0f, 0, 0, 255, 0, 0, -1.0f, 0, 255, 0, 0, 0, 1.0f, 0
-          }; // every number is a color  (Red,Green,Blue,Alpha)
+      btnReset.setOnClickListener(v -> ResetPass());
 
-          imgWhiteCake.setColorFilter(
-              new ColorMatrixColorFilter(NEGATIVE)); // set color to the color above
-          imgWhiteCake.setColorFilter(0x00ff0000, PorterDuff.Mode.ADD); // invert back
-          imgWhiteCake = findViewById(R.id.imgWhiteCake);
-          rltReset.setBackgroundColor(Color.WHITE);
-          tvForgotPass.setTextColor(Color.BLACK);
-          tvHelp.setTextColor(Color.BLACK);
-          tvInstructions.setTextColor(Color.BLACK);
-          tvHide.setTextColor(Color.BLACK);
-          etInputEmail.setHintTextColor(Color.BLACK);
-          etInputEmail.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
-          etInputEmail.setTextColor(Color.BLACK);
-          btnReset.setTextColor(Color.BLACK);
-          btnHelp.setTextColor(Color.BLACK);
-          btnHide.setTextColor(Color.BLACK);
-          btnWhite.setVisibility(View.INVISIBLE);
-          btnBlack.setVisibility(View.VISIBLE);
-        });
-    btnBlack.setOnClickListener(
-        view -> {
-          // code that invert color(In this case rom Black/White to White/Black)
-          final float[] NEGATIVE = {
-            -1.0f, 0, 0, 0, 255, 0, -1.0f, 0, 0, 255, 0, 0, -1.0f, 0, 255, 0, 0, 0, 1.0f, 0
-          }; // every number is a color  (Red,Green,Blue,Alpha)
+      btnWhite.setOnClickListener(v -> switchToLightMode());
 
-          imgWhiteCake.setColorFilter(
-              new ColorMatrixColorFilter(NEGATIVE)); // set color to the color above
-          rltReset.setBackgroundColor(Color.BLACK);
-          tvForgotPass.setTextColor(Color.WHITE);
-          tvHelp.setTextColor(Color.WHITE);
-          tvInstructions.setTextColor(Color.WHITE);
-          tvHide.setTextColor(Color.WHITE);
-          etInputEmail.setHintTextColor(Color.WHITE);
-          etInputEmail.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-          etInputEmail.setTextColor(Color.WHITE);
-          btnReset.setTextColor(Color.WHITE);
-          btnHelp.setTextColor(Color.WHITE);
-          btnHide.setTextColor(Color.WHITE);
-          btnBlack.setVisibility(View.INVISIBLE);
-          btnWhite.setVisibility(View.VISIBLE);
-        });
-    btnHelp.setOnClickListener(
-        view -> {
-          tvInstructions.setVisibility(View.VISIBLE);
-          tvHelp.setVisibility(View.INVISIBLE);
-          btnHelp.setVisibility(View.INVISIBLE);
-          tvHide.setVisibility(View.VISIBLE);
-          btnHide.setVisibility(View.VISIBLE);
-        });
-    btnHide.setOnClickListener(
-        view -> {
-          tvInstructions.setVisibility(View.INVISIBLE);
-          tvHelp.setVisibility(View.VISIBLE);
-          btnHelp.setVisibility(View.VISIBLE);
-          tvHide.setVisibility(View.INVISIBLE);
-          btnHide.setVisibility(View.INVISIBLE);
-        });
+      btnBlack.setOnClickListener(v -> switchToDarkMode());
+
+      btnHelp.setOnClickListener(v -> {
+          showViews(tvInstructions, tvHide, btnHide);
+          hideViews(tvHelp, btnHelp);
+      });
+
+      btnHide.setOnClickListener(v -> {
+          hideViews(tvInstructions, tvHide, btnHide);
+          showViews(tvHelp, btnHelp);
+      });
   }
+
+    private void switchToLightMode() {
+        applyColorFilterToImage();
+        rltReset.setBackgroundColor(Color.WHITE);
+
+        setTextColors(Color.BLACK);
+        setEditTextColors(Color.BLACK);
+        setButtonTextColors(Color.BLACK);
+
+        hideViews(btnWhite);
+        showViews(btnBlack);
+    }
+
+    private void switchToDarkMode() {
+        applyColorFilterToImage();
+        rltReset.setBackgroundColor(Color.BLACK);
+
+        setTextColors(Color.WHITE);
+        setEditTextColors(Color.WHITE);
+        setButtonTextColors(Color.WHITE);
+
+        hideViews(btnBlack);
+        showViews(btnWhite);
+    }
+
+    private void applyColorFilterToImage() {
+        final float[] NEGATIVE = {
+                -1.0f, 0, 0, 0, 255,
+                0, -1.0f, 0, 0, 255,
+                0, 0, -1.0f, 0, 255,
+                0, 0,  0, 1.0f, 0
+        };
+        imgWhiteCake.setColorFilter(new ColorMatrixColorFilter(NEGATIVE));
+    }
+
+    private void setTextColors(int color) {
+        tvForgotPass.setTextColor(color);
+        tvHelp.setTextColor(color);
+        tvInstructions.setTextColor(color);
+        tvHide.setTextColor(color);
+    }
+
+    private void setEditTextColors(int color) {
+        etInputEmail.setHintTextColor(color);
+        etInputEmail.setBackgroundTintList(ColorStateList.valueOf(color));
+        etInputEmail.setTextColor(color);
+    }
+
+    private void setButtonTextColors(int color) {
+        btnReset.setTextColor(color);
+        btnHelp.setTextColor(color);
+        btnHide.setTextColor(color);
+    }
 }
