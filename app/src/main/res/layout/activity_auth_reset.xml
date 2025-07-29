@@ -5,8 +5,9 @@
     android:id="@+id/rltReset"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@drawable/bg_party_screen"
     android:fitsSystemWindows="true"
+    android:padding="16dp"
     tools:context="com.example.partymaker.ui.auth.ResetPasswordActivity">
 
 
@@ -16,7 +17,7 @@
         android:layout_height="200dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="53dp"
+        android:layout_marginTop="54dp"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/ic_cake_white" />
 
@@ -27,8 +28,11 @@
         android:layout_below="@+id/imgWhiteCake"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
+        android:fontFamily="sans-serif-medium"
         android:text="@string/forgot_your_password_reset_it_now"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etInputEmail"
@@ -38,6 +42,7 @@
         android:layout_centerHorizontal="true"
         android:autofillHints=""
         android:backgroundTint="@color/black"
+        android:gravity="center"
         android:hint="@string/input_email"
         android:inputType="textPersonName"
         android:minHeight="48dp"
@@ -65,11 +70,10 @@
 
     <Button
         android:id="@+id/btnWhite"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
         android:background="#0000ffff"
         android:text="@string/white_screen"
         android:textColor="#ffffff"
@@ -77,65 +81,66 @@
 
     <Button
         android:id="@+id/btnBlack"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
         android:background="#0000ffff"
         android:text="@string/black_screen"
         tools:ignore="TextSizeCheck" />
 
     <Button
         android:id="@+id/btnHelp"
-        android:layout_width="75dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="210dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="585dp"
+        android:layout_toEndOf="@+id/tvHelp"
         android:background="#0000ffff"
         android:text="@string/press_here"
         android:textAllCaps="false"
+        android:textColor="@color/primaryBlue"
         tools:ignore="TextSizeCheck" />
 
     <TextView
         android:id="@+id/tvHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="600dp"
         android:text="@string/need_help"
         android:textColor="@color/black" />
 
     <Button
         android:id="@+id/btnHide"
-        android:layout_width="75dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="585dp"
+        android:layout_toEndOf="@+id/tvHide"
         android:background="#0000ffff"
         android:text="@string/hide_it"
         android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:visibility="invisible"/>
+        android:textColor="@color/blue_primary"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/tvHide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
-        android:layout_marginTop="590dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="600dp"
         android:text="@string/got_help"
         android:textColor="@color/black"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/tvInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etInputEmail"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
         android:text="@string/type_in_your_email_address_above_and_we_ll_send_you_an_email_with_instructions_on_how_to_create_a_new_password"
-        android:textAlignment="center"
         android:textColor="@color/black"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 </RelativeLayout>
