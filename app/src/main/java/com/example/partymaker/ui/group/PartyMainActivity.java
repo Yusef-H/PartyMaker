@@ -596,9 +596,7 @@ public class PartyMainActivity extends AppCompatActivity {
             String time = currentGroup.getGroupHours();
             Toast.makeText(
                     PartyMainActivity.this,
-                    "Party Date: " + date + " at " + time + "\n\nOnly admin can change the date.",
-                    Toast.LENGTH_LONG)
-                .show();
+                    "Party Date: " + date + " at " + time, Toast.LENGTH_LONG).show();
           }
         });
 
