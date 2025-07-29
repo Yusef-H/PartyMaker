@@ -1,116 +1,147 @@
 package com.example.partymaker.ui.adapters;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.IdRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
-import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.group.UsersListActivity;
-import com.example.partymaker.utilities.AuthHelper;
-import com.squareup.picasso.Picasso;
-import java.util.List;
+import com.example.partymaker.util.GlideImageLoader;
+import java.util.Objects;
 
-/** Adapter for displaying groups in a ListView. Loads group images and displays group details. */
-public class GroupAdapter extends ArrayAdapter<Group> {
-  /** The context in which the adapter is used. */
-  final Context context;
+/**
+ * Adapter for displaying groups in a RecyclerView. Uses the OptimizedRecyclerAdapter base class for
+ * efficient updates.
+ */
+public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.GroupViewHolder> {
 
-  /** The list of groups to display. */
-  final List<Group> groupList;
-
-  /** Application context for image loading. */
-  final Context applicationContext;
+  private final Context context;
+  private final OnGroupClickListener listener;
 
   /**
-   * Constructor for GroupAdapter.
+   * Constructs a GroupAdapter.
    *
-   * @param context the context
-   * @param resource the layout resource ID
-   * @param textViewResourceId the text view resource ID
-   * @param groupList the list of groups
+   * @param context The context
+   * @param listener The click listener
    */
-  public GroupAdapter(
-      @NonNull Context context,
-      @LayoutRes int resource,
-      @IdRes int textViewResourceId,
-      @NonNull List<Group> groupList) {
-    super(context, resource, textViewResourceId, groupList);
+  public GroupAdapter(Context context, OnGroupClickListener listener) {
     this.context = context;
-    this.groupList = groupList;
-    this.applicationContext = UsersListActivity.getContextOfApplication();
+    this.listener = listener;
   }
 
-  /**
-   * Returns the view for a specific group in the list. Loads group image and displays group
-   * details.
-   *
-   * @param position the position in the list
-   * @param convertView the recycled view
-   * @param parent the parent view group
-   * @return the view for the group
-   */
   @NonNull
   @Override
-  public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+  public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    View view = LayoutInflater.from(context).inflate(R.layout.item_group, parent, false);
+    return new GroupViewHolder(view);
+  }
 
-    LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    @SuppressLint("ViewHolder")
-    View view = layoutInflater.inflate(R.layout.item_group, parent, false);
-    Group temp = groupList.get(position);
+  @Override
+  public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
+    Group group = getItem(position);
+    if (group != null) {
+      holder.bind(group);
+    }
+  }
 
-    TextView tvpGroupName = view.findViewById(R.id.tvGroupName);
-    tvpGroupName.setText(temp.getGroupName());
+  @Override
+  protected boolean areItemsTheSame(Group oldItem, Group newItem) {
+    return oldItem != null
+        && newItem != null
+        && Objects.equals(oldItem.getGroupKey(), newItem.getGroupKey());
+  }
 
-    TextView tvpGroupDate = view.findViewById(R.id.tvGroupDate);
-    String GroupDate =
-        (temp.getGroupDays() + " " + temp.getGroupMonths() + " " + temp.getGroupYears());
-    tvpGroupDate.setText(GroupDate);
+  @Override
+  protected boolean areContentsTheSame(Group oldItem, Group newItem) {
+    return oldItem != null
+        && newItem != null
+        && Objects.equals(oldItem.getGroupName(), newItem.getGroupName())
+        && Objects.equals(oldItem.getGroupLocation(), newItem.getGroupLocation())
+        && Objects.equals(oldItem.getGroupDays(), newItem.getGroupDays())
+        && Objects.equals(oldItem.getGroupMonths(), newItem.getGroupMonths())
+        && Objects.equals(oldItem.getGroupYears(), newItem.getGroupYears())
+        && Objects.equals(oldItem.getGroupHours(), newItem.getGroupHours())
+        && Objects.equals(oldItem.getGroupPrice(), newItem.getGroupPrice())
+        && oldItem.getGroupType() == newItem.getGroupType();
+  }
 
-    final ImageView imageView = view.findViewById(R.id.imgGroupPicture);
+  /** ViewHolder for group items. */
+  class GroupViewHolder extends RecyclerView.ViewHolder {
+    private final TextView groupNameTextView;
+    private final TextView groupDateTextView;
+    private final ImageView groupImageView;
 
-    String GroupKey = temp.getGroupKey();
+    GroupViewHolder(@NonNull View itemView) {
+      super(itemView);
+      groupNameTextView = itemView.findViewById(R.id.tvGroupName);
+      groupDateTextView = itemView.findViewById(R.id.tvGroupDate);
+      groupImageView = itemView.findViewById(R.id.imgGroupPicture);
 
-    // Only try to load image if Firebase Auth is available
-    if (AuthHelper.isFirebaseAuthAvailable(context)) {
-      DBRef.refStorage
-          .child("UsersImageProfile/Groups/" + GroupKey)
-          .getDownloadUrl()
-          .addOnSuccessListener(
-              uri ->
-                  Picasso.get()
-                      .load(uri) // image url goes here
-                      .fit()
-                      .centerCrop()
-                      .into(imageView))
-          .addOnFailureListener(
-              exception -> {
-                // Try the old path if the new path fails
-                DBRef.refStorage
-                    .child("Groups/" + GroupKey)
-                    .getDownloadUrl()
-                    .addOnSuccessListener(
-                        uri -> Picasso.get().load(uri).fit().centerCrop().into(imageView))
-                    .addOnFailureListener(
-                        e -> {
-                          // Set default image if both paths fail
-                          imageView.setImageResource(R.drawable.ic_group);
-                        });
-              });
-    } else {
-      // Set default image when Firebase Auth is not available
-      imageView.setImageResource(R.drawable.ic_group);
+      itemView.setOnClickListener(
+          v -> {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION && listener != null) {
+              listener.onGroupClick(getItem(position));
+            }
+          });
     }
 
-    return view;
+    void bind(Group group) {
+      groupNameTextView.setText(group.getGroupName());
+
+      // Format date
+      String date =
+          String.format(
+              "%s/%s/%s %s",
+              group.getGroupDays(),
+              group.getGroupMonths(),
+              group.getGroupYears(),
+              group.getGroupHours());
+      groupDateTextView.setText(date);
+
+      // Load group image from Firebase Storage
+      String groupKey = group.getGroupKey();
+      if (groupKey != null && !groupKey.isEmpty()) {
+        // Try to load from new path first
+        com.example.partymaker.data.firebase.DBRef.refStorage
+            .child("UsersImageProfile/Groups/" + groupKey)
+            .getDownloadUrl()
+            .addOnSuccessListener(
+                uri ->
+                    GlideImageLoader.loadImage(
+                        context, uri.toString(), groupImageView, R.drawable.ic_launcher))
+            .addOnFailureListener(
+                e -> {
+                  // Try old path as fallback
+                  com.example.partymaker.data.firebase.DBRef.refStorage
+                      .child("Groups/" + groupKey)
+                      .getDownloadUrl()
+                      .addOnSuccessListener(
+                          uri ->
+                              GlideImageLoader.loadImage(
+                                  context,
+                                  uri.toString(),
+                                  groupImageView,
+                                  R.drawable.ic_launcher))
+                      .addOnFailureListener(
+                          e2 -> {
+                            // Use default image if both paths fail
+                            groupImageView.setImageResource(R.drawable.ic_launcher);
+                          });
+                });
+      } else {
+        // No group key, use default image
+        groupImageView.setImageResource(R.drawable.ic_launcher);
+      }
+    }
+  }
+
+  /** Interface for handling group click events. */
+  public interface OnGroupClickListener {
+    void onGroupClick(Group group);
   }
 }
