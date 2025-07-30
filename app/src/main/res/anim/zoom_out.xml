@@ -6,13 +6,13 @@
     <scale
         android:fromXScale="1.0"
         android:fromYScale="1.0"
-        android:toXScale="0.95"
-        android:toYScale="0.95"
         android:pivotX="50%"
-        android:pivotY="50%" />
+        android:pivotY="50%"
+        android:toXScale="0.95"
+        android:toYScale="0.95" />
 
     <alpha
+        android:duration="200"
         android:fromAlpha="1.0"
-        android:toAlpha="0.0"
-        android:duration="200" />
+        android:toAlpha="0.0" />
 </set>

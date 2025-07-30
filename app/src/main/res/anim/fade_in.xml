@@ -5,25 +5,25 @@
     <alpha
         android:duration="1500"
         android:fromAlpha="0.0"
-        android:toAlpha="1.0"
-        android:interpolator="@android:anim/decelerate_interpolator" />
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:toAlpha="1.0" />
 
     <!-- Scale animation for elegant entrance -->
     <scale
         android:duration="1500"
         android:fromXScale="0.8"
         android:fromYScale="0.8"
-        android:toXScale="1.0"
-        android:toYScale="1.0"
+        android:interpolator="@android:anim/decelerate_interpolator"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:interpolator="@android:anim/decelerate_interpolator" />
+        android:toXScale="1.0"
+        android:toYScale="1.0" />
 
     <!-- Subtle translate animation -->
     <translate
         android:duration="1500"
         android:fromYDelta="50dp"
-        android:toYDelta="0dp"
-        android:interpolator="@android:anim/decelerate_interpolator" />
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:toYDelta="0dp" />
 
 </set>
