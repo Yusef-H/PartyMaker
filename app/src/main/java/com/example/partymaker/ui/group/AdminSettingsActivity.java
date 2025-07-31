@@ -26,10 +26,14 @@ import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.media.ImageCompressor;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import java.util.HashMap;
 
@@ -227,23 +231,58 @@ public class AdminSettingsActivity extends AppCompatActivity {
             if (requestCode == 100) {
                 Uri uri = data.getData();
                 if (null != uri) {
-                    ((ImageView) findViewById(R.id.imgEditGroup)).setImageURI(uri);
+                    // Show compression progress
+                    Toast.makeText(this, "Compressing group image...", Toast.LENGTH_SHORT).show();
 
-                    DBRef.refStorage
-                            .child("UsersImageProfile/Groups/" + GroupKey)
-                            .putFile(uri)
-                            .addOnSuccessListener(
-                                    taskSnapshot ->
-                                            Toast.makeText(AdminSettingsActivity.this, "saved", Toast.LENGTH_SHORT)
-                                                    .show())
-                            .addOnFailureListener(
-                                    exception ->
-                                            Toast.makeText(
-                                                            AdminSettingsActivity.this, "error while saving ", Toast.LENGTH_SHORT)
-                                                    .show());
+                    // First compress the image to reduce size and improve upload speed
+                    ImageCompressor.compressImage(this, uri, new ImageCompressor.CompressCallback() {
+                        @Override
+                        public void onCompressSuccess(File compressedFile) {
+                            ThreadUtils.runOnMainThread(() -> {
+                                Uri compressedUri = Uri.fromFile(compressedFile);
+                                ((ImageView) findViewById(R.id.imgEditGroup)).setImageURI(compressedUri);
+                                
+                                Toast.makeText(AdminSettingsActivity.this, "Image compressed successfully. Uploading...", Toast.LENGTH_SHORT).show();
+                                
+                                // Upload the compressed image
+                                uploadGroupImage(compressedUri);
+                            });
+                        }
+
+                        @Override
+                        public void onCompressError(String error) {
+                            ThreadUtils.runOnMainThread(() -> {
+                                Toast.makeText(AdminSettingsActivity.this, "Compression failed, uploading original image...", Toast.LENGTH_SHORT).show();
+                                ((ImageView) findViewById(R.id.imgEditGroup)).setImageURI(uri);
+                                
+                                // Upload original image if compression fails
+                                uploadGroupImage(uri);
+                            });
+                        }
+                    });
                 }
             }
         }
+    }
+
+    /**
+     * Uploads the group image to Firebase Storage
+     * 
+     * @param uri The URI of the image to upload
+     */
+    private void uploadGroupImage(Uri uri) {
+        DBRef.refStorage
+                .child("UsersImageProfile/Groups/" + GroupKey)
+                .putFile(uri)
+                .addOnSuccessListener(
+                        taskSnapshot ->
+                                Toast.makeText(AdminSettingsActivity.this, "Group image updated successfully", Toast.LENGTH_SHORT)
+                                        .show())
+                .addOnFailureListener(
+                        exception ->
+                                Toast.makeText(
+                                                AdminSettingsActivity.this, "Error uploading group image: " + exception.getMessage(), Toast.LENGTH_LONG)
+                                        .show());
     }
 
     @SuppressLint("SetTextI18n")

@@ -28,6 +28,7 @@ import com.example.partymaker.ui.adapters.ChatAdapter;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.system.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -217,7 +218,7 @@ public class ChatActivity extends AppCompatActivity {
                                 String gptQuestion = input.getText().toString();
                                 if (!gptQuestion.isEmpty()) {
                                     // Show loading message
-                                    runOnUiThread(
+                                    ThreadUtils.runOnMainThread(
                                             () ->
                                                     Toast.makeText(
                                                                     ChatActivity.this,
@@ -225,7 +226,7 @@ public class ChatActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT)
                                                             .show());
 
-                                    new Thread(
+                                    ThreadUtils.runInBackground(
                                             () -> {
                                                 try {
                                                     String prompt =
@@ -234,9 +235,9 @@ public class ChatActivity extends AppCompatActivity {
                                                                     + "\n\nQuestion: ";
                                                     OpenAiApi openAiApi = new OpenAiApi(getApiKey());
                                                     String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
-                                                    runOnUiThread(() -> sendBotMessage(gptAnswer));
+                                                    ThreadUtils.runOnMainThread(() -> sendBotMessage(gptAnswer));
                                                 } catch (java.net.UnknownHostException e) {
-                                                    runOnUiThread(
+                                                    ThreadUtils.runOnMainThread(
                                                             () -> {
                                                                 Toast.makeText(
                                                                                 ChatActivity.this,
@@ -248,7 +249,7 @@ public class ChatActivity extends AppCompatActivity {
                                                                         "Sorry I can not connect to the internet at the moment, check your connection and try again.");
                                                             });
                                                 } catch (Exception e) {
-                                                    runOnUiThread(
+                                                    ThreadUtils.runOnMainThread(
                                                             () -> {
                                                                 Toast.makeText(
                                                                                 ChatActivity.this,
@@ -259,8 +260,7 @@ public class ChatActivity extends AppCompatActivity {
                                                                 sendBotMessage("Internal Service Error, try again later.");
                                                             });
                                                 }
-                                            })
-                                            .start();
+                                            });
                                 }
                             });
                     builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -327,7 +327,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(List<ChatMessage> messages) {
                         // Show the ListView
-                        runOnUiThread(() -> lv4.setVisibility(View.VISIBLE));
+                        ThreadUtils.runOnMainThread(() -> lv4.setVisibility(View.VISIBLE));
 
                         if (messages != null && !messages.isEmpty()) {
                             Log.d(TAG, "ShowData: Received " + messages.size() + " messages from server");
@@ -342,7 +342,7 @@ public class ChatActivity extends AppCompatActivity {
                                     });
 
                             // Update the adapter
-                            runOnUiThread(
+                            ThreadUtils.runOnMainThread(
                                     () -> {
                                         Log.d(TAG, "ShowData: Updating adapter with " + messages.size() + " messages");
                                         adapter.clear();
@@ -356,7 +356,7 @@ public class ChatActivity extends AppCompatActivity {
                         } else {
                             Log.d(TAG, "ShowData: No messages found or messages list is null");
                             // Ensure we have an empty adapter to allow sending new messages
-                            runOnUiThread(
+                            ThreadUtils.runOnMainThread(
                                     () -> {
                                         adapter.clear();
                                         adapter.notifyDataSetChanged();
@@ -368,7 +368,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onError(String errorMessage) {
                         Log.e(TAG, "ShowData: Error fetching messages: " + errorMessage);
-                        runOnUiThread(
+                        ThreadUtils.runOnMainThread(
                                 () -> {
                                     Toast.makeText(
                                                     ChatActivity.this,
@@ -548,7 +548,7 @@ public class ChatActivity extends AppCompatActivity {
                                     if (msg != null && messageId.equals(msg.getMessageKey())) {
                                         Log.d(TAG, "AUTO TEST: Found message in adapter, updating text");
                                         msg.setMessageText(message.getMessageText());
-                                        runOnUiThread(() -> adapter.notifyDataSetChanged());
+                                        ThreadUtils.runOnMainThread(() -> adapter.notifyDataSetChanged());
                                         break;
                                     }
                                 }
@@ -578,12 +578,12 @@ public class ChatActivity extends AppCompatActivity {
                                                 + (retryCount + 1)
                                                 + ")");
 
-                                retryHandler.postDelayed(
+                                ThreadUtils.runOnMainThreadDelayed(
                                         () -> sendMessageWithRetry(messageId, message, retryCount + 1), delayMillis);
                             } else {
                                 // Max retries reached, show error to user
                                 Log.e(TAG, "AUTO TEST: Max retry attempts reached for message ID: " + messageId);
-                                runOnUiThread(
+                                ThreadUtils.runOnMainThread(
                                         () -> {
                                             Toast.makeText(
                                                             ChatActivity.this,
@@ -686,7 +686,7 @@ public class ChatActivity extends AppCompatActivity {
                                             + (retryCount + 1)
                                             + ")");
 
-                            retryHandler.postDelayed(
+                            ThreadUtils.runOnMainThreadDelayed(
                                     () -> updateGroupWithRetry(group, retryCount + 1), delayMillis);
                         }
                     }

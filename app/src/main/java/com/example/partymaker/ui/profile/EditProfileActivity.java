@@ -366,9 +366,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ConnectivityManager.getInstance().refreshNetworkStatus();
 
         // Add a small delay to allow the network status to update
-        new Handler()
-                .postDelayed(
-                        () -> {
+        ThreadUtils.runOnMainThreadDelayed(() -> {
                             // Check network availability again after refresh
                             boolean isNetworkAvailable =
                                     ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
@@ -393,8 +391,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                             // Update the user profile
                             profileViewModel.updateCurrentUser(updates);
-                        },
-                        500); // 500ms delay to allow network status to update
+                        }, 500); // 500ms delay to allow network status to update
     }
 
     private void loadProfileImageFromStorage(String userKey) {
@@ -511,8 +508,7 @@ public class EditProfileActivity extends AppCompatActivity {
      * @param localPath The local path to save the image to
      */
     private void downloadAndSaveImage(String imageUrl, String localPath) {
-        new Thread(
-                () -> {
+        ThreadUtils.runInBackground(() -> {
                     try {
                         // Download the image
                         java.net.URL url = new java.net.URL(imageUrl);
@@ -536,8 +532,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.e(TAG, "Error saving image to local cache", e);
                     }
-                })
-                .start();
+                });
     }
 
     private void uploadImageToFirebase(Uri uri) {
@@ -818,9 +813,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ConnectivityManager.getInstance().refreshNetworkStatus();
 
         // Add a small delay to allow the network status to update
-        new Handler()
-                .postDelayed(
-                        () -> {
+        ThreadUtils.runOnMainThreadDelayed(() -> {
                             // Check if we need to reload user data based on network availability
                             boolean isNetworkAvailable =
                                     ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null

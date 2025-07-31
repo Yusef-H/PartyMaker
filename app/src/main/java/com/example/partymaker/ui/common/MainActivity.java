@@ -399,8 +399,7 @@ public class MainActivity extends AppCompatActivity {
     // Shows an empty state when no groups are available
     private void showEmptyState() {
         try {
-            runOnUiThread(
-                    () -> {
+            ThreadUtils.runOnMainThread(() -> {
                         if (lv1 != null && groupAdapter != null && groupAdapter.getItemCount() == 0) {
                             // Check if we're still loading
                             if (viewModel.getIsLoading().getValue() != null

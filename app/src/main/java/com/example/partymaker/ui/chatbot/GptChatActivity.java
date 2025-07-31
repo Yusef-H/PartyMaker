@@ -16,6 +16,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessageGpt;
 import com.example.partymaker.ui.adapters.ChatbotAdapter;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.io.IOException;
@@ -138,7 +139,7 @@ public class GptChatActivity extends AppCompatActivity {
 
                         ChatMessageGpt assistantMsg = new ChatMessageGpt("assistant", answer);
 
-                        runOnUiThread(
+                        ThreadUtils.runOnMainThread(
                                 () -> {
                                     history.add(assistantMsg); // for continued context
                                     visibleMessages.add(assistantMsg); // for display
@@ -147,7 +148,7 @@ public class GptChatActivity extends AppCompatActivity {
                                 });
 
                     } catch (Exception e) {
-                        runOnUiThread(
+                        ThreadUtils.runOnMainThread(
                                 () -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     }
                 });

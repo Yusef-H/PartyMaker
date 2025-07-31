@@ -520,7 +520,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
                         initializeGroupChat(group);
 
                         // Show success message and transition to next step on the UI thread
-                        runOnUiThread(
+                        ThreadUtils.runOnMainThread(
                                 () -> {
                                     showSuccessMessage();
                                     transitionToImageStep();
@@ -533,7 +533,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
                         Log.e(TAG, "Error saving group via server client: " + errorMessage);
 
                         // Show error message on the UI thread
-                        runOnUiThread(
+                        ThreadUtils.runOnMainThread(
                                 () -> {
                                     Toast.makeText(
                                                     CreateGroupActivity.this,
@@ -567,10 +567,9 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
     @SuppressLint("SetTextI18n")
     private void scheduleInstructionTextUpdate() {
-        new Handler()
-                .postDelayed(
-                        () -> tvGroupPicture.setText("Tap on the picture above to set a profile picture"),
-                        INSTRUCTION_DELAY_MS);
+        ThreadUtils.runOnMainThreadDelayed(
+                () -> tvGroupPicture.setText("Tap on the picture above to set a profile picture"),
+                INSTRUCTION_DELAY_MS);
     }
 
     private void openImagePicker() {

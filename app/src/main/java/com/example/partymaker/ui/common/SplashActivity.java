@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.system.ThreadUtils;
 
 /**
  * SplashActivity displays the initial splash screen with animations, then navigates the user to the
@@ -82,12 +83,12 @@ public class SplashActivity extends AppCompatActivity {
 
     // Animates loading dots in a wave effect
     private void animateLoadingDots() {
-        handler.postDelayed(() -> animateDot(dot1), 500);
-        handler.postDelayed(() -> animateDot(dot2), 700);
-        handler.postDelayed(() -> animateDot(dot3), 900);
+        ThreadUtils.runOnMainThreadDelayed(() -> animateDot(dot1), 500);
+        ThreadUtils.runOnMainThreadDelayed(() -> animateDot(dot2), 700);
+        ThreadUtils.runOnMainThreadDelayed(() -> animateDot(dot3), 900);
 
         // Repeats the dot animation loop every 1.5 seconds
-        handler.postDelayed(this::animateLoadingDots, 1500);
+        ThreadUtils.runOnMainThreadDelayed(this::animateLoadingDots, 1500);
     }
 
     // Single dot animation (scale + alpha)
@@ -109,7 +110,7 @@ public class SplashActivity extends AppCompatActivity {
 
     // Schedules the transition to the next activity after the splash delay
     private void scheduleNextScreen() {
-        handler.postDelayed(this::navigateToNextScreen, SPLASH_DELAY);
+        ThreadUtils.runOnMainThreadDelayed(this::navigateToNextScreen, SPLASH_DELAY);
     }
 
     // Navigates to MainActivity or LoginActivity based on user state

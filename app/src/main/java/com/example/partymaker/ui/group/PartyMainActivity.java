@@ -32,6 +32,7 @@ import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.sharing.ShareHelper;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -211,7 +212,7 @@ public class PartyMainActivity extends AppCompatActivity {
                                 }
 
                                 // Update UI with group data
-                                runOnUiThread(
+                                ThreadUtils.runOnMainThread(
                                         () -> {
                                             try {
                                                 updateGroupUI(group);
@@ -293,7 +294,7 @@ public class PartyMainActivity extends AppCompatActivity {
      * @param show True to show loading, false to hide
      */
     private void showLoading(boolean show) {
-        runOnUiThread(
+        ThreadUtils.runOnMainThread(
                 () -> {
                     // You can implement a proper loading indicator here
                     // For now, just disable/enable UI elements
@@ -314,7 +315,7 @@ public class PartyMainActivity extends AppCompatActivity {
      * @param message The error message to display
      */
     private void showError(String message) {
-        runOnUiThread(
+        ThreadUtils.runOnMainThread(
                 () -> {
                     try {
                         Toast.makeText(PartyMainActivity.this, message, Toast.LENGTH_LONG).show();
@@ -862,9 +863,7 @@ public class PartyMainActivity extends AppCompatActivity {
         processingDialog.show();
 
         // Simulate payment processing
-        new android.os.Handler()
-                .postDelayed(
-                        () -> {
+        ThreadUtils.runOnMainThreadDelayed(() -> {
                             processingDialog.dismiss();
 
                             // Update payment status in database

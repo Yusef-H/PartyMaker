@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.partymaker.R;
+import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
@@ -247,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks connectivity to the server
+     * Checks connectivity to the server using NetworkManager
      */
     private void checkServerConnectivity() {
         ThreadUtils.runInBackground(() -> {
@@ -258,28 +259,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
 
-                java.net.URL url = new java.net.URL(serverUrl + "/api/firebase/health");
-                java.net.HttpURLConnection connection =
-                        (java.net.HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(10000);
-
-                int responseCode = connection.getResponseCode();
-                Log.d("LoginActivity", "Server response code: " + responseCode);
-
-                if (responseCode == 200) {
-                    java.io.BufferedReader reader =
-                            new java.io.BufferedReader(
-                                    new java.io.InputStreamReader(connection.getInputStream()));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-                    reader.close();
-
-                    Log.d("LoginActivity", "Server response: " + response);
+                NetworkManager networkManager = NetworkManager.getInstance();
+                boolean isReachable = networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
+                
+                if (isReachable) {
+                    Log.d("LoginActivity", "Server is reachable");
+                } else {
+                    Log.w("LoginActivity", "Server is not reachable");
                 }
             } catch (Exception e) {
                 Log.e("LoginActivity", "Error checking server connectivity", e);

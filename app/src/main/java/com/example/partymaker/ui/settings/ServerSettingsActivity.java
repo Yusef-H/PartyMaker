@@ -13,6 +13,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.partymaker.R;
+import com.example.partymaker.utils.media.FileManager;
 import com.example.partymaker.utils.server.ServerModeHelper;
 
 public class ServerSettingsActivity extends AppCompatActivity {
@@ -40,12 +41,14 @@ public class ServerSettingsActivity extends AppCompatActivity {
         switchServerMode = findViewById(R.id.switch_server_mode);
         editServerUrl = findViewById(R.id.edit_server_url);
         Button btnSaveSettings = findViewById(R.id.btn_save_settings);
+        Button btnClearCache = findViewById(R.id.btn_clear_cache);
 
         // Load current settings
         loadSettings();
 
         // Set up listeners
         btnSaveSettings.setOnClickListener(v -> saveSettings());
+        btnClearCache.setOnClickListener(v -> clearCache());
     }
 
     private void loadSettings() {
@@ -84,6 +87,29 @@ public class ServerSettingsActivity extends AppCompatActivity {
                 .show();
 
         finish();
+    }
+
+    /**
+     * Clears the application cache using FileManager
+     */
+    private void clearCache() {
+        // Show initial toast
+        Toast.makeText(this, "Clearing cache...", Toast.LENGTH_SHORT).show();
+        
+        // Get cache size before clearing
+        long cacheSize = FileManager.getSize(getCacheDir());
+        String cacheSizeFormatted = FileManager.formatSize(cacheSize);
+        
+        Log.d("ServerSettings", "Cache size before clearing: " + cacheSizeFormatted);
+        
+        // Clear cache using FileManager
+        FileManager.clearCache(this);
+        
+        // Show completion message with cache size that was cleared
+        String message = "Cache cleared! Freed up " + cacheSizeFormatted + " of storage.";
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        
+        Log.d("ServerSettings", "Cache cleared successfully");
     }
 
     @Override
