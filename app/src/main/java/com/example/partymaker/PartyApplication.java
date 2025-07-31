@@ -8,6 +8,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.repository.GroupRepository;
+import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.system.MemoryManager;
 import com.example.partymaker.utils.ui.NotificationHelper;
 import com.google.firebase.FirebaseApp;
@@ -72,9 +73,9 @@ public class PartyApplication extends Application {
         GroupRepository groupRepository = GroupRepository.getInstance();
         groupRepository.initialize(getApplicationContext());
 
-        // Initialize other repositories as needed
-        // UserRepository userRepository = UserRepository.getInstance();
-        // userRepository.initialize(getApplicationContext());
+        // Initialize User Repository
+        UserRepository userRepository = UserRepository.getInstance();
+        userRepository.initialize(getApplicationContext());
 
         // Add more repositories here as needed
 
