@@ -43,18 +43,36 @@ This guide explains the security improvements made to the PartyMaker application
 
 ### 1. Configure API Keys
 
-1. Copy `local.properties.template` to `local.properties`:
-   ```bash
-   cp local.properties.template local.properties
-   ```
+You have two options for configuring API keys:
 
-2. Edit `local.properties` and add your API keys:
-   ```properties
-   openai.api.key=your_actual_openai_api_key
-   maps.api.key=your_actual_google_maps_api_key
-   ```
+#### Option A: Using local.properties (Recommended)
+```bash
+cp local.properties.template local.properties
+```
 
-3. **IMPORTANT**: Never commit `local.properties` to version control!
+Edit `local.properties`:
+```properties
+openai.api.key=your_actual_openai_api_key
+maps.api.key=your_actual_google_maps_api_key
+```
+
+#### Option B: Using secrets.properties (For secrets-gradle-plugin)
+```bash
+cp local.properties.template secrets.properties
+```
+
+Edit `secrets.properties` (supports both formats):
+```properties
+# Format 1: lowercase with dots
+openai.api.key=your_actual_openai_api_key
+maps.api.key=your_actual_google_maps_api_key
+
+# Format 2: uppercase with underscores
+OPENAI_API_KEY=your_actual_openai_api_key
+MAPS_API_KEY=your_actual_google_maps_api_key
+```
+
+**IMPORTANT**: Never commit `local.properties` or `secrets.properties` to version control!
 
 ### 2. For CI/CD Environments
 
