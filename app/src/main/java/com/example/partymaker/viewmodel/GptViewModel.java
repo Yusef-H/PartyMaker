@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessage;
+import com.example.partymaker.utils.security.SecureConfig;
 import com.example.partymaker.utils.system.ThreadUtils;
 
 import java.util.ArrayList;
@@ -21,13 +22,31 @@ public class GptViewModel extends BaseViewModel {
     private final MutableLiveData<List<ChatMessage>> chatHistory = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> currentResponse = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isTyping = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isApiConfigured = new MutableLiveData<>(false);
     
-    private final OpenAiApi openAiApi;
+    private OpenAiApi openAiApi;
     
     public GptViewModel(@NonNull Application application) {
         super(application);
-        // TODO: Get API key from secure storage or environment
-        openAiApi = new OpenAiApi("");
+        initializeOpenAiApi();
+    }
+    
+    private void initializeOpenAiApi() {
+        try {
+            SecureConfig config = SecureConfig.getInstance(getApplication());
+            String apiKey = config.getOpenAiApiKey();
+            
+            if (apiKey != null && !apiKey.isEmpty()) {
+                openAiApi = new OpenAiApi(apiKey);
+                isApiConfigured.setValue(true);
+            } else {
+                isApiConfigured.setValue(false);
+                setError("OpenAI API key not configured. Please set it in settings.");
+            }
+        } catch (Exception e) {
+            isApiConfigured.setValue(false);
+            setError("Failed to load API configuration: " + e.getMessage());
+        }
     }
     
     public LiveData<List<ChatMessage>> getChatHistory() {
@@ -43,6 +62,11 @@ public class GptViewModel extends BaseViewModel {
     }
     
     public void sendMessage(String message, String userKey, String username) {
+        if (!Boolean.TRUE.equals(isApiConfigured.getValue()) || openAiApi == null) {
+            setError("OpenAI API is not configured. Please check settings.");
+            return;
+        }
+        
         if (message == null || message.trim().isEmpty()) {
             setError("Message cannot be empty");
             return;

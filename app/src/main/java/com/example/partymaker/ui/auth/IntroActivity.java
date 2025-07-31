@@ -1,6 +1,6 @@
 package com.example.partymaker.ui.auth;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,21 +15,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.partymaker.R;
+import com.example.partymaker.viewmodel.IntroViewModel;
 
 /**
  * Activity for displaying the intro/welcome slides to new users. Handles ViewPager navigation and
  * onboarding flow.
  */
-public class IntroActivity extends Activity {
+public class IntroActivity extends AppCompatActivity {
 
     /**
      * The ViewPager for intro slides.
      */
     private ViewPager viewPager;
+    
+    /**
+     * Intro ViewModel
+     */
+    private IntroViewModel viewModel;
 
     /**
      * The layout for the bottom dots indicator.
@@ -51,17 +58,7 @@ public class IntroActivity extends Activity {
                 @Override
                 public void onPageSelected(int position) {
                     addBottomDots(position);
-
-                    // changing the next button text 'NEXT' / 'GOT IT'
-                    if (position == layouts.length - 1) {
-                        // last page. make button text to GOT IT
-                        btnNext.setText(getString(R.string.start));
-                        btnSkip.setVisibility(View.GONE);
-                    } else {
-                        // still pages are left
-                        btnNext.setText(getString(R.string.next));
-                        btnSkip.setVisibility(View.VISIBLE);
-                    }
+                    viewModel.setCurrentPage(position);
                 }
 
                 @Override
@@ -84,6 +81,10 @@ public class IntroActivity extends Activity {
                         WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_intro);
+        
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(IntroViewModel.class);
+        setupViewModelObservers();
 
         viewPager = findViewById(R.id.view_pager);
         dotsLayout = findViewById(R.id.layoutDots);
@@ -104,20 +105,38 @@ public class IntroActivity extends Activity {
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
     }
+    
+    /**
+     * Sets up observers for ViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        viewModel.getIsLastPage().observe(this, isLastPage -> {
+            if (isLastPage) {
+                btnNext.setText(getString(R.string.start));
+                btnSkip.setVisibility(View.GONE);
+            } else {
+                btnNext.setText(getString(R.string.next));
+                btnSkip.setVisibility(View.VISIBLE);
+            }
+        });
+        
+        viewModel.getShouldNavigateToLogin().observe(this, shouldNavigate -> {
+            if (shouldNavigate) {
+                launchHomeScreen();
+            }
+        });
+    }
 
     public void btnSkipClick(View v) {
-        launchHomeScreen();
+        viewModel.onSkipClicked();
     }
 
     public void btnNextClick(View v) {
-        // checking for last page
-        // if last page home screen will be launched
         int current = getItem(1);
         if (current < layouts.length) {
-            // move to next screen
             viewPager.setCurrentItem(current);
         } else {
-            launchHomeScreen();
+            viewModel.onNextClicked();
         }
     }
 
@@ -156,6 +175,7 @@ public class IntroActivity extends Activity {
      * Launches the LoginActivity and finishes the intro.
      */
     private void launchHomeScreen() {
+        viewModel.resetNavigation();
         startActivity(new Intent(getBaseContext(), LoginActivity.class));
         finish();
     }

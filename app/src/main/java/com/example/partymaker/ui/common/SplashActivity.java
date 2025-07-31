@@ -16,10 +16,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.partymaker.R;
+import com.example.partymaker.ui.auth.IntroActivity;
 import com.example.partymaker.ui.auth.LoginActivity;
+import com.example.partymaker.viewmodel.SplashViewModel;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.security.SecureConfig;
 import com.example.partymaker.utils.system.ThreadUtils;
 
 /**
@@ -34,29 +38,36 @@ public class SplashActivity extends AppCompatActivity {
     private ImageView imgLogo;
     private View dot1, dot2, dot3;
     private Handler handler;
+    private SplashViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth_splash);
 
-        // Force set server URL to Render
-        forceSetServerUrl();
+        // Initialize secure configuration
+        initializeSecureConfig();
+        
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(SplashViewModel.class);
+        setupViewModelObservers();
 
         initializeViews();
         startSplashFlow();
     }
 
     /**
-     * Forces the server URL to be set to Render
+     * Initialize secure configuration
      */
-    private void forceSetServerUrl() {
-        String renderUrl = "https://partymaker.onrender.com";
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                .edit()
-                .putString("server_url", renderUrl)
-                .apply();
-        android.util.Log.d("SplashActivity", "Forced server URL to: " + renderUrl);
+    private void initializeSecureConfig() {
+        try {
+            SecureConfig config = SecureConfig.getInstance(this);
+            // Server URL is now managed through SecureConfig
+            String serverUrl = config.getServerUrl();
+            android.util.Log.d("SplashActivity", "Server URL: " + serverUrl);
+        } catch (Exception e) {
+            android.util.Log.e("SplashActivity", "Failed to initialize secure config", e);
+        }
     }
 
     // Initialize views and handler
@@ -110,21 +121,31 @@ public class SplashActivity extends AppCompatActivity {
 
     // Schedules the transition to the next activity after the splash delay
     private void scheduleNextScreen() {
-        ThreadUtils.runOnMainThreadDelayed(this::navigateToNextScreen, SPLASH_DELAY);
+        ThreadUtils.runOnMainThreadDelayed(() -> viewModel.initialize(), SPLASH_DELAY);
     }
 
-    // Navigates to MainActivity or LoginActivity based on user state
-    private void navigateToNextScreen() {
-        if (isFinishing()) return;
-
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean rememberMe = prefs.getBoolean(IS_CHECKED, false);
-
-        Class<?> destination =
-                shouldNavigateToMain(rememberMe) ? MainActivity.class : LoginActivity.class;
-
-        startActivity(new Intent(this, destination));
-        finish();
+    /**
+     * Sets up observers for ViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        viewModel.getNavigationDestination().observe(this, destination -> {
+            if (destination != null && !isFinishing()) {
+                switch (destination) {
+                    case LOGIN:
+                        startActivity(new Intent(this, LoginActivity.class));
+                        finish();
+                        break;
+                    case MAIN:
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+                        break;
+                    case INTRO:
+                        startActivity(new Intent(this, IntroActivity.class));
+                        finish();
+                        break;
+                }
+            }
+        });
     }
 
     // Checks if user is authenticated and 'Remember Me' is checked with session validation

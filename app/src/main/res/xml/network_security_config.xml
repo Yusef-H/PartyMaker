@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Default configuration that applies to all connections -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    
+    <!-- Domain-specific configurations with certificate pinning -->
+    <domain-config>
+        <!-- PartyMaker backend server -->
+        <domain includeSubdomains="true">partymaker.onrender.com</domain>
+        <pin-set expiration="2025-12-31">
+            <!-- Add your server's certificate pins here -->
+            <!-- Example: <pin digest="SHA-256">base64==</pin> -->
+            <!-- You'll need to get these from your server's SSL certificate -->
+        </pin-set>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Firebase domains -->
+    <domain-config>
+        <domain includeSubdomains="true">firebaseapp.com</domain>
+        <domain includeSubdomains="true">firebase.googleapis.com</domain>
+        <domain includeSubdomains="true">firebaseio.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- OpenAI API -->
+    <domain-config>
+        <domain includeSubdomains="true">api.openai.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Google services -->
+    <domain-config>
+        <domain includeSubdomains="true">googleapis.com</domain>
+        <domain includeSubdomains="true">gstatic.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Debug-only configuration (only active in debug builds) -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- Allow user-installed certificates for debugging -->
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

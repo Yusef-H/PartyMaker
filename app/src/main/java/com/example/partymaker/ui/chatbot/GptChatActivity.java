@@ -9,10 +9,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.partymaker.R;
+import com.example.partymaker.viewmodel.GptViewModel;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessageGpt;
 import com.example.partymaker.ui.adapters.ChatbotAdapter;
@@ -45,6 +47,7 @@ public class GptChatActivity extends AppCompatActivity {
     private EditText messageInput;
     private ChatbotAdapter chatAdapter;
     private OpenAiApi openAiApi;
+    private GptViewModel viewModel;
 
     // ------------------------------------------------------------------------
     // onCreate
@@ -55,6 +58,10 @@ public class GptChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chatbot);
 
+        // ---------- Init ViewModel ----------
+        viewModel = new ViewModelProvider(this).get(GptViewModel.class);
+        setupViewModelObservers();
+        
         // ---------- Init OpenAI helper ----------
         String apiKey = getApiKey();
         openAiApi = new OpenAiApi(apiKey);
@@ -103,6 +110,42 @@ public class GptChatActivity extends AppCompatActivity {
                         messageInput.setText("");
                     }
                 });
+    }
+    
+    /**
+     * Sets up observers for ViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        viewModel.getChatHistory().observe(this, messages -> {
+            if (messages != null) {
+                visibleMessages.clear();
+                // Convert ChatMessage to ChatMessageGpt
+                for (com.example.partymaker.data.model.ChatMessage msg : messages) {
+                    ChatMessageGpt gptMsg = new ChatMessageGpt(
+                        msg.getSenderKey().equals("gpt") ? "assistant" : "user",
+                        msg.getMessage()
+                    );
+                    visibleMessages.add(gptMsg);
+                }
+                chatAdapter.notifyDataSetChanged();
+                scrollToBottom();
+            }
+        });
+        
+        viewModel.getIsTyping().observe(this, isTyping -> {
+            // Could show typing indicator here
+        });
+        
+        viewModel.getIsLoading().observe(this, isLoading -> {
+            // Disable send button while loading
+            findViewById(R.id.sendButton).setEnabled(!isLoading);
+        });
+    }
+    
+    private void scrollToBottom() {
+        if (chatAdapter.getItemCount() > 0) {
+            chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+        }
     }
 
     // ------------------------------------------------------------------------

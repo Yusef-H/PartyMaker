@@ -1,5 +1,7 @@
 // app/build.gradle.kts – Android application module configuration
 
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,6 +23,24 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = null // Disable Android instrumentation tests
+        
+        // Load API keys from local.properties or environment variables
+        val localPropertiesFile = rootProject.file("local.properties")
+        val localProperties = if (localPropertiesFile.exists()) {
+            val props = Properties()
+            localPropertiesFile.reader().use { props.load(it) }
+            props
+        } else {
+            Properties()
+        }
+        
+        // API Keys - These should be in local.properties (not in version control)
+        val openAiKey = localProperties.getProperty("openai.api.key") ?: System.getenv("OPENAI_API_KEY") ?: ""
+        val mapsKey = localProperties.getProperty("maps.api.key") ?: System.getenv("MAPS_API_KEY") ?: ""
+        
+        buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
+        manifestPlaceholders["MAPS_API_KEY"] = mapsKey.ifEmpty { "YOUR_API_KEY_HERE" }
     }
 
     buildTypes {
@@ -200,6 +220,9 @@ dependencies {
 
     // --- Concurrent Programming ---
     implementation(libs.androidx.concurrent.futures)
+    
+    // --- Security ---
+    implementation("androidx.security:security-crypto:1.0.0")
 }
 
 // Secrets plugin configuration

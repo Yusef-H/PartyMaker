@@ -5,13 +5,14 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.SecureAuthHelper;
+import com.example.partymaker.utils.security.PasswordValidator;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -28,13 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class AuthViewModel extends AndroidViewModel {
+public class AuthViewModel extends BaseViewModel {
     private static final String TAG = "AuthViewModel";
     private static final int RC_SIGN_IN = 9001;
 
-    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
-    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private final MutableLiveData<String> successMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isAuthenticated = new MutableLiveData<>(false);
     private final MutableLiveData<FirebaseUser> currentUser = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isRegistrationMode = new MutableLiveData<>(false);
@@ -65,17 +63,6 @@ public class AuthViewModel extends AndroidViewModel {
         googleSignInClient = GoogleSignIn.getClient(getApplication(), gso);
     }
 
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
-    }
-
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
-    }
-
-    public LiveData<String> getSuccessMessage() {
-        return successMessage;
-    }
 
     public LiveData<Boolean> getIsAuthenticated() {
         return isAuthenticated;
@@ -103,41 +90,41 @@ public class AuthViewModel extends AndroidViewModel {
 
     public void loginWithEmail(String email, String password) {
         if (email == null || email.trim().isEmpty()) {
-            errorMessage.setValue("Email is required");
+            setError("Email is required");
             return;
         }
 
         if (password == null || password.trim().isEmpty()) {
-            errorMessage.setValue("Password is required");
+            setError("Password is required");
             return;
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            errorMessage.setValue("Please enter a valid email address");
+            setError("Please enter a valid email address");
             return;
         }
 
         Log.d(TAG, "Attempting to login with email: " + email);
-        isLoading.setValue(true);
+        setLoading(true);
         clearMessages();
 
         auth.signInWithEmailAndPassword(email.trim(), password)
                 .addOnCompleteListener(task -> {
                     ThreadUtils.runOnMainThread(() -> {
-                        isLoading.setValue(false);
+                        setLoading(false);
                         if (task.isSuccessful()) {
                             Log.d(TAG, "Email login successful");
                             FirebaseUser user = auth.getCurrentUser();
                             if (user != null) {
                                 currentUser.setValue(user);
                                 isAuthenticated.setValue(true);
-                                successMessage.setValue("Login successful");
+                                setSuccess("Login successful");
                             }
                         } else {
                             Log.e(TAG, "Email login failed", task.getException());
                             String error = task.getException() != null ? 
                                     task.getException().getMessage() : "Login failed";
-                            errorMessage.setValue(error);
+                            setError(error);
                         }
                     });
                 });
@@ -145,42 +132,44 @@ public class AuthViewModel extends AndroidViewModel {
 
     public void registerWithEmail(String email, String password, String confirmPassword, String username) {
         if (email == null || email.trim().isEmpty()) {
-            errorMessage.setValue("Email is required");
+            setError("Email is required");
             return;
         }
 
         if (password == null || password.trim().isEmpty()) {
-            errorMessage.setValue("Password is required");
+            setError("Password is required");
             return;
         }
 
         if (confirmPassword == null || confirmPassword.trim().isEmpty()) {
-            errorMessage.setValue("Please confirm your password");
+            setError("Please confirm your password");
             return;
         }
 
         if (username == null || username.trim().isEmpty()) {
-            errorMessage.setValue("Username is required");
+            setError("Username is required");
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            errorMessage.setValue("Passwords do not match");
+            setError("Passwords do not match");
             return;
         }
 
-        if (password.length() < 6) {
-            errorMessage.setValue("Password must be at least 6 characters");
+        // Enhanced password validation
+        PasswordValidator.ValidationResult passwordValidation = PasswordValidator.validate(password);
+        if (!passwordValidation.isValid) {
+            setError(String.join(". ", passwordValidation.errors));
             return;
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            errorMessage.setValue("Please enter a valid email address");
+            setError("Please enter a valid email address");
             return;
         }
 
         Log.d(TAG, "Attempting to register with email: " + email);
-        isLoading.setValue(true);
+        setLoading(true);
         clearMessages();
 
         auth.createUserWithEmailAndPassword(email.trim(), password)
@@ -192,11 +181,11 @@ public class AuthViewModel extends AndroidViewModel {
                             createUserProfile(user, username.trim());
                         }
                     } else {
-                        isLoading.setValue(false);
+                        setLoading(false);
                         Log.e(TAG, "Email registration failed", task.getException());
                         String error = task.getException() != null ? 
                                 task.getException().getMessage() : "Registration failed";
-                        errorMessage.setValue(error);
+                        setError(error);
                     }
                 });
     }
@@ -208,8 +197,8 @@ public class AuthViewModel extends AndroidViewModel {
             firebaseAuthWithGoogle(account.getIdToken());
         } catch (ApiException e) {
             Log.e(TAG, "Google sign in failed", e);
-            isLoading.setValue(false);
-            errorMessage.setValue("Google sign in failed: " + e.getMessage());
+            setLoading(false);
+            setError("Google sign in failed: " + e.getMessage());
         }
     }
 
@@ -218,7 +207,7 @@ public class AuthViewModel extends AndroidViewModel {
         
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
-                    isLoading.setValue(false);
+                    setLoading(false);
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Firebase authentication with Google successful");
                         FirebaseUser user = auth.getCurrentUser();
@@ -234,7 +223,7 @@ public class AuthViewModel extends AndroidViewModel {
                         Log.e(TAG, "Firebase authentication with Google failed", task.getException());
                         String error = task.getException() != null ? 
                                 task.getException().getMessage() : "Google authentication failed";
-                        errorMessage.setValue(error);
+                        setError(error);
                     }
                 });
     }
@@ -245,14 +234,14 @@ public class AuthViewModel extends AndroidViewModel {
         // First check if user already exists
         DBRef.refUsers.child(userKey).get()
                 .addOnCompleteListener(task -> {
-                    isLoading.setValue(false);
+                    setLoading(false);
                     if (task.isSuccessful()) {
                         if (task.getResult().exists()) {
                             // User already exists, just sign in
                             Log.d(TAG, "Existing user signed in with Google");
                             currentUser.setValue(firebaseUser);
                             isAuthenticated.setValue(true);
-                            successMessage.setValue("Login successful");
+                            setSuccess("Login successful");
                         } else {
                             // New user, create profile
                             Log.d(TAG, "New user, creating profile");
@@ -260,7 +249,7 @@ public class AuthViewModel extends AndroidViewModel {
                         }
                     } else {
                         Log.e(TAG, "Failed to check if user exists", task.getException());
-                        errorMessage.setValue("Failed to verify user profile");
+                        setError("Failed to verify user profile");
                     }
                 });
     }
@@ -290,10 +279,10 @@ public class AuthViewModel extends AndroidViewModel {
                         Log.d(TAG, "New user profile created successfully");
                         currentUser.setValue(firebaseUser);
                         isAuthenticated.setValue(true);
-                        successMessage.setValue("Account created successfully");
+                        setSuccess("Account created successfully");
                     } else {
                         Log.e(TAG, "Failed to create user profile", task.getException());
-                        errorMessage.setValue("Failed to create user profile");
+                        setError("Failed to create user profile");
                     }
                 });
     }
@@ -305,31 +294,31 @@ public class AuthViewModel extends AndroidViewModel {
 
     public void resetPassword(String email) {
         if (email == null || email.trim().isEmpty()) {
-            errorMessage.setValue("Email is required");
+            setError("Email is required");
             return;
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            errorMessage.setValue("Please enter a valid email address");
+            setError("Please enter a valid email address");
             return;
         }
 
         Log.d(TAG, "Sending password reset email to: " + email);
-        isLoading.setValue(true);
+        setLoading(true);
         clearMessages();
 
         auth.sendPasswordResetEmail(email.trim())
                 .addOnCompleteListener(task -> {
-                    isLoading.setValue(false);
+                    setLoading(false);
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Password reset email sent successfully");
                         isPasswordResetSent.setValue(true);
-                        successMessage.setValue("Password reset email sent");
+                        setSuccess("Password reset email sent");
                     } else {
                         Log.e(TAG, "Failed to send password reset email", task.getException());
                         String error = task.getException() != null ? 
                                 task.getException().getMessage() : "Failed to send reset email";
-                        errorMessage.setValue(error);
+                        setError(error);
                     }
                 });
     }
@@ -343,17 +332,13 @@ public class AuthViewModel extends AndroidViewModel {
             googleSignInClient.signOut();
         }
         
-        AuthHelper.clearAuthData(context);
+        SecureAuthHelper.clearAuthData(context);
         
         currentUser.setValue(null);
         isAuthenticated.setValue(false);
-        successMessage.setValue("Signed out successfully");
+        setSuccess("Signed out successfully");
     }
 
-    public void clearMessages() {
-        errorMessage.setValue(null);
-        successMessage.setValue(null);
-    }
 
     public void clearPasswordResetStatus() {
         isPasswordResetSent.setValue(false);
@@ -364,7 +349,9 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public boolean isValidPassword(String password) {
-        return password != null && password.length() >= 6;
+        if (password == null) return false;
+        PasswordValidator.ValidationResult result = PasswordValidator.validate(password);
+        return result.isValid;
     }
 
     public boolean isValidUsername(String username) {

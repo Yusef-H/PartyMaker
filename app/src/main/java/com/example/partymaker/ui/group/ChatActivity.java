@@ -17,8 +17,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.partymaker.R;
+import com.example.partymaker.viewmodel.SimplifiedChatViewModel;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.FirebaseServerClient.OperationCallback;
 import com.example.partymaker.data.api.OpenAiApi;
@@ -51,6 +53,7 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseServerClient serverClient;
     private ChatAdapter adapter;
     private String UserKey;
+    private SimplifiedChatViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,10 @@ public class ChatActivity extends AppCompatActivity {
 
         // Initialize server client
         serverClient = FirebaseServerClient.getInstance();
+        
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(SimplifiedChatViewModel.class);
+        setupViewModelObservers();
 
         // Actionbar settings
         ActionBar actionBar = getSupportActionBar();
@@ -131,6 +138,32 @@ public class ChatActivity extends AppCompatActivity {
         ShowData();
         eventHandler();
         setupGptButton();
+        
+        // Set the group key in ViewModel
+        viewModel.setGroupKey(GroupKey);
+    }
+    
+    /**
+     * Sets up observers for ViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        viewModel.getMessages().observe(this, messages -> {
+            if (messages != null && adapter != null) {
+                // Refresh the adapter with new messages
+                ShowData();
+            }
+        });
+        
+        viewModel.getIsMessageSent().observe(this, isSent -> {
+            if (isSent) {
+                etMessage.setText("");
+                viewModel.resetMessageSentFlag();
+            }
+        });
+        
+        viewModel.getIsLoading().observe(this, isLoading -> {
+            btnSend.setEnabled(!isLoading);
+        });
     }
 
     private void eventHandler() {

@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.partymaker.R;
+import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -25,6 +27,11 @@ import com.google.firebase.auth.FirebaseAuth;
  * logic.
  */
 public class ResetPasswordActivity extends AppCompatActivity {
+    /**
+     * Auth ViewModel
+     */
+    private AuthViewModel authViewModel;
+    
     /**
      * White theme button.
      */
@@ -94,6 +101,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();
+        
+        // Initialize ViewModel
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        setupViewModelObservers();
 
         btnBlack = findViewById(R.id.btnBlack);
         btnWhite = findViewById(R.id.btnWhite);
@@ -110,30 +121,40 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         eventHandler();
     }
+    
+    /**
+     * Sets up observers for AuthViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        authViewModel.getIsLoading().observe(this, isLoading -> {
+            btnReset.setEnabled(!isLoading);
+        });
+        
+        authViewModel.getErrorMessage().observe(this, errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        authViewModel.getSuccessMessage().observe(this, successMessage -> {
+            if (successMessage != null) {
+                Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        authViewModel.getIsPasswordResetSent().observe(this, isResetSent -> {
+            if (isResetSent) {
+                finish();
+            }
+        });
+    }
 
     /**
      * Sends a password reset email to the user.
      */
     private void ResetPass() {
-        final String email = etInputEmail.getText().toString(); // the user email
-        if (email.matches("")) {
-            Toast.makeText(ResetPasswordActivity.this, "input email", Toast.LENGTH_SHORT).show();
-        } else {
-            FirebaseAuth.getInstance()
-                    .sendPasswordResetEmail(email)
-                    .addOnCompleteListener(
-                            task -> {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(
-                                                    ResetPasswordActivity.this, "Email successfully sent", Toast.LENGTH_SHORT)
-                                            .show();
-                                } else {
-                                    Toast.makeText(
-                                                    ResetPasswordActivity.this, "Email Error sending", Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            });
-        }
+        final String email = etInputEmail.getText().toString();
+        authViewModel.resetPassword(email);
     }
 
     /**

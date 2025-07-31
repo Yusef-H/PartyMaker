@@ -1,0 +1,17 @@
+# Local Properties Template for PartyMaker
+# ========================================
+# Copy this file to local.properties and fill in your actual API keys
+# NEVER commit local.properties to version control!
+
+# Android SDK location (auto-generated, don't modify)
+sdk.dir=/path/to/your/Android/sdk
+
+# API Keys - Replace with your actual keys
+# Get your OpenAI API key from: https://platform.openai.com/api-keys
+openai.api.key=YOUR_OPENAI_API_KEY_HERE
+
+# Get your Google Maps API key from: https://console.cloud.google.com/
+maps.api.key=YOUR_GOOGLE_MAPS_API_KEY_HERE
+
+# Optional: Override server URL for development
+# server.url=https://your-dev-server.com
