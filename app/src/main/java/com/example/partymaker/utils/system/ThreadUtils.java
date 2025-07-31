@@ -2,9 +2,7 @@ package com.example.partymaker.utils.system;
 
 import android.os.Handler;
 import android.os.Looper;
-
 import androidx.annotation.NonNull;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -13,9 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Utility class for thread management. Provides executors for different types of tasks.
- */
+/** Utility class for thread management. Provides executors for different types of tasks. */
 public class ThreadUtils {
     private static final String TAG = "ThreadUtils";
 
@@ -25,16 +21,8 @@ public class ThreadUtils {
     // Thread pool sizes
     private static final int CORE_POOL_SIZE = Math.max(2, Math.min(CPU_COUNT - 1, 4));
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
-    private static final ThreadPoolExecutor BACKGROUND_EXECUTOR =
-            new ThreadPoolExecutor(
-                    CORE_POOL_SIZE,
-                    MAXIMUM_POOL_SIZE,
-                    KEEP_ALIVE_SECONDS,
-                    TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<>(128),
-                    BACKGROUND_THREAD_FACTORY,
-                    new ThreadPoolExecutor.DiscardOldestPolicy());
     private static final int KEEP_ALIVE_SECONDS = 30;
+
     // Thread factories
     private static final ThreadFactory BACKGROUND_THREAD_FACTORY =
             new ThreadFactory() {
@@ -47,6 +35,7 @@ public class ThreadUtils {
                     return thread;
                 }
             };
+
     private static final ThreadFactory NETWORK_THREAD_FACTORY =
             new ThreadFactory() {
                 private final AtomicInteger mCount = new AtomicInteger(1);
@@ -56,8 +45,20 @@ public class ThreadUtils {
                     return new Thread(r, "PartyMaker-net-" + mCount.getAndIncrement());
                 }
             };
+
     // Executors
     private static final Executor MAIN_THREAD_EXECUTOR = new MainThreadExecutor();
+
+    private static final ThreadPoolExecutor BACKGROUND_EXECUTOR =
+            new ThreadPoolExecutor(
+                    CORE_POOL_SIZE,
+                    MAXIMUM_POOL_SIZE,
+                    KEEP_ALIVE_SECONDS,
+                    TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<>(128),
+                    BACKGROUND_THREAD_FACTORY,
+                    new ThreadPoolExecutor.DiscardOldestPolicy());
+
     private static final Executor NETWORK_EXECUTOR =
             Executors.newFixedThreadPool(Math.max(2, CPU_COUNT / 2), NETWORK_THREAD_FACTORY);
 
@@ -125,7 +126,7 @@ public class ThreadUtils {
     /**
      * Runs a task on the main thread with a delay.
      *
-     * @param runnable    The task to run
+     * @param runnable The task to run
      * @param delayMillis The delay in milliseconds
      */
     public static void runOnMainThreadDelayed(Runnable runnable, long delayMillis) {
@@ -159,9 +160,7 @@ public class ThreadUtils {
         return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
-    /**
-     * An executor that runs tasks on the main thread.
-     */
+    /** An executor that runs tasks on the main thread. */
     private static class MainThreadExecutor implements Executor {
         private final Handler mHandler = new Handler(Looper.getMainLooper());
 
