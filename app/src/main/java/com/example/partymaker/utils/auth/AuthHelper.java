@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.partymaker.data.local.AppDatabase;
+import com.example.partymaker.data.repository.GroupRepository;
+import com.example.partymaker.data.repository.UserRepository;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -138,7 +142,9 @@ public class AuthHelper {
      */
     public static boolean logout(Context context) {
         Log.d(TAG, "Logging out user");
-        return clearAuthData(context);
+        boolean authCleared = clearAuthData(context);
+        clearAllUserData(context);
+        return authCleared;
     }
 
     /**
@@ -180,6 +186,53 @@ public class AuthHelper {
         }
 
         return firebaseSignOutSuccess || sharedPrefsSuccess;
+    }
+
+    /**
+     * Clears all user-related data including Room database and repository caches
+     *
+     * @param context Application context
+     */
+    public static void clearAllUserData(Context context) {
+        if (context == null) {
+            Log.w(TAG, "Cannot clear user data: context is null");
+            return;
+        }
+
+        Log.d(TAG, "Clearing all user data including Room database");
+
+        // Clear repositories cache first
+        try {
+            GroupRepository.getInstance().clearCache();
+            UserRepository.getInstance().clearCache();
+            Log.d(TAG, "Repository caches cleared");
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing repository caches", e);
+        }
+
+        // Clear Room database in background thread but wait for completion
+        ThreadUtils.runInBackground(() -> {
+            try {
+                AppDatabase database = AppDatabase.getInstance(context);
+                database.groupDao().deleteAllGroups();
+                database.userDao().deleteAllUsers();
+                
+                // Also clear chat messages if needed
+                if (database.chatMessageDao() != null) {
+                    database.chatMessageDao().deleteAllMessages();
+                }
+                
+                Log.d(TAG, "Room database cleared successfully");
+                
+                // Additional verification: check that database is actually empty
+                int groupCount = database.groupDao().getAllGroups().size();
+                int userCount = database.userDao().getAllUsers().size();
+                Log.d(TAG, "Database verification after clear - Groups: " + groupCount + ", Users: " + userCount);
+                
+            } catch (Exception e) {
+                Log.e(TAG, "Error clearing Room database", e);
+            }
+        });
     }
 
     /**
