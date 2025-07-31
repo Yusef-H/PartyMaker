@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="12dp"
     android:paddingBottom="6dp">
@@ -12,8 +12,8 @@
         android:id="@+id/spaceLeft"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bubbleLayout"
@@ -21,11 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="16dp"
+        android:maxWidth="260dp"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="18dp"
         app:cardElevation="3dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardMaxElevation="3dp"
-        android:maxWidth="260dp">
+        app:cardMaxElevation="3dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -39,12 +39,12 @@
                 android:id="@+id/tvSender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sender_name"
-                android:textSize="10sp"
-                android:textColor="#5C6BC0"
                 android:fontFamily="sans-serif-medium"
-                android:paddingBottom="4dp"
                 android:letterSpacing="0.05"
+                android:paddingBottom="4dp"
+                android:text="@string/sender_name"
+                android:textColor="#5C6BC0"
+                android:textSize="10sp"
                 android:visibility="gone"
                 tools:ignore="SmallSp" />
 
@@ -52,21 +52,21 @@
                 android:id="@+id/messageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#FFFFFF"
-                android:text="@string/message_content"
-                android:textDirection="ltr"
-                android:gravity="start"
-                android:lineSpacingExtra="3dp"
+                android:layout_marginBottom="6dp"
                 android:fontFamily="sans-serif"
+                android:gravity="start"
                 android:letterSpacing="0.01"
-                android:layout_marginBottom="6dp"/>
+                android:lineSpacingExtra="3dp"
+                android:text="@string/message_content"
+                android:textColor="#FFFFFF"
+                android:textDirection="ltr"
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tvTime"
@@ -86,6 +86,6 @@
         android:id="@+id/spaceRight"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginStart="8dp" />
+        android:layout_marginStart="8dp"
+        android:layout_weight="1" />
 </LinearLayout>

@@ -16,31 +16,31 @@
         android:id="@+id/bubbleLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@drawable/msg_bg_bubble"
-        android:padding="8dp"
         android:elevation="1dp"
-        android:maxWidth="280dp">
+        android:maxWidth="280dp"
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/tvSender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sender_name"
-            android:textSize="12sp"
-            android:textColor="#1986ed"
             android:paddingBottom="2dp"
-            android:visibility="gone"/>
+            android:text="@string/sender_name"
+            android:textColor="#1986ed"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#222222"
+            android:gravity="start"
             android:text="@string/message_content"
+            android:textColor="#222222"
             android:textDirection="ltr"
-            android:gravity="start"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvTime"
