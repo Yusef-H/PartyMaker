@@ -127,17 +127,17 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/compact_payment_background"
+                        android:elevation="4dp"
                         android:orientation="horizontal"
                         android:paddingHorizontal="8dp"
-                        android:paddingVertical="2dp"
-                        android:elevation="4dp">
+                        android:paddingVertical="2dp">
 
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
+                            android:contentDescription="@string/pull_to_pay"
                             android:src="@drawable/ic_payment"
-                            app:tint="#4CAF50"
-                            android:contentDescription="@string/pull_to_pay" />
+                            app:tint="#4CAF50" />
 
                         <TextView
                             android:id="@+id/tvPayNow"
@@ -514,7 +514,7 @@
                         android:textAlignment="center"
                         android:textColor="#ffffff"
                         android:textSize="18sp"
-                        android:visibility="invisible"/>
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/imgOptions"

@@ -5,57 +5,57 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
+    android:background="@color/primaryGray"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    android:background="@color/primaryGray">
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/primaryGray"
         android:paddingVertical="8dp"
         android:paddingStart="8dp"
-        android:paddingEnd="12dp"
-        android:background="@color/primaryGray">
+        android:paddingEnd="12dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgGroupPicture"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@mipmap/ic_launcher_round"
-            app:civ_border_width="2dp"
             app:civ_border_color="@color/primaryBlue"
-            app:layout_constraintTop_toTopOf="parent"
+            app:civ_border_width="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvGroupName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/group_name"
             android:textColor="@color/primaryBlue"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintStart_toEndOf="@id/imgGroupPicture"
-            app:layout_constraintTop_toTopOf="@id/imgGroupPicture"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="2dp"/>
+            app:layout_constraintStart_toEndOf="@id/imgGroupPicture"
+            app:layout_constraintTop_toTopOf="@id/imgGroupPicture" />
 
         <TextView
             android:id="@+id/tvGroupDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@string/date"
             android:textColor="@color/md_theme_secondary"
             android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="@id/tvGroupName"
-            app:layout_constraintTop_toBottomOf="@id/tvGroupName"
-            app:layout_constraintEnd_toEndOf="@id/tvGroupName"
             app:layout_constraintBottom_toBottomOf="@id/imgGroupPicture"
-            android:layout_marginTop="2dp" />
+            app:layout_constraintEnd_toEndOf="@id/tvGroupName"
+            app:layout_constraintStart_toStartOf="@id/tvGroupName"
+            app:layout_constraintTop_toBottomOf="@id/tvGroupName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

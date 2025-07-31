@@ -97,8 +97,8 @@ tasks.named("build") {
     setDependsOn(
         dependsOn.filterNot {
             it.toString().contains("test", ignoreCase = true) ||
-                it.toString().contains("androidTest", ignoreCase = true) ||
-                it.toString().contains("lint", ignoreCase = true)
+                    it.toString().contains("androidTest", ignoreCase = true) ||
+                    it.toString().contains("lint", ignoreCase = true)
         },
     )
 }

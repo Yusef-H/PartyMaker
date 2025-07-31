@@ -26,12 +26,12 @@ allprojects {
         compilerOptions {
             // Enable Java 8 compatibility
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-            
+
             // Use the experimental Kotlin compiler
             freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
         }
     }
-    
+
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = JavaVersion.VERSION_11.toString()
         targetCompatibility = JavaVersion.VERSION_11.toString()

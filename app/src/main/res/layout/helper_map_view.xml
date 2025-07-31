@@ -31,12 +31,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
-            app:drawableStartCompat="@android:drawable/ic_menu_close_clear_cancel"
             android:drawablePadding="8dp"
             android:padding="12dp"
             android:text="@string/close_map"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:drawableStartCompat="@android:drawable/ic_menu_close_clear_cancel" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -53,12 +53,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
-            app:drawableStartCompat="@android:drawable/ic_menu_directions"
             android:drawablePadding="8dp"
             android:padding="12dp"
             android:text="@string/open_in_google_maps"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:drawableStartCompat="@android:drawable/ic_menu_directions" />
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
