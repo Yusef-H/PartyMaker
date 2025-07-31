@@ -9,6 +9,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
+import com.example.partymaker.utils.system.ThreadUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -65,7 +67,7 @@ public class FileManager {
      * @param callback Callback for the operation
      */
     public static void saveBitmapToFile(Bitmap bitmap, File file, FileOperationCallback callback) {
-        executor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     try {
                         FileOutputStream outputStream = new FileOutputStream(file);
@@ -73,10 +75,10 @@ public class FileManager {
                         outputStream.flush();
                         outputStream.close();
 
-                        callback.onSuccess(file);
+                        ThreadUtils.runOnMainThread(() -> callback.onSuccess(file));
                     } catch (IOException e) {
                         Log.e(TAG, "Error saving bitmap to file", e);
-                        callback.onError("Error saving image: " + e.getMessage());
+                        ThreadUtils.runOnMainThread(() -> callback.onError("Error saving image: " + e.getMessage()));
                     }
                 });
     }
@@ -91,12 +93,12 @@ public class FileManager {
      */
     public static void copyFile(
             Context context, Uri sourceUri, File destFile, FileOperationCallback callback) {
-        executor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     try {
                         InputStream inputStream = context.getContentResolver().openInputStream(sourceUri);
                         if (inputStream == null) {
-                            callback.onError("Could not open input stream");
+                            ThreadUtils.runOnMainThread(() -> callback.onError("Could not open input stream"));
                             return;
                         }
 
@@ -112,10 +114,10 @@ public class FileManager {
                         outputStream.close();
                         inputStream.close();
 
-                        callback.onSuccess(destFile);
+                        ThreadUtils.runOnMainThread(() -> callback.onSuccess(destFile));
                     } catch (IOException e) {
                         Log.e(TAG, "Error copying file", e);
-                        callback.onError("Error copying file: " + e.getMessage());
+                        ThreadUtils.runOnMainThread(() -> callback.onError("Error copying file: " + e.getMessage()));
                     }
                 });
     }
@@ -139,7 +141,7 @@ public class FileManager {
      * @param context The context
      */
     public static void clearCache(Context context) {
-        executor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     try {
                         File cacheDir = context.getCacheDir();
