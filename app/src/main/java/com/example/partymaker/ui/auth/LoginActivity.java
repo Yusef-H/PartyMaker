@@ -22,6 +22,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -249,43 +250,41 @@ public class LoginActivity extends AppCompatActivity {
      * Checks connectivity to the server
      */
     private void checkServerConnectivity() {
-        new Thread(
-                () -> {
-                    try {
-                        String serverUrl =
-                                androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                                        .getString("server_url", "https://partymaker.onrender.com");
+        ThreadUtils.runInBackground(() -> {
+            try {
+                String serverUrl =
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                                .getString("server_url", "https://partymaker.onrender.com");
 
-                        Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
+                Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
 
-                        java.net.URL url = new java.net.URL(serverUrl + "/api/firebase/health");
-                        java.net.HttpURLConnection connection =
-                                (java.net.HttpURLConnection) url.openConnection();
-                        connection.setRequestMethod("GET");
-                        connection.setConnectTimeout(10000);
-                        connection.setReadTimeout(10000);
+                java.net.URL url = new java.net.URL(serverUrl + "/api/firebase/health");
+                java.net.HttpURLConnection connection =
+                        (java.net.HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
 
-                        int responseCode = connection.getResponseCode();
-                        Log.d("LoginActivity", "Server response code: " + responseCode);
+                int responseCode = connection.getResponseCode();
+                Log.d("LoginActivity", "Server response code: " + responseCode);
 
-                        if (responseCode == 200) {
-                            java.io.BufferedReader reader =
-                                    new java.io.BufferedReader(
-                                            new java.io.InputStreamReader(connection.getInputStream()));
-                            StringBuilder response = new StringBuilder();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                response.append(line);
-                            }
-                            reader.close();
-
-                            Log.d("LoginActivity", "Server response: " + response);
-                        }
-                    } catch (Exception e) {
-                        Log.e("LoginActivity", "Error checking server connectivity", e);
+                if (responseCode == 200) {
+                    java.io.BufferedReader reader =
+                            new java.io.BufferedReader(
+                                    new java.io.InputStreamReader(connection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
                     }
-                })
-                .start();
+                    reader.close();
+
+                    Log.d("LoginActivity", "Server response: " + response);
+                }
+            } catch (Exception e) {
+                Log.e("LoginActivity", "Error checking server connectivity", e);
+            }
+        });
     }
 
     /**

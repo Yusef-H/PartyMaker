@@ -88,3 +88,5 @@ fabric.properties
 /logs.txt
 /app/.cursor/rules/main.mdc
 app/server/src/main/resources/firebase-service-account.json
+/CLAUDE.md
+/.claude/settings.local.json

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.media.GlideImageLoader;
+import com.example.partymaker.utils.sharing.ShareHelper;
 
 import java.util.Objects;
 
@@ -99,6 +100,17 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
                         if (position != RecyclerView.NO_POSITION && listener != null) {
                             listener.onGroupClick(getItem(position));
                         }
+                    });
+            
+            // Add long click for share functionality
+            itemView.setOnLongClickListener(
+                    v -> {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            Group group = getItem(position);
+                            ShareHelper.sharePartyText(context, group);
+                        }
+                        return true;
                     });
         }
 

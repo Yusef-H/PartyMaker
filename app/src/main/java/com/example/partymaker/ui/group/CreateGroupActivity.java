@@ -50,8 +50,11 @@ import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;
+import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.MapUtilities;
+import com.example.partymaker.utils.ui.NotificationHelper;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -67,6 +70,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -502,6 +506,13 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
                     public void onSuccess() {
                         Log.d(TAG, "Group saved successfully via server client");
 
+                        // Show success notification
+                        NotificationHelper.showUpdateNotification(
+                                CreateGroupActivity.this, 
+                                "Party Created", 
+                                "Party '" + group.getGroupName() + "' created successfully!"
+                        );
+
                         // Add admin to group members
                         addAdminToGroup(group);
 
@@ -718,20 +729,42 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
                     ((ImageView) findViewById(R.id.imgGroupPicture)).setImageURI(uri);
 
-                    DBRef.refStorage
-                            .child("UsersImageProfile/Groups/" + GroupKey1)
-                            .putFile(uri)
-                            .addOnSuccessListener(
-                                    taskSnapshot ->
-                                            Toast.makeText(CreateGroupActivity.this, "saved", Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(
-                                    exception ->
-                                            Toast.makeText(
-                                                            CreateGroupActivity.this, "error while saving ", Toast.LENGTH_SHORT)
-                                                    .show());
+                    // Compress image before uploading for better performance
+                    Toast.makeText(this, "Compressing image...", Toast.LENGTH_SHORT).show();
+                    ImageCompressor.compressImage(this, uri, new ImageCompressor.CompressCallback() {
+                        @Override
+                        public void onCompressSuccess(File compressedFile) {
+                            ThreadUtils.runOnMainThread(() -> {
+                                Toast.makeText(CreateGroupActivity.this, "Image compressed. Uploading...", Toast.LENGTH_SHORT).show();
+                                uploadGroupImage(Uri.fromFile(compressedFile));
+                            });
+                        }
+
+                        @Override
+                        public void onCompressError(String error) {
+                            ThreadUtils.runOnMainThread(() -> {
+                                Log.w(TAG, "Image compression failed, uploading original: " + error);
+                                uploadGroupImage(uri);
+                            });
+                        }
+                    });
                 }
             }
         }
+    }
+
+    private void uploadGroupImage(Uri uri) {
+        DBRef.refStorage
+                .child("UsersImageProfile/Groups/" + GroupKey1)
+                .putFile(uri)
+                .addOnSuccessListener(
+                        taskSnapshot ->
+                                Toast.makeText(CreateGroupActivity.this, "Image saved successfully", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(
+                        exception ->
+                                Toast.makeText(
+                                                CreateGroupActivity.this, "Error while saving image", Toast.LENGTH_SHORT)
+                                        .show());
     }
 
     @Override

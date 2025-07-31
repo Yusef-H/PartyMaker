@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AuthViewModel extends AndroidViewModel {
     private static final String TAG = "AuthViewModel";
@@ -121,21 +123,23 @@ public class AuthViewModel extends AndroidViewModel {
 
         auth.signInWithEmailAndPassword(email.trim(), password)
                 .addOnCompleteListener(task -> {
-                    isLoading.setValue(false);
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Email login successful");
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user != null) {
-                            currentUser.setValue(user);
-                            isAuthenticated.setValue(true);
-                            successMessage.setValue("Login successful");
+                    ThreadUtils.runOnMainThread(() -> {
+                        isLoading.setValue(false);
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email login successful");
+                            FirebaseUser user = auth.getCurrentUser();
+                            if (user != null) {
+                                currentUser.setValue(user);
+                                isAuthenticated.setValue(true);
+                                successMessage.setValue("Login successful");
+                            }
+                        } else {
+                            Log.e(TAG, "Email login failed", task.getException());
+                            String error = task.getException() != null ? 
+                                    task.getException().getMessage() : "Login failed";
+                            errorMessage.setValue(error);
                         }
-                    } else {
-                        Log.e(TAG, "Email login failed", task.getException());
-                        String error = task.getException() != null ? 
-                                task.getException().getMessage() : "Login failed";
-                        errorMessage.setValue(error);
-                    }
+                    });
                 });
     }
 
@@ -236,7 +240,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     private void checkAndCreateUserProfile(FirebaseUser firebaseUser, String username) {
-        String userKey = firebaseUser.getEmail().replace('.', ' ');
+        String userKey = Objects.requireNonNull(firebaseUser.getEmail()).replace('.', ' ');
         
         // First check if user already exists
         DBRef.refUsers.child(userKey).get()
@@ -262,7 +266,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     private void createNewUserProfile(FirebaseUser firebaseUser, String username) {
-        String userKey = firebaseUser.getEmail().replace('.', ' ');
+        String userKey = Objects.requireNonNull(firebaseUser.getEmail()).replace('.', ' ');
         
         User user = new User();
         user.setUserKey(userKey);

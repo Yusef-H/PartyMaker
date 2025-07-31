@@ -34,7 +34,12 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.media.FileManager;
+import com.example.partymaker.utils.media.ImageCompressor;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.viewmodel.ProfileViewModel;
+
+import java.io.File;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
@@ -550,6 +555,33 @@ public class EditProfileActivity extends AppCompatActivity {
                     false);
             return;
         }
+
+        // Show compression progress
+        progressBar.setVisibility(View.VISIBLE);
+        showSuccess("Compressing image...");
+
+        // First compress the image to reduce size and improve upload speed
+        ImageCompressor.compressImage(this, uri, new ImageCompressor.CompressCallback() {
+            @Override
+            public void onCompressSuccess(File compressedFile) {
+                ThreadUtils.runOnMainThread(() -> {
+                    showSuccess("Image compressed successfully. Uploading...");
+                    uploadCompressedImageToFirebase(Uri.fromFile(compressedFile));
+                });
+            }
+
+            @Override
+            public void onCompressError(String error) {
+                ThreadUtils.runOnMainThread(() -> {
+                    Log.w(TAG, "Image compression failed, uploading original: " + error);
+                    showError("Compression failed, uploading original image...");
+                    uploadCompressedImageToFirebase(uri);
+                });
+            }
+        });
+    }
+
+    private void uploadCompressedImageToFirebase(Uri uri) {
 
         // Show a loading indicator
         progressBar.setVisibility(View.VISIBLE);

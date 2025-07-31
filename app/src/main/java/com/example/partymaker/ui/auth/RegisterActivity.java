@@ -38,6 +38,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
+import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -199,12 +200,11 @@ public class RegisterActivity extends AppCompatActivity {
                 sendSuccessNotification(username);
                 
                 // Navigate to login screen after celebration
-                new Handler(Looper.getMainLooper())
-                        .postDelayed(() -> {
-                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }, 3000);
+                ThreadUtils.runOnMainThreadDelayed(() -> {
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }, 3000);
             }
         });
         
