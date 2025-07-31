@@ -13,8 +13,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.partymaker.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -23,109 +25,137 @@ import com.google.firebase.auth.FirebaseAuth;
  * logic.
  */
 public class ResetPasswordActivity extends AppCompatActivity {
-  /** White theme button. */
-  private Button btnWhite;
+    /**
+     * White theme button.
+     */
+    private Button btnWhite;
 
-  /** Black theme button. */
-  private Button btnBlack;
+    /**
+     * Black theme button.
+     */
+    private Button btnBlack;
 
-  /** Reset password button. */
-  private Button btnReset;
+    /**
+     * Reset password button.
+     */
+    private Button btnReset;
 
-  /** Help button. */
-  private Button btnHelp;
+    /**
+     * Help button.
+     */
+    private Button btnHelp;
 
-  /** Hide instructions button. */
-  private Button btnHide;
+    /**
+     * Hide instructions button.
+     */
+    private Button btnHide;
 
-  /** Reset layout. */
-  private RelativeLayout rltReset;
+    /**
+     * Reset layout.
+     */
+    private RelativeLayout rltReset;
 
-  /** Forgot password text. */
-  private TextView tvForgotPass;
+    /**
+     * Forgot password text.
+     */
+    private TextView tvForgotPass;
 
-  /** Help text. */
-  private TextView tvHelp;
+    /**
+     * Help text.
+     */
+    private TextView tvHelp;
 
-  /** Instructions text. */
-  private TextView tvInstructions;
+    /**
+     * Instructions text.
+     */
+    private TextView tvInstructions;
 
-  /** Hide instructions text. */
-  private TextView tvHide;
+    /**
+     * Hide instructions text.
+     */
+    private TextView tvHide;
 
-  /** Email input field. */
-  private EditText etInputEmail;
+    /**
+     * Email input field.
+     */
+    private EditText etInputEmail;
 
-  /** Cake image view. */
-  private ImageView imgWhiteCake;
+    /**
+     * Cake image view.
+     */
+    private ImageView imgWhiteCake;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_auth_reset);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_auth_reset);
 
-    // this 3 lines disables the action bar only in this activity
-    ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
-    actionBar.hide();
+        // this 3 lines disables the action bar only in this activity
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.hide();
 
-    btnBlack = findViewById(R.id.btnBlack);
-    btnWhite = findViewById(R.id.btnWhite);
-    btnHelp = findViewById(R.id.btnHelp);
-    btnReset = findViewById(R.id.btnReset);
-    btnHide = findViewById(R.id.btnHide);
-    etInputEmail = findViewById(R.id.etInputEmail);
-    tvForgotPass = findViewById(R.id.tvForgotPass);
-    tvHelp = findViewById(R.id.tvHelp);
-    tvInstructions = findViewById(R.id.tvInstructions);
-    tvHide = findViewById(R.id.tvHide);
-    rltReset = findViewById(R.id.rltReset);
-    imgWhiteCake = findViewById(R.id.imgWhiteCake);
+        btnBlack = findViewById(R.id.btnBlack);
+        btnWhite = findViewById(R.id.btnWhite);
+        btnHelp = findViewById(R.id.btnHelp);
+        btnReset = findViewById(R.id.btnReset);
+        btnHide = findViewById(R.id.btnHide);
+        etInputEmail = findViewById(R.id.etInputEmail);
+        tvForgotPass = findViewById(R.id.tvForgotPass);
+        tvHelp = findViewById(R.id.tvHelp);
+        tvInstructions = findViewById(R.id.tvInstructions);
+        tvHide = findViewById(R.id.tvHide);
+        rltReset = findViewById(R.id.rltReset);
+        imgWhiteCake = findViewById(R.id.imgWhiteCake);
 
-    eventHandler();
-  }
-
-  /** Sends a password reset email to the user. */
-  private void ResetPass() {
-    final String email = etInputEmail.getText().toString(); // the user email
-    if (email.matches("")) {
-      Toast.makeText(ResetPasswordActivity.this, "input email", Toast.LENGTH_SHORT).show();
-    } else {
-      FirebaseAuth.getInstance()
-          .sendPasswordResetEmail(email)
-          .addOnCompleteListener(
-              task -> {
-                if (task.isSuccessful()) {
-                  Toast.makeText(
-                          ResetPasswordActivity.this, "Email successfully sent", Toast.LENGTH_SHORT)
-                      .show();
-                } else {
-                  Toast.makeText(
-                          ResetPasswordActivity.this, "Email Error sending", Toast.LENGTH_SHORT)
-                      .show();
-                }
-              });
+        eventHandler();
     }
-  }
 
-  /** Handles all button click events and UI theme switching. */
-  private void eventHandler() {
-      btnReset.setOnClickListener(v -> ResetPass());
+    /**
+     * Sends a password reset email to the user.
+     */
+    private void ResetPass() {
+        final String email = etInputEmail.getText().toString(); // the user email
+        if (email.matches("")) {
+            Toast.makeText(ResetPasswordActivity.this, "input email", Toast.LENGTH_SHORT).show();
+        } else {
+            FirebaseAuth.getInstance()
+                    .sendPasswordResetEmail(email)
+                    .addOnCompleteListener(
+                            task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(
+                                                    ResetPasswordActivity.this, "Email successfully sent", Toast.LENGTH_SHORT)
+                                            .show();
+                                } else {
+                                    Toast.makeText(
+                                                    ResetPasswordActivity.this, "Email Error sending", Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
+        }
+    }
 
-      btnWhite.setOnClickListener(v -> switchToLightMode());
+    /**
+     * Handles all button click events and UI theme switching.
+     */
+    private void eventHandler() {
+        btnReset.setOnClickListener(v -> ResetPass());
 
-      btnBlack.setOnClickListener(v -> switchToDarkMode());
+        btnWhite.setOnClickListener(v -> switchToLightMode());
 
-      btnHelp.setOnClickListener(v -> {
-          showViews(tvInstructions, tvHide, btnHide);
-          hideViews(tvHelp, btnHelp);
-      });
+        btnBlack.setOnClickListener(v -> switchToDarkMode());
 
-      btnHide.setOnClickListener(v -> {
-          hideViews(tvInstructions, tvHide, btnHide);
-          showViews(tvHelp, btnHelp);
-      });
-  }
+        btnHelp.setOnClickListener(v -> {
+            showViews(tvInstructions, tvHide, btnHide);
+            hideViews(tvHelp, btnHelp);
+        });
+
+        btnHide.setOnClickListener(v -> {
+            hideViews(tvInstructions, tvHide, btnHide);
+            showViews(tvHelp, btnHelp);
+        });
+    }
 
     private void switchToLightMode() {
         applyColorFilterToImage();
@@ -156,7 +186,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 -1.0f, 0, 0, 0, 255,
                 0, -1.0f, 0, 0, 255,
                 0, 0, -1.0f, 0, 255,
-                0, 0,  0, 1.0f, 0
+                0, 0, 0, 1.0f, 0
         };
         imgWhiteCake.setColorFilter(new ColorMatrixColorFilter(NEGATIVE));
     }
