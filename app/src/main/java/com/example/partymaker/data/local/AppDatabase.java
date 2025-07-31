@@ -1,12 +1,10 @@
 package com.example.partymaker.data.local;
 
 import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
@@ -16,39 +14,39 @@ import com.example.partymaker.data.model.User;
  * allowing offline access.
  */
 @Database(
-        entities = {Group.class, User.class, ChatMessage.class},
-        version = 1,
-        exportSchema = false)
+    entities = {Group.class, User.class, ChatMessage.class},
+    version = 1,
+    exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static volatile AppDatabase INSTANCE;
+  private static volatile AppDatabase INSTANCE;
 
-    /**
-     * Gets the singleton instance of the database.
-     *
-     * @param context The application context
-     * @return The database instance
-     */
-    public static AppDatabase getInstance(Context context) {
+  /**
+   * Gets the singleton instance of the database.
+   *
+   * @param context The application context
+   * @return The database instance
+   */
+  public static AppDatabase getInstance(Context context) {
+    if (INSTANCE == null) {
+      synchronized (AppDatabase.class) {
         if (INSTANCE == null) {
-            synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE =
-                            Room.databaseBuilder(
-                                            context.getApplicationContext(), AppDatabase.class, "partymaker_database")
-                                    .fallbackToDestructiveMigration() // For simplicity in development
-                                    .build();
-                }
-            }
+          INSTANCE =
+              Room.databaseBuilder(
+                      context.getApplicationContext(), AppDatabase.class, "partymaker_database")
+                  .fallbackToDestructiveMigration() // For simplicity in development
+                  .build();
         }
-        return INSTANCE;
+      }
     }
+    return INSTANCE;
+  }
 
-    // DAOs (Data Access Objects)
-    public abstract GroupDao groupDao();
+  // DAOs (Data Access Objects)
+  public abstract GroupDao groupDao();
 
-    public abstract UserDao userDao();
+  public abstract UserDao userDao();
 
-    public abstract ChatMessageDao chatMessageDao();
+  public abstract ChatMessageDao chatMessageDao();
 }

@@ -3,7 +3,6 @@ package com.example.partymaker.ui.auth;
 import static com.example.partymaker.utils.data.Constants.IS_CHECKED;
 import static com.example.partymaker.utils.data.Constants.PREFS_NAME;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,11 +12,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
@@ -30,16 +27,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -49,293 +41,286 @@ import java.util.Objects;
  * navigation, and UI state.
  */
 public class LoginActivity extends AppCompatActivity {
-    /**
-     * Request code for Google sign-in.
-     */
-    private static final int RC_SIGN_IN = 9001;
-    /**
-     * Email input field.
-     */
-    private TextInputEditText etEmail;
-    /**
-     * Password input field.
-     */
-    private TextInputEditText etPassword;
-    /**
-     * About button.
-     */
-    private ImageButton btnAbout;
-    /**
-     * Login button.
-     */
-    private MaterialButton btnLogin;
-    /**
-     * Register button.
-     */
-    private MaterialButton btnPress;
-    /**
-     * Reset password button.
-     */
-    private MaterialButton btnResetPass;
-    /**
-     * Remember me checkbox.
-     */
-    private MaterialCheckBox cbRememberMe;
-    /**
-     * Google sign-in button.
-     */
-    private SignInButton btnGoogleSignIn;
-    /**
-     * Google sign-in client.
-     */
-    private GoogleSignInClient mGoogleSignInClient;
-    /**
-     * Firebase authentication instance.
-     */
-    private FirebaseAuth mAuth;
-    
-    /**
-     * Authentication ViewModel
-     */
-    private AuthViewModel authViewModel;
+  /** Request code for Google sign-in. */
+  private static final int RC_SIGN_IN = 9001;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth_login);
+  /** Email input field. */
+  private TextInputEditText etEmail;
 
-        // Force set server URL to Render
-        forceSetServerUrl();
+  /** Password input field. */
+  private TextInputEditText etPassword;
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        
-        // Initialize ViewModel
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-        setupViewModelObservers();
+  /** About button. */
+  private ImageButton btnAbout;
 
-        // Add debug option to reset test user password
-        resetTestUserPassword();
+  /** Login button. */
+  private MaterialButton btnLogin;
 
-        // Check server connectivity
-        checkServerConnectivity();
+  /** Register button. */
+  private MaterialButton btnPress;
 
-        // Configure Google Sign In
-        GoogleSignInOptions gso =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.default_web_client_id))
-                        .requestEmail()
-                        .build();
+  /** Reset password button. */
+  private MaterialButton btnResetPass;
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+  /** Remember me checkbox. */
+  private MaterialCheckBox cbRememberMe;
 
-        // this 2 lines disables the action bar only in this activity
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
+  /** Google sign-in button. */
+  private SignInButton btnGoogleSignIn;
 
-        // connection between XML and Java
-        btnAbout = findViewById(R.id.btnAbout);
-        etEmail = findViewById(R.id.etEmailL);
-        etPassword = findViewById(R.id.etPasswordL);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnPress = findViewById(R.id.btnPressL);
-        cbRememberMe = findViewById(R.id.cbRememberMe);
-        btnResetPass = findViewById(R.id.btnResetPass);
-        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
+  /** Google sign-in client. */
+  private GoogleSignInClient mGoogleSignInClient;
 
-        // start animation on ImageButton btnAbout
-        Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fade_in);
-        btnAbout.startAnimation(myFadeInAnimation);
+  /** Firebase authentication instance. */
+  private FirebaseAuth mAuth;
 
-        eventHandler();
+  /** Authentication ViewModel */
+  private AuthViewModel authViewModel;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_auth_login);
+
+    // Force set server URL to Render
+    forceSetServerUrl();
+
+    // Initialize Firebase Auth
+    mAuth = FirebaseAuth.getInstance();
+
+    // Initialize ViewModel
+    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+    setupViewModelObservers();
+
+    // Add debug option to reset test user password
+    resetTestUserPassword();
+
+    // Check server connectivity
+    checkServerConnectivity();
+
+    // Configure Google Sign In
+    GoogleSignInOptions gso =
+        new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build();
+
+    mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+    // this 2 lines disables the action bar only in this activity
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
     }
-    
-    /**
-     * Sets up observers for AuthViewModel LiveData
-     */
-    private void setupViewModelObservers() {
-        authViewModel.getIsLoading().observe(this, isLoading -> {
-            btnLogin.setEnabled(!isLoading);
-            btnGoogleSignIn.setEnabled(!isLoading);
-        });
-        
-        authViewModel.getErrorMessage().observe(this, errorMessage -> {
-            if (errorMessage != null) {
+
+    // connection between XML and Java
+    btnAbout = findViewById(R.id.btnAbout);
+    etEmail = findViewById(R.id.etEmailL);
+    etPassword = findViewById(R.id.etPasswordL);
+    btnLogin = findViewById(R.id.btnLogin);
+    btnPress = findViewById(R.id.btnPressL);
+    cbRememberMe = findViewById(R.id.cbRememberMe);
+    btnResetPass = findViewById(R.id.btnResetPass);
+    btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
+
+    // start animation on ImageButton btnAbout
+    Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fade_in);
+    btnAbout.startAnimation(myFadeInAnimation);
+
+    eventHandler();
+  }
+
+  /** Sets up observers for AuthViewModel LiveData */
+  private void setupViewModelObservers() {
+    authViewModel
+        .getIsLoading()
+        .observe(
+            this,
+            isLoading -> {
+              btnLogin.setEnabled(!isLoading);
+              btnGoogleSignIn.setEnabled(!isLoading);
+            });
+
+    authViewModel
+        .getErrorMessage()
+        .observe(
+            this,
+            errorMessage -> {
+              if (errorMessage != null) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                 btnResetPass.setVisibility(View.VISIBLE);
-            }
-        });
-        
-        authViewModel.getSuccessMessage().observe(this, successMessage -> {
-            if (successMessage != null) {
+              }
+            });
+
+    authViewModel
+        .getSuccessMessage()
+        .observe(
+            this,
+            successMessage -> {
+              if (successMessage != null) {
                 Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-        
-        authViewModel.getIsAuthenticated().observe(this, isAuthenticated -> {
-            if (isAuthenticated) {
+              }
+            });
+
+    authViewModel
+        .getIsAuthenticated()
+        .observe(
+            this,
+            isAuthenticated -> {
+              if (isAuthenticated) {
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
                 editor.apply();
-                
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 btnAbout.clearAnimation();
                 startActivity(intent);
                 finish();
-            }
-        });
-    }
+              }
+            });
+  }
 
-    /**
-     * Forces the server URL to be set to Render
-     */
-    private void forceSetServerUrl() {
-        String renderUrl = "https://partymaker.onrender.com";
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                .edit()
-                .putString("server_url", renderUrl)
-                .apply();
-        Log.d("LoginActivity", "Forced server URL to: " + renderUrl);
-    }
+  /** Forces the server URL to be set to Render */
+  private void forceSetServerUrl() {
+    String renderUrl = "https://partymaker.onrender.com";
+    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        .edit()
+        .putString("server_url", renderUrl)
+        .apply();
+    Log.d("LoginActivity", "Forced server URL to: " + renderUrl);
+  }
 
-    /**
-     * Resets password for test user (1@1.com) to 123456 This is for debugging purposes only
-     */
-    private void resetTestUserPassword() {
-        String testEmail = "1@1.com";
-        String testPassword = "123456";
+  /** Resets password for test user (1@1.com) to 123456 This is for debugging purposes only */
+  private void resetTestUserPassword() {
+    String testEmail = "1@1.com";
+    String testPassword = "123456";
 
-        // Try to sign in with email and password directly
-        mAuth
-                .signInWithEmailAndPassword(testEmail, testPassword)
-                .addOnCompleteListener(
-                        task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("LoginActivity", "Test user login successful");
-                            } else {
-                                Log.d("LoginActivity", "Test user login failed, attempting to create user");
+    // Try to sign in with email and password directly
+    mAuth
+        .signInWithEmailAndPassword(testEmail, testPassword)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d("LoginActivity", "Test user login successful");
+              } else {
+                Log.d("LoginActivity", "Test user login failed, attempting to create user");
 
-                                // If login fails, try to create the user
-                                mAuth
-                                        .createUserWithEmailAndPassword(testEmail, testPassword)
-                                        .addOnCompleteListener(
-                                                createTask -> {
-                                                    if (createTask.isSuccessful()) {
-                                                        Log.d("LoginActivity", "Test user created successfully");
-                                                        // Create user in database using Map instead of User object
-                                                        Map<String, Object> testUserData = new HashMap<>();
-                                                        testUserData.put("username", "Test User");
-                                                        testUserData.put("email", testEmail);
-                                                        testUserData.put("userKey", java.util.UUID.randomUUID().toString());
+                // If login fails, try to create the user
+                mAuth
+                    .createUserWithEmailAndPassword(testEmail, testPassword)
+                    .addOnCompleteListener(
+                        createTask -> {
+                          if (createTask.isSuccessful()) {
+                            Log.d("LoginActivity", "Test user created successfully");
+                            // Create user in database using Map instead of User object
+                            Map<String, Object> testUserData = new HashMap<>();
+                            testUserData.put("username", "Test User");
+                            testUserData.put("email", testEmail);
+                            testUserData.put("userKey", java.util.UUID.randomUUID().toString());
 
-                                                        DBRef.refUsers
-                                                                .child(testEmail.replace('.', ' '))
-                                                                .setValue(testUserData);
-                                                    } else {
-                                                        Log.d(
-                                                                "LoginActivity",
-                                                                "Test user creation failed: "
-                                                                        + (createTask.getException() != null
-                                                                        ? createTask.getException().getMessage()
-                                                                        : "unknown error"));
-                                                    }
-                                                });
-                            }
+                            DBRef.refUsers
+                                .child(testEmail.replace('.', ' '))
+                                .setValue(testUserData);
+                          } else {
+                            Log.d(
+                                "LoginActivity",
+                                "Test user creation failed: "
+                                    + (createTask.getException() != null
+                                        ? createTask.getException().getMessage()
+                                        : "unknown error"));
+                          }
                         });
-    }
+              }
+            });
+  }
 
-    /**
-     * Checks connectivity to the server using NetworkManager
-     */
-    private void checkServerConnectivity() {
-        ThreadUtils.runInBackground(() -> {
-            try {
-                String serverUrl =
-                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                                .getString("server_url", "https://partymaker.onrender.com");
+  /** Checks connectivity to the server using NetworkManager */
+  private void checkServerConnectivity() {
+    ThreadUtils.runInBackground(
+        () -> {
+          try {
+            String serverUrl =
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString("server_url", "https://partymaker.onrender.com");
 
-                Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
+            Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
 
-                NetworkManager networkManager = NetworkManager.getInstance();
-                boolean isReachable = networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
-                
-                if (isReachable) {
-                    Log.d("LoginActivity", "Server is reachable");
-                } else {
-                    Log.w("LoginActivity", "Server is not reachable");
-                }
-            } catch (Exception e) {
-                Log.e("LoginActivity", "Error checking server connectivity", e);
+            NetworkManager networkManager = NetworkManager.getInstance();
+            boolean isReachable =
+                networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
+
+            if (isReachable) {
+              Log.d("LoginActivity", "Server is reachable");
+            } else {
+              Log.w("LoginActivity", "Server is not reachable");
             }
+          } catch (Exception e) {
+            Log.e("LoginActivity", "Error checking server connectivity", e);
+          }
         });
-    }
+  }
 
-    /**
-     * Handles all button click events and login logic.
-     */
-    private void eventHandler() {
-        btnLogin.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        SignIn();
-                    }
+  /** Handles all button click events and login logic. */
+  private void eventHandler() {
+    btnLogin.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            SignIn();
+          }
 
-                    // connection between firebase and login button using ViewModel
-                    private void SignIn() {
-                        String email = Objects.requireNonNull(etEmail.getText()).toString();
-                        String password = Objects.requireNonNull(etPassword.getText()).toString();
-                        
-                        authViewModel.loginWithEmail(email, password);
-                        
-                        // Set user session using AuthHelper when login succeeds
-                        if (!email.isEmpty()) {
-                            AuthHelper.setCurrentUserSession(LoginActivity.this, email);
-                        }
-                    }
-                });
+          // connection between firebase and login button using ViewModel
+          private void SignIn() {
+            String email = Objects.requireNonNull(etEmail.getText()).toString();
+            String password = Objects.requireNonNull(etPassword.getText()).toString();
 
-        // Google Sign In button click listener - use ViewModel's GoogleSignInClient
-        btnGoogleSignIn.setOnClickListener(v -> {
-            Intent signInIntent = authViewModel.getGoogleSignInClient().getSignInIntent();
-            startActivityForResult(signInIntent, RC_SIGN_IN);
+            authViewModel.loginWithEmail(email, password);
+
+            // Set user session using AuthHelper when login succeeds
+            if (!email.isEmpty()) {
+              AuthHelper.setCurrentUserSession(LoginActivity.this, email);
+            }
+          }
         });
 
-        // Press Here Onclick
-        btnPress.setOnClickListener(
-                view -> {
-                    // when click on "press here" it takes you to RegisterActivity
-                    Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-                    btnAbout.clearAnimation();
-                    startActivity(i);
-                    overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-                });
-        btnResetPass.setOnClickListener(
-                v -> {
-                    Intent i = new Intent(LoginActivity.this, ResetPasswordActivity.class);
-                    btnAbout.clearAnimation();
-                    startActivity(i);
-                });
-        btnAbout.setOnClickListener(
-                v -> {
-                    Intent i = new Intent(LoginActivity.this, IntroActivity.class);
-                    startActivity(i);
-                });
-    }
+    // Google Sign In button click listener - use ViewModel's GoogleSignInClient
+    btnGoogleSignIn.setOnClickListener(
+        v -> {
+          Intent signInIntent = authViewModel.getGoogleSignInClient().getSignInIntent();
+          startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
 
-    /**
-     * Handles the result of Google sign-in intent using ViewModel.
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    // Press Here Onclick
+    btnPress.setOnClickListener(
+        view -> {
+          // when click on "press here" it takes you to RegisterActivity
+          Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+          btnAbout.clearAnimation();
+          startActivity(i);
+          overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+        });
+    btnResetPass.setOnClickListener(
+        v -> {
+          Intent i = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+          btnAbout.clearAnimation();
+          startActivity(i);
+        });
+    btnAbout.setOnClickListener(
+        v -> {
+          Intent i = new Intent(LoginActivity.this, IntroActivity.class);
+          startActivity(i);
+        });
+  }
 
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            authViewModel.signInWithGoogle(task);
-        }
+  /** Handles the result of Google sign-in intent using ViewModel. */
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == RC_SIGN_IN) {
+      Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+      authViewModel.signInWithGoogle(task);
     }
+  }
 }

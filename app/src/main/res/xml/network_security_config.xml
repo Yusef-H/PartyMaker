@@ -6,7 +6,7 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    
+
     <!-- Domain-specific configurations with certificate pinning -->
     <domain-config>
         <!-- PartyMaker backend server -->
@@ -20,7 +20,7 @@
             <certificates src="system" />
         </trust-anchors>
     </domain-config>
-    
+
     <!-- Firebase domains -->
     <domain-config>
         <domain includeSubdomains="true">firebaseapp.com</domain>
@@ -30,7 +30,7 @@
             <certificates src="system" />
         </trust-anchors>
     </domain-config>
-    
+
     <!-- OpenAI API -->
     <domain-config>
         <domain includeSubdomains="true">api.openai.com</domain>
@@ -38,7 +38,7 @@
             <certificates src="system" />
         </trust-anchors>
     </domain-config>
-    
+
     <!-- Google services -->
     <domain-config>
         <domain includeSubdomains="true">googleapis.com</domain>
@@ -47,7 +47,7 @@
             <certificates src="system" />
         </trust-anchors>
     </domain-config>
-    
+
     <!-- Debug-only configuration (only active in debug builds) -->
     <debug-overrides>
         <trust-anchors>

@@ -2,16 +2,13 @@ package com.example.partymaker.data.repository;
 
 import android.content.Context;
 import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,464 +19,459 @@ import java.util.Map;
  * (server/local) and the ViewModel.
  */
 public class UserRepository {
-    private static final String TAG = "UserRepository";
-    private static UserRepository instance;
-    private final FirebaseServerClient serverClient;
-    private AppDatabase database;
+  private static final String TAG = "UserRepository";
+  private static UserRepository instance;
+  private final FirebaseServerClient serverClient;
+  private AppDatabase database;
 
-    // LiveData objects for caching data
-    private final MutableLiveData<Map<String, User>> allUsers =
-            new MutableLiveData<>(new HashMap<>());
-    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
-    private final Map<String, User> userCache = new HashMap<>();
+  // LiveData objects for caching data
+  private final MutableLiveData<Map<String, User>> allUsers =
+      new MutableLiveData<>(new HashMap<>());
+  private final MutableLiveData<User> currentUser = new MutableLiveData<>();
+  private final Map<String, User> userCache = new HashMap<>();
 
-    /**
-     * Private constructor to enforce singleton pattern
-     */
-    private UserRepository() {
-        serverClient = FirebaseServerClient.getInstance();
+  /** Private constructor to enforce singleton pattern */
+  private UserRepository() {
+    serverClient = FirebaseServerClient.getInstance();
+  }
+
+  /**
+   * Gets the singleton instance of UserRepository
+   *
+   * @return The UserRepository instance
+   */
+  public static synchronized UserRepository getInstance() {
+    if (instance == null) {
+      instance = new UserRepository();
+    }
+    return instance;
+  }
+
+  /**
+   * Initializes the repository with a context. This is required for database access.
+   *
+   * @param context The application context
+   */
+  public void initialize(Context context) {
+    if (context != null) {
+      database = AppDatabase.getInstance(context);
+      Log.d(TAG, "UserRepository initialized with database");
+    } else {
+      Log.e(TAG, "Cannot initialize UserRepository: context is null");
+    }
+  }
+
+  /**
+   * Gets all users
+   *
+   * @param callback Callback to return the data
+   * @param forceRefresh Whether to force a refresh from the server
+   */
+  public void getAllUsers(DataCallback<List<User>> callback, boolean forceRefresh) {
+    if (database == null) {
+      Log.e(TAG, "Database not initialized. Call initialize() first.");
+      getAllUsersFromServer(callback);
+      return;
     }
 
-    /**
-     * Gets the singleton instance of UserRepository
-     *
-     * @return The UserRepository instance
-     */
-    public static synchronized UserRepository getInstance() {
-        if (instance == null) {
-            instance = new UserRepository();
-        }
-        return instance;
-    }
+    ThreadUtils.runInBackground(
+        () -> {
+          // Try to get from cache first
+          List<User> cachedUsers = database.userDao().getAllUsers();
 
-    /**
-     * Initializes the repository with a context. This is required for database access.
-     *
-     * @param context The application context
-     */
-    public void initialize(Context context) {
-        if (context != null) {
-            database = AppDatabase.getInstance(context);
-            Log.d(TAG, "UserRepository initialized with database");
-        } else {
-            Log.e(TAG, "Cannot initialize UserRepository: context is null");
-        }
-    }
-
-    /**
-     * Gets all users
-     *
-     * @param callback     Callback to return the data
-     * @param forceRefresh Whether to force a refresh from the server
-     */
-    public void getAllUsers(DataCallback<List<User>> callback, boolean forceRefresh) {
-        if (database == null) {
-            Log.e(TAG, "Database not initialized. Call initialize() first.");
-            getAllUsersFromServer(callback);
+          if (cachedUsers != null && !cachedUsers.isEmpty() && !forceRefresh) {
+            Log.d(TAG, "Users found in cache: " + cachedUsers.size());
+            ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
             return;
-        }
+          }
 
-        ThreadUtils.runInBackground(() -> {
-            // Try to get from cache first
-            List<User> cachedUsers = database.userDao().getAllUsers();
-
-            if (cachedUsers != null && !cachedUsers.isEmpty() && !forceRefresh) {
-                Log.d(TAG, "Users found in cache: " + cachedUsers.size());
-                ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
-                return;
-            }
-
-            // Otherwise, get from server
-            getAllUsersFromServer(new DataCallback<List<User>>() {
+          // Otherwise, get from server
+          getAllUsersFromServer(
+              new DataCallback<List<User>>() {
                 @Override
                 public void onDataLoaded(List<User> users) {
-                    // Cache the users
-                    if (users != null && !users.isEmpty()) {
-                        ThreadUtils.runInBackground(() -> {
-                            database.userDao().insertUsers(users);
-                            Log.d(TAG, "Users cached: " + users.size());
+                  // Cache the users
+                  if (users != null && !users.isEmpty()) {
+                    ThreadUtils.runInBackground(
+                        () -> {
+                          database.userDao().insertUsers(users);
+                          Log.d(TAG, "Users cached: " + users.size());
                         });
-                    }
+                  }
 
-                    // Return the users
-                    ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(users));
+                  // Return the users
+                  ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(users));
                 }
 
                 @Override
                 public void onError(String error) {
-                    // If we have cached users, return them even if there was an error
-                    if (cachedUsers != null && !cachedUsers.isEmpty()) {
-                        Log.d(TAG, "Returning cached users after server error: " + cachedUsers.size());
-                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
-                    } else {
-                        ThreadUtils.runOnMainThread(() -> callback.onError(error));
-                    }
+                  // If we have cached users, return them even if there was an error
+                  if (cachedUsers != null && !cachedUsers.isEmpty()) {
+                    Log.d(TAG, "Returning cached users after server error: " + cachedUsers.size());
+                    ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
+                  } else {
+                    ThreadUtils.runOnMainThread(() -> callback.onError(error));
+                  }
                 }
-            });
+              });
         });
-    }
+  }
 
-    private void getAllUsersFromServer(DataCallback<List<User>> callback) {
+  private void getAllUsersFromServer(DataCallback<List<User>> callback) {
 
-        Log.d(TAG, "Fetching all users from server");
-        serverClient.getUsers(
-                new FirebaseServerClient.DataCallback<>() {
-                    @Override
-                    public void onSuccess(Map<String, User> users) {
-                        if (users == null) {
-                            Log.w(TAG, "Server returned null users map");
-                            callback.onDataLoaded(new ArrayList<>()); // Return empty list instead of null
-                            return;
-                        }
-
-                        Log.d(TAG, "Successfully retrieved " + users.size() + " users");
-
-                        // Update cache
-                        userCache.clear();
-                        userCache.putAll(users);
-                        allUsers.postValue(users);
-
-                        List<User> userList = new ArrayList<>(users.values());
-                        callback.onDataLoaded(userList);
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Log.e(TAG, "Error retrieving users: " + errorMessage);
-
-                        // If we have cached data, use it as fallback
-                        if (!userCache.isEmpty()) {
-                            Log.d(TAG, "Using cached users as fallback");
-                            callback.onDataLoaded(new ArrayList<>(userCache.values()));
-                        } else {
-                            callback.onError(errorMessage);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Gets a specific user by ID
-     *
-     * @param userId       The user ID
-     * @param callback     Callback to return the data
-     * @param forceRefresh Whether to force a refresh from the server
-     */
-    public void getUser(String userId, DataCallback<User> callback, boolean forceRefresh) {
-        if (userId == null || userId.isEmpty()) {
-            Log.e(TAG, "Invalid userId: null or empty");
-            callback.onError("Invalid user ID");
-            return;
-        }
-
-        // Check cache first
-        if (!forceRefresh && userCache.containsKey(userId)) {
-            User cachedUser = userCache.get(userId);
-            Log.d(TAG, "Returning cached user: " + userId);
-            callback.onDataLoaded(cachedUser);
-            return;
-        }
-
-        Log.d(TAG, "Fetching user from server: " + userId);
-        serverClient.getUser(
-                userId,
-                new FirebaseServerClient.DataCallback<>() {
-                    @Override
-                    public void onSuccess(User user) {
-                        if (user == null) {
-                            Log.e(TAG, "Server returned null user for ID: " + userId);
-                            callback.onError("User not found");
-                            return;
-                        }
-
-                        Log.d(TAG, "Successfully retrieved user: " + userId);
-
-                        // Update cache
-                        userCache.put(userId, user);
-
-                        // If this is the current user, update currentUser LiveData
-                        if (isCurrentUser(userId)) {
-                            currentUser.postValue(user);
-                        }
-
-                        callback.onDataLoaded(user);
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Log.e(TAG, "Error retrieving user: " + errorMessage);
-
-                        // If we have cached data, use it as fallback
-                        if (userCache.containsKey(userId)) {
-                            Log.d(TAG, "Using cached user as fallback");
-                            callback.onDataLoaded(userCache.get(userId));
-                        } else {
-                            callback.onError(errorMessage);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Gets the current user
-     *
-     * @param context      Application context
-     * @param callback     Callback to return the data
-     * @param forceRefresh Whether to force a refresh from the server
-     */
-    public void getCurrentUser(
-            android.content.Context context, DataCallback<User> callback, boolean forceRefresh) {
-        try {
-            String currentUserEmail = AuthHelper.getCurrentUserEmail(context);
-            if (currentUserEmail == null || currentUserEmail.isEmpty()) {
-                Log.e(TAG, "No current user found");
-                callback.onError("No current user found");
-                return;
+    Log.d(TAG, "Fetching all users from server");
+    serverClient.getUsers(
+        new FirebaseServerClient.DataCallback<>() {
+          @Override
+          public void onSuccess(Map<String, User> users) {
+            if (users == null) {
+              Log.w(TAG, "Server returned null users map");
+              callback.onDataLoaded(new ArrayList<>()); // Return empty list instead of null
+              return;
             }
 
-            String userKey = currentUserEmail.replace('.', ' ');
+            Log.d(TAG, "Successfully retrieved " + users.size() + " users");
 
-            // Check if we already have the current user in LiveData
-            User cachedCurrentUser = currentUser.getValue();
-            if (!forceRefresh && cachedCurrentUser != null) {
-                Log.d(TAG, "Returning cached current user: " + userKey);
-                callback.onDataLoaded(cachedCurrentUser);
-                return;
+            // Update cache
+            userCache.clear();
+            userCache.putAll(users);
+            allUsers.postValue(users);
+
+            List<User> userList = new ArrayList<>(users.values());
+            callback.onDataLoaded(userList);
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error retrieving users: " + errorMessage);
+
+            // If we have cached data, use it as fallback
+            if (!userCache.isEmpty()) {
+              Log.d(TAG, "Using cached users as fallback");
+              callback.onDataLoaded(new ArrayList<>(userCache.values()));
+            } else {
+              callback.onError(errorMessage);
+            }
+          }
+        });
+  }
+
+  /**
+   * Gets a specific user by ID
+   *
+   * @param userId The user ID
+   * @param callback Callback to return the data
+   * @param forceRefresh Whether to force a refresh from the server
+   */
+  public void getUser(String userId, DataCallback<User> callback, boolean forceRefresh) {
+    if (userId == null || userId.isEmpty()) {
+      Log.e(TAG, "Invalid userId: null or empty");
+      callback.onError("Invalid user ID");
+      return;
+    }
+
+    // Check cache first
+    if (!forceRefresh && userCache.containsKey(userId)) {
+      User cachedUser = userCache.get(userId);
+      Log.d(TAG, "Returning cached user: " + userId);
+      callback.onDataLoaded(cachedUser);
+      return;
+    }
+
+    Log.d(TAG, "Fetching user from server: " + userId);
+    serverClient.getUser(
+        userId,
+        new FirebaseServerClient.DataCallback<>() {
+          @Override
+          public void onSuccess(User user) {
+            if (user == null) {
+              Log.e(TAG, "Server returned null user for ID: " + userId);
+              callback.onError("User not found");
+              return;
             }
 
-            // Fetch from server
-            getUser(
-                    userKey,
-                    new DataCallback<>() {
-                        @Override
-                        public void onDataLoaded(User user) {
-                            currentUser.postValue(user);
-                            callback.onDataLoaded(user);
-                        }
+            Log.d(TAG, "Successfully retrieved user: " + userId);
 
-                        @Override
-                        public void onError(String error) {
-                            callback.onError(error);
-                        }
-                    },
-                    forceRefresh);
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting current user", e);
-            callback.onError("Error getting current user: " + e.getMessage());
-        }
-    }
+            // Update cache
+            userCache.put(userId, user);
 
-    /**
-     * Saves a user to the server
-     *
-     * @param userId   The user ID
-     * @param user     The user to save
-     * @param callback Callback for operation result
-     */
-    public void saveUser(String userId, User user, OperationCallback callback) {
-        if (userId == null || userId.isEmpty()) {
-            Log.e(TAG, "Invalid userId: null or empty");
-            callback.onError("Invalid user ID");
-            return;
-        }
-
-        if (user == null) {
-            Log.e(TAG, "Cannot save null user");
-            callback.onError("User object is null");
-            return;
-        }
-
-        Log.d(TAG, "Saving user: " + userId);
-
-        serverClient.saveUser(
-                userId,
-                user,
-                new FirebaseServerClient.OperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "User saved successfully");
-
-                        // Update cache
-                        userCache.put(userId, user);
-
-                        // If this is the current user, update currentUser LiveData
-                        if (isCurrentUser(userId)) {
-                            currentUser.postValue(user);
-                        }
-
-                        // Update allUsers LiveData if it contains data
-                        Map<String, User> currentUsers = allUsers.getValue();
-                        if (currentUsers != null) {
-                            currentUsers.put(userId, user);
-                            allUsers.postValue(currentUsers);
-                        }
-
-                        callback.onComplete();
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Log.e(TAG, "Error saving user: " + errorMessage);
-                        callback.onError(errorMessage);
-                    }
-                });
-    }
-
-    /**
-     * Updates a user on the server
-     *
-     * @param userId   The user ID
-     * @param updates  Map of fields to update
-     * @param callback Callback for operation result
-     */
-    public void updateUser(String userId, Map<String, Object> updates, OperationCallback callback) {
-        if (userId == null || userId.isEmpty()) {
-            Log.e(TAG, "Invalid userId: null or empty");
-            callback.onError("Invalid user ID");
-            return;
-        }
-
-        if (updates == null || updates.isEmpty()) {
-            Log.e(TAG, "Updates map is null or empty");
-            callback.onError("No updates provided");
-            return;
-        }
-
-        Log.d(TAG, "Updating user: " + userId);
-
-        serverClient.updateUser(
-                userId,
-                updates,
-                new FirebaseServerClient.OperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "User updated successfully");
-
-                        // Update cache if we have the user
-                        if (userCache.containsKey(userId)) {
-                            User user = userCache.get(userId);
-                            applyUpdatesToUser(user, updates);
-                            userCache.put(userId, user);
-
-                            // If this is the current user, update currentUser LiveData
-                            if (isCurrentUser(userId)) {
-                                currentUser.postValue(user);
-                            }
-
-                            // Update allUsers LiveData if it contains data
-                            Map<String, User> currentUsers = allUsers.getValue();
-                            if (currentUsers != null && currentUsers.containsKey(userId)) {
-                                currentUsers.put(userId, user);
-                                allUsers.postValue(currentUsers);
-                            }
-                        }
-
-                        callback.onComplete();
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Log.e(TAG, "Error updating user: " + errorMessage);
-                        callback.onError(errorMessage);
-                    }
-                });
-    }
-
-    /**
-     * Checks if a user ID matches the current user
-     *
-     * @param userId The user ID to check
-     * @return true if it matches the current user, false otherwise
-     */
-    private boolean isCurrentUser(String userId) {
-        User current = currentUser.getValue();
-        return current != null && userId.equals(current.getUserKey());
-    }
-
-    /**
-     * Applies updates to a user object
-     *
-     * @param user    The user to update
-     * @param updates The updates to apply
-     */
-    @SuppressWarnings("unchecked")
-    private void applyUpdatesToUser(User user, Map<String, Object> updates) {
-        if (user == null || updates == null) {
-            return;
-        }
-
-        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            String field = entry.getKey();
-            Object value = entry.getValue();
-
-            switch (field) {
-                case "username":
-                    if (value instanceof String) {
-                        user.setUsername((String) value);
-                    }
-                    break;
-                case "email":
-                    if (value instanceof String) {
-                        user.setEmail((String) value);
-                    }
-                    break;
-                case "profileImageUrl":
-                    if (value instanceof String) {
-                        user.setProfileImageUrl((String) value);
-                    }
-                    break;
-                case "friendKeys":
-                    if (value instanceof Map) {
-                        user.setFriendKeys((Map<String, Boolean>) value);
-                    }
-                    break;
-                // Add more fields as needed
+            // If this is the current user, update currentUser LiveData
+            if (isCurrentUser(userId)) {
+              currentUser.postValue(user);
             }
-        }
+
+            callback.onDataLoaded(user);
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error retrieving user: " + errorMessage);
+
+            // If we have cached data, use it as fallback
+            if (userCache.containsKey(userId)) {
+              Log.d(TAG, "Using cached user as fallback");
+              callback.onDataLoaded(userCache.get(userId));
+            } else {
+              callback.onError(errorMessage);
+            }
+          }
+        });
+  }
+
+  /**
+   * Gets the current user
+   *
+   * @param context Application context
+   * @param callback Callback to return the data
+   * @param forceRefresh Whether to force a refresh from the server
+   */
+  public void getCurrentUser(
+      android.content.Context context, DataCallback<User> callback, boolean forceRefresh) {
+    try {
+      String currentUserEmail = AuthHelper.getCurrentUserEmail(context);
+      if (currentUserEmail == null || currentUserEmail.isEmpty()) {
+        Log.e(TAG, "No current user found");
+        callback.onError("No current user found");
+        return;
+      }
+
+      String userKey = currentUserEmail.replace('.', ' ');
+
+      // Check if we already have the current user in LiveData
+      User cachedCurrentUser = currentUser.getValue();
+      if (!forceRefresh && cachedCurrentUser != null) {
+        Log.d(TAG, "Returning cached current user: " + userKey);
+        callback.onDataLoaded(cachedCurrentUser);
+        return;
+      }
+
+      // Fetch from server
+      getUser(
+          userKey,
+          new DataCallback<>() {
+            @Override
+            public void onDataLoaded(User user) {
+              currentUser.postValue(user);
+              callback.onDataLoaded(user);
+            }
+
+            @Override
+            public void onError(String error) {
+              callback.onError(error);
+            }
+          },
+          forceRefresh);
+    } catch (Exception e) {
+      Log.e(TAG, "Error getting current user", e);
+      callback.onError("Error getting current user: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Saves a user to the server
+   *
+   * @param userId The user ID
+   * @param user The user to save
+   * @param callback Callback for operation result
+   */
+  public void saveUser(String userId, User user, OperationCallback callback) {
+    if (userId == null || userId.isEmpty()) {
+      Log.e(TAG, "Invalid userId: null or empty");
+      callback.onError("Invalid user ID");
+      return;
     }
 
-    /**
-     * Gets all users as LiveData
-     *
-     * @return LiveData containing map of all users
-     */
-    public LiveData<Map<String, User>> getAllUsersLiveData() {
-        return allUsers;
+    if (user == null) {
+      Log.e(TAG, "Cannot save null user");
+      callback.onError("User object is null");
+      return;
     }
 
-    /**
-     * Gets current user as LiveData
-     *
-     * @return LiveData containing the current user
-     */
-    public LiveData<User> getCurrentUserLiveData() {
-        return currentUser;
+    Log.d(TAG, "Saving user: " + userId);
+
+    serverClient.saveUser(
+        userId,
+        user,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "User saved successfully");
+
+            // Update cache
+            userCache.put(userId, user);
+
+            // If this is the current user, update currentUser LiveData
+            if (isCurrentUser(userId)) {
+              currentUser.postValue(user);
+            }
+
+            // Update allUsers LiveData if it contains data
+            Map<String, User> currentUsers = allUsers.getValue();
+            if (currentUsers != null) {
+              currentUsers.put(userId, user);
+              allUsers.postValue(currentUsers);
+            }
+
+            callback.onComplete();
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error saving user: " + errorMessage);
+            callback.onError(errorMessage);
+          }
+        });
+  }
+
+  /**
+   * Updates a user on the server
+   *
+   * @param userId The user ID
+   * @param updates Map of fields to update
+   * @param callback Callback for operation result
+   */
+  public void updateUser(String userId, Map<String, Object> updates, OperationCallback callback) {
+    if (userId == null || userId.isEmpty()) {
+      Log.e(TAG, "Invalid userId: null or empty");
+      callback.onError("Invalid user ID");
+      return;
     }
 
-    /**
-     * Clears the user cache
-     */
-    public void clearCache() {
-        userCache.clear();
-        allUsers.setValue(new HashMap<>());
-        currentUser.setValue(null);
+    if (updates == null || updates.isEmpty()) {
+      Log.e(TAG, "Updates map is null or empty");
+      callback.onError("No updates provided");
+      return;
     }
 
-    /**
-     * Interface for data callbacks
-     */
-    public interface DataCallback<T> {
-        void onDataLoaded(T data);
+    Log.d(TAG, "Updating user: " + userId);
 
-        void onError(String error);
+    serverClient.updateUser(
+        userId,
+        updates,
+        new FirebaseServerClient.OperationCallback() {
+          @Override
+          public void onSuccess() {
+            Log.d(TAG, "User updated successfully");
+
+            // Update cache if we have the user
+            if (userCache.containsKey(userId)) {
+              User user = userCache.get(userId);
+              applyUpdatesToUser(user, updates);
+              userCache.put(userId, user);
+
+              // If this is the current user, update currentUser LiveData
+              if (isCurrentUser(userId)) {
+                currentUser.postValue(user);
+              }
+
+              // Update allUsers LiveData if it contains data
+              Map<String, User> currentUsers = allUsers.getValue();
+              if (currentUsers != null && currentUsers.containsKey(userId)) {
+                currentUsers.put(userId, user);
+                allUsers.postValue(currentUsers);
+              }
+            }
+
+            callback.onComplete();
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error updating user: " + errorMessage);
+            callback.onError(errorMessage);
+          }
+        });
+  }
+
+  /**
+   * Checks if a user ID matches the current user
+   *
+   * @param userId The user ID to check
+   * @return true if it matches the current user, false otherwise
+   */
+  private boolean isCurrentUser(String userId) {
+    User current = currentUser.getValue();
+    return current != null && userId.equals(current.getUserKey());
+  }
+
+  /**
+   * Applies updates to a user object
+   *
+   * @param user The user to update
+   * @param updates The updates to apply
+   */
+  @SuppressWarnings("unchecked")
+  private void applyUpdatesToUser(User user, Map<String, Object> updates) {
+    if (user == null || updates == null) {
+      return;
     }
 
-    /**
-     * Interface for operation callbacks
-     */
-    public interface OperationCallback {
-        void onComplete();
+    for (Map.Entry<String, Object> entry : updates.entrySet()) {
+      String field = entry.getKey();
+      Object value = entry.getValue();
 
-        void onError(String error);
+      switch (field) {
+        case "username":
+          if (value instanceof String) {
+            user.setUsername((String) value);
+          }
+          break;
+        case "email":
+          if (value instanceof String) {
+            user.setEmail((String) value);
+          }
+          break;
+        case "profileImageUrl":
+          if (value instanceof String) {
+            user.setProfileImageUrl((String) value);
+          }
+          break;
+        case "friendKeys":
+          if (value instanceof Map) {
+            user.setFriendKeys((Map<String, Boolean>) value);
+          }
+          break;
+          // Add more fields as needed
+      }
     }
+  }
+
+  /**
+   * Gets all users as LiveData
+   *
+   * @return LiveData containing map of all users
+   */
+  public LiveData<Map<String, User>> getAllUsersLiveData() {
+    return allUsers;
+  }
+
+  /**
+   * Gets current user as LiveData
+   *
+   * @return LiveData containing the current user
+   */
+  public LiveData<User> getCurrentUserLiveData() {
+    return currentUser;
+  }
+
+  /** Clears the user cache */
+  public void clearCache() {
+    userCache.clear();
+    allUsers.setValue(new HashMap<>());
+    currentUser.setValue(null);
+  }
+
+  /** Interface for data callbacks */
+  public interface DataCallback<T> {
+    void onDataLoaded(T data);
+
+    void onError(String error);
+  }
+
+  /** Interface for operation callbacks */
+  public interface OperationCallback {
+    void onComplete();
+
+    void onError(String error);
+  }
 }

@@ -23,34 +23,36 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = null // Disable Android instrumentation tests
-        
+
         // Load API keys from local.properties OR secrets.properties
         val localPropertiesFile = rootProject.file("local.properties")
         val secretsPropertiesFile = rootProject.file("secrets.properties")
-        
+
         val properties = Properties()
-        
+
         // Try loading from local.properties first
         if (localPropertiesFile.exists()) {
             localPropertiesFile.reader().use { properties.load(it) }
         }
-        
+
         // Also load from secrets.properties (will override if both exist)
         if (secretsPropertiesFile.exists()) {
             secretsPropertiesFile.reader().use { properties.load(it) }
         }
-        
+
         // API Keys - Can be in either local.properties or secrets.properties
-        val openAiKey = properties.getProperty("openai.api.key") 
-            ?: properties.getProperty("OPENAI_API_KEY")
-            ?: System.getenv("OPENAI_API_KEY") 
-            ?: ""
-            
-        val mapsKey = properties.getProperty("maps.api.key") 
-            ?: properties.getProperty("MAPS_API_KEY")
-            ?: System.getenv("MAPS_API_KEY") 
-            ?: ""
-        
+        val openAiKey =
+            properties.getProperty("openai.api.key")
+                ?: properties.getProperty("OPENAI_API_KEY")
+                ?: System.getenv("OPENAI_API_KEY")
+                ?: ""
+
+        val mapsKey =
+            properties.getProperty("maps.api.key")
+                ?: properties.getProperty("MAPS_API_KEY")
+                ?: System.getenv("MAPS_API_KEY")
+                ?: ""
+
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
         manifestPlaceholders["MAPS_API_KEY"] = mapsKey.ifEmpty { "YOUR_API_KEY_HERE" }
@@ -130,8 +132,8 @@ tasks.named("build") {
     setDependsOn(
         dependsOn.filterNot {
             it.toString().contains("test", ignoreCase = true) ||
-                    it.toString().contains("androidTest", ignoreCase = true) ||
-                    it.toString().contains("lint", ignoreCase = true)
+                it.toString().contains("androidTest", ignoreCase = true) ||
+                it.toString().contains("lint", ignoreCase = true)
         },
     )
 }
@@ -233,7 +235,7 @@ dependencies {
 
     // --- Concurrent Programming ---
     implementation(libs.androidx.concurrent.futures)
-    
+
     // --- Security ---
     implementation("androidx.security:security-crypto:1.0.0")
 }

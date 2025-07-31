@@ -6,21 +6,18 @@ import android.os.LocaleList;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.partymaker.R;
-import com.example.partymaker.viewmodel.GptViewModel;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessageGpt;
 import com.example.partymaker.ui.adapters.ChatbotAdapter;
 import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.viewmodel.GptViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,168 +29,178 @@ import java.util.concurrent.Executors;
 
 public class GptChatActivity extends AppCompatActivity {
 
-    // ---------- System prompt ----------
-    private static final ChatMessageGpt SYSTEM_PROMPT = // NEW
-            new ChatMessageGpt(
-                    "system", "Always answer in English, even if the question is in another language.");
-    // ---------- Lists ----------
-    // Only what is displayed to the user
-    private final List<ChatMessageGpt> visibleMessages = new ArrayList<>(); // NEW
-    // All history sent to API (including system)
-    private final List<ChatMessageGpt> history = new ArrayList<>(); // NEW
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    // ---------- Views ----------
-    private RecyclerView chatRecyclerView;
-    private EditText messageInput;
-    private ChatbotAdapter chatAdapter;
-    private OpenAiApi openAiApi;
-    private GptViewModel viewModel;
+  // ---------- System prompt ----------
+  private static final ChatMessageGpt SYSTEM_PROMPT = // NEW
+      new ChatMessageGpt(
+          "system", "Always answer in English, even if the question is in another language.");
+  // ---------- Lists ----------
+  // Only what is displayed to the user
+  private final List<ChatMessageGpt> visibleMessages = new ArrayList<>(); // NEW
+  // All history sent to API (including system)
+  private final List<ChatMessageGpt> history = new ArrayList<>(); // NEW
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  // ---------- Views ----------
+  private RecyclerView chatRecyclerView;
+  private EditText messageInput;
+  private ChatbotAdapter chatAdapter;
+  private OpenAiApi openAiApi;
+  private GptViewModel viewModel;
 
-    // ------------------------------------------------------------------------
-    // onCreate
-    // ------------------------------------------------------------------------
-    @SuppressLint("NotifyDataSetChanged")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_chatbot);
+  // ------------------------------------------------------------------------
+  // onCreate
+  // ------------------------------------------------------------------------
+  @SuppressLint("NotifyDataSetChanged")
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main_chatbot);
 
-        // ---------- Init ViewModel ----------
-        viewModel = new ViewModelProvider(this).get(GptViewModel.class);
-        setupViewModelObservers();
-        
-        // ---------- Init OpenAI helper ----------
-        String apiKey = getApiKey();
-        openAiApi = new OpenAiApi(apiKey);
+    // ---------- Init ViewModel ----------
+    viewModel = new ViewModelProvider(this).get(GptViewModel.class);
+    setupViewModelObservers();
 
-        // ---------- Hide action bar (only this activity) ----------
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.hide();
+    // ---------- Init OpenAI helper ----------
+    String apiKey = getApiKey();
+    openAiApi = new OpenAiApi(apiKey);
 
-        // ---------- Init views ----------
-        chatRecyclerView = findViewById(R.id.chatRecyclerView);
-        messageInput = findViewById(R.id.messageInput);
-        ImageButton sendButton = findViewById(R.id.sendButton);
-        MaterialToolbar toolbar = findViewById(R.id.chatToolbar);
+    // ---------- Hide action bar (only this activity) ----------
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) actionBar.hide();
 
-        // Toolbar back button
-        toolbar.setNavigationOnClickListener(v -> finish());
+    // ---------- Init views ----------
+    chatRecyclerView = findViewById(R.id.chatRecyclerView);
+    messageInput = findViewById(R.id.messageInput);
+    ImageButton sendButton = findViewById(R.id.sendButton);
+    MaterialToolbar toolbar = findViewById(R.id.chatToolbar);
 
-        // ---------- RecyclerView ----------
-        chatAdapter = new ChatbotAdapter(visibleMessages); // CHANGED
-        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatRecyclerView.setAdapter(chatAdapter);
+    // Toolbar back button
+    toolbar.setNavigationOnClickListener(v -> finish());
 
-        // ---------- Add system prompt (not displayed) ----------
-        history.add(SYSTEM_PROMPT); // NEW
+    // ---------- RecyclerView ----------
+    chatAdapter = new ChatbotAdapter(visibleMessages); // CHANGED
+    chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    chatRecyclerView.setAdapter(chatAdapter);
 
-        // ---------- Assistant welcome (displayed) ----------
-        ChatMessageGpt welcome =
-                new ChatMessageGpt(
-                        "assistant",
-                        "🎉 Welcome to PartyMaker app help – the perfect app for planning parties!\n\n"
-                                + "I'm here to help you with any question or issue. Ask me how to add friends, create a group, manage an event, or anything else – and I'll explain it to you step-by-step in English.\n\n"
-                                + "How can I help?");
-        history.add(welcome);
-        visibleMessages.add(welcome); // NEW
-        chatAdapter.notifyDataSetChanged();
+    // ---------- Add system prompt (not displayed) ----------
+    history.add(SYSTEM_PROMPT); // NEW
 
-        // ---------- Keyboard hint to English ----------
-        messageInput.setImeHintLocales(new LocaleList(new Locale("en")));
+    // ---------- Assistant welcome (displayed) ----------
+    ChatMessageGpt welcome =
+        new ChatMessageGpt(
+            "assistant",
+            "🎉 Welcome to PartyMaker app help – the perfect app for planning parties!\n\n"
+                + "I'm here to help you with any question or issue. Ask me how to add friends, create a group, manage an event, or anything else – and I'll explain it to you step-by-step in English.\n\n"
+                + "How can I help?");
+    history.add(welcome);
+    visibleMessages.add(welcome); // NEW
+    chatAdapter.notifyDataSetChanged();
 
-        // ---------- Send button ----------
-        sendButton.setOnClickListener(
-                v -> {
-                    String userText = messageInput.getText().toString().trim();
-                    if (!userText.isEmpty()) {
-                        sendMessage(userText);
-                        messageInput.setText("");
-                    }
-                });
-    }
-    
-    /**
-     * Sets up observers for ViewModel LiveData
-     */
-    private void setupViewModelObservers() {
-        viewModel.getChatHistory().observe(this, messages -> {
-            if (messages != null) {
+    // ---------- Keyboard hint to English ----------
+    messageInput.setImeHintLocales(new LocaleList(new Locale("en")));
+
+    // ---------- Send button ----------
+    sendButton.setOnClickListener(
+        v -> {
+          String userText = messageInput.getText().toString().trim();
+          if (!userText.isEmpty()) {
+            sendMessage(userText);
+            messageInput.setText("");
+          }
+        });
+  }
+
+  /** Sets up observers for ViewModel LiveData */
+  private void setupViewModelObservers() {
+    viewModel
+        .getChatHistory()
+        .observe(
+            this,
+            messages -> {
+              if (messages != null) {
                 visibleMessages.clear();
                 // Convert ChatMessage to ChatMessageGpt
                 for (com.example.partymaker.data.model.ChatMessage msg : messages) {
-                    ChatMessageGpt gptMsg = new ChatMessageGpt(
-                        msg.getSenderKey().equals("gpt") ? "assistant" : "user",
-                        msg.getMessage()
-                    );
-                    visibleMessages.add(gptMsg);
+                  ChatMessageGpt gptMsg =
+                      new ChatMessageGpt(
+                          msg.getSenderKey().equals("gpt") ? "assistant" : "user",
+                          msg.getMessage());
+                  visibleMessages.add(gptMsg);
                 }
                 chatAdapter.notifyDataSetChanged();
                 scrollToBottom();
-            }
-        });
-        
-        viewModel.getIsTyping().observe(this, isTyping -> {
-            // Could show typing indicator here
-        });
-        
-        viewModel.getIsLoading().observe(this, isLoading -> {
-            // Disable send button while loading
-            findViewById(R.id.sendButton).setEnabled(!isLoading);
-        });
-    }
-    
-    private void scrollToBottom() {
-        if (chatAdapter.getItemCount() > 0) {
-            chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-        }
-    }
+              }
+            });
 
-    // ------------------------------------------------------------------------
-    // Get API key from assets/local.properties
-    // ------------------------------------------------------------------------
-    private String getApiKey() {
-        try (InputStream inputStream = getAssets().open("local.properties")) {
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties.getProperty("OPENAI_API_KEY", "");
-        } catch (IOException e) {
-            Toast.makeText(this, "API key error", Toast.LENGTH_SHORT).show();
-            return "";
-        }
+    viewModel
+        .getIsTyping()
+        .observe(
+            this,
+            isTyping -> {
+              // Could show typing indicator here
+            });
+
+    viewModel
+        .getIsLoading()
+        .observe(
+            this,
+            isLoading -> {
+              // Disable send button while loading
+              findViewById(R.id.sendButton).setEnabled(!isLoading);
+            });
+  }
+
+  private void scrollToBottom() {
+    if (chatAdapter.getItemCount() > 0) {
+      chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
     }
+  }
 
-    // ------------------------------------------------------------------------
-    // Send user message
-    // ------------------------------------------------------------------------
-    @SuppressLint("NotifyDataSetChanged")
-    private void sendMessage(String userText) {
-        // ---------- User message ----------
-        ChatMessageGpt userMsg = new ChatMessageGpt("user", userText);
-        visibleMessages.add(userMsg); // display
-        history.add(userMsg); // for history
-        chatAdapter.notifyDataSetChanged();
-        chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
+  // ------------------------------------------------------------------------
+  // Get API key from assets/local.properties
+  // ------------------------------------------------------------------------
+  private String getApiKey() {
+    try (InputStream inputStream = getAssets().open("local.properties")) {
+      Properties properties = new Properties();
+      properties.load(inputStream);
+      return properties.getProperty("OPENAI_API_KEY", "");
+    } catch (IOException e) {
+      Toast.makeText(this, "API key error", Toast.LENGTH_SHORT).show();
+      return "";
+    }
+  }
 
-        // ---------- Call OpenAI ----------
-        executor.execute(
+  // ------------------------------------------------------------------------
+  // Send user message
+  // ------------------------------------------------------------------------
+  @SuppressLint("NotifyDataSetChanged")
+  private void sendMessage(String userText) {
+    // ---------- User message ----------
+    ChatMessageGpt userMsg = new ChatMessageGpt("user", userText);
+    visibleMessages.add(userMsg); // display
+    history.add(userMsg); // for history
+    chatAdapter.notifyDataSetChanged();
+    chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
+
+    // ---------- Call OpenAI ----------
+    executor.execute(
+        () -> {
+          try {
+            String answer = openAiApi.sendMessageWithHistory(history);
+
+            ChatMessageGpt assistantMsg = new ChatMessageGpt("assistant", answer);
+
+            ThreadUtils.runOnMainThread(
                 () -> {
-                    try {
-                        String answer = openAiApi.sendMessageWithHistory(history);
-
-                        ChatMessageGpt assistantMsg = new ChatMessageGpt("assistant", answer);
-
-                        ThreadUtils.runOnMainThread(
-                                () -> {
-                                    history.add(assistantMsg); // for continued context
-                                    visibleMessages.add(assistantMsg); // for display
-                                    chatAdapter.notifyDataSetChanged();
-                                    chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
-                                });
-
-                    } catch (Exception e) {
-                        ThreadUtils.runOnMainThread(
-                                () -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                    }
+                  history.add(assistantMsg); // for continued context
+                  visibleMessages.add(assistantMsg); // for display
+                  chatAdapter.notifyDataSetChanged();
+                  chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
                 });
-    }
+
+          } catch (Exception e) {
+            ThreadUtils.runOnMainThread(
+                () -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+          }
+        });
+  }
 }
