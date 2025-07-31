@@ -148,9 +148,9 @@ public class UserRepository {
                         Log.e(TAG, "Error retrieving users: " + errorMessage);
 
                         // If we have cached data, use it as fallback
-                        if (cachedUsers != null && !cachedUsers.isEmpty()) {
+                        if (!userCache.isEmpty()) {
                             Log.d(TAG, "Using cached users as fallback");
-                            callback.onDataLoaded(new ArrayList<>(cachedUsers.values()));
+                            callback.onDataLoaded(new ArrayList<>(userCache.values()));
                         } else {
                             callback.onError(errorMessage);
                         }

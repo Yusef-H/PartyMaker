@@ -14,6 +14,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.system.ThreadUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -373,9 +374,26 @@ public class GroupRepository {
      * @return LiveData with all groups
      */
     public LiveData<Result<List<Group>>> getAllGroupsLiveData() {
-        // This is a placeholder implementation
-        // In a real app, you'd implement this properly
-        return null;
+        if (database == null) {
+            Log.e(TAG, "Database not initialized. Call initialize() first.");
+            return null;
+        }
+
+        // Transform the Room LiveData to include Result wrapper
+        LiveData<List<Group>> roomLiveData = database.groupDao().observeAllGroups();
+        
+        // Create a MediatorLiveData to transform the data
+        androidx.lifecycle.MediatorLiveData<Result<List<Group>>> mediatorLiveData = new androidx.lifecycle.MediatorLiveData<>();
+        
+        mediatorLiveData.addSource(roomLiveData, groups -> {
+            if (groups != null) {
+                mediatorLiveData.setValue(Result.success(groups));
+            } else {
+                mediatorLiveData.setValue(Result.success(new ArrayList<>()));
+            }
+        });
+        
+        return mediatorLiveData;
     }
 
     /**
@@ -403,12 +421,22 @@ public class GroupRepository {
 
                     // Filter groups for this user
                     if (cachedGroups != null && !cachedGroups.isEmpty()) {
+                        Log.d(TAG, "Filtering " + cachedGroups.size() + " cached groups for user: " + userKey);
                         for (Group group : cachedGroups) {
-                            if ((group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey))
-                                    || (group.getAdminKey() != null && group.getAdminKey().equals(userKey))) {
+                            boolean isAdmin = (group.getAdminKey() != null && group.getAdminKey().equals(userKey));
+                            boolean isMember = (group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey));
+                            
+                            if (isAdmin || isMember) {
                                 userGroups.add(group);
+                                Log.d(TAG, "Group " + group.getGroupName() + " belongs to user " + userKey + 
+                                     " (admin: " + isAdmin + ", member: " + isMember + ")");
+                            } else {
+                                Log.d(TAG, "Group " + group.getGroupName() + " does NOT belong to user " + userKey + 
+                                     " (adminKey: " + group.getAdminKey() + ")");
                             }
                         }
+                    } else {
+                        Log.d(TAG, "No cached groups found or empty cache");
                     }
 
                     if (!userGroups.isEmpty() && !forceRefresh) {
@@ -489,6 +517,79 @@ public class GroupRepository {
                                 });
                     }
                 });
+    }
+
+    /**
+     * Joins a group for the specified user.
+     *
+     * @param groupKey The group key
+     * @param userKey  The user key
+     * @param callback Callback for operation result
+     */
+    public void joinGroup(String groupKey, String userKey, final OperationCallback callback) {
+        if (groupKey == null || groupKey.isEmpty()) {
+            callback.onError("Invalid group key");
+            return;
+        }
+        
+        if (userKey == null || userKey.isEmpty()) {
+            callback.onError("Invalid user key");
+            return;
+        }
+
+        Log.d(TAG, "Joining group: " + groupKey + " for user: " + userKey);
+        
+        // Add user to group's friendKeys
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("friendKeys/" + userKey, true);
+        
+        updateGroup(groupKey, updates, callback);
+    }
+
+    /**
+     * Leaves a group for the specified user.
+     *
+     * @param groupKey The group key
+     * @param userKey  The user key
+     * @param callback Callback for operation result
+     */
+    public void leaveGroup(String groupKey, String userKey, final OperationCallback callback) {
+        if (groupKey == null || groupKey.isEmpty()) {
+            callback.onError("Invalid group key");
+            return;
+        }
+        
+        if (userKey == null || userKey.isEmpty()) {
+            callback.onError("Invalid user key");
+            return;
+        }
+
+        Log.d(TAG, "Leaving group: " + groupKey + " for user: " + userKey);
+        
+        // Remove user from group's friendKeys
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("friendKeys/" + userKey, null); // null removes the field in Firebase
+        
+        updateGroup(groupKey, updates, callback);
+    }
+
+    /**
+     * Clears all cached data and database entries
+     */
+    public void clearCache() {
+        Log.d(TAG, "Clearing GroupRepository cache and database");
+        
+        // Clear database in background thread
+        if (database != null) {
+            ThreadUtils.runInBackground(() -> {
+                try {
+                    database.groupDao().deleteAllGroups();
+                    Log.d(TAG, "All groups deleted from database");
+                } catch (Exception e) {
+                    Log.e(TAG, "Error clearing groups from database", e);
+                }
+            });
+        }
     }
 
     /**
