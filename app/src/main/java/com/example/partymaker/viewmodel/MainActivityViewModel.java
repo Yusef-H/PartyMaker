@@ -331,40 +331,93 @@ public class MainActivityViewModel extends ViewModel {
      * Joins a group
      *
      * @param groupId The group ID
+     * @param userKey The user key
      */
-    public void joinGroup(String groupId) {
+    public void joinGroup(String groupId, String userKey) {
         if (groupId == null || groupId.isEmpty()) {
             Log.e(TAG, "Cannot join group: groupId is null or empty");
             errorMessage.setValue("Invalid group ID");
             return;
         }
+        
+        if (userKey == null || userKey.isEmpty()) {
+            Log.e(TAG, "Cannot join group: userKey is null or empty");
+            errorMessage.setValue("Invalid user key");
+            return;
+        }
 
-        Log.d(TAG, "Joining group: " + groupId);
+        Log.d(TAG, "Joining group: " + groupId + " for user: " + userKey);
         isLoading.setValue(true);
 
-        // This is a placeholder implementation
-        // In a real app, you'd call the repository to join the group
-        isLoading.setValue(false);
+        repository.joinGroup(groupId, userKey, new GroupRepository.OperationCallback() {
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "Successfully joined group: " + groupId);
+                isLoading.setValue(false);
+                
+                // Refresh the group data to show the updated membership
+                loadGroup(groupId, true);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Error joining group: " + error);
+                errorMessage.setValue("Failed to join group: " + error);
+                isLoading.setValue(false);
+            }
+        });
     }
 
     /**
      * Leaves a group
      *
      * @param groupId The group ID
+     * @param userKey The user key
      */
-    public void leaveGroup(String groupId) {
+    public void leaveGroup(String groupId, String userKey) {
         if (groupId == null || groupId.isEmpty()) {
             Log.e(TAG, "Cannot leave group: groupId is null or empty");
             errorMessage.setValue("Invalid group ID");
             return;
         }
+        
+        if (userKey == null || userKey.isEmpty()) {
+            Log.e(TAG, "Cannot leave group: userKey is null or empty");
+            errorMessage.setValue("Invalid user key");
+            return;
+        }
 
-        Log.d(TAG, "Leaving group: " + groupId);
+        Log.d(TAG, "Leaving group: " + groupId + " for user: " + userKey);
         isLoading.setValue(true);
 
-        // This is a placeholder implementation
-        // In a real app, you'd call the repository to leave the group
-        isLoading.setValue(false);
+        repository.leaveGroup(groupId, userKey, new GroupRepository.OperationCallback() {
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "Successfully left group: " + groupId);
+                isLoading.setValue(false);
+                
+                // Remove the group from the list since user is no longer a member
+                List<Group> currentList = groupList.getValue();
+                if (currentList != null) {
+                    List<Group> newList = new ArrayList<>(currentList);
+                    newList.removeIf(group -> groupId.equals(group.getGroupKey()));
+                    groupList.setValue(newList);
+                }
+                
+                // Clear selected group if it was the left group
+                Group selectedGroupValue = selectedGroup.getValue();
+                if (selectedGroupValue != null && groupId.equals(selectedGroupValue.getGroupKey())) {
+                    selectedGroup.setValue(null);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Error leaving group: " + error);
+                errorMessage.setValue("Failed to leave group: " + error);
+                isLoading.setValue(false);
+            }
+        });
     }
 
     /**
@@ -389,6 +442,17 @@ public class MainActivityViewModel extends ViewModel {
      */
     public void clearError() {
         errorMessage.setValue(null);
+    }
+
+    /**
+     * Clears all data from the ViewModel (used during logout)
+     */
+    public void clearAllData() {
+        Log.d(TAG, "Clearing all ViewModel data");
+        groupList.setValue(new ArrayList<>());
+        selectedGroup.setValue(null);
+        errorMessage.setValue(null);
+        isLoading.setValue(false);
     }
 
     /**
