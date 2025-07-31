@@ -33,10 +33,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
+import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -124,6 +126,11 @@ public class RegisterActivity extends AppCompatActivity {
      * Number of completed fields.
      */
     private int completedFields = 0;
+    
+    /**
+     * Authentication ViewModel
+     */
+    private AuthViewModel authViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +148,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Initialize UI components
         initializeViews();
+        
+        // Initialize ViewModel
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        setupViewModelObservers();
 
         // Create notification channel
         createNotificationChannel();
@@ -156,6 +167,53 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Set up form progress tracking
         setupFormProgressTracking();
+    }
+    
+    /**
+     * Sets up observers for AuthViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        authViewModel.getIsLoading().observe(this, isLoading -> {
+            btnRegister.setEnabled(!isLoading);
+            if (isLoading) {
+                animateLoadingButton();
+            } else {
+                btnRegister.setText(getString(R.string.register));
+            }
+        });
+        
+        authViewModel.getErrorMessage().observe(this, errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        authViewModel.getSuccessMessage().observe(this, successMessage -> {
+            if (successMessage != null && successMessage.contains("Account created successfully")) {
+                String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
+                
+                // Show celebration animation
+                showCelebrationAnimation(username);
+                
+                // Send success notification
+                sendSuccessNotification(username);
+                
+                // Navigate to login screen after celebration
+                new Handler(Looper.getMainLooper())
+                        .postDelayed(() -> {
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }, 3000);
+            }
+        });
+        
+        authViewModel.getIsRegistrationMode().observe(this, isRegistrationMode -> {
+            // Set registration mode to true for this activity
+            if (!isRegistrationMode) {
+                authViewModel.setRegistrationMode(true);
+            }
+        });
     }
 
     /**
@@ -681,40 +739,10 @@ public class RegisterActivity extends AppCompatActivity {
         final String email = Objects.requireNonNull(etEmail.getText()).toString().trim().toLowerCase();
         final String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
         String password = Objects.requireNonNull(etPassword.getText()).toString();
+        String confirmPassword = password; // In this case, we don't have a separate confirm field
 
-        DBRef.Auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(
-                        RegisterActivity.this,
-                        task -> {
-                            // Re-enable button
-                            btnRegister.setEnabled(true);
-                            btnRegister.setText(getString(R.string.register));
-
-                            if (task.isSuccessful()) {
-                                // Show celebration animation
-                                showCelebrationAnimation(username);
-
-                                // Send success notification
-                                sendSuccessNotification(username);
-
-                                // Save user data to database
-                                User user = new User(username, email);
-                                DBRef.refUsers.child(email.replace('.', ' ')).setValue(user);
-
-                                // Navigate to login screen after celebration
-                                new Handler(Looper.getMainLooper())
-                                        .postDelayed(
-                                                () -> {
-                                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                                    startActivity(intent);
-                                                    finish();
-                                                },
-                                                3000);
-
-                            } else {
-                                handleRegistrationError(task.getException());
-                            }
-                        });
+        // Use AuthViewModel for registration
+        authViewModel.registerWithEmail(email, password, confirmPassword, username);
     }
 
     @SuppressLint("SetTextI18n")

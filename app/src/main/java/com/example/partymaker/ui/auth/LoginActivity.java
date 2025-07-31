@@ -16,11 +16,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -89,6 +91,11 @@ public class LoginActivity extends AppCompatActivity {
      * Firebase authentication instance.
      */
     private FirebaseAuth mAuth;
+    
+    /**
+     * Authentication ViewModel
+     */
+    private AuthViewModel authViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +107,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        
+        // Initialize ViewModel
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        setupViewModelObservers();
 
         // Add debug option to reset test user password
         resetTestUserPassword();
@@ -137,6 +148,43 @@ public class LoginActivity extends AppCompatActivity {
         btnAbout.startAnimation(myFadeInAnimation);
 
         eventHandler();
+    }
+    
+    /**
+     * Sets up observers for AuthViewModel LiveData
+     */
+    private void setupViewModelObservers() {
+        authViewModel.getIsLoading().observe(this, isLoading -> {
+            btnLogin.setEnabled(!isLoading);
+            btnGoogleSignIn.setEnabled(!isLoading);
+        });
+        
+        authViewModel.getErrorMessage().observe(this, errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                btnResetPass.setVisibility(View.VISIBLE);
+            }
+        });
+        
+        authViewModel.getSuccessMessage().observe(this, successMessage -> {
+            if (successMessage != null) {
+                Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        authViewModel.getIsAuthenticated().observe(this, isAuthenticated -> {
+            if (isAuthenticated) {
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
+                editor.apply();
+                
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                btnAbout.clearAnimation();
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     /**
@@ -251,62 +299,25 @@ public class LoginActivity extends AppCompatActivity {
                         SignIn();
                     }
 
-                    // connection between firebase and login button
+                    // connection between firebase and login button using ViewModel
                     private void SignIn() {
                         String email = Objects.requireNonNull(etEmail.getText()).toString();
                         String password = Objects.requireNonNull(etPassword.getText()).toString();
-                        if (email.matches("") || password.matches("")) {
-                            Toast.makeText(LoginActivity.this, "input both to login", Toast.LENGTH_SHORT).show();
-                        } else {
-                            final ProgressDialog pd =
-                                    ProgressDialog.show(LoginActivity.this, "connecting", "please wait... ", true);
-                            pd.show();
-
-                            mAuth
-                                    .signInWithEmailAndPassword(email, password)
-                                    .addOnCompleteListener(
-                                            LoginActivity.this,
-                                            task -> {
-                                                pd.dismiss();
-                                                if (task.isSuccessful()) {
-                                                    // Set user session using AuthHelper
-                                                    AuthHelper.setCurrentUserSession(LoginActivity.this, email);
-
-                                                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                                                    SharedPreferences.Editor editor = settings.edit();
-                                                    editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                                                    editor.apply();
-
-                                                    Toast.makeText(
-                                                                    LoginActivity.this, "Connected Successfully", Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                                    btnAbout.clearAnimation();
-                                                    startActivity(intent);
-                                                    finish();
-                                                } else {
-                                                    // Log the error details
-                                                    Log.e("LoginActivity", "Authentication failed", task.getException());
-                                                    String errorMessage =
-                                                            task.getException() != null
-                                                                    ? task.getException().getMessage()
-                                                                    : "Unknown error";
-                                                    Log.e("LoginActivity", "Error details: " + errorMessage);
-
-                                                    Toast.makeText(
-                                                                    LoginActivity.this,
-                                                                    "Invalid Email or Password",
-                                                                    Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    btnResetPass.setVisibility(View.VISIBLE);
-                                                }
-                                            });
+                        
+                        authViewModel.loginWithEmail(email, password);
+                        
+                        // Set user session using AuthHelper when login succeeds
+                        if (!email.isEmpty()) {
+                            AuthHelper.setCurrentUserSession(LoginActivity.this, email);
                         }
                     }
                 });
 
-        // Google Sign In button click listener
-        btnGoogleSignIn.setOnClickListener(v -> signInWithGoogle());
+        // Google Sign In button click listener - use ViewModel's GoogleSignInClient
+        btnGoogleSignIn.setOnClickListener(v -> {
+            Intent signInIntent = authViewModel.getGoogleSignInClient().getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
 
         // Press Here Onclick
         btnPress.setOnClickListener(
@@ -331,15 +342,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Initiates Google sign-in flow.
-     */
-    private void signInWithGoogle() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    /**
-     * Handles the result of Google sign-in intent.
+     * Handles the result of Google sign-in intent using ViewModel.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -347,54 +350,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                Toast.makeText(
-                                LoginActivity.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT)
-                        .show();
-            }
+            authViewModel.signInWithGoogle(task);
         }
-    }
-
-    /**
-     * Authenticates with Firebase using Google ID token.
-     *
-     * @param idToken the Google ID token
-     */
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth
-                .signInWithCredential(credential)
-                .addOnCompleteListener(
-                        this,
-                        task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success
-                                FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                                if (firebaseUser != null) {
-                                    String email = firebaseUser.getEmail();
-                                    String username = firebaseUser.getDisplayName();
-
-                                    // Use a Map instead of User object to avoid Firebase serialization issues
-                                    Map<String, Object> userData = new HashMap<>();
-                                    userData.put("username", username);
-                                    userData.put("email", email);
-                                    userData.put("userKey", java.util.UUID.randomUUID().toString());
-
-                                    // Replace dots with spaces in the email to make it a valid key in Firebase
-                                    assert email != null;
-                                    DBRef.refUsers.child(email.replace('.', ' ')).setValue(userData);
-                                }
-
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Toast.makeText(LoginActivity.this, task.toString(), Toast.LENGTH_LONG).show();
-                            }
-                        });
     }
 }

@@ -34,7 +34,7 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
-import com.example.partymaker.viewmodel.UserViewModel;
+import com.example.partymaker.viewmodel.ProfileViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
@@ -53,7 +53,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText etUsername;
     private Button btnSaveProfile;
     private ProgressBar progressBar;
-    private UserViewModel userViewModel;
+    private ProfileViewModel profileViewModel;
     private View rootLayout;
     private final ActivityResultLauncher<String> imagePickerLauncher =
             registerForActivityResult(
@@ -69,8 +69,8 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_edit_profile);
 
         // Initialize ViewModel
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.setAppContext(getApplicationContext());
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        profileViewModel.setAppContext(getApplicationContext());
 
         // Hide action bar to remove black bar at top
         androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
@@ -148,7 +148,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void setupObservers() {
         // Observe current user
-        userViewModel
+        profileViewModel
                 .getCurrentUser()
                 .observe(
                         this,
@@ -159,7 +159,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         });
 
         // Observe loading state
-        userViewModel
+        profileViewModel
                 .getIsLoading()
                 .observe(
                         this,
@@ -169,31 +169,31 @@ public class EditProfileActivity extends AppCompatActivity {
                         });
 
         // Observe error messages
-        userViewModel
+        profileViewModel
                 .getErrorMessage()
                 .observe(
                         this,
                         error -> {
                             if (error != null && !error.isEmpty()) {
                                 showError(error);
-                                userViewModel.clearError();
+                                profileViewModel.clearError();
                             }
                         });
 
         // Observe success messages
-        userViewModel
+        profileViewModel
                 .getSuccessMessage()
                 .observe(
                         this,
                         success -> {
                             if (success != null && !success.isEmpty()) {
                                 showSuccess(success);
-                                userViewModel.clearSuccess();
+                                profileViewModel.clearSuccess();
                             }
                         });
 
         // Observe network error type
-        userViewModel
+        profileViewModel
                 .getNetworkErrorType()
                 .observe(
                         this,
@@ -258,7 +258,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     loadProfileImageFromStorage(userKey);
 
                     // Try to get cached user data
-                    User cachedUser = userViewModel.getCurrentUser().getValue();
+                    User cachedUser = profileViewModel.getCurrentUser().getValue();
                     if (cachedUser != null) {
                         updateUI(cachedUser);
                     }
@@ -272,7 +272,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         // Force refresh from server to ensure we have the latest data
-        userViewModel.loadCurrentUser(this, true);
+        profileViewModel.loadCurrentUser(this, true);
 
         // Direct load from Firebase as backup
         try {
@@ -387,7 +387,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             updates.put("username", username);
 
                             // Update the user profile
-                            userViewModel.updateCurrentUser(updates);
+                            profileViewModel.updateCurrentUser(updates);
                         },
                         500); // 500ms delay to allow network status to update
     }
@@ -615,7 +615,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                                                             .show();
 
                                                                     // Also update in ViewModel to keep UI in sync
-                                                                    userViewModel.updateCurrentUser(updates);
+                                                                    profileViewModel.updateCurrentUser(updates);
 
                                                                     // Save to local cache for offline use
                                                                     String localCachePath =
@@ -697,7 +697,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                                                             .show();
 
                                                                     // Also update in ViewModel to keep UI in sync
-                                                                    userViewModel.updateCurrentUser(updates);
+                                                                    profileViewModel.updateCurrentUser(updates);
 
                                                                     // Save to local cache for offline use
                                                                     String localCachePath =

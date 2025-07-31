@@ -30,7 +30,7 @@ import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
-import com.example.partymaker.viewmodel.GroupViewModel;
+import com.example.partymaker.viewmodel.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabChat;
 
     // Data Components
-    private GroupViewModel viewModel;
+    private MainActivityViewModel viewModel;
     private String UserKey;
     private GroupAdapter groupAdapter;
 
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Initialize ViewModel
-            viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
+            viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
             initializeViews();
             setupActionBar();
