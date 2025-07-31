@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_party_screen"
-    android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     android:padding="20dp"
     tools:context="com.example.partymaker.ui.group.ChangeDateActivity">
 
@@ -21,45 +21,45 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:layout_marginHorizontal="20dp"
-        android:orientation="vertical"
+        android:layout_marginTop="30dp"
         android:background="@drawable/rounded_white_background"
+        android:orientation="vertical"
         android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
             android:text="@string/select_date"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvSelectedDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_date"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:textAlignment="center"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_border"
+            android:gravity="center"
             android:padding="15dp"
-            android:layout_marginBottom="10dp" />
+            android:text="@string/select_date"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btnSelectDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@drawable/rounded_button"
+            android:padding="10dp"
             android:text="@string/choose_date"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:background="@drawable/rounded_button"
-            android:padding="10dp" />
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
@@ -67,45 +67,45 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
-        android:orientation="vertical"
+        android:layout_marginTop="20dp"
         android:background="@drawable/rounded_white_background"
+        android:orientation="vertical"
         android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
             android:text="@string/select_time"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvSelectedTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_time"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textAlignment="center"
-            android:gravity="center"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_border"
+            android:gravity="center"
             android:padding="15dp"
-            android:layout_marginBottom="10dp" />
+            android:text="@string/select_time"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btnSelectTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@drawable/rounded_button"
+            android:padding="10dp"
             android:text="@string/choose_time"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:background="@drawable/rounded_button"
-            android:padding="10dp" />
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
@@ -113,13 +113,13 @@
         android:id="@+id/tvInstructions2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/choose_a_new_date_above"
-        android:textAlignment="center"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:visibility="invisible"
+        android:text="@string/choose_a_new_date_above"
+        android:textAlignment="center"
         android:textColor="@color/black"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/btnChangeDate"

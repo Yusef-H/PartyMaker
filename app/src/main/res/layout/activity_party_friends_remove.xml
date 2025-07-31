@@ -34,10 +34,10 @@
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:layout_marginBottom="16dp">
 
             <EditText
                 android:id="@+id/etDeleteEmail"
@@ -53,8 +53,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="@string/remove_friend"
             android:background="@drawable/button_rounded_primary"
+            android:text="@string/remove_friend"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -62,9 +62,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@string/friends_in_group"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:textStyle="bold" />
 
         <ListView
             android:id="@+id/friends_remove_list"
@@ -78,40 +78,40 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/toolbar"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/help"
         android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/toolbar"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/need_help"
         android:visibility="gone" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/toolbar"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/hide"
         android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/toolbar"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/hide_instructions"
         android:visibility="gone" />
 

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_party_screen"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:weightSum="10"
-    android:fitsSystemWindows="true"
     tools:context="com.example.partymaker.ui.group.AdminSettingsActivity">
 
     <RelativeLayout
@@ -31,17 +31,17 @@
             android:id="@+id/imgEditGroup"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/ic_party_set_picture"
             android:layout_centerHorizontal="true"
-            android:clickable="true" />
+            android:layout_marginTop="40dp"
+            android:clickable="true"
+            android:src="@drawable/ic_party_set_picture" />
 
         <TextView
             android:id="@+id/tvNameGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/imgEditGroup"
+            android:layout_centerHorizontal="true"
             android:text="@string/groupname"
             android:textColor="@android:color/white"
             android:textSize="34sp" />
@@ -73,11 +73,11 @@
             android:id="@+id/Card1"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_rowWeight="1"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp">
 
@@ -114,11 +114,11 @@
             android:id="@+id/Card5"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_rowWeight="1"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp">
 
@@ -155,11 +155,11 @@
             android:id="@+id/Card6"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_rowWeight="1"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp">
 
@@ -195,11 +195,11 @@
             android:id="@+id/Card4"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_rowWeight="1"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp">
 
