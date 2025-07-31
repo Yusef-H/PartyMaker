@@ -1,6 +1,7 @@
 package com.example.partymaker;
 
 import android.os.AsyncTask;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class AndroidClientExample {
                     URL url = new URL(SERVER_URL + "/api/firebase/" + params[0]);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    
+
                     int responseCode = connection.getResponseCode();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
                         BufferedReader reader = new BufferedReader(
@@ -91,7 +92,7 @@ public class AndroidClientExample {
                     URL url = new URL(SERVER_URL + "/api/firebase/list/" + params[0]);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    
+
                     int responseCode = connection.getResponseCode();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
                         BufferedReader reader = new BufferedReader(
@@ -151,15 +152,15 @@ public class AndroidClientExample {
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type", "application/json");
                     connection.setDoOutput(true);
-                    
+
                     JSONObject jsonObject = mapToJson((Map<String, Object>) params[1]);
                     String jsonString = jsonObject.toString();
-                    
+
                     try (OutputStream os = connection.getOutputStream()) {
                         byte[] input = jsonString.getBytes(StandardCharsets.UTF_8);
                         os.write(input, 0, input.length);
                     }
-                    
+
                     int responseCode = connection.getResponseCode();
                     return responseCode == HttpURLConnection.HTTP_OK;
                 } catch (IOException | JSONException e) {
@@ -197,15 +198,15 @@ public class AndroidClientExample {
                     connection.setRequestMethod("PUT");
                     connection.setRequestProperty("Content-Type", "application/json");
                     connection.setDoOutput(true);
-                    
+
                     JSONObject jsonObject = mapToJson((Map<String, Object>) params[1]);
                     String jsonString = jsonObject.toString();
-                    
+
                     try (OutputStream os = connection.getOutputStream()) {
                         byte[] input = jsonString.getBytes(StandardCharsets.UTF_8);
                         os.write(input, 0, input.length);
                     }
-                    
+
                     int responseCode = connection.getResponseCode();
                     return responseCode == HttpURLConnection.HTTP_OK;
                 } catch (IOException | JSONException e) {
@@ -241,7 +242,7 @@ public class AndroidClientExample {
                     URL url = new URL(SERVER_URL + "/api/firebase/" + params[0]);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("DELETE");
-                    
+
                     int responseCode = connection.getResponseCode();
                     return responseCode == HttpURLConnection.HTTP_OK;
                 } catch (IOException e) {
@@ -297,16 +298,19 @@ public class AndroidClientExample {
     // Callback interfaces
     public interface DataCallback {
         void onSuccess(Map<String, Object> data);
+
         void onError(String errorMessage);
     }
 
     public interface ListDataCallback {
         void onSuccess(List<Map<String, Object>> dataList);
+
         void onError(String errorMessage);
     }
 
     public interface SaveCallback {
         void onSuccess();
+
         void onError(String errorMessage);
     }
 } 
