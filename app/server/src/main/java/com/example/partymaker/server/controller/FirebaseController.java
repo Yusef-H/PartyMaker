@@ -1,6 +1,7 @@
 package com.example.partymaker.server.controller;
 
 import com.example.partymaker.server.service.FirebaseService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class FirebaseController {
 
     /**
      * Retrieves data from Firebase at the specified path.
+     *
      * @param path The path in Firebase.
      * @return Map of data at the path, or 500 on error.
      */
@@ -44,6 +46,7 @@ public class FirebaseController {
 
     /**
      * Retrieves a list of data objects from Firebase at the specified path.
+     *
      * @param path The path in Firebase.
      * @return List of maps representing the data, or 500 on error.
      */
@@ -60,6 +63,7 @@ public class FirebaseController {
 
     /**
      * Saves data to Firebase at the specified path.
+     *
      * @param path The path in Firebase.
      * @param data The data to save.
      * @return 200 OK on success, 500 on error.
@@ -77,7 +81,8 @@ public class FirebaseController {
 
     /**
      * Updates data at the specified path in Firebase.
-     * @param path The path in Firebase.
+     *
+     * @param path    The path in Firebase.
      * @param updates The updates to apply.
      * @return 200 OK on success, 500 on error.
      */
@@ -94,6 +99,7 @@ public class FirebaseController {
 
     /**
      * Deletes data at the specified path in Firebase.
+     *
      * @param path The path in Firebase.
      * @return 200 OK on success, 500 on error.
      */
@@ -107,9 +113,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves user groups for a specific user.
+     *
      * @param userId The user ID.
      * @return Map of user groups, or 500 on error.
      */
@@ -124,11 +131,12 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Saves user groups for a specific user.
+     *
      * @param userId The user ID.
-     * @param data The data to save.
+     * @param data   The data to save.
      * @return 200 OK on success, 500 on error.
      */
     @PostMapping("/UserGroups/{userId}")
@@ -141,9 +149,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves a single group by its ID.
+     *
      * @param groupId The group ID.
      * @return The group object, 404 if not found, 500 on error.
      */
@@ -155,7 +164,7 @@ public class FirebaseController {
             Map<String, Object> allGroups = firebaseService.getData("Groups").get();
             System.out.println("DEBUG: Retrieved " + allGroups.size() + " groups from Firebase");
             System.out.println("DEBUG: Available group keys: " + allGroups.keySet());
-            
+
             // Check if the group exists
             if (allGroups.containsKey(groupId)) {
                 System.out.println("DEBUG: Group found! Returning group data");
@@ -170,9 +179,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves all groups from Firebase.
+     *
      * @return Map of all groups, or 500 on error.
      */
     @GetMapping("/Groups")
@@ -188,9 +198,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves all messages from Firebase.
+     *
      * @return Map of all messages, or 500 on error.
      */
     @GetMapping("/GroupsMessages")
@@ -206,9 +217,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves all messages for a specific group.
+     *
      * @param groupId The group ID.
      * @return Map of messages for the group, or 500 on error.
      */
@@ -220,7 +232,7 @@ public class FirebaseController {
             Map<String, Object> allMessages = firebaseService.getData("GroupsMessages").get();
             System.out.println("DEBUG: Retrieved " + allMessages.size() + " messages from Firebase");
             System.out.println("DEBUG: Message keys: " + allMessages.keySet());
-            
+
             // Filter messages for this group
             Map<String, Object> groupMessages = new HashMap<>();
             for (Map.Entry<String, Object> entry : allMessages.entrySet()) {
@@ -238,7 +250,7 @@ public class FirebaseController {
                     System.out.println("DEBUG: Entry value is not a Map: " + entry.getValue());
                 }
             }
-            
+
             System.out.println("DEBUG: Returning " + groupMessages.size() + " messages for group");
             return ResponseEntity.ok(groupMessages);
         } catch (InterruptedException | ExecutionException e) {
@@ -247,11 +259,12 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Saves a message to Firebase under the specified message key.
+     *
      * @param messageKey The message key.
-     * @param data The message data.
+     * @param data       The message data.
      * @return 200 OK on success, 500 on error.
      */
     @PostMapping("/GroupsMessages/{messageKey}")
@@ -264,9 +277,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Updates a group in Firebase (e.g., for updating MessageKeys).
+     *
      * @param groupId The group ID.
      * @param updates The updates to apply.
      * @return 200 OK on success, 500 on error.
@@ -284,9 +298,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Deletes a group from Firebase.
+     *
      * @param groupId The group ID.
      * @return 200 OK on success, 404 if not found, 500 on error.
      */
@@ -303,9 +318,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves all users from Firebase.
+     *
      * @return Map of all users, or 500 on error.
      */
     @GetMapping("/Users")
@@ -321,9 +337,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Retrieves a single user by ID.
+     *
      * @param userId The user ID.
      * @return The user object, 404 if not found, 500 on error.
      */
@@ -335,7 +352,7 @@ public class FirebaseController {
             Map<String, Object> allUsers = firebaseService.getData("Users").get();
             System.out.println("DEBUG: Retrieved " + allUsers.size() + " users from Firebase");
             System.out.println("DEBUG: Available user keys: " + allUsers.keySet());
-            
+
             // Check if the user exists
             if (allUsers.containsKey(userId)) {
                 System.out.println("DEBUG: User found! Returning user data");
@@ -350,11 +367,12 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Saves a user to Firebase.
+     *
      * @param userId The user ID.
-     * @param data The user data.
+     * @param data   The user data.
      * @return 200 OK on success, 500 on error.
      */
     @PostMapping("/Users/{userId}")
@@ -370,10 +388,11 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Updates a user in Firebase.
-     * @param userId The user ID.
+     *
+     * @param userId  The user ID.
      * @param updates The updates to apply.
      * @return 200 OK on success, 500 on error.
      */
@@ -390,9 +409,10 @@ public class FirebaseController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     /**
      * Deletes a user from Firebase.
+     *
      * @param userId The user ID.
      * @return 200 OK on success, 500 on error.
      */

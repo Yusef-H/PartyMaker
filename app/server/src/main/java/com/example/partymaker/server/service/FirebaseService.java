@@ -1,6 +1,7 @@
 package com.example.partymaker.server.service;
 
 import com.google.firebase.database.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,13 @@ public class FirebaseService {
 
     /**
      * Retrieves data from Firebase at the specified path as a Map.
+     *
      * @param path The path in Firebase.
      * @return CompletableFuture with the data map.
      */
     public CompletableFuture<Map<String, Object>> getData(String path) {
         CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
-        
+
         DatabaseReference ref = firebaseDatabase.getReference(path);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -50,18 +52,19 @@ public class FirebaseService {
                 future.completeExceptionally(databaseError.toException());
             }
         });
-        
+
         return future;
     }
 
     /**
      * Retrieves data from Firebase at the specified path as a List of Maps.
+     *
      * @param path The path in Firebase.
      * @return CompletableFuture with the list of maps.
      */
     public CompletableFuture<List<Map<String, Object>>> getDataAsList(String path) {
         CompletableFuture<List<Map<String, Object>>> future = new CompletableFuture<>();
-        
+
         DatabaseReference ref = firebaseDatabase.getReference(path);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -85,19 +88,20 @@ public class FirebaseService {
                 future.completeExceptionally(databaseError.toException());
             }
         });
-        
+
         return future;
     }
 
     /**
      * Saves data to Firebase at the specified path.
+     *
      * @param path The path in Firebase.
      * @param data The data to save.
      * @return CompletableFuture that completes when the operation finishes.
      */
     public CompletableFuture<Void> saveData(String path, Object data) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        
+
         DatabaseReference ref = firebaseDatabase.getReference(path);
         ref.setValue(data, (databaseError, databaseReference) -> {
             if (databaseError != null) {
@@ -106,19 +110,20 @@ public class FirebaseService {
                 future.complete(null);
             }
         });
-        
+
         return future;
     }
 
     /**
      * Updates data at the specified path in Firebase.
-     * @param path The path in Firebase.
+     *
+     * @param path    The path in Firebase.
      * @param updates The updates to apply.
      * @return CompletableFuture that completes when the operation finishes.
      */
     public CompletableFuture<Void> updateData(String path, Map<String, Object> updates) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        
+
         DatabaseReference ref = firebaseDatabase.getReference(path);
         ref.updateChildren(updates, (databaseError, databaseReference) -> {
             if (databaseError != null) {
@@ -127,12 +132,13 @@ public class FirebaseService {
                 future.complete(null);
             }
         });
-        
+
         return future;
     }
 
     /**
      * Deletes data at the specified path in Firebase (sets value to null).
+     *
      * @param path The path in Firebase.
      * @return CompletableFuture that completes when the operation finishes.
      */
