@@ -26,6 +26,7 @@ import androidx.cardview.widget.CardView;
 
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
+import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.auth.AuthHelper;
@@ -45,6 +46,7 @@ public class PartyMainActivity extends AppCompatActivity {
     private String GroupKey;
     private String UserKey;
     private Map<String, String> MessageKeys;
+    private GroupRepository groupRepository;
     private Button back5;
     private TextView tvGroupName;
     private TextView tvCreatedBy;
@@ -145,6 +147,9 @@ public class PartyMainActivity extends AppCompatActivity {
                 return;
             }
 
+            // Initialize repository
+            groupRepository = GroupRepository.getInstance();
+
             // Load group data
             loadGroupData();
 
@@ -165,19 +170,27 @@ public class PartyMainActivity extends AppCompatActivity {
     }
 
     /**
-     * Loads group data from the server with proper error handling
+     * Loads group data from the repository with caching support
      */
     private void loadGroupData() {
+        loadGroupData(false); // Use cache by default
+    }
+
+    /**
+     * Loads group data from the repository with caching support
+     *
+     * @param forceRefresh Whether to force refresh from server
+     */
+    private void loadGroupData(boolean forceRefresh) {
         try {
             // Show loading indicator
             showLoading(true);
 
-            FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
-            serverClient.getGroup(
+            groupRepository.getGroup(
                     GroupKey,
-                    new FirebaseServerClient.DataCallback<>() {
+                    new GroupRepository.DataCallback<Group>() {
                         @Override
-                        public void onSuccess(Group group) {
+                        public void onDataLoaded(Group group) {
                             try {
                                 if (group == null) {
                                     Log.e(TAG, "Group data is null");
@@ -234,7 +247,8 @@ public class PartyMainActivity extends AppCompatActivity {
                             Log.e(TAG, "Failed to get group details: " + errorMessage);
                             showError("Failed to load group details: " + errorMessage);
                         }
-                    });
+                    },
+                    forceRefresh);
 
             // Load messages with error handling
             loadMessages();

@@ -51,6 +51,8 @@ public class JoinGroupActivity extends AppCompatActivity {
     private String CurrentUser;
     private int IsClicked = 1;
     private HashMap<String, Object> FriendKeys;
+    private String groupName;
+    private String groupPrice;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -70,7 +72,7 @@ public class JoinGroupActivity extends AppCompatActivity {
             finish();
             return;
         }
-        String groupName = extras.getGroupName();
+        groupName = extras.getGroupName();
         GroupKey = extras.getGroupKey();
         GroupDay = extras.getGroupDays();
         GroupMonth = extras.getGroupMonths();
@@ -79,7 +81,7 @@ public class JoinGroupActivity extends AppCompatActivity {
         GroupLocation = extras.getGroupLocation();
         String adminKey = extras.getAdminKey();
         String createdAt = extras.getCreatedAt();
-        String groupPrice = extras.getGroupPrice();
+        groupPrice = extras.getGroupPrice();
         FriendKeys = extras.getFriendKeys();
 
         // Get UserKey from AuthHelper instead of Firebase Auth
@@ -273,6 +275,21 @@ public class JoinGroupActivity extends AppCompatActivity {
                         {
                             Intent i1 = new Intent(getBaseContext(), PublicGroupsActivity.class);
                             startActivity(i1);
+                        } else if (finalI == 4) // Share this group
+                        {
+                            // Create a Group object from the current data
+                            Group groupToShare = new Group();
+                            groupToShare.setGroupKey(GroupKey);
+                            groupToShare.setGroupName(groupName);
+                            groupToShare.setGroupLocation(GroupLocation);
+                            groupToShare.setGroupDays(GroupDay);
+                            groupToShare.setGroupMonths(GroupMonth);
+                            groupToShare.setGroupYears(GroupYear);
+                            groupToShare.setGroupHours(GroupHour);
+                            groupToShare.setGroupPrice(groupPrice);
+                            
+                            // Show share options dialog
+                            showShareDialog(groupToShare);
                         }
                     });
         }
@@ -304,5 +321,47 @@ public class JoinGroupActivity extends AppCompatActivity {
             hideViews(tvSeeDate, tvAt, tvDateHours);
         }
         return 2;
+    }
+
+    /**
+     * Shows a dialog with share options for the group
+     */
+    private void showShareDialog(Group group) {
+        try {
+            String[] shareOptions = {
+                "Share via Text",
+                "Share to WhatsApp", 
+                "Share to Facebook",
+                "Share via SMS",
+                "Share via Email"
+            };
+
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("Share Party")
+                    .setItems(shareOptions, (dialog, which) -> {
+                        switch (which) {
+                            case 0: // Share via Text
+                                ShareHelper.sharePartyText(JoinGroupActivity.this, group);
+                                break;
+                            case 1: // Share to WhatsApp
+                                ShareHelper.shareToWhatsApp(JoinGroupActivity.this, group);
+                                break;
+                            case 2: // Share to Facebook
+                                ShareHelper.shareToFacebook(JoinGroupActivity.this, group);
+                                break;
+                            case 3: // Share via SMS
+                                ShareHelper.shareViaSMS(JoinGroupActivity.this, group);
+                                break;
+                            case 4: // Share via Email
+                                ShareHelper.shareViaEmail(JoinGroupActivity.this, group);
+                                break;
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        } catch (Exception e) {
+            Log.e(TAG, "Error showing share dialog", e);
+            Toast.makeText(this, "Error opening share options", Toast.LENGTH_SHORT).show();
+        }
     }
 }

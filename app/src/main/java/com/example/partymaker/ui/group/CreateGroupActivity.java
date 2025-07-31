@@ -732,7 +732,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
                     Toast.makeText(this, "Compressing image...", Toast.LENGTH_SHORT).show();
                     ImageCompressor.compressImage(this, uri, new ImageCompressor.CompressCallback() {
                         @Override
-                        public void onCompressSuccess(File compressedFile) {
+                        public void onCompressSuccess(@NonNull File compressedFile) {
                             ThreadUtils.runOnMainThread(() -> {
                                 Toast.makeText(CreateGroupActivity.this, "Image compressed. Uploading...", Toast.LENGTH_SHORT).show();
                                 uploadGroupImage(Uri.fromFile(compressedFile));

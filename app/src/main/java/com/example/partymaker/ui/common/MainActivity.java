@@ -456,10 +456,7 @@ public class MainActivity extends AppCompatActivity {
             goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
             startActivity(goToNextActivity);
         } else if (itemId == R.id.logout) {
-            AuthHelper.clearAuthData(this);
-            goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(goToNextActivity);
-            finish();
+            handleLogout();
         }
 
         return true;
@@ -474,7 +471,13 @@ public class MainActivity extends AppCompatActivity {
     // Handles user logout process
     private void handleLogout() {
         try {
-            AuthHelper.clearAuthData(this);
+            // Clear ViewModel data first
+            if (viewModel != null) {
+                viewModel.clearAllData();
+            }
+            
+            // Clear all user data including Room database
+            AuthHelper.logout(this);
             navigateToLogin();
             Log.d(TAG, "User logged out successfully");
         } catch (Exception e) {
