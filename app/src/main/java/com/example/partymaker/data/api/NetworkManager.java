@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.partymaker.utils.system.ThreadUtils;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -130,7 +132,7 @@ public class NetworkManager {
      * @param isAvailable Whether the network is available
      */
     private void updateNetworkStatus(final boolean isAvailable) {
-        mainHandler.post(
+        ThreadUtils.runOnMainThread(
                 () -> {
                     if (isNetworkAvailable.getValue() == null
                             || isNetworkAvailable.getValue() != isAvailable) {
@@ -187,7 +189,7 @@ public class NetworkManager {
         final boolean[] completed = {false};
 
         // Timeout handler
-        mainHandler.postDelayed(
+        ThreadUtils.runOnMainThreadDelayed(
                 () -> {
                     if (!completed[0]) {
                         Log.d(TAG, "Network request timed out after " + timeoutMs + "ms");
@@ -200,7 +202,7 @@ public class NetworkManager {
                 timeoutMs);
 
         // Execute the request
-        networkExecutor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     try {
                         runnable.run();

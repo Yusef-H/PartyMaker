@@ -11,6 +11,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.utils.system.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,14 +82,14 @@ public class GroupRepository {
             return;
         }
 
-        executor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     // Try to get from cache first
                     Group cachedGroup = database.groupDao().getGroupByKey(groupKey);
 
                     if (cachedGroup != null && !forceRefresh) {
                         Log.d(TAG, "Group found in cache: " + groupKey);
-                        callback.onDataLoaded(cachedGroup);
+                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedGroup));
                         return;
                     }
 
@@ -100,7 +101,7 @@ public class GroupRepository {
                                 public void onDataLoaded(Group group) {
                                     // Cache the group
                                     if (group != null) {
-                                        executor.execute(
+                                        ThreadUtils.runInBackground(
                                                 () -> {
                                                     database.groupDao().insertGroup(group);
                                                     Log.d(TAG, "Group cached: " + groupKey);
@@ -108,7 +109,7 @@ public class GroupRepository {
                                     }
 
                                     // Return the group
-                                    callback.onDataLoaded(group);
+                                    ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(group));
                                 }
 
                                 @Override
@@ -116,9 +117,9 @@ public class GroupRepository {
                                     // If we have a cached group, return it even if there was an error
                                     if (cachedGroup != null) {
                                         Log.d(TAG, "Returning cached group after server error: " + groupKey);
-                                        callback.onDataLoaded(cachedGroup);
+                                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedGroup));
                                     } else {
-                                        callback.onError(error);
+                                        ThreadUtils.runOnMainThread(() -> callback.onError(error));
                                     }
                                 }
                             });
@@ -160,14 +161,14 @@ public class GroupRepository {
             return;
         }
 
-        executor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     // Try to get from cache first
                     List<Group> cachedGroups = database.groupDao().getAllGroups();
 
                     if (cachedGroups != null && !cachedGroups.isEmpty() && !forceRefresh) {
                         Log.d(TAG, "Groups found in cache: " + cachedGroups.size());
-                        callback.onDataLoaded(cachedGroups);
+                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedGroups));
                         return;
                     }
 
@@ -178,7 +179,7 @@ public class GroupRepository {
                                 public void onDataLoaded(List<Group> groups) {
                                     // Cache the groups
                                     if (groups != null && !groups.isEmpty()) {
-                                        executor.execute(
+                                        ThreadUtils.runInBackground(
                                                 () -> {
                                                     database.groupDao().insertGroups(groups);
                                                     Log.d(TAG, "Groups cached: " + groups.size());
@@ -186,7 +187,7 @@ public class GroupRepository {
                                     }
 
                                     // Return the groups
-                                    callback.onDataLoaded(groups);
+                                    ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(groups));
                                 }
 
                                 @Override
@@ -195,9 +196,9 @@ public class GroupRepository {
                                     if (cachedGroups != null && !cachedGroups.isEmpty()) {
                                         Log.d(
                                                 TAG, "Returning cached groups after server error: " + cachedGroups.size());
-                                        callback.onDataLoaded(cachedGroups);
+                                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedGroups));
                                     } else {
-                                        callback.onError(error);
+                                        ThreadUtils.runOnMainThread(() -> callback.onError(error));
                                     }
                                 }
                             });
@@ -241,7 +242,7 @@ public class GroupRepository {
                     public void onSuccess() {
                         // Cache the group
                         if (database != null) {
-                            executor.execute(
+                            ThreadUtils.runInBackground(
                                     () -> {
                                         database.groupDao().insertGroup(group);
                                         Log.d(TAG, "Group saved and cached: " + groupKey);
@@ -275,7 +276,7 @@ public class GroupRepository {
                     public void onSuccess() {
                         // Update the cached group
                         if (database != null) {
-                            executor.execute(
+                            ThreadUtils.runInBackground(
                                     () -> {
                                         Group cachedGroup = database.groupDao().getGroupByKey(groupKey);
                                         if (cachedGroup != null) {
@@ -320,7 +321,7 @@ public class GroupRepository {
                     public void onSuccess() {
                         // Delete from cache
                         if (database != null) {
-                            executor.execute(
+                            ThreadUtils.runInBackground(
                                     () -> {
                                         database.groupDao().deleteGroupByKey(groupKey);
                                         Log.d(TAG, "Group deleted from cache: " + groupKey);
@@ -394,7 +395,7 @@ public class GroupRepository {
             return;
         }
 
-        executor.execute(
+        ThreadUtils.runInBackground(
                 () -> {
                     // Try to get from cache first
                     List<Group> cachedGroups = database.groupDao().getAllGroups();
@@ -413,7 +414,7 @@ public class GroupRepository {
                     if (!userGroups.isEmpty() && !forceRefresh) {
                         Log.d(TAG, "User groups found in cache: " + userGroups.size());
                         final List<Group> finalUserGroups = userGroups;
-                        mainHandler.post(() -> callback.onDataLoaded(Result.success(finalUserGroups)));
+                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(Result.success(finalUserGroups)));
                         return;
                     }
 
@@ -432,7 +433,7 @@ public class GroupRepository {
         Log.d(TAG, "Getting user groups from server for: " + userKey);
 
         // Notify loading state on main thread
-        mainHandler.post(() -> callback.onDataLoaded(Result.loading()));
+        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(Result.loading()));
 
         serverClient.getUserGroups(
                 userKey,
@@ -444,7 +445,7 @@ public class GroupRepository {
 
                         // Cache the groups
                         if (database != null && !groups.isEmpty()) {
-                            executor.execute(
+                            ThreadUtils.runInBackground(
                                     () -> {
                                         database.groupDao().insertGroups(groups);
                                         Log.d(TAG, "User groups cached: " + groups.size());
@@ -452,7 +453,7 @@ public class GroupRepository {
                         }
 
                         // Return result on main thread
-                        mainHandler.post(() -> callback.onDataLoaded(Result.success(groups)));
+                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(Result.success(groups)));
                     }
 
                     @Override
@@ -460,7 +461,7 @@ public class GroupRepository {
                         Log.e(TAG, "Error loading user groups: " + errorMessage);
 
                         // Try to get from cache as fallback
-                        executor.execute(
+                        ThreadUtils.runInBackground(
                                 () -> {
                                     List<Group> cachedGroups = database.groupDao().getAllGroups();
                                     List<Group> userGroups = new ArrayList<>();
@@ -479,11 +480,11 @@ public class GroupRepository {
                                     if (!userGroups.isEmpty()) {
                                         Log.d(
                                                 TAG, "Using cached user groups due to network error: " + userGroups.size());
-                                        mainHandler.post(() -> callback.onDataLoaded(Result.success(userGroups)));
+                                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(Result.success(userGroups)));
                                     } else {
                                         // No cached data available
                                         Log.e(TAG, "No cached user groups available");
-                                        mainHandler.post(() -> callback.onDataLoaded(Result.error(errorMessage)));
+                                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(Result.error(errorMessage)));
                                     }
                                 });
                     }

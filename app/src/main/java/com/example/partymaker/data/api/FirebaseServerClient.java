@@ -70,6 +70,10 @@ public class FirebaseServerClient {
      */
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     /**
+     * NetworkManager instance for network operations.
+     */
+    private final NetworkManager networkManager = NetworkManager.getInstance();
+    /**
      * The current server URL.
      */
     private String serverUrl = DEFAULT_SERVER_URL;

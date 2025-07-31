@@ -1,13 +1,16 @@
 package com.example.partymaker.data.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.partymaker.data.api.FirebaseServerClient;
+import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.system.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ public class UserRepository {
     private static final String TAG = "UserRepository";
     private static UserRepository instance;
     private final FirebaseServerClient serverClient;
+    private AppDatabase database;
 
     // LiveData objects for caching data
     private final MutableLiveData<Map<String, User>> allUsers =
@@ -49,19 +53,73 @@ public class UserRepository {
     }
 
     /**
+     * Initializes the repository with a context. This is required for database access.
+     *
+     * @param context The application context
+     */
+    public void initialize(Context context) {
+        if (context != null) {
+            database = AppDatabase.getInstance(context);
+            Log.d(TAG, "UserRepository initialized with database");
+        } else {
+            Log.e(TAG, "Cannot initialize UserRepository: context is null");
+        }
+    }
+
+    /**
      * Gets all users
      *
      * @param callback     Callback to return the data
      * @param forceRefresh Whether to force a refresh from the server
      */
     public void getAllUsers(DataCallback<List<User>> callback, boolean forceRefresh) {
-        Map<String, User> cachedUsers = allUsers.getValue();
-
-        if (!forceRefresh && cachedUsers != null && !cachedUsers.isEmpty()) {
-            Log.d(TAG, "Returning cached users: " + cachedUsers.size());
-            callback.onDataLoaded(new ArrayList<>(cachedUsers.values()));
+        if (database == null) {
+            Log.e(TAG, "Database not initialized. Call initialize() first.");
+            getAllUsersFromServer(callback);
             return;
         }
+
+        ThreadUtils.runInBackground(() -> {
+            // Try to get from cache first
+            List<User> cachedUsers = database.userDao().getAllUsers();
+
+            if (cachedUsers != null && !cachedUsers.isEmpty() && !forceRefresh) {
+                Log.d(TAG, "Users found in cache: " + cachedUsers.size());
+                ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
+                return;
+            }
+
+            // Otherwise, get from server
+            getAllUsersFromServer(new DataCallback<List<User>>() {
+                @Override
+                public void onDataLoaded(List<User> users) {
+                    // Cache the users
+                    if (users != null && !users.isEmpty()) {
+                        ThreadUtils.runInBackground(() -> {
+                            database.userDao().insertUsers(users);
+                            Log.d(TAG, "Users cached: " + users.size());
+                        });
+                    }
+
+                    // Return the users
+                    ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(users));
+                }
+
+                @Override
+                public void onError(String error) {
+                    // If we have cached users, return them even if there was an error
+                    if (cachedUsers != null && !cachedUsers.isEmpty()) {
+                        Log.d(TAG, "Returning cached users after server error: " + cachedUsers.size());
+                        ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
+                    } else {
+                        ThreadUtils.runOnMainThread(() -> callback.onError(error));
+                    }
+                }
+            });
+        });
+    }
+
+    private void getAllUsersFromServer(DataCallback<List<User>> callback) {
 
         Log.d(TAG, "Fetching all users from server");
         serverClient.getUsers(
