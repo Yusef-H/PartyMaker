@@ -3,6 +3,7 @@ package com.example.partymaker.ui.auth;
 import static com.example.partymaker.utils.data.Constants.Preferences.IS_CHECKED;
 import static com.example.partymaker.utils.data.Constants.Preferences.PREFS_NAME;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -42,6 +43,9 @@ import java.util.Objects;
  * navigation, and UI state.
  */
 public class LoginActivity extends AppCompatActivity {
+  /** Tag for logging. */
+  private static final String TAG = "LoginActivity";
+
   /** Request code for Google sign-in. */
   private static final int RC_SIGN_IN = 9001;
 
@@ -101,6 +105,9 @@ public class LoginActivity extends AppCompatActivity {
     // Initialize UI components
     initializeUiComponents();
     setupViewModelObservers();
+
+    // Clear any previous authentication state to prevent auto-login
+    clearPreviousAuthState();
 
     // Add debug option to reset test user password
     resetTestUserPassword();
@@ -220,6 +227,11 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
                 editor.apply();
+
+                // Mark that user explicitly logged in
+                SharedPreferences prefs =
+                    getSharedPreferences("PartyMakerPrefs", Context.MODE_PRIVATE);
+                prefs.edit().putBoolean("user_explicitly_logged_in", true).apply();
 
                 // Navigate after short delay to show success message
                 ThreadUtils.runOnMainThreadDelayed(
@@ -387,6 +399,22 @@ public class LoginActivity extends AppCompatActivity {
     if (requestCode == RC_SIGN_IN) {
       Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
       authViewModel.signInWithGoogle(task);
+    }
+  }
+
+  /** Clears previous authentication state to prevent auto-login */
+  private void clearPreviousAuthState() {
+    try {
+      Log.d(TAG, "Clearing previous authentication state to prevent auto-login");
+
+      // Reset the ViewModel's authentication state
+      if (authViewModel != null) {
+        authViewModel.clearAuthenticationState();
+      }
+
+      Log.d(TAG, "Authentication state cleared successfully");
+    } catch (Exception e) {
+      Log.e(TAG, "Error clearing authentication state", e);
     }
   }
 }

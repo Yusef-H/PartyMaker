@@ -588,9 +588,9 @@ public class RegisterActivity extends AppCompatActivity {
               authViewModel.clearError();
             }
             // Ensure button is enabled when user types (unless in loading state)
-            if (authViewModel != null && 
-                authViewModel.getIsLoading().getValue() != null && 
-                !authViewModel.getIsLoading().getValue()) {
+            if (authViewModel != null
+                && authViewModel.getIsLoading().getValue() != null
+                && !authViewModel.getIsLoading().getValue()) {
               btnRegister.setEnabled(true);
             }
           }

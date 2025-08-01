@@ -1,7 +1,9 @@
 package com.example.partymaker.ui.common;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -159,6 +161,16 @@ public class MainActivity extends AppCompatActivity {
    */
   private boolean initializeUser() {
     try {
+      // Check if user explicitly logged in
+      SharedPreferences prefs = getSharedPreferences("PartyMakerPrefs", Context.MODE_PRIVATE);
+      boolean userExplicitlyLoggedIn = prefs.getBoolean("user_explicitly_logged_in", false);
+
+      if (!userExplicitlyLoggedIn) {
+        Log.d(TAG, "User did not explicitly log in - redirecting to login");
+        navigateToLogin();
+        return false;
+      }
+
       String userEmail = AuthHelper.getCurrentUserEmail(this);
       if (userEmail != null) {
         UserKey = userEmail.replace('.', ' ');
@@ -601,6 +613,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Clear all user data including Room database
             AuthHelper.logout(this);
+
+            // Clear the explicit login flag
+            SharedPreferences prefs = getSharedPreferences("PartyMakerPrefs", Context.MODE_PRIVATE);
+            prefs.edit().putBoolean("user_explicitly_logged_in", false).apply();
 
             // Show success message briefly before navigating
             UiStateManager.showSuccess(rootView, "Logged out successfully");
