@@ -1,14 +1,20 @@
 package com.example.partymaker.utils.security;
 
+import com.example.partymaker.utils.data.Constants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 /** Enhanced password validation utility with strong security requirements */
-public class PasswordValidator {
+public final class PasswordValidator {
 
-  // Minimum password length
-  private static final int MIN_LENGTH = 8;
+  // Private constructor to prevent instantiation
+  private PasswordValidator() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+  }
+
+  // Minimum password length from constants
+  private static final int MIN_LENGTH = Constants.Security.MIN_PASSWORD_LENGTH;
 
   // Maximum password length (to prevent DoS attacks)
   private static final int MAX_LENGTH = 128;

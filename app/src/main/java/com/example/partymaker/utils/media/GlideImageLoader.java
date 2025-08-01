@@ -117,15 +117,16 @@ public class GlideImageLoader {
 
     Glide.with(context)
         .load(imageUrl)
-        .apply(new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .timeout(10000)) // 10 second timeout
+        .apply(
+            new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .timeout(10000)) // 10 second timeout
         .preload();
   }
 
   /**
-   * Preloads multiple images into the cache. Useful for preloading group images
-   * to improve RecyclerView scrolling performance.
+   * Preloads multiple images into the cache. Useful for preloading group images to improve
+   * RecyclerView scrolling performance.
    *
    * @param context The context
    * @param imageUrls List of image URLs to preload
