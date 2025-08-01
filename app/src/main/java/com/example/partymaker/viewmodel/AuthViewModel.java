@@ -359,6 +359,7 @@ public class AuthViewModel extends BaseViewModel {
         .setValue(userMap)
         .addOnCompleteListener(
             task -> {
+              setLoading(false); // Always stop loading regardless of success/failure
               if (task.isSuccessful()) {
                 Log.d(TAG, "New user profile created successfully");
                 currentUser.setValue(firebaseUser);

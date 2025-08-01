@@ -166,6 +166,9 @@ public class RegisterActivity extends AppCompatActivity {
             errorMessage -> {
               if (errorMessage != null) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                // Re-enable button after error is shown
+                btnRegister.setEnabled(true);
+                btnRegister.setText(getString(R.string.register));
               }
             });
 
@@ -580,6 +583,16 @@ public class RegisterActivity extends AppCompatActivity {
           @Override
           public void onTextChanged(CharSequence s, int start, int before, int count) {
             updateFormProgress();
+            // Clear previous errors when user starts typing
+            if (authViewModel != null) {
+              authViewModel.clearError();
+            }
+            // Ensure button is enabled when user types (unless in loading state)
+            if (authViewModel != null && 
+                authViewModel.getIsLoading().getValue() != null && 
+                !authViewModel.getIsLoading().getValue()) {
+              btnRegister.setEnabled(true);
+            }
           }
 
           @Override
