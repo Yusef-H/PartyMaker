@@ -21,6 +21,9 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.ui.LoadingStateManager;
+import com.example.partymaker.utils.ui.UiStateManager;
+import com.example.partymaker.utils.ui.UserFeedback;
 import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -77,6 +80,12 @@ public class LoginActivity extends AppCompatActivity {
   /** Authentication ViewModel */
   private AuthViewModel authViewModel;
 
+  /** Loading state manager */
+  private LoadingStateManager loadingStateManager;
+
+  /** Root view for UI feedback */
+  private View rootView;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -90,6 +99,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // Initialize ViewModel
     authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+    
+    // Initialize UI components
+    initializeUiComponents();
     setupViewModelObservers();
 
     // Add debug option to reset test user password
@@ -130,6 +142,28 @@ public class LoginActivity extends AppCompatActivity {
     eventHandler();
   }
 
+  /** Initialize UI components for better UX */
+  private void initializeUiComponents() {
+    rootView = findViewById(android.R.id.content);
+    
+    // Setup loading state manager for smooth transitions
+    setupLoadingStateManager();
+  }
+
+  /** Setup loading state manager */
+  private void setupLoadingStateManager() {
+    android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
+    if (progressBar == null) {
+      progressBar = new android.widget.ProgressBar(this);
+      progressBar.setVisibility(View.GONE);
+    }
+    
+    loadingStateManager = new LoadingStateManager.Builder()
+        .contentView(findViewById(R.id.etEmailL)) // Use existing view as content
+        .progressBar(progressBar)
+        .build();
+  }
+
   /** Sets up observers for AuthViewModel LiveData */
   private void setupViewModelObservers() {
     authViewModel
@@ -139,6 +173,12 @@ public class LoginActivity extends AppCompatActivity {
             isLoading -> {
               btnLogin.setEnabled(!isLoading);
               btnGoogleSignIn.setEnabled(!isLoading);
+              
+              if (isLoading) {
+                loadingStateManager.showLoading("Signing in...");
+              } else {
+                loadingStateManager.showContent();
+              }
             });
 
     authViewModel
@@ -147,7 +187,11 @@ public class LoginActivity extends AppCompatActivity {
             this,
             errorMessage -> {
               if (errorMessage != null) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                UiStateManager.showError(rootView, errorMessage, () -> {
+                  // Retry logic - clear error and enable retry
+                  authViewModel.clearError();
+                });
+                loadingStateManager.showError(errorMessage);
                 btnResetPass.setVisibility(View.VISIBLE);
               }
             });
@@ -158,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
             this,
             successMessage -> {
               if (successMessage != null) {
-                Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
+                UiStateManager.showSuccess(rootView, successMessage);
               }
             });
 
@@ -168,15 +212,20 @@ public class LoginActivity extends AppCompatActivity {
             this,
             isAuthenticated -> {
               if (isAuthenticated) {
+                UiStateManager.showSuccess(rootView, "Login successful!");
+                
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
                 editor.apply();
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                btnAbout.clearAnimation();
-                startActivity(intent);
-                finish();
+                // Navigate after short delay to show success message
+                ThreadUtils.runOnMainThreadDelayed(() -> {
+                  Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                  btnAbout.clearAnimation();
+                  startActivity(intent);
+                  finish();
+                }, 800);
               }
             });
   }
@@ -250,13 +299,20 @@ public class LoginActivity extends AppCompatActivity {
             boolean isReachable =
                 networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
 
-            if (isReachable) {
-              Log.d("LoginActivity", "Server is reachable");
-            } else {
-              Log.w("LoginActivity", "Server is not reachable");
-            }
+            ThreadUtils.runOnMainThread(() -> {
+              if (isReachable) {
+                Log.d("LoginActivity", "Server is reachable");
+                UiStateManager.showInfo(rootView, "Connected to server");
+              } else {
+                Log.w("LoginActivity", "Server is not reachable");
+                UiStateManager.showWarning(rootView, "Server connection issues - some features may be limited");
+              }
+            });
           } catch (Exception e) {
             Log.e("LoginActivity", "Error checking server connectivity", e);
+            ThreadUtils.runOnMainThread(() -> {
+              UiStateManager.showWarning(rootView, "Unable to verify server connection");
+            });
           }
         });
   }

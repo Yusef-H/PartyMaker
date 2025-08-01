@@ -117,8 +117,29 @@ public class GlideImageLoader {
 
     Glide.with(context)
         .load(imageUrl)
-        .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+        .apply(new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .timeout(10000)) // 10 second timeout
         .preload();
+  }
+
+  /**
+   * Preloads multiple images into the cache. Useful for preloading group images
+   * to improve RecyclerView scrolling performance.
+   *
+   * @param context The context
+   * @param imageUrls List of image URLs to preload
+   */
+  public static void preloadImages(Context context, java.util.List<String> imageUrls) {
+    if (context == null || imageUrls == null || imageUrls.isEmpty()) {
+      return;
+    }
+
+    for (String imageUrl : imageUrls) {
+      if (imageUrl != null && !imageUrl.isEmpty()) {
+        preloadImage(context, imageUrl);
+      }
+    }
   }
 
   /**
@@ -191,8 +212,9 @@ public class GlideImageLoader {
         .placeholder(placeholderResId)
         .error(placeholderResId)
         .fallback(placeholderResId)
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .skipMemoryCache(false)
+        .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache both original and resized images
+        .skipMemoryCache(false) // Enable memory caching for better performance
+        .timeout(10000) // 10 second timeout for network requests
         .dontTransform(); // Prevent unnecessary transformations for better performance
   }
 }

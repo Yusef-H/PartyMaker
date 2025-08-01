@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
   // UI Components
   private RecyclerView lv1;
   private FloatingActionButton fabChat;
+  private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
   private View rootView;
 
   // Data Components
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
 
   // Variable to track if we've shown the loading toast already
   private boolean loadingToastShown = false;
+  
+  // Track when we last refreshed to avoid excessive server calls
+  private long lastRefreshTime = 0;
+  private static final long REFRESH_COOLDOWN_MS = 30000; // 30 seconds cooldown
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
@@ -91,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
       showLoading(true, false);
 
       // Load groups for current user
+      Log.d(TAG, "Starting to load groups for user: " + UserKey);
       viewModel.loadUserGroups(UserKey, true);
+      lastRefreshTime = System.currentTimeMillis();
     } catch (Exception e) {
       Log.e(TAG, "Fatal error in onCreate", e);
       showError("An unexpected error occurred. Please restart the app.");
@@ -155,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
       String userEmail = AuthHelper.getCurrentUserEmail(this);
       if (userEmail != null) {
         UserKey = userEmail.replace('.', ' ');
-        Log.d(TAG, "User initialized successfully: " + UserKey);
+        Log.d(TAG, "User initialized successfully. Original email: " + userEmail + ", UserKey: " + UserKey);
         return true;
       } else {
         Log.e(TAG, "User not logged in or email is null");
@@ -177,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
     rootView = findViewById(android.R.id.content);
     lv1 = findViewById(R.id.lv1);
     fabChat = findViewById(R.id.fabChat);
+    swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
     if (lv1 == null) {
       Log.e(TAG, "Critical view lv1 not found");
@@ -192,6 +200,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Initialize loading state manager
     setupLoadingStateManager();
+    
+    // Setup pull-to-refresh functionality
+    setupSwipeRefresh();
   }
 
   private void setupLoadingStateManager() {
@@ -217,6 +228,27 @@ public class MainActivity extends AppCompatActivity {
             .progressBar(progressBar)
             .loadingText(loadingText)
             .build();
+  }
+
+  private void setupSwipeRefresh() {
+    if (swipeRefreshLayout != null) {
+      // Set the colors for the refresh indicator
+      swipeRefreshLayout.setColorSchemeColors(
+          getResources().getColor(android.R.color.holo_blue_bright),
+          getResources().getColor(android.R.color.holo_green_light),
+          getResources().getColor(android.R.color.holo_orange_light),
+          getResources().getColor(android.R.color.holo_red_light)
+      );
+      
+      // Set the refresh listener
+      swipeRefreshLayout.setOnRefreshListener(() -> {
+        Log.d(TAG, "Pull-to-refresh triggered: refreshing user groups");
+        if (viewModel != null && UserKey != null) {
+          viewModel.loadUserGroups(UserKey, true); // Force refresh from server
+          lastRefreshTime = System.currentTimeMillis(); // Update refresh time
+        }
+      });
+    }
   }
 
   // Sets up the action bar with custom gradient background and styling.
@@ -278,22 +310,31 @@ public class MainActivity extends AppCompatActivity {
               this,
               groups -> {
                 try {
+                  Log.d(TAG, "observeViewModel: received groups data, groups = " + groups);
                   if (groups != null) {
+                    Log.d(TAG, "Group list size: " + groups.size());
+                    for (int i = 0; i < groups.size() && i < 3; i++) {
+                      Group g = groups.get(i);
+                      Log.d(TAG, "Group " + i + ": " + g.getGroupName() + " (key: " + g.getGroupKey() + ")");
+                    }
+                    
                     groupAdapter.updateItems(groups);
                     Log.d(TAG, "Group list updated with " + groups.size() + " groups");
 
                     // Update UI state
                     if (groups.isEmpty()) {
+                      Log.d(TAG, "Groups list is empty - showing empty state");
                       loadingStateManager.showEmpty();
                       showEmptyState();
                     } else {
+                      Log.d(TAG, "Groups list has " + groups.size() + " items - showing content");
                       loadingStateManager.showContent();
                       hideEmptyState();
                     }
                   } else {
-                    Log.w(TAG, "Received null groups list from ViewModel");
-                    loadingStateManager.showEmpty();
-                    showEmptyState();
+                    Log.d(TAG, "Received null groups list from ViewModel - data not loaded yet, staying in loading state");
+                    // Don't show empty state when data is null - it means data hasn't loaded yet
+                    // Keep showing loading state until we get actual data (empty list or populated list)
                   }
                 } catch (Exception e) {
                   Log.e(TAG, "Error processing groups data", e);
@@ -312,8 +353,14 @@ public class MainActivity extends AppCompatActivity {
               this,
               isLoading -> {
                 try {
+                  Log.d(TAG, "observeViewModel: loading state changed to: " + isLoading);
                   if (isLoading) {
                     loadingStateManager.showLoading("Loading your parties...");
+                  } else {
+                    // Stop pull-to-refresh indicator when loading is done
+                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                      swipeRefreshLayout.setRefreshing(false);
+                    }
                   }
                 } catch (Exception e) {
                   Log.e(TAG, "Error updating loading state", e);
@@ -327,7 +374,9 @@ public class MainActivity extends AppCompatActivity {
               this,
               errorMsg -> {
                 try {
+                  Log.d(TAG, "observeViewModel: received error message: " + errorMsg);
                   if (errorMsg != null && !errorMsg.isEmpty()) {
+                    Log.e(TAG, "Showing error to user: " + errorMsg);
                     UiStateManager.showError(
                         rootView, errorMsg, () -> viewModel.loadUserGroups(UserKey, true));
                     loadingStateManager.showError(errorMsg);
@@ -588,5 +637,27 @@ public class MainActivity extends AppCompatActivity {
   // Update the UI with the current group list
   private void updateUI() {
     // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    
+    // Refresh groups when returning to the activity, but only if enough time has passed
+    // This catches cases where user was added to a group while away
+    if (viewModel != null && UserKey != null) {
+      long currentTime = System.currentTimeMillis();
+      long timeSinceLastRefresh = currentTime - lastRefreshTime;
+      
+      if (timeSinceLastRefresh > REFRESH_COOLDOWN_MS) {
+        Log.d(TAG, "onResume: Refreshing user groups to catch any new invitations (last refresh: " + 
+              timeSinceLastRefresh + "ms ago)");
+        viewModel.loadUserGroups(UserKey, true); // Force refresh from server
+        lastRefreshTime = currentTime;
+      } else {
+        Log.d(TAG, "onResume: Skipping refresh - too soon since last refresh (" + 
+              timeSinceLastRefresh + "ms ago, cooldown: " + REFRESH_COOLDOWN_MS + "ms)");
+      }
+    }
   }
 }

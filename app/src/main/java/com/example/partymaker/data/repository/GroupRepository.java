@@ -403,7 +403,8 @@ public class GroupRepository {
    */
   public void getUserGroups(
       String userKey, DataCallback<Result<List<Group>>> callback, boolean forceRefresh) {
-    Log.d(TAG, "getUserGroups called for user: " + userKey);
+    Log.d(TAG, "getUserGroups called for user: " + userKey + ", forceRefresh: " + forceRefresh);
+    Log.d(TAG, "Database initialized: " + (database != null));
 
     if (database == null) {
       Log.e(TAG, "Database not initialized. Call initialize() first.");
@@ -411,9 +412,16 @@ public class GroupRepository {
       return;
     }
 
+    // If forceRefresh is true, skip cache entirely and go directly to server
+    if (forceRefresh) {
+      Log.d(TAG, "Force refresh requested - skipping cache, going directly to server");
+      getUserGroupsFromServer(userKey, callback);
+      return;
+    }
+
     ThreadUtils.runInBackground(
         () -> {
-          // Try to get from cache first
+          // Try to get from cache first (only when not force refreshing)
           List<Group> cachedGroups = database.groupDao().getAllGroups();
           List<Group> userGroups = new ArrayList<>();
 
@@ -455,7 +463,7 @@ public class GroupRepository {
             Log.d(TAG, "No cached groups found or empty cache");
           }
 
-          if (!userGroups.isEmpty() && !forceRefresh) {
+          if (!userGroups.isEmpty()) {
             Log.d(TAG, "User groups found in cache: " + userGroups.size());
             final List<Group> finalUserGroups = userGroups;
             ThreadUtils.runOnMainThread(
@@ -463,7 +471,8 @@ public class GroupRepository {
             return;
           }
 
-          // Otherwise, get from server
+          // If no cache data found, get from server
+          Log.d(TAG, "No cached user groups found, fetching from server");
           getUserGroupsFromServer(userKey, callback);
         });
   }

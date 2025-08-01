@@ -20,7 +20,7 @@ public class MainActivityViewModel extends ViewModel {
   private static final String TAG = "MainActivityViewModel";
 
   /** List of all groups. */
-  private final MutableLiveData<List<Group>> groupList = new MutableLiveData<>(new ArrayList<>());
+  private final MutableLiveData<List<Group>> groupList = new MutableLiveData<>();
 
   /** Currently selected group. */
   private final MutableLiveData<Group> selectedGroup = new MutableLiveData<>();
@@ -101,7 +101,7 @@ public class MainActivityViewModel extends ViewModel {
    * @param forceRefresh Whether to force a refresh from the server
    */
   public void loadUserGroups(String userKey, boolean forceRefresh) {
-    Log.d(TAG, "Loading groups for user: " + userKey);
+    Log.d(TAG, "Loading groups for user: " + userKey + ", forceRefresh: " + forceRefresh);
     isLoading.setValue(true);
 
     repository.getUserGroups(
@@ -115,11 +115,15 @@ public class MainActivityViewModel extends ViewModel {
               Log.d(TAG, "User groups loaded successfully: " + data.size() + " groups");
               sortGroups(data);
               groupList.setValue(data);
+            } else {
+              Log.w(TAG, "User groups loaded but data is null - setting empty list");
+              groupList.setValue(new ArrayList<>());
             }
             isLoading.setValue(false);
           } else if (result.isError()) {
             Log.e(TAG, "Error loading user groups: " + result.getError());
             errorMessage.setValue(result.getUserFriendlyError());
+            // Don't clear existing data on error, just stop loading
             isLoading.setValue(false);
           }
         },

@@ -11,12 +11,16 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.example.partymaker.utils.security.SSLPinningManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Manager for network operations and connectivity monitoring. Provides utilities for checking
@@ -31,6 +35,7 @@ public class NetworkManager {
   private final Handler mainHandler;
   private ConnectivityManager connectivityManager;
   private ConnectivityManager.NetworkCallback networkCallback;
+  private SSLPinningManager sslPinningManager;
 
   /** Private constructor for singleton pattern. */
   private NetworkManager() {
@@ -64,6 +69,9 @@ public class NetworkManager {
 
     connectivityManager =
         (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    // Initialize SSL Pinning Manager
+    initializeSSLPinning();
 
     // Register network callback
     registerNetworkCallback();
@@ -204,7 +212,28 @@ public class NetworkManager {
   }
 
   /**
-   * Checks if a server is reachable.
+   * Initialize SSL Pinning Manager
+   */
+  private void initializeSSLPinning() {
+    boolean isProduction = !android.os.Build.TYPE.equals("userdebug");
+    sslPinningManager = SSLPinningManager.getInstance(isProduction);
+    Log.d(TAG, "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
+  }
+
+  /**
+   * Get secure OkHttpClient with SSL pinning
+   */
+  public OkHttpClient getSecureClient() {
+    if (sslPinningManager != null) {
+      return sslPinningManager.createSecureClient();
+    } else {
+      Log.w(TAG, "SSL Pinning Manager not initialized, returning default client");
+      return new OkHttpClient();
+    }
+  }
+
+  /**
+   * Checks if a server is reachable using secure connection.
    *
    * @param url The URL to check
    * @param timeout The timeout in milliseconds
@@ -212,6 +241,12 @@ public class NetworkManager {
    */
   public boolean isServerReachable(String url, int timeout) {
     try {
+      // Use secure client if available
+      if (sslPinningManager != null && (url.startsWith("https://") || url.contains("partymaker"))) {
+        return isServerReachableSecure(url, timeout);
+      }
+      
+      // Fallback to regular HTTP connection
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
       connection.setConnectTimeout(timeout);
       connection.setReadTimeout(timeout);
@@ -222,6 +257,38 @@ public class NetworkManager {
       Log.e(TAG, "Error checking server reachability", e);
       return false;
     }
+  }
+
+  /**
+   * Checks server reachability using secure SSL-pinned connection
+   */
+  private boolean isServerReachableSecure(String url, int timeout) {
+    try {
+      OkHttpClient client = sslPinningManager.createSecureClient();
+      Request request = new Request.Builder()
+          .url(url)
+          .head()
+          .build();
+          
+      try (Response response = client.newCall(request).execute()) {
+        boolean isReachable = response.isSuccessful();
+        Log.d(TAG, "Secure server check for " + url + ": " + (isReachable ? "success" : "failed"));
+        return isReachable;
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error in secure server check for " + url, e);
+      return false;
+    }
+  }
+
+  /**
+   * Test SSL connection to verify pinning
+   */
+  public boolean testSSLConnection(String url) {
+    if (sslPinningManager != null) {
+      return sslPinningManager.testSSLConnection(url);
+    }
+    return false;
   }
 
   /**

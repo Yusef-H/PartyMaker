@@ -6,6 +6,7 @@ import com.example.partymaker.data.api.ConnectivityManager;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
+import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.system.MemoryManager;
@@ -43,6 +44,8 @@ public class PartyApplication extends Application {
     // Initialize ConnectivityManager
     ConnectivityManager.getInstance().init(getApplicationContext());
     Log.d(TAG, "ConnectivityManager initialized successfully");
+
+    // Database will be recreated automatically by Room if schema doesn't match
 
     // Initialize FirebaseServerClient
     try {
