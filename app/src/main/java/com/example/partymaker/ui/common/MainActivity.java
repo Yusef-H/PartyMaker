@@ -29,6 +29,9 @@ import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.ui.LoadingStateManager;
+import com.example.partymaker.utils.ui.UiStateManager;
+import com.example.partymaker.utils.ui.UserFeedback;
 import com.example.partymaker.viewmodel.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
@@ -45,11 +48,15 @@ public class MainActivity extends AppCompatActivity {
   // UI Components
   private RecyclerView lv1;
   private FloatingActionButton fabChat;
+  private View rootView;
 
   // Data Components
   private MainActivityViewModel viewModel;
   private String UserKey;
   private GroupAdapter groupAdapter;
+
+  // UI State Management
+  private LoadingStateManager loadingStateManager;
 
   // Variable to track if we've shown the loading toast already
   private boolean loadingToastShown = false;
@@ -167,12 +174,13 @@ public class MainActivity extends AppCompatActivity {
 
   // Initializes all view components.
   private void initializeViews() {
+    rootView = findViewById(android.R.id.content);
     lv1 = findViewById(R.id.lv1);
     fabChat = findViewById(R.id.fabChat);
 
     if (lv1 == null) {
       Log.e(TAG, "Critical view lv1 not found");
-      showError("UI initialization failed");
+      UserFeedback.showErrorDialog(this, "UI initialization failed");
       finish();
       return;
     }
@@ -181,6 +189,34 @@ public class MainActivity extends AppCompatActivity {
     lv1.setLayoutManager(new LinearLayoutManager(this));
     groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
     lv1.setAdapter(groupAdapter);
+
+    // Initialize loading state manager
+    setupLoadingStateManager();
+  }
+
+  private void setupLoadingStateManager() {
+    // Find or create loading views
+    android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
+    android.widget.TextView loadingText = null; // Optional loading text view
+
+    // Create progress bar if not found
+    if (progressBar == null) {
+      progressBar = new android.widget.ProgressBar(this);
+      progressBar.setId(R.id.progressBar);
+      progressBar.setVisibility(View.GONE);
+
+      // Add to root layout
+      if (rootView instanceof android.widget.FrameLayout) {
+        ((android.widget.FrameLayout) rootView).addView(progressBar);
+      }
+    }
+
+    loadingStateManager =
+        new LoadingStateManager.Builder()
+            .contentView(lv1)
+            .progressBar(progressBar)
+            .loadingText(loadingText)
+            .build();
   }
 
   // Sets up the action bar with custom gradient background and styling.
@@ -246,22 +282,26 @@ public class MainActivity extends AppCompatActivity {
                     groupAdapter.updateItems(groups);
                     Log.d(TAG, "Group list updated with " + groups.size() + " groups");
 
-                    // Hide loading indicator
-                    showLoading(false);
-
-                    // Show empty state if needed
+                    // Update UI state
                     if (groups.isEmpty()) {
+                      loadingStateManager.showEmpty();
                       showEmptyState();
+                    } else {
+                      loadingStateManager.showContent();
+                      hideEmptyState();
                     }
                   } else {
                     Log.w(TAG, "Received null groups list from ViewModel");
+                    loadingStateManager.showEmpty();
                     showEmptyState();
-                    showLoading(false);
                   }
                 } catch (Exception e) {
                   Log.e(TAG, "Error processing groups data", e);
-                  showError("Error displaying groups");
-                  showLoading(false);
+                  UiStateManager.showError(
+                      rootView,
+                      "Error displaying groups",
+                      () -> viewModel.loadUserGroups(UserKey, true));
+                  loadingStateManager.showError("Error loading groups");
                 }
               });
 
@@ -272,7 +312,9 @@ public class MainActivity extends AppCompatActivity {
               this,
               isLoading -> {
                 try {
-                  showLoading(isLoading);
+                  if (isLoading) {
+                    loadingStateManager.showLoading("Loading your parties...");
+                  }
                 } catch (Exception e) {
                   Log.e(TAG, "Error updating loading state", e);
                 }
@@ -286,9 +328,10 @@ public class MainActivity extends AppCompatActivity {
               errorMsg -> {
                 try {
                   if (errorMsg != null && !errorMsg.isEmpty()) {
-                    showError(errorMsg);
+                    UiStateManager.showError(
+                        rootView, errorMsg, () -> viewModel.loadUserGroups(UserKey, true));
+                    loadingStateManager.showError(errorMsg);
                     viewModel.clearError(); // Clear the error after showing it
-                    showLoading(false);
                   }
                 } catch (Exception e) {
                   Log.e(TAG, "Error displaying error message", e);
@@ -296,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
               });
     } catch (Exception e) {
       Log.e(TAG, "Error setting up observers", e);
-      showError("Error initializing data observers");
+      UserFeedback.showErrorDialog(this, "Error initializing data observers");
     }
   }
 
@@ -403,22 +446,34 @@ public class MainActivity extends AppCompatActivity {
                 return;
               }
 
-              // Show a simple text view instead of a Snackbar
+              // Show empty state message
               TextView emptyView = findViewById(R.id.emptyGroupsView);
               if (emptyView != null) {
                 emptyView.setVisibility(View.VISIBLE);
                 emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
-              }
-            } else {
-              // Hide empty view if we have groups
-              TextView emptyView = findViewById(R.id.emptyGroupsView);
-              if (emptyView != null) {
-                emptyView.setVisibility(View.GONE);
+              } else {
+                // Show snackbar as fallback
+                UiStateManager.showInfo(rootView, "לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
               }
             }
           });
     } catch (Exception e) {
       Log.e(TAG, "Error showing empty state", e);
+    }
+  }
+
+  // Hides the empty state
+  private void hideEmptyState() {
+    try {
+      ThreadUtils.runOnMainThread(
+          () -> {
+            TextView emptyView = findViewById(R.id.emptyGroupsView);
+            if (emptyView != null) {
+              emptyView.setVisibility(View.GONE);
+            }
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error hiding empty state", e);
     }
   }
 
@@ -465,20 +520,40 @@ public class MainActivity extends AppCompatActivity {
 
   // Handles user logout process
   private void handleLogout() {
-    try {
-      // Clear ViewModel data first
-      if (viewModel != null) {
-        viewModel.clearAllData();
-      }
+    UserFeedback.showConfirmationDialog(
+        this,
+        "Logout",
+        "Are you sure you want to logout?",
+        () -> {
+          try {
+            // Show logout progress
+            loadingStateManager.showLoading("Logging out...");
 
-      // Clear all user data including Room database
-      AuthHelper.logout(this);
-      navigateToLogin();
-      Log.d(TAG, "User logged out successfully");
-    } catch (Exception e) {
-      Log.e(TAG, "Error during logout", e);
-      showError("Logout failed");
-    }
+            // Clear ViewModel data first
+            if (viewModel != null) {
+              viewModel.clearAllData();
+            }
+
+            // Clear all user data including Room database
+            AuthHelper.logout(this);
+
+            // Show success message briefly before navigating
+            UiStateManager.showSuccess(rootView, "Logged out successfully");
+
+            // Navigate after a short delay
+            ThreadUtils.runOnMainThreadDelayed(
+                () -> {
+                  navigateToLogin();
+                  Log.d(TAG, "User logged out successfully");
+                },
+                1000);
+
+          } catch (Exception e) {
+            Log.e(TAG, "Error during logout", e);
+            UiStateManager.showError(rootView, "Logout failed", this::handleLogout);
+            loadingStateManager.showError("Logout failed");
+          }
+        });
   }
 
   // Navigates to the login activity and finishes current activity.
@@ -495,10 +570,12 @@ public class MainActivity extends AppCompatActivity {
    */
   private void showError(String message) {
     try {
-      Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+      UiStateManager.showError(rootView, message);
       Log.e(TAG, "Error shown to user: " + message);
     } catch (Exception e) {
       Log.e(TAG, "Error showing error message", e);
+      // Fallback to toast if snackbar fails
+      Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
   }
 

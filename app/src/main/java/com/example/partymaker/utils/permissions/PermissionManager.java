@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
@@ -27,25 +26,21 @@ public class PermissionManager {
   public static final String[] CAMERA_PERMISSIONS = {Manifest.permission.CAMERA};
 
   public static final String[] STORAGE_PERMISSIONS =
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-          ? new String[] {Manifest.permission.READ_MEDIA_IMAGES}
-          : new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
+      new String[] {Manifest.permission.READ_MEDIA_IMAGES};
 
   public static final String[] NOTIFICATION_PERMISSIONS =
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-          ? new String[] {Manifest.permission.POST_NOTIFICATIONS}
-          : new String[] {};
+      new String[] {Manifest.permission.POST_NOTIFICATIONS};
 
   /** Check if a specific permission is granted */
   public static boolean isPermissionGranted(Context context, String permission) {
     return ContextCompat.checkSelfPermission(context, permission)
-        == PackageManager.PERMISSION_GRANTED;
+        != PackageManager.PERMISSION_GRANTED;
   }
 
   /** Check if all permissions in a group are granted */
   public static boolean arePermissionsGranted(Context context, String[] permissions) {
     for (String permission : permissions) {
-      if (!isPermissionGranted(context, permission)) {
+      if (isPermissionGranted(context, permission)) {
         return false;
       }
     }
@@ -57,7 +52,7 @@ public class PermissionManager {
     List<String> permissionsToRequest = new ArrayList<>();
 
     for (String permission : permissions) {
-      if (!isPermissionGranted(activity, permission)) {
+      if (isPermissionGranted(activity, permission)) {
         permissionsToRequest.add(permission);
       }
     }
@@ -85,11 +80,8 @@ public class PermissionManager {
 
   /** Check if notification features can be used */
   public static boolean canUseNotificationFeatures(Context context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      return arePermissionsGranted(context, NOTIFICATION_PERMISSIONS);
-    }
+    return arePermissionsGranted(context, NOTIFICATION_PERMISSIONS);
     // Pre-Android 13, notifications don't need runtime permission
-    return true;
   }
 
   /** Request location permissions if needed */
