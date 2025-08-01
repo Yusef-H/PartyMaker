@@ -50,6 +50,7 @@ circleimageview = "3.1.0"
 # --- Testing ---
 preference = "1.2.1"
 junitKtx = "1.2.1"
+securityCrypto = "1.1.0-alpha06"
 swiperefreshlayout = "1.1.0"
 
 [libraries]
@@ -67,6 +68,7 @@ androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-lived
 
 # --- Compose ---
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
