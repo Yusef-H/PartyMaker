@@ -23,6 +23,8 @@ dependencies {
     implementation libs.firebase.admin
     // --- Testing ---
     testImplementation libs.spring.boot.starter.test
+    // --- Validation ---
+    implementation libs.spring.boot.starter.validation
 }
 
 test {

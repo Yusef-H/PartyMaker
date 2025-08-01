@@ -115,6 +115,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 # --- Testing ---
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
