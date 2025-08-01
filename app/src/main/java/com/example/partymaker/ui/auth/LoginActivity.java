@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.auth;
 
-import static com.example.partymaker.utils.data.Constants.IS_CHECKED;
-import static com.example.partymaker.utils.data.Constants.PREFS_NAME;
+import static com.example.partymaker.utils.data.Constants.Preferences.IS_CHECKED;
+import static com.example.partymaker.utils.data.Constants.Preferences.PREFS_NAME;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,7 +22,6 @@ import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.LoadingStateManager;
 import com.example.partymaker.utils.ui.UiStateManager;
-import com.example.partymaker.utils.ui.UserFeedback;
 import com.example.partymaker.viewmodel.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -99,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Initialize ViewModel
     authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-    
+
     // Initialize UI components
     initializeUiComponents();
     setupViewModelObservers();
@@ -145,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
   /** Initialize UI components for better UX */
   private void initializeUiComponents() {
     rootView = findViewById(android.R.id.content);
-    
+
     // Setup loading state manager for smooth transitions
     setupLoadingStateManager();
   }
@@ -157,11 +155,12 @@ public class LoginActivity extends AppCompatActivity {
       progressBar = new android.widget.ProgressBar(this);
       progressBar.setVisibility(View.GONE);
     }
-    
-    loadingStateManager = new LoadingStateManager.Builder()
-        .contentView(findViewById(R.id.etEmailL)) // Use existing view as content
-        .progressBar(progressBar)
-        .build();
+
+    loadingStateManager =
+        new LoadingStateManager.Builder()
+            .contentView(findViewById(R.id.etEmailL)) // Use existing view as content
+            .progressBar(progressBar)
+            .build();
   }
 
   /** Sets up observers for AuthViewModel LiveData */
@@ -173,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
             isLoading -> {
               btnLogin.setEnabled(!isLoading);
               btnGoogleSignIn.setEnabled(!isLoading);
-              
+
               if (isLoading) {
                 loadingStateManager.showLoading("Signing in...");
               } else {
@@ -187,10 +186,13 @@ public class LoginActivity extends AppCompatActivity {
             this,
             errorMessage -> {
               if (errorMessage != null) {
-                UiStateManager.showError(rootView, errorMessage, () -> {
-                  // Retry logic - clear error and enable retry
-                  authViewModel.clearError();
-                });
+                UiStateManager.showError(
+                    rootView,
+                    errorMessage,
+                    () -> {
+                      // Retry logic - clear error and enable retry
+                      authViewModel.clearError();
+                    });
                 loadingStateManager.showError(errorMessage);
                 btnResetPass.setVisibility(View.VISIBLE);
               }
@@ -213,19 +215,21 @@ public class LoginActivity extends AppCompatActivity {
             isAuthenticated -> {
               if (isAuthenticated) {
                 UiStateManager.showSuccess(rootView, "Login successful!");
-                
+
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
                 editor.apply();
 
                 // Navigate after short delay to show success message
-                ThreadUtils.runOnMainThreadDelayed(() -> {
-                  Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                  btnAbout.clearAnimation();
-                  startActivity(intent);
-                  finish();
-                }, 800);
+                ThreadUtils.runOnMainThreadDelayed(
+                    () -> {
+                      Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                      btnAbout.clearAnimation();
+                      startActivity(intent);
+                      finish();
+                    },
+                    800);
               }
             });
   }
@@ -299,20 +303,23 @@ public class LoginActivity extends AppCompatActivity {
             boolean isReachable =
                 networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
 
-            ThreadUtils.runOnMainThread(() -> {
-              if (isReachable) {
-                Log.d("LoginActivity", "Server is reachable");
-                UiStateManager.showInfo(rootView, "Connected to server");
-              } else {
-                Log.w("LoginActivity", "Server is not reachable");
-                UiStateManager.showWarning(rootView, "Server connection issues - some features may be limited");
-              }
-            });
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  if (isReachable) {
+                    Log.d("LoginActivity", "Server is reachable");
+                    UiStateManager.showInfo(rootView, "Connected to server");
+                  } else {
+                    Log.w("LoginActivity", "Server is not reachable");
+                    UiStateManager.showWarning(
+                        rootView, "Server connection issues - some features may be limited");
+                  }
+                });
           } catch (Exception e) {
             Log.e("LoginActivity", "Error checking server connectivity", e);
-            ThreadUtils.runOnMainThread(() -> {
-              UiStateManager.showWarning(rootView, "Unable to verify server connection");
-            });
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  UiStateManager.showWarning(rootView, "Unable to verify server connection");
+                });
           }
         });
   }

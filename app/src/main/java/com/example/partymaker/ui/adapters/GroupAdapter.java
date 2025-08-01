@@ -1,6 +1,7 @@
 package com.example.partymaker.ui.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,9 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.media.GlideImageLoader;
 import com.example.partymaker.utils.sharing.ShareHelper;
-import java.util.Objects;
-import android.util.Log;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -161,74 +161,92 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
     }
 
     /**
-     * Loads group image with timeout and enhanced error handling.
-     * Tries multiple Firebase Storage paths with fallback mechanism.
+     * Loads group image with timeout and enhanced error handling. Tries multiple Firebase Storage
+     * paths with fallback mechanism.
      */
     private void loadGroupImageWithTimeout(String groupKey, ImageView imageView) {
       // Timeout for Firebase Storage requests (5 seconds)
       final long TIMEOUT_MS = 5000;
-      
+
       // Try primary path with timeout
-      Task<android.net.Uri> primaryTask = com.example.partymaker.data.firebase.DBRef.refStorage
-          .child("UsersImageProfile/Groups/" + groupKey)
-          .getDownloadUrl();
-      
+      Task<android.net.Uri> primaryTask =
+          com.example.partymaker.data.firebase.DBRef.refStorage
+              .child("UsersImageProfile/Groups/" + groupKey)
+              .getDownloadUrl();
+
       // Apply timeout to the task
-      Task<android.net.Uri> timedPrimaryTask = Tasks.withTimeout(primaryTask, TIMEOUT_MS, TimeUnit.MILLISECONDS);
-      
+      Task<android.net.Uri> timedPrimaryTask =
+          Tasks.withTimeout(primaryTask, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+
       timedPrimaryTask
-          .addOnSuccessListener(uri -> {
-            // Check if this ViewHolder is still showing the same group
-            if (groupKey.equals(imageView.getTag())) {
-              Log.d("GroupAdapter", "Successfully loaded image from primary path for group: " + groupKey);
-              GlideImageLoader.loadImage(context, uri.toString(), imageView, R.drawable.default_group_image);
-            }
-          })
-          .addOnFailureListener(e -> {
-            // Log the error but don't spam logcat for missing images
-            if (!(e.getMessage() != null && e.getMessage().contains("Object does not exist"))) {
-              Log.w("GroupAdapter", "Primary path failed for group " + groupKey + ": " + e.getMessage());
-            }
-            
-            // Try fallback path with timeout, but only if ViewHolder still shows same group
-            if (groupKey.equals(imageView.getTag())) {
-              tryFallbackImagePath(groupKey, imageView);
-            }
-          });
+          .addOnSuccessListener(
+              uri -> {
+                // Check if this ViewHolder is still showing the same group
+                if (groupKey.equals(imageView.getTag())) {
+                  Log.d(
+                      "GroupAdapter",
+                      "Successfully loaded image from primary path for group: " + groupKey);
+                  GlideImageLoader.loadImage(
+                      context, uri.toString(), imageView, R.drawable.default_group_image);
+                }
+              })
+          .addOnFailureListener(
+              e -> {
+                // Log the error but don't spam logcat for missing images
+                if (!(e.getMessage() != null && e.getMessage().contains("Object does not exist"))) {
+                  Log.w(
+                      "GroupAdapter",
+                      "Primary path failed for group " + groupKey + ": " + e.getMessage());
+                }
+
+                // Try fallback path with timeout, but only if ViewHolder still shows same group
+                if (groupKey.equals(imageView.getTag())) {
+                  tryFallbackImagePath(groupKey, imageView);
+                }
+              });
     }
 
-    /**
-     * Tries the fallback Firebase Storage path for group images.
-     */
+    /** Tries the fallback Firebase Storage path for group images. */
     private void tryFallbackImagePath(String groupKey, ImageView imageView) {
       final long TIMEOUT_MS = 5000;
-      
-      Task<android.net.Uri> fallbackTask = com.example.partymaker.data.firebase.DBRef.refStorage
-          .child("Groups/" + groupKey)
-          .getDownloadUrl();
-      
+
+      Task<android.net.Uri> fallbackTask =
+          com.example.partymaker.data.firebase.DBRef.refStorage
+              .child("Groups/" + groupKey)
+              .getDownloadUrl();
+
       // Apply timeout to fallback task
-      Task<android.net.Uri> timedFallbackTask = Tasks.withTimeout(fallbackTask, TIMEOUT_MS, TimeUnit.MILLISECONDS);
-      
+      Task<android.net.Uri> timedFallbackTask =
+          Tasks.withTimeout(fallbackTask, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+
       timedFallbackTask
-          .addOnSuccessListener(uri -> {
-            // Double-check the tag again
-            if (groupKey.equals(imageView.getTag())) {
-              Log.d("GroupAdapter", "Successfully loaded image from fallback path for group: " + groupKey);
-              GlideImageLoader.loadImage(context, uri.toString(), imageView, R.drawable.default_group_image);
-            }
-          })
-          .addOnFailureListener(e -> {
-            // Only log non-404 errors to reduce log spam
-            if (!(e.getMessage() != null && e.getMessage().contains("Object does not exist"))) {
-              Log.w("GroupAdapter", "Fallback path also failed for group " + groupKey + ": " + e.getMessage());
-            }
-            
-            // Keep default image - it's already set, no need to change
-            if (groupKey.equals(imageView.getTag())) {
-              Log.d("GroupAdapter", "Using default image for group: " + groupKey + " (both paths failed)");
-            }
-          });
+          .addOnSuccessListener(
+              uri -> {
+                // Double-check the tag again
+                if (groupKey.equals(imageView.getTag())) {
+                  Log.d(
+                      "GroupAdapter",
+                      "Successfully loaded image from fallback path for group: " + groupKey);
+                  GlideImageLoader.loadImage(
+                      context, uri.toString(), imageView, R.drawable.default_group_image);
+                }
+              })
+          .addOnFailureListener(
+              e -> {
+                // Only log non-404 errors to reduce log spam
+                if (!(e.getMessage() != null && e.getMessage().contains("Object does not exist"))) {
+                  Log.w(
+                      "GroupAdapter",
+                      "Fallback path also failed for group " + groupKey + ": " + e.getMessage());
+                }
+
+                // Keep default image - it's already set, no need to change
+                if (groupKey.equals(imageView.getTag())) {
+                  Log.d(
+                      "GroupAdapter",
+                      "Using default image for group: " + groupKey + " (both paths failed)");
+                }
+              });
     }
   }
 }
