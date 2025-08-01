@@ -41,7 +41,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.PartyMaker"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <!-- Launcher activity (entry point) -->
         <activity
@@ -96,10 +97,10 @@
         <!-- AI chatbot -->
         <activity android:name=".ui.chatbot.GptChatActivity" />
 
-        <!-- Google Maps API key -->
+        <!-- Google Maps API key will be loaded from BuildConfig -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDummyKeyForTesting" />
+            android:value="${MAPS_API_KEY}" />
 
         <!-- Google Play Services version -->
         <meta-data

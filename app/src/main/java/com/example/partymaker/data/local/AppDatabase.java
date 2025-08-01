@@ -1,12 +1,12 @@
 package com.example.partymaker.data.local;
 
 import android.content.Context;
-
+import android.util.Log;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
@@ -16,39 +16,119 @@ import com.example.partymaker.data.model.User;
  * allowing offline access.
  */
 @Database(
-        entities = {Group.class, User.class, ChatMessage.class},
-        version = 1,
-        exportSchema = false)
+    entities = {Group.class, User.class, ChatMessage.class},
+    version = 4, // Updated to latest version
+    exportSchema = false) // Disable schema export to avoid build warnings
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static volatile AppDatabase INSTANCE;
+  private static final String TAG = "AppDatabase";
+  private static volatile AppDatabase INSTANCE;
 
-    /**
-     * Gets the singleton instance of the database.
-     *
-     * @param context The application context
-     * @return The database instance
-     */
-    public static AppDatabase getInstance(Context context) {
+  /**
+   * Gets the singleton instance of the database with proper migration support.
+   *
+   * @param context The application context
+   * @return The database instance
+   */
+  public static AppDatabase getInstance(Context context) {
+    if (INSTANCE == null) {
+      synchronized (AppDatabase.class) {
         if (INSTANCE == null) {
-            synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE =
-                            Room.databaseBuilder(
-                                            context.getApplicationContext(), AppDatabase.class, "partymaker_database")
-                                    .fallbackToDestructiveMigration() // For simplicity in development
-                                    .build();
-                }
-            }
+          INSTANCE = createDatabase(context);
         }
-        return INSTANCE;
+      }
+    }
+    return INSTANCE;
+  }
+
+  /**
+   * Creates the database instance with comprehensive migration strategy
+   */
+  private static AppDatabase createDatabase(Context context) {
+    return Room.databaseBuilder(
+            context.getApplicationContext(), 
+            AppDatabase.class, 
+            "partymaker_database")
+        // Skip migrations for now - use destructive migration
+        // .addMigrations(DatabaseMigrations.getAllMigrations())
+        // Add callback for database events
+        .addCallback(databaseCallback)
+        // Enable WAL mode for better performance
+        .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+        // Use destructive migration for development - this will recreate DB with correct schema
+        .fallbackToDestructiveMigration()
+        .fallbackToDestructiveMigrationOnDowngrade()
+        .build();
+  }
+
+  /**
+   * Database callback for monitoring and initialization
+   */
+  private static final RoomDatabase.Callback databaseCallback = new RoomDatabase.Callback() {
+    @Override
+    public void onCreate(SupportSQLiteDatabase db) {
+      super.onCreate(db);
+      Log.i(TAG, "Database created for the first time");
+      // Add any initial data setup here if needed
     }
 
-    // DAOs (Data Access Objects)
-    public abstract GroupDao groupDao();
+    @Override
+    public void onOpen(SupportSQLiteDatabase db) {
+      super.onOpen(db);
+      Log.d(TAG, "Database opened, version: " + db.getVersion());
+      
+      // Enable foreign keys
+      db.execSQL("PRAGMA foreign_keys=ON");
+      
+      // Optimize performance
+      db.execSQL("PRAGMA synchronous=NORMAL");
+      db.execSQL("PRAGMA cache_size=10000");
+      db.execSQL("PRAGMA temp_store=MEMORY");
+    }
 
-    public abstract UserDao userDao();
+    @Override
+    public void onDestructiveMigration(SupportSQLiteDatabase db) {
+      super.onDestructiveMigration(db);
+      Log.w(TAG, "Destructive migration occurred - all data lost");
+      DatabaseMigrations.MigrationCallback.onFallbackToDestructive(
+          db.getVersion(), 4);
+    }
+  };
 
-    public abstract ChatMessageDao chatMessageDao();
+  /**
+   * Closes the database instance (for testing or app shutdown)
+   */
+  public static void closeDatabase() {
+    if (INSTANCE != null) {
+      INSTANCE.close();
+      INSTANCE = null;
+      Log.d(TAG, "Database closed");
+    }
+  }
+
+  /**
+   * Forces database recreation (for testing purposes)
+   */
+  public static void recreateDatabase(Context context) {
+    closeDatabase();
+    context.deleteDatabase("partymaker_database");
+    // Also delete any related files
+    String[] filesToDelete = {
+        "partymaker_database-shm",
+        "partymaker_database-wal",
+        "partymaker_database-journal"
+    };
+    for (String fileName : filesToDelete) {
+      context.deleteDatabase(fileName);
+    }
+    Log.i(TAG, "Database and related files deleted");
+  }
+
+  // DAOs (Data Access Objects)
+  public abstract GroupDao groupDao();
+
+  public abstract UserDao userDao();
+
+  public abstract ChatMessageDao chatMessageDao();
 }
