@@ -72,12 +72,14 @@ public class AuthViewModel extends BaseViewModel {
     super(application);
     auth = FirebaseAuth.getInstance();
 
-    // Check if user is already authenticated
+    // Don't automatically authenticate - let the user choose to login
+    // This prevents auto-login when navigating from registration to login screen
     FirebaseUser user = auth.getCurrentUser();
     if (user != null) {
       Log.d(TAG, "User already authenticated: " + user.getEmail());
       currentUser.setValue(user);
-      isAuthenticated.setValue(true);
+      // Don't set isAuthenticated to true automatically - user must explicitly login
+      // isAuthenticated.setValue(true);
     }
 
     setupGoogleSignIn();
@@ -502,6 +504,15 @@ public class AuthViewModel extends BaseViewModel {
       Log.e(TAG, baseMessage);
     }
     setError(errorMessage);
+  }
+
+  /** Clears authentication state to prevent auto-login */
+  public void clearAuthenticationState() {
+    Log.d(TAG, "Clearing authentication state");
+    isAuthenticated.setValue(false);
+    currentUser.setValue(null);
+    clearError();
+    clearMessages();
   }
 
   @Override

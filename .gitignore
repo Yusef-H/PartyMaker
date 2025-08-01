@@ -90,3 +90,6 @@ fabric.properties
 app/server/src/main/resources/firebase-service-account.json
 /CLAUDE.md
 /.claude/settings.local.json
+/agents/agent_app_polish.md
+/agents/agent_improve_code.md
+/agents/agent_warnings_fix.md
