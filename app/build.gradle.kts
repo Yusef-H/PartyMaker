@@ -181,6 +181,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.activity.compose)
+    
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -216,6 +217,7 @@ dependencies {
     // --- Room Database ---
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
     annotationProcessor(libs.androidx.room.compiler)
 
     // --- Media & Image Loading ---
@@ -237,7 +239,7 @@ dependencies {
     implementation(libs.androidx.concurrent.futures)
 
     // --- Security ---
-    implementation("androidx.security:security-crypto:1.0.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 }
 
 // Secrets plugin configuration
