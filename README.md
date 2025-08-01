@@ -26,10 +26,13 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Architecture**: Professional MVVM with Repository Pattern, ViewModels, and LiveData
 - **Database**: Room database for offline support and caching
 - **Threading**: Custom ThreadUtils for optimized background operations
-- **Image Processing**: Integrated ImageCompressor for optimal performance
+- **Image Processing**: Integrated ImageCompressor for optimal performance with Glide optimization
 - **Network Management**: Comprehensive NetworkManager with connectivity monitoring
 - **File Management**: Professional FileManager for cache and file operations
 - **Build System**: Gradle with Version Catalogs and custom build tasks
+- **UI Components**: SwipeRefreshLayout integration for pull-to-refresh functionality
+- **Error Handling**: Comprehensive timeout management and graceful degradation
+- **Caching Strategy**: Smart cache invalidation with force refresh capabilities
 
 ### 🖥️ Spring Boot Server
 
@@ -76,6 +79,9 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Group Administration**: Advanced admin tools and settings with image management
 - **Group Activities**: Dedicated group interaction screens
 - **Offline Group Access**: Groups cached locally for offline viewing
+- **Smart Group Updates**: Automatic refresh when returning to app to catch new group invitations
+- **Pull-to-Refresh**: Manual refresh capability for instant group list updates
+- **Enhanced Image Loading**: Dual-path Firebase Storage support with graceful fallbacks
 
 ### 🎊 Event Planning
 
@@ -115,6 +121,16 @@ PartyMaker follows a **client-server architecture** with clear separation of con
 - **Visual Indicators**: Clear notification icons and descriptions
 - **Memory Management**: Built-in MemoryManager for optimal performance
 - **Cache Management**: FileManager integration for cache cleaning and optimization
+
+### ⚡ Performance Optimizations
+
+- **Smart Caching**: Intelligent cache invalidation with force refresh capabilities
+- **Image Loading**: Optimized Glide configuration with timeout management and memory caching
+- **Background Operations**: All network operations handled with proper threading via ThreadUtils
+- **Race Condition Prevention**: Resolved data loading conflicts in MainActivity
+- **Efficient Data Flow**: Enhanced MVVM architecture with proper LiveData state management
+- **Network Optimization**: Reduced unnecessary server calls with cooldown mechanisms
+- **Error Recovery**: Graceful handling of Firebase Storage 404 errors and network timeouts
 
 ## 📁 Project Structure
 
@@ -311,7 +327,38 @@ cd app/server
 
 ## 🐞 Bug Fixes & Improvements
 
-### Recent Fixes (May 2023)
+### Latest Fixes & Features (August 2025)
+
+#### 🔧 Critical Bug Fixes
+- **Race Condition Fix**: Resolved intermittent group loading issues where groups sometimes wouldn't display on MainActivity startup
+- **URL Encoding Bug**: Fixed user group filtering issue where encoded email addresses (spaces → %20) prevented proper group membership detection
+- **Group Loading State**: Fixed null group list handling that caused premature empty state display
+
+#### 🚀 New Features & Enhancements
+
+##### 📱 Enhanced User Experience
+- **Pull-to-Refresh**: Added SwipeRefreshLayout to MainActivity for manual group list updates
+- **Smart Auto-Refresh**: Implemented onResume refresh with 30-second cooldown to catch new group invitations
+- **Real-time Group Updates**: Users now see new groups they've been added to without requiring logout/login
+
+##### 🖼️ Image Loading Improvements
+- **Enhanced Error Handling**: Improved Firebase Storage 404 error handling with proper fallback to default images
+- **Timeout Management**: Added 5-second timeouts to Firebase Storage requests to prevent hanging
+- **Dual Path Support**: Tries both `UsersImageProfile/Groups/` and `Groups/` storage paths with graceful fallback
+- **Proper Placeholders**: Uses `default_group_image` instead of generic launcher icon
+- **Reduced Log Spam**: Minimized repetitive 404 error logging for missing images
+
+##### 💾 Caching & Performance
+- **Smart Caching Strategy**: Enhanced caching logic with proper force refresh handling
+- **Memory Optimization**: Improved Glide image loading with better memory and disk caching
+- **Background Threading**: Optimized Firebase Storage operations with proper threading
+
+#### 🔄 Data Flow Improvements
+- **Force Refresh Logic**: When `forceRefresh: true`, now skips cache entirely and goes directly to server
+- **ViewModel State Management**: Improved LiveData initialization to prevent premature empty state display
+- **Repository Layer**: Enhanced GroupRepository with better error handling and fallback mechanisms
+
+### Previous Fixes (May 2023)
 
 - **Firebase Serialization**: Fixed conflicts between `username` and `userName` fields
 - **Image Path Handling**: Standardized image paths with backward compatibility

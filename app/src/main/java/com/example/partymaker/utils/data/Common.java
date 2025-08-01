@@ -1,21 +1,21 @@
 package com.example.partymaker.utils.data;
 
-import static com.example.partymaker.utils.data.Constants.ADMIN_KEY;
-import static com.example.partymaker.utils.data.Constants.CAN_ADD;
-import static com.example.partymaker.utils.data.Constants.COMING_KEYS;
-import static com.example.partymaker.utils.data.Constants.CREATED_AT;
-import static com.example.partymaker.utils.data.Constants.DEFAULT_KEY;
-import static com.example.partymaker.utils.data.Constants.FRIEND_KEYS;
-import static com.example.partymaker.utils.data.Constants.GROUP_DAYS;
-import static com.example.partymaker.utils.data.Constants.GROUP_HOURS;
-import static com.example.partymaker.utils.data.Constants.GROUP_KEY;
-import static com.example.partymaker.utils.data.Constants.GROUP_LOCATION;
-import static com.example.partymaker.utils.data.Constants.GROUP_MONTHS;
-import static com.example.partymaker.utils.data.Constants.GROUP_NAME;
-import static com.example.partymaker.utils.data.Constants.GROUP_PRICE;
-import static com.example.partymaker.utils.data.Constants.GROUP_TYPE;
-import static com.example.partymaker.utils.data.Constants.GROUP_YEARS;
-import static com.example.partymaker.utils.data.Constants.MESSAGE_KEYS;
+import static com.example.partymaker.utils.data.Constants.Extras.ADMIN_KEY;
+import static com.example.partymaker.utils.data.Constants.Extras.CAN_ADD;
+import static com.example.partymaker.utils.data.Constants.Extras.COMING_KEYS;
+import static com.example.partymaker.utils.data.Constants.Extras.CREATED_AT;
+import static com.example.partymaker.utils.data.Constants.Extras.DEFAULT_KEY;
+import static com.example.partymaker.utils.data.Constants.Extras.FRIEND_KEYS;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_DAYS;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_HOURS;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_KEY;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_LOCATION;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_MONTHS;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_NAME;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_PRICE;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_TYPE;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_YEARS;
+import static com.example.partymaker.utils.data.Constants.Extras.MESSAGE_KEYS;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

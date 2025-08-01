@@ -1,6 +1,6 @@
 # PartyMaker Server
 
-A minimal Spring Boot server that acts as a middleware between the PartyMaker app and Firebase.
+A Spring Boot server that acts as a secure middleware between the PartyMaker Android app and Firebase, providing optimized data access and enhanced performance.
 
 ## Setup
 
@@ -20,54 +20,182 @@ A minimal Spring Boot server that acts as a middleware between the PartyMaker ap
 
 The server will start on port 8080.
 
-## API Endpoints
+## 🚀 Features & Performance Enhancements
 
-### Get Data
+### Server Optimizations (August 2025)
+- **Enhanced Request Handling**: Optimized Firebase data retrieval with improved error handling
+- **Secure Data Filtering**: Server-side user group filtering prevents client-side data exposure
+- **Timeout Management**: 10-second request timeouts to prevent hanging connections
+- **Memory Optimization**: Efficient data processing and response streaming
+- **Error Sanitization**: Secure error responses that don't leak sensitive information
 
+### Key Benefits
+- **Reduced Client Load**: Heavy data processing done on server
+- **Enhanced Security**: Centralized data access control
+- **Better Performance**: Optimized Firebase queries with caching
+- **Consistent API**: Unified interface for all Firebase operations
+
+## 📋 API Endpoints
+
+### Core Firebase Operations
+
+#### Get All Groups
+```http
+GET /api/firebase/Groups
 ```
-GET /api/firebase/{path}
+**Response**: JSON object with all groups and optimized user filtering
+
+#### Get All Users
+```http
+GET /api/firebase/Users
+```
+**Response**: JSON object with all user data
+
+#### Get All Group Messages
+```http
+GET /api/firebase/GroupsMessages
+```
+**Response**: JSON object with all group messages
+
+### Generic Firebase Operations
+
+#### Get Data
+```http
+GET /api/firebase/data/{path}
+```
+**Response**: JSON data from specified Firebase path
+
+#### Save Data
+```http
+POST /api/firebase/data/{path}
+Content-Type: application/json
+
+{
+  "key": "value",
+  "data": "example"
+}
 ```
 
-### Get Data as List
+#### Update Data
+```http
+PUT /api/firebase/data/{path}
+Content-Type: application/json
 
-```
-GET /api/firebase/list/{path}
-```
-
-### Save Data
-
-```
-POST /api/firebase/{path}
-Body: JSON data
+{
+  "field": "updated_value"
+}
 ```
 
-### Update Data
-
-```
-PUT /api/firebase/{path}
-Body: JSON updates
+#### Delete Data
+```http
+DELETE /api/firebase/data/{path}
 ```
 
-### Delete Data
+## 📱 Mobile App Integration
 
-```
-DELETE /api/firebase/{path}
-```
+The PartyMaker Android app integrates with this server through the `FirebaseServerClient` class, which provides optimized data access with enhanced error handling and performance.
 
-## Mobile App Integration
+### Key Integration Features
 
-Update your mobile app to use these API endpoints instead of directly accessing Firebase. For
-example:
+#### Smart Group Loading
+The server provides optimized group filtering that prevents the URL encoding issues that could occur with client-side filtering:
 
 ```java
-// Instead of directly accessing Firebase
-DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path");
+// FirebaseServerClient.java handles the integration
+public void getUserGroups(String userId, DataCallback<Map<String, Group>> callback) {
+    // Server handles the filtering and returns only relevant groups
+    // Prevents client-side URL encoding issues
+    // Provides enhanced error handling
+}
+```
 
-// Use the server API
-String serverUrl = "http://your-server-url:8080";
-// For GET requests
-URL url = new URL(serverUrl + "/api/firebase/path");
-// For POST requests
-URL url = new URL(serverUrl + "/api/firebase/path");
-// Then use HttpURLConnection or your preferred HTTP client
-``` 
+#### Enhanced Error Handling
+- **Timeout Management**: All requests have configurable timeouts
+- **Graceful Degradation**: Falls back to cached data when server is unavailable
+- **Error Recovery**: Automatic retry mechanisms for transient failures
+
+#### Performance Optimizations
+- **Reduced Data Transfer**: Server filters data before sending to client
+- **Optimized Queries**: Server-side Firebase query optimization
+- **Caching Support**: Coordinated caching between server and client
+
+### Configuration
+
+The Android app automatically uses the production server URL:
+```java
+// MainActivity.java - Force server URL
+String renderUrl = "https://partymaker.onrender.com";
+```
+
+For local development, update the server URL in the app settings:
+- **Emulator**: `http://10.0.2.2:8080`
+- **Physical device**: `http://[your-computer-ip]:8080`
+
+### Latest Improvements (August 2025)
+- **Race Condition Prevention**: Fixed client-server race conditions in group loading
+- **Enhanced Caching**: Smart cache invalidation with force refresh support
+- **Better Error Messages**: More user-friendly error handling
+- **Timeout Optimization**: Balanced timeouts for better user experience
+
+## 🛠️ Technology Stack
+
+- **Framework**: Spring Boot 2.7.5
+- **Language**: Java 11
+- **Build Tool**: Gradle
+- **Database**: Firebase Realtime Database (via Admin SDK)
+- **Authentication**: Firebase Admin SDK
+- **Deployment**: Render.com (Production)
+- **Development**: Local with hot reload
+
+## 🚀 Deployment
+
+### Production Deployment (Render.com)
+The server is deployed at: `https://partymaker.onrender.com`
+
+1. **Automatic Deployment**: Connected to GitHub repository
+2. **Environment Variables**: Configure Firebase service account in Render dashboard
+3. **Health Checks**: Automatic health monitoring and restart
+4. **SSL**: Automatic HTTPS with certificate management
+
+### Local Development
+```bash
+# Start local server
+./gradlew bootRun
+
+# Server runs on http://localhost:8080
+# Update Android app to use local server for testing
+```
+
+### Build for Production
+```bash
+# Build JAR file
+./gradlew bootJar
+
+# JAR file location: build/libs/server-*.jar
+# Deploy to your preferred cloud platform
+```
+
+## 🔧 Configuration
+
+### Required Environment Variables
+- `FIREBASE_SERVICE_ACCOUNT`: Firebase Admin SDK service account JSON
+- `FIREBASE_PROJECT_ID`: Your Firebase project ID
+
+### Optional Configuration
+- `SERVER_PORT`: Server port (default: 8080)
+- `FIREBASE_DATABASE_URL`: Firebase database URL
+- `CORS_ALLOWED_ORIGINS`: Allowed CORS origins
+
+## 📊 Monitoring & Health
+
+The server provides health check endpoints:
+- `GET /actuator/health` - Application health status
+- `GET /actuator/info` - Application information
+
+## 🔒 Security Features
+
+- **CORS Configuration**: Properly configured cross-origin requests
+- **Input Validation**: Request validation and sanitization  
+- **Error Handling**: Secure error responses without information leakage
+- **Timeout Protection**: Request timeouts to prevent DoS attacks
+- **Firebase Security**: Server-side Firebase Admin SDK access 

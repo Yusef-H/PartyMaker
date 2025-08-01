@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.example.partymaker.R;
 
 /**
  * Manager class for handling loading states in a consistent and user-friendly way. Provides smooth

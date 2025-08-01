@@ -1,10 +1,10 @@
 package com.example.partymaker.utils.ui;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkUtils;
 import com.example.partymaker.data.api.Result;

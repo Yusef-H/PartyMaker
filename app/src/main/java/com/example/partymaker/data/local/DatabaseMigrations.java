@@ -6,264 +6,277 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 /**
- * Database migration strategies for Room database.
- * Handles schema changes while preserving user data.
+ * Database migration strategies for Room database. Handles schema changes while preserving user
+ * data.
  */
 public class DatabaseMigrations {
-    private static final String TAG = "DatabaseMigrations";
-    
-    /**
-     * Migration from version 1 to 2
-     * Example: Adding a new column to existing tables
-     */
-    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+  private static final String TAG = "DatabaseMigrations";
+
+  /** Migration from version 1 to 2 Example: Adding a new column to existing tables */
+  public static final Migration MIGRATION_1_2 =
+      new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            try {
-                Log.d(TAG, "Starting migration from version 1 to 2");
-                
-                // Example: Add new columns
-                database.execSQL("ALTER TABLE groups ADD COLUMN isPrivate INTEGER NOT NULL DEFAULT 0");
-                database.execSQL("ALTER TABLE users ADD COLUMN lastActiveTime INTEGER NOT NULL DEFAULT 0");
-                database.execSQL("ALTER TABLE chat_messages ADD COLUMN messageType TEXT NOT NULL DEFAULT 'TEXT'");
-                
-                // Example: Create indexes for better performance
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_groups_isPrivate ON groups(isPrivate)");
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_users_lastActiveTime ON users(lastActiveTime)");
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_chat_messages_messageType ON chat_messages(messageType)");
-                
-                Log.d(TAG, "Successfully migrated from version 1 to 2");
-                
-            } catch (Exception e) {
-                Log.e(TAG, "Error during migration 1->2", e);
-                throw e; // Re-throw to trigger fallback
-            }
+          try {
+            Log.d(TAG, "Starting migration from version 1 to 2");
+
+            // Example: Add new columns
+            database.execSQL("ALTER TABLE groups ADD COLUMN isPrivate INTEGER NOT NULL DEFAULT 0");
+            database.execSQL(
+                "ALTER TABLE users ADD COLUMN lastActiveTime INTEGER NOT NULL DEFAULT 0");
+            database.execSQL(
+                "ALTER TABLE chat_messages ADD COLUMN messageType TEXT NOT NULL DEFAULT 'TEXT'");
+
+            // Example: Create indexes for better performance
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_groups_isPrivate ON groups(isPrivate)");
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_users_lastActiveTime ON users(lastActiveTime)");
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_chat_messages_messageType ON chat_messages(messageType)");
+
+            Log.d(TAG, "Successfully migrated from version 1 to 2");
+
+          } catch (Exception e) {
+            Log.e(TAG, "Error during migration 1->2", e);
+            throw e; // Re-throw to trigger fallback
+          }
         }
-    };
-    
-    /**
-     * Migration from version 2 to 3
-     * Example: Adding new tables and relationships
-     */
-    public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+      };
+
+  /** Migration from version 2 to 3 Example: Adding new tables and relationships */
+  public static final Migration MIGRATION_2_3 =
+      new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            try {
-                Log.d(TAG, "Starting migration from version 2 to 3");
-                
-                // Example: Create new table for user preferences
-                database.execSQL("CREATE TABLE IF NOT EXISTS user_preferences (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                    "userId TEXT NOT NULL, " +
-                    "preferenceKey TEXT NOT NULL, " +
-                    "preferenceValue TEXT, " +
-                    "createdAt INTEGER NOT NULL, " +
-                    "updatedAt INTEGER NOT NULL, " +
-                    "FOREIGN KEY(userId) REFERENCES users(userKey) ON DELETE CASCADE" +
-                    ")");
-                
-                // Create unique index for user preferences
-                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_user_preferences_user_key " +
-                    "ON user_preferences(userId, preferenceKey)");
-                
-                // Example: Add new columns for group management
-                database.execSQL("ALTER TABLE groups ADD COLUMN maxParticipants INTEGER DEFAULT -1");
-                database.execSQL("ALTER TABLE groups ADD COLUMN requiresApproval INTEGER NOT NULL DEFAULT 0");
-                
-                Log.d(TAG, "Successfully migrated from version 2 to 3");
-                
-            } catch (Exception e) {
-                Log.e(TAG, "Error during migration 2->3", e);
-                throw e;
-            }
+          try {
+            Log.d(TAG, "Starting migration from version 2 to 3");
+
+            // Example: Create new table for user preferences
+            database.execSQL(
+                "CREATE TABLE IF NOT EXISTS user_preferences ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "userId TEXT NOT NULL, "
+                    + "preferenceKey TEXT NOT NULL, "
+                    + "preferenceValue TEXT, "
+                    + "createdAt INTEGER NOT NULL, "
+                    + "updatedAt INTEGER NOT NULL, "
+                    + "FOREIGN KEY(userId) REFERENCES users(userKey) ON DELETE CASCADE"
+                    + ")");
+
+            // Create unique index for user preferences
+            database.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS index_user_preferences_user_key "
+                    + "ON user_preferences(userId, preferenceKey)");
+
+            // Example: Add new columns for group management
+            database.execSQL("ALTER TABLE groups ADD COLUMN maxParticipants INTEGER DEFAULT -1");
+            database.execSQL(
+                "ALTER TABLE groups ADD COLUMN requiresApproval INTEGER NOT NULL DEFAULT 0");
+
+            Log.d(TAG, "Successfully migrated from version 2 to 3");
+
+          } catch (Exception e) {
+            Log.e(TAG, "Error during migration 2->3", e);
+            throw e;
+          }
         }
-    };
-    
-    /**
-     * Migration from version 3 to 4
-     * Example: Data transformation and cleanup
-     */
-    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+      };
+
+  /** Migration from version 3 to 4 Example: Data transformation and cleanup */
+  public static final Migration MIGRATION_3_4 =
+      new Migration(3, 4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            try {
-                Log.d(TAG, "Starting migration from version 3 to 4");
-                
-                // Example: Create temporary table for data transformation
-                database.execSQL("CREATE TABLE groups_new (" +
-                    "groupKey TEXT PRIMARY KEY NOT NULL, " +
-                    "groupName TEXT NOT NULL, " +
-                    "adminKey TEXT NOT NULL, " +
-                    "groupLocation TEXT, " +
-                    "groupDays TEXT, " +
-                    "groupMonths TEXT, " +
-                    "groupYears TEXT, " +
-                    "groupHours TEXT, " +
-                    "createdAt INTEGER NOT NULL, " +
-                    "groupPrice REAL NOT NULL DEFAULT 0.0, " +
-                    "groupType TEXT NOT NULL DEFAULT 'GENERAL', " +
-                    "canAdd INTEGER NOT NULL DEFAULT 1, " +
-                    "friendKeys TEXT, " +
-                    "comingKeys TEXT, " +
-                    "messageKeys TEXT, " +
-                    "isPrivate INTEGER NOT NULL DEFAULT 0, " +
-                    "maxParticipants INTEGER DEFAULT -1, " +
-                    "requiresApproval INTEGER NOT NULL DEFAULT 0, " +
-                    "description TEXT, " +
-                    "category TEXT NOT NULL DEFAULT 'OTHER'" +
-                    ")");
-                
-                // Copy data with transformation
-                database.execSQL("INSERT INTO groups_new " +
-                    "SELECT groupKey, groupName, adminKey, groupLocation, groupDays, groupMonths, " +
-                    "groupYears, groupHours, createdAt, groupPrice, groupType, canAdd, " +
-                    "friendKeys, comingKeys, messageKeys, isPrivate, maxParticipants, " +
-                    "requiresApproval, NULL as description, 'OTHER' as category " +
-                    "FROM groups");
-                
-                // Drop old table and rename new one
-                database.execSQL("DROP TABLE groups");
-                database.execSQL("ALTER TABLE groups_new RENAME TO groups");
-                
-                // Recreate indexes
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_groups_adminKey ON groups(adminKey)");
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_groups_category ON groups(category)");
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_groups_createdAt ON groups(createdAt)");
-                
-                Log.d(TAG, "Successfully migrated from version 3 to 4");
-                
-            } catch (Exception e) {
-                Log.e(TAG, "Error during migration 3->4", e);
-                throw e;
-            }
+          try {
+            Log.d(TAG, "Starting migration from version 3 to 4");
+
+            // Example: Create temporary table for data transformation
+            database.execSQL(
+                "CREATE TABLE groups_new ("
+                    + "groupKey TEXT PRIMARY KEY NOT NULL, "
+                    + "groupName TEXT NOT NULL, "
+                    + "adminKey TEXT NOT NULL, "
+                    + "groupLocation TEXT, "
+                    + "groupDays TEXT, "
+                    + "groupMonths TEXT, "
+                    + "groupYears TEXT, "
+                    + "groupHours TEXT, "
+                    + "createdAt INTEGER NOT NULL, "
+                    + "groupPrice REAL NOT NULL DEFAULT 0.0, "
+                    + "groupType TEXT NOT NULL DEFAULT 'GENERAL', "
+                    + "canAdd INTEGER NOT NULL DEFAULT 1, "
+                    + "friendKeys TEXT, "
+                    + "comingKeys TEXT, "
+                    + "messageKeys TEXT, "
+                    + "isPrivate INTEGER NOT NULL DEFAULT 0, "
+                    + "maxParticipants INTEGER DEFAULT -1, "
+                    + "requiresApproval INTEGER NOT NULL DEFAULT 0, "
+                    + "description TEXT, "
+                    + "category TEXT NOT NULL DEFAULT 'OTHER'"
+                    + ")");
+
+            // Copy data with transformation
+            database.execSQL(
+                "INSERT INTO groups_new "
+                    + "SELECT groupKey, groupName, adminKey, groupLocation, groupDays, groupMonths, "
+                    + "groupYears, groupHours, createdAt, groupPrice, groupType, canAdd, "
+                    + "friendKeys, comingKeys, messageKeys, isPrivate, maxParticipants, "
+                    + "requiresApproval, NULL as description, 'OTHER' as category "
+                    + "FROM groups");
+
+            // Drop old table and rename new one
+            database.execSQL("DROP TABLE groups");
+            database.execSQL("ALTER TABLE groups_new RENAME TO groups");
+
+            // Recreate indexes
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_groups_adminKey ON groups(adminKey)");
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_groups_category ON groups(category)");
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_groups_createdAt ON groups(createdAt)");
+
+            Log.d(TAG, "Successfully migrated from version 3 to 4");
+
+          } catch (Exception e) {
+            Log.e(TAG, "Error during migration 3->4", e);
+            throw e;
+          }
         }
-    };
-    
-    /**
-     * Emergency migration - clears all data if migration fails
-     * Use this as a last resort when data integrity is compromised
-     */
-    public static final Migration EMERGENCY_CLEAR_ALL = new Migration(1, 4) {
+      };
+
+  /**
+   * Emergency migration - clears all data if migration fails Use this as a last resort when data
+   * integrity is compromised
+   */
+  public static final Migration EMERGENCY_CLEAR_ALL =
+      new Migration(1, 4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            Log.w(TAG, "Performing emergency migration - all data will be lost");
-            
-            try {
-                // Drop all tables
-                database.execSQL("DROP TABLE IF EXISTS groups");
-                database.execSQL("DROP TABLE IF EXISTS users");
-                database.execSQL("DROP TABLE IF EXISTS chat_messages");
-                database.execSQL("DROP TABLE IF EXISTS user_preferences");
-                
-                // Recreate tables with latest schema
-                createLatestSchema(database);
-                
-                Log.w(TAG, "Emergency migration completed - database recreated");
-                
-            } catch (Exception e) {
-                Log.e(TAG, "Emergency migration failed", e);
-                throw e;
-            }
+          Log.w(TAG, "Performing emergency migration - all data will be lost");
+
+          try {
+            // Drop all tables
+            database.execSQL("DROP TABLE IF EXISTS groups");
+            database.execSQL("DROP TABLE IF EXISTS users");
+            database.execSQL("DROP TABLE IF EXISTS chat_messages");
+            database.execSQL("DROP TABLE IF EXISTS user_preferences");
+
+            // Recreate tables with latest schema
+            createLatestSchema(database);
+
+            Log.w(TAG, "Emergency migration completed - database recreated");
+
+          } catch (Exception e) {
+            Log.e(TAG, "Emergency migration failed", e);
+            throw e;
+          }
         }
-        
+
         private void createLatestSchema(@NonNull SupportSQLiteDatabase database) {
-            // Create groups table matching Entity expectations exactly
-            database.execSQL("CREATE TABLE IF NOT EXISTS `groups` (" +
-                "`groupKey` TEXT PRIMARY KEY NOT NULL, " +
-                "`group_name` TEXT, " +
-                "`admin_key` TEXT, " +
-                "`group_location` TEXT, " +
-                "`group_days` TEXT, " +
-                "`group_months` TEXT, " +
-                "`group_years` TEXT, " +
-                "`group_hours` TEXT, " +
-                "`created_at` TEXT, " +
-                "`group_price` TEXT, " +
-                "`group_type` INTEGER NOT NULL, " +
-                "`can_add` INTEGER NOT NULL, " +
-                "`friend_keys` TEXT, " +
-                "`coming_keys` TEXT, " +
-                "`message_keys` TEXT, " +
-                "`group_description` TEXT" +
-                ")");
-            
-            // Create users table matching Entity expectations exactly
-            database.execSQL("CREATE TABLE IF NOT EXISTS `users` (" +
-                "`userKey` TEXT PRIMARY KEY NOT NULL, " +
-                "`username` TEXT, " +
-                "`email` TEXT, " +
-                "`profile_image_url` TEXT, " +
-                "`friend_keys` TEXT" +
-                ")");
-            
-            // Create chat_messages table matching Entity expectations exactly  
-            database.execSQL("CREATE TABLE IF NOT EXISTS `chat_messages` (" +
-                "`messageKey` TEXT PRIMARY KEY NOT NULL, " +
-                "`groupKey` TEXT, " +
-                "`senderKey` TEXT, " +
-                "`senderName` TEXT, " +
-                "`message` TEXT, " +
-                "`timestamp` INTEGER, " +
-                "`imageUrl` TEXT, " +
-                "`metadata` TEXT" +
-                ")");
-            
-            // Skip user_preferences table for now as it's not part of core entities
-            
-            // Create basic indexes matching the entities
-            database.execSQL("CREATE INDEX IF NOT EXISTS `index_groups_admin_key` ON `groups`(`admin_key`)");
-            database.execSQL("CREATE INDEX IF NOT EXISTS `index_chat_messages_groupKey` ON `chat_messages`(`groupKey`)");
-            database.execSQL("CREATE INDEX IF NOT EXISTS `index_users_email` ON `users`(`email`)");
+          // Create groups table matching Entity expectations exactly
+          database.execSQL(
+              "CREATE TABLE IF NOT EXISTS `groups` ("
+                  + "`groupKey` TEXT PRIMARY KEY NOT NULL, "
+                  + "`group_name` TEXT, "
+                  + "`admin_key` TEXT, "
+                  + "`group_location` TEXT, "
+                  + "`group_days` TEXT, "
+                  + "`group_months` TEXT, "
+                  + "`group_years` TEXT, "
+                  + "`group_hours` TEXT, "
+                  + "`created_at` TEXT, "
+                  + "`group_price` TEXT, "
+                  + "`group_type` INTEGER NOT NULL, "
+                  + "`can_add` INTEGER NOT NULL, "
+                  + "`friend_keys` TEXT, "
+                  + "`coming_keys` TEXT, "
+                  + "`message_keys` TEXT, "
+                  + "`group_description` TEXT"
+                  + ")");
+
+          // Create users table matching Entity expectations exactly
+          database.execSQL(
+              "CREATE TABLE IF NOT EXISTS `users` ("
+                  + "`userKey` TEXT PRIMARY KEY NOT NULL, "
+                  + "`username` TEXT, "
+                  + "`email` TEXT, "
+                  + "`profile_image_url` TEXT, "
+                  + "`friend_keys` TEXT"
+                  + ")");
+
+          // Create chat_messages table matching Entity expectations exactly
+          database.execSQL(
+              "CREATE TABLE IF NOT EXISTS `chat_messages` ("
+                  + "`messageKey` TEXT PRIMARY KEY NOT NULL, "
+                  + "`groupKey` TEXT, "
+                  + "`senderKey` TEXT, "
+                  + "`senderName` TEXT, "
+                  + "`message` TEXT, "
+                  + "`timestamp` INTEGER, "
+                  + "`imageUrl` TEXT, "
+                  + "`metadata` TEXT"
+                  + ")");
+
+          // Skip user_preferences table for now as it's not part of core entities
+
+          // Create basic indexes matching the entities
+          database.execSQL(
+              "CREATE INDEX IF NOT EXISTS `index_groups_admin_key` ON `groups`(`admin_key`)");
+          database.execSQL(
+              "CREATE INDEX IF NOT EXISTS `index_chat_messages_groupKey` ON `chat_messages`(`groupKey`)");
+          database.execSQL("CREATE INDEX IF NOT EXISTS `index_users_email` ON `users`(`email`)");
         }
+      };
+
+  /** Get all available migrations in order */
+  public static Migration[] getAllMigrations() {
+    return new Migration[] {MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4};
+  }
+
+  /** Get emergency migration for data recovery scenarios */
+  public static Migration getEmergencyMigration(int fromVersion, int toVersion) {
+    return new Migration(fromVersion, toVersion) {
+      @Override
+      public void migrate(@NonNull SupportSQLiteDatabase database) {
+        Log.w(TAG, String.format("Emergency migration from %d to %d", fromVersion, toVersion));
+        EMERGENCY_CLEAR_ALL.migrate(database);
+      }
     };
-    
-    /**
-     * Get all available migrations in order
-     */
-    public static Migration[] getAllMigrations() {
-        return new Migration[] {
-            MIGRATION_1_2,
-            MIGRATION_2_3,
-            MIGRATION_3_4
-        };
+  }
+
+  /** Database migration callback for monitoring migration success/failure */
+  public static class MigrationCallback {
+
+    public static void onMigrationStart(int fromVersion, int toVersion) {
+      Log.i(
+          TAG,
+          String.format(
+              "Starting database migration from version %d to %d", fromVersion, toVersion));
     }
-    
-    /**
-     * Get emergency migration for data recovery scenarios
-     */
-    public static Migration getEmergencyMigration(int fromVersion, int toVersion) {
-        return new Migration(fromVersion, toVersion) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                Log.w(TAG, String.format("Emergency migration from %d to %d", fromVersion, toVersion));
-                EMERGENCY_CLEAR_ALL.migrate(database);
-            }
-        };
+
+    public static void onMigrationSuccess(int fromVersion, int toVersion) {
+      Log.i(
+          TAG,
+          String.format(
+              "Database migration completed successfully from version %d to %d",
+              fromVersion, toVersion));
     }
-    
-    /**
-     * Database migration callback for monitoring migration success/failure
-     */
-    public static class MigrationCallback {
-        
-        public static void onMigrationStart(int fromVersion, int toVersion) {
-            Log.i(TAG, String.format("Starting database migration from version %d to %d", 
-                fromVersion, toVersion));
-        }
-        
-        public static void onMigrationSuccess(int fromVersion, int toVersion) {
-            Log.i(TAG, String.format("Database migration completed successfully from version %d to %d", 
-                fromVersion, toVersion));
-        }
-        
-        public static void onMigrationFailure(int fromVersion, int toVersion, Exception error) {
-            Log.e(TAG, String.format("Database migration failed from version %d to %d", 
-                fromVersion, toVersion), error);
-        }
-        
-        public static void onFallbackToDestructive(int fromVersion, int toVersion) {
-            Log.w(TAG, String.format("Falling back to destructive migration from version %d to %d - DATA WILL BE LOST", 
-                fromVersion, toVersion));
-        }
+
+    public static void onMigrationFailure(int fromVersion, int toVersion, Exception error) {
+      Log.e(
+          TAG,
+          String.format("Database migration failed from version %d to %d", fromVersion, toVersion),
+          error);
     }
+
+    public static void onFallbackToDestructive(int fromVersion, int toVersion) {
+      Log.w(
+          TAG,
+          String.format(
+              "Falling back to destructive migration from version %d to %d - DATA WILL BE LOST",
+              fromVersion, toVersion));
+    }
+  }
 }

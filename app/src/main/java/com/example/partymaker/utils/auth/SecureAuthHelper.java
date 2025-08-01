@@ -6,18 +6,27 @@ import android.util.Log;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
+import com.example.partymaker.utils.data.Constants;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /** Secure version of AuthHelper using EncryptedSharedPreferences */
-public class SecureAuthHelper {
+public final class SecureAuthHelper {
   private static final String TAG = "SecureAuthHelper";
+
+  // Private constructor to prevent instantiation
+  private SecureAuthHelper() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+  }
+
   private static final String PREFS_NAME = "secure_auth_prefs";
   private static final String KEY_USER_EMAIL = "user_email";
   private static final String KEY_SESSION_TOKEN = "session_token";
   private static final String KEY_SESSION_EXPIRY = "session_expiry";
   private static final String KEY_REFRESH_TOKEN = "refresh_token";
+  private static final String KEY_FAILED_ATTEMPTS = "failed_attempts";
+  private static final String KEY_LOCKOUT_UNTIL = "lockout_until";
 
   // Session duration: 7 days (reduced from 30 days for better security)
   private static final long SESSION_DURATION_MS = 7L * 24 * 60 * 60 * 1000;
@@ -236,6 +245,101 @@ public class SecureAuthHelper {
     if (email != null && !email.isEmpty()) {
       saveUserSession(context, email);
       Log.d(TAG, "Session refreshed for user: " + email);
+    }
+  }
+
+  /** Record a failed login attempt */
+  public static void recordFailedAttempt(Context context, String email) {
+    if (context == null || email == null || email.isEmpty()) {
+      return;
+    }
+
+    try {
+      SharedPreferences prefs = getSecurePrefs(context);
+      String key = KEY_FAILED_ATTEMPTS + "_" + email.hashCode();
+      int attempts = prefs.getInt(key, 0) + 1;
+
+      prefs.edit().putInt(key, attempts).apply();
+
+      // Check if we need to lock out the user
+      if (attempts >= Constants.Security.MAX_LOGIN_ATTEMPTS) {
+        long lockoutUntil = System.currentTimeMillis() + Constants.Security.LOCKOUT_DURATION_MS;
+        prefs.edit().putLong(KEY_LOCKOUT_UNTIL + "_" + email.hashCode(), lockoutUntil).apply();
+
+        Log.w(TAG, "User locked out due to too many failed attempts: " + email);
+      }
+
+      Log.d(TAG, "Recorded failed attempt " + attempts + " for user: " + email);
+    } catch (Exception e) {
+      Log.e(TAG, "Error recording failed attempt", e);
+    }
+  }
+
+  /** Clear failed login attempts for a user */
+  public static void clearFailedAttempts(Context context, String email) {
+    if (context == null || email == null || email.isEmpty()) {
+      return;
+    }
+
+    try {
+      SharedPreferences prefs = getSecurePrefs(context);
+      String key = KEY_FAILED_ATTEMPTS + "_" + email.hashCode();
+      String lockoutKey = KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+
+      prefs.edit().remove(key).remove(lockoutKey).apply();
+
+      Log.d(TAG, "Cleared failed attempts for user: " + email);
+    } catch (Exception e) {
+      Log.e(TAG, "Error clearing failed attempts", e);
+    }
+  }
+
+  /** Check if user is currently locked out */
+  public static boolean isLockedOut(Context context, String email) {
+    if (context == null || email == null || email.isEmpty()) {
+      return false;
+    }
+
+    try {
+      SharedPreferences prefs = getSecurePrefs(context);
+      String lockoutKey = KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+      long lockoutUntil = prefs.getLong(lockoutKey, 0);
+
+      if (lockoutUntil > 0 && System.currentTimeMillis() < lockoutUntil) {
+        Log.w(TAG, "User is locked out: " + email);
+        return true;
+      } else if (lockoutUntil > 0) {
+        // Lockout period has expired, clear it
+        prefs.edit().remove(lockoutKey).apply();
+      }
+
+      return false;
+    } catch (Exception e) {
+      Log.e(TAG, "Error checking lockout status", e);
+      return false;
+    }
+  }
+
+  /** Get remaining lockout time in milliseconds */
+  public static long getRemainingLockoutTime(Context context, String email) {
+    if (context == null || email == null || email.isEmpty()) {
+      return 0;
+    }
+
+    try {
+      SharedPreferences prefs = getSecurePrefs(context);
+      String lockoutKey = KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+      long lockoutUntil = prefs.getLong(lockoutKey, 0);
+
+      if (lockoutUntil > 0) {
+        long remaining = lockoutUntil - System.currentTimeMillis();
+        return Math.max(0, remaining);
+      }
+
+      return 0;
+    } catch (Exception e) {
+      Log.e(TAG, "Error getting remaining lockout time", e);
+      return 0;
     }
   }
 

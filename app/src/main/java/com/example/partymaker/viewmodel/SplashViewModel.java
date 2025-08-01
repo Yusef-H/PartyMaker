@@ -28,7 +28,7 @@ public class SplashViewModel extends BaseViewModel {
   public SplashViewModel(@NonNull Application application) {
     super(application);
     auth = FirebaseAuth.getInstance();
-    sharedPreferences = application.getSharedPreferences(Constants.PREFS_NAME, 0);
+    sharedPreferences = application.getSharedPreferences(Constants.Preferences.PREFS_NAME, 0);
   }
 
   public LiveData<NavigationDestination> getNavigationDestination() {
@@ -55,7 +55,7 @@ public class SplashViewModel extends BaseViewModel {
 
   private void checkAuthenticationStatus() {
     FirebaseUser currentUser = auth.getCurrentUser();
-    boolean isChecked = sharedPreferences.getBoolean(Constants.IS_CHECKED, false);
+    boolean isChecked = sharedPreferences.getBoolean(Constants.Preferences.IS_CHECKED, false);
 
     if (currentUser != null && isChecked) {
       // User is signed in and remember me was checked

@@ -42,14 +42,10 @@ public abstract class AppDatabase extends RoomDatabase {
     return INSTANCE;
   }
 
-  /**
-   * Creates the database instance with comprehensive migration strategy
-   */
+  /** Creates the database instance with comprehensive migration strategy */
   private static AppDatabase createDatabase(Context context) {
     return Room.databaseBuilder(
-            context.getApplicationContext(), 
-            AppDatabase.class, 
-            "partymaker_database")
+            context.getApplicationContext(), AppDatabase.class, "partymaker_database")
         // Skip migrations for now - use destructive migration
         // .addMigrations(DatabaseMigrations.getAllMigrations())
         // Add callback for database events
@@ -62,43 +58,39 @@ public abstract class AppDatabase extends RoomDatabase {
         .build();
   }
 
-  /**
-   * Database callback for monitoring and initialization
-   */
-  private static final RoomDatabase.Callback databaseCallback = new RoomDatabase.Callback() {
-    @Override
-    public void onCreate(SupportSQLiteDatabase db) {
-      super.onCreate(db);
-      Log.i(TAG, "Database created for the first time");
-      // Add any initial data setup here if needed
-    }
+  /** Database callback for monitoring and initialization */
+  private static final RoomDatabase.Callback databaseCallback =
+      new RoomDatabase.Callback() {
+        @Override
+        public void onCreate(SupportSQLiteDatabase db) {
+          super.onCreate(db);
+          Log.i(TAG, "Database created for the first time");
+          // Add any initial data setup here if needed
+        }
 
-    @Override
-    public void onOpen(SupportSQLiteDatabase db) {
-      super.onOpen(db);
-      Log.d(TAG, "Database opened, version: " + db.getVersion());
-      
-      // Enable foreign keys
-      db.execSQL("PRAGMA foreign_keys=ON");
-      
-      // Optimize performance
-      db.execSQL("PRAGMA synchronous=NORMAL");
-      db.execSQL("PRAGMA cache_size=10000");
-      db.execSQL("PRAGMA temp_store=MEMORY");
-    }
+        @Override
+        public void onOpen(SupportSQLiteDatabase db) {
+          super.onOpen(db);
+          Log.d(TAG, "Database opened, version: " + db.getVersion());
 
-    @Override
-    public void onDestructiveMigration(SupportSQLiteDatabase db) {
-      super.onDestructiveMigration(db);
-      Log.w(TAG, "Destructive migration occurred - all data lost");
-      DatabaseMigrations.MigrationCallback.onFallbackToDestructive(
-          db.getVersion(), 4);
-    }
-  };
+          // Enable foreign keys
+          db.execSQL("PRAGMA foreign_keys=ON");
 
-  /**
-   * Closes the database instance (for testing or app shutdown)
-   */
+          // Optimize performance
+          db.execSQL("PRAGMA synchronous=NORMAL");
+          db.execSQL("PRAGMA cache_size=10000");
+          db.execSQL("PRAGMA temp_store=MEMORY");
+        }
+
+        @Override
+        public void onDestructiveMigration(SupportSQLiteDatabase db) {
+          super.onDestructiveMigration(db);
+          Log.w(TAG, "Destructive migration occurred - all data lost");
+          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), 4);
+        }
+      };
+
+  /** Closes the database instance (for testing or app shutdown) */
   public static void closeDatabase() {
     if (INSTANCE != null) {
       INSTANCE.close();
@@ -107,17 +99,13 @@ public abstract class AppDatabase extends RoomDatabase {
     }
   }
 
-  /**
-   * Forces database recreation (for testing purposes)
-   */
+  /** Forces database recreation (for testing purposes) */
   public static void recreateDatabase(Context context) {
     closeDatabase();
     context.deleteDatabase("partymaker_database");
     // Also delete any related files
     String[] filesToDelete = {
-        "partymaker_database-shm",
-        "partymaker_database-wal",
-        "partymaker_database-journal"
+      "partymaker_database-shm", "partymaker_database-wal", "partymaker_database-journal"
     };
     for (String fileName : filesToDelete) {
       context.deleteDatabase(fileName);

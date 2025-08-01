@@ -1,6 +1,6 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.data.Constants.GROUP_NAME;
+import static com.example.partymaker.utils.data.Constants.Extras.GROUP_NAME;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

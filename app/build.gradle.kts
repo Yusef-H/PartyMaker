@@ -181,7 +181,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.activity.compose)
-    
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -239,7 +238,7 @@ dependencies {
     implementation(libs.androidx.concurrent.futures)
 
     // --- Security ---
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation(libs.androidx.security.crypto)
 }
 
 // Secrets plugin configuration

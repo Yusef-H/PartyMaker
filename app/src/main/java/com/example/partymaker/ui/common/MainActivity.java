@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
   // Variable to track if we've shown the loading toast already
   private boolean loadingToastShown = false;
-  
+
   // Track when we last refreshed to avoid excessive server calls
   private long lastRefreshTime = 0;
   private static final long REFRESH_COOLDOWN_MS = 30000; // 30 seconds cooldown
@@ -162,7 +162,12 @@ public class MainActivity extends AppCompatActivity {
       String userEmail = AuthHelper.getCurrentUserEmail(this);
       if (userEmail != null) {
         UserKey = userEmail.replace('.', ' ');
-        Log.d(TAG, "User initialized successfully. Original email: " + userEmail + ", UserKey: " + UserKey);
+        Log.d(
+            TAG,
+            "User initialized successfully. Original email: "
+                + userEmail
+                + ", UserKey: "
+                + UserKey);
         return true;
       } else {
         Log.e(TAG, "User not logged in or email is null");
@@ -200,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Initialize loading state manager
     setupLoadingStateManager();
-    
+
     // Setup pull-to-refresh functionality
     setupSwipeRefresh();
   }
@@ -237,17 +242,17 @@ public class MainActivity extends AppCompatActivity {
           getResources().getColor(android.R.color.holo_blue_bright),
           getResources().getColor(android.R.color.holo_green_light),
           getResources().getColor(android.R.color.holo_orange_light),
-          getResources().getColor(android.R.color.holo_red_light)
-      );
-      
+          getResources().getColor(android.R.color.holo_red_light));
+
       // Set the refresh listener
-      swipeRefreshLayout.setOnRefreshListener(() -> {
-        Log.d(TAG, "Pull-to-refresh triggered: refreshing user groups");
-        if (viewModel != null && UserKey != null) {
-          viewModel.loadUserGroups(UserKey, true); // Force refresh from server
-          lastRefreshTime = System.currentTimeMillis(); // Update refresh time
-        }
-      });
+      swipeRefreshLayout.setOnRefreshListener(
+          () -> {
+            Log.d(TAG, "Pull-to-refresh triggered: refreshing user groups");
+            if (viewModel != null && UserKey != null) {
+              viewModel.loadUserGroups(UserKey, true); // Force refresh from server
+              lastRefreshTime = System.currentTimeMillis(); // Update refresh time
+            }
+          });
     }
   }
 
@@ -315,9 +320,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Group list size: " + groups.size());
                     for (int i = 0; i < groups.size() && i < 3; i++) {
                       Group g = groups.get(i);
-                      Log.d(TAG, "Group " + i + ": " + g.getGroupName() + " (key: " + g.getGroupKey() + ")");
+                      Log.d(
+                          TAG,
+                          "Group "
+                              + i
+                              + ": "
+                              + g.getGroupName()
+                              + " (key: "
+                              + g.getGroupKey()
+                              + ")");
                     }
-                    
+
                     groupAdapter.updateItems(groups);
                     Log.d(TAG, "Group list updated with " + groups.size() + " groups");
 
@@ -332,9 +345,12 @@ public class MainActivity extends AppCompatActivity {
                       hideEmptyState();
                     }
                   } else {
-                    Log.d(TAG, "Received null groups list from ViewModel - data not loaded yet, staying in loading state");
+                    Log.d(
+                        TAG,
+                        "Received null groups list from ViewModel - data not loaded yet, staying in loading state");
                     // Don't show empty state when data is null - it means data hasn't loaded yet
-                    // Keep showing loading state until we get actual data (empty list or populated list)
+                    // Keep showing loading state until we get actual data (empty list or populated
+                    // list)
                   }
                 } catch (Exception e) {
                   Log.e(TAG, "Error processing groups data", e);
@@ -642,21 +658,29 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    
+
     // Refresh groups when returning to the activity, but only if enough time has passed
     // This catches cases where user was added to a group while away
     if (viewModel != null && UserKey != null) {
       long currentTime = System.currentTimeMillis();
       long timeSinceLastRefresh = currentTime - lastRefreshTime;
-      
+
       if (timeSinceLastRefresh > REFRESH_COOLDOWN_MS) {
-        Log.d(TAG, "onResume: Refreshing user groups to catch any new invitations (last refresh: " + 
-              timeSinceLastRefresh + "ms ago)");
+        Log.d(
+            TAG,
+            "onResume: Refreshing user groups to catch any new invitations (last refresh: "
+                + timeSinceLastRefresh
+                + "ms ago)");
         viewModel.loadUserGroups(UserKey, true); // Force refresh from server
         lastRefreshTime = currentTime;
       } else {
-        Log.d(TAG, "onResume: Skipping refresh - too soon since last refresh (" + 
-              timeSinceLastRefresh + "ms ago, cooldown: " + REFRESH_COOLDOWN_MS + "ms)");
+        Log.d(
+            TAG,
+            "onResume: Skipping refresh - too soon since last refresh ("
+                + timeSinceLastRefresh
+                + "ms ago, cooldown: "
+                + REFRESH_COOLDOWN_MS
+                + "ms)");
       }
     }
   }

@@ -211,18 +211,16 @@ public class NetworkManager {
         });
   }
 
-  /**
-   * Initialize SSL Pinning Manager
-   */
+  /** Initialize SSL Pinning Manager */
   private void initializeSSLPinning() {
     boolean isProduction = !android.os.Build.TYPE.equals("userdebug");
     sslPinningManager = SSLPinningManager.getInstance(isProduction);
-    Log.d(TAG, "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
+    Log.d(
+        TAG,
+        "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
   }
 
-  /**
-   * Get secure OkHttpClient with SSL pinning
-   */
+  /** Get secure OkHttpClient with SSL pinning */
   public OkHttpClient getSecureClient() {
     if (sslPinningManager != null) {
       return sslPinningManager.createSecureClient();
@@ -245,7 +243,7 @@ public class NetworkManager {
       if (sslPinningManager != null && (url.startsWith("https://") || url.contains("partymaker"))) {
         return isServerReachableSecure(url, timeout);
       }
-      
+
       // Fallback to regular HTTP connection
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
       connection.setConnectTimeout(timeout);
@@ -259,17 +257,12 @@ public class NetworkManager {
     }
   }
 
-  /**
-   * Checks server reachability using secure SSL-pinned connection
-   */
+  /** Checks server reachability using secure SSL-pinned connection */
   private boolean isServerReachableSecure(String url, int timeout) {
     try {
       OkHttpClient client = sslPinningManager.createSecureClient();
-      Request request = new Request.Builder()
-          .url(url)
-          .head()
-          .build();
-          
+      Request request = new Request.Builder().url(url).head().build();
+
       try (Response response = client.newCall(request).execute()) {
         boolean isReachable = response.isSuccessful();
         Log.d(TAG, "Secure server check for " + url + ": " + (isReachable ? "success" : "failed"));
@@ -281,9 +274,7 @@ public class NetworkManager {
     }
   }
 
-  /**
-   * Test SSL connection to verify pinning
-   */
+  /** Test SSL connection to verify pinning */
   public boolean testSSLConnection(String url) {
     if (sslPinningManager != null) {
       return sslPinningManager.testSSLConnection(url);
