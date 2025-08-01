@@ -307,18 +307,21 @@ public class LoginActivity extends AppCompatActivity {
                 () -> {
                   if (isReachable) {
                     Log.d("LoginActivity", "Server is reachable");
-                    UiStateManager.showInfo(rootView, "Connected to server");
+                    // Don't show info message to avoid cluttering UI
+                    // UiStateManager.showInfo(rootView, "Connected to server");
                   } else {
                     Log.w("LoginActivity", "Server is not reachable");
-                    UiStateManager.showWarning(
-                        rootView, "Server connection issues - some features may be limited");
+                    // Don't show warning message after logout to avoid confusing users
+                    // UiStateManager.showWarning(
+                    //     rootView, "Server connection issues - some features may be limited");
                   }
                 });
           } catch (Exception e) {
             Log.e("LoginActivity", "Error checking server connectivity", e);
             ThreadUtils.runOnMainThread(
                 () -> {
-                  UiStateManager.showWarning(rootView, "Unable to verify server connection");
+                  // Don't show warning message after logout to avoid confusing users
+                  // UiStateManager.showWarning(rootView, "Unable to verify server connection");
                 });
           }
         });
