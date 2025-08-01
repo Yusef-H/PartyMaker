@@ -2,10 +2,17 @@ package com.example.partymaker.server.controller;
 
 import com.example.partymaker.server.service.FirebaseService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,16 +22,41 @@ import java.util.concurrent.ExecutionException;
  * REST Controller for handling Firebase-related API endpoints.
  * Provides CRUD operations for data, users, groups, and messages in Firebase.
  * All endpoints are under /api/firebase.
+ * 
+ * <p>Features:
+ * <ul>
+ *   <li>Comprehensive input validation
+ *   <li>Structured error handling and logging
+ *   <li>Consistent response formats
+ *   <li>Security best practices
+ * </ul>
  */
 @RestController
 @RequestMapping("/api/firebase")
+@Validated
 public class FirebaseController {
 
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseController.class);
+    
     private final FirebaseService firebaseService;
 
     @Autowired
     public FirebaseController(FirebaseService firebaseService) {
         this.firebaseService = firebaseService;
+    }
+
+    /**
+     * Creates a standardized error response.
+     *
+     * @param message The error message
+     * @return A map containing the error details
+     */
+    private Map<String, Object> createErrorResponse(String message) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", true);
+        error.put("message", message);
+        error.put("timestamp", System.currentTimeMillis());
+        return error;
     }
 
     /**
@@ -153,49 +185,74 @@ public class FirebaseController {
     /**
      * Retrieves a single group by its ID.
      *
-     * @param groupId The group ID.
-     * @return The group object, 404 if not found, 500 on error.
+     * @param groupId The group ID (must not be blank)
+     * @return ResponseEntity with group data, 404 if not found, 400 for invalid input, 500 on server error
      */
     @GetMapping("/Groups/{groupId}")
-    public ResponseEntity<Object> getGroup(@PathVariable String groupId) {
+    public ResponseEntity<Object> getGroup(@PathVariable @NotBlank(message = "Group ID cannot be blank") String groupId) {
+        logger.info("Retrieving group with ID: {}", groupId);
+        
         try {
-            System.out.println("DEBUG: Requesting group with ID: " + groupId);
-            // First get all groups
+            // Validate input
+            if (groupId.trim().isEmpty()) {
+                logger.warn("Invalid group ID provided: empty or whitespace only");
+                return ResponseEntity.badRequest().body(createErrorResponse("Group ID cannot be empty"));
+            }
+            
+            // Get all groups from Firebase
             Map<String, Object> allGroups = firebaseService.getData("Groups").get();
-            System.out.println("DEBUG: Retrieved " + allGroups.size() + " groups from Firebase");
-            System.out.println("DEBUG: Available group keys: " + allGroups.keySet());
+            logger.debug("Retrieved {} groups from Firebase", allGroups.size());
 
             // Check if the group exists
             if (allGroups.containsKey(groupId)) {
-                System.out.println("DEBUG: Group found! Returning group data");
+                logger.info("Group found successfully: {}", groupId);
                 return ResponseEntity.ok(allGroups.get(groupId));
             } else {
-                System.out.println("DEBUG: Group not found in keys: " + allGroups.keySet());
+                logger.warn("Group not found: {}. Available groups: {}", groupId, allGroups.keySet());
                 return ResponseEntity.notFound().build();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("DEBUG: Exception occurred: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        } catch (InterruptedException e) {
+            logger.error("Thread interrupted while retrieving group: {}", groupId, e);
+            Thread.currentThread().interrupt();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Request was interrupted"));
+        } catch (ExecutionException e) {
+            logger.error("Execution error while retrieving group: {}", groupId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Failed to retrieve group data"));
+        } catch (Exception e) {
+            logger.error("Unexpected error while retrieving group: {}", groupId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("An unexpected error occurred"));
         }
     }
 
     /**
      * Retrieves all groups from Firebase.
      *
-     * @return Map of all groups, or 500 on error.
+     * @return ResponseEntity with map of all groups, or 500 on server error
      */
     @GetMapping("/Groups")
-    public ResponseEntity<Map<String, Object>> getAllGroups() {
+    public ResponseEntity<Object> getAllGroups() {
+        logger.info("Retrieving all groups");
+        
         try {
-            System.out.println("DEBUG: Requesting all groups");
             Map<String, Object> allGroups = firebaseService.getData("Groups").get();
-            System.out.println("DEBUG: Retrieved " + allGroups.size() + " groups from Firebase");
+            logger.info("Successfully retrieved {} groups from Firebase", allGroups.size());
             return ResponseEntity.ok(allGroups);
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("DEBUG: Exception occurred while getting all groups: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        } catch (InterruptedException e) {
+            logger.error("Thread interrupted while retrieving all groups", e);
+            Thread.currentThread().interrupt();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Request was interrupted"));
+        } catch (ExecutionException e) {
+            logger.error("Execution error while retrieving all groups", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Failed to retrieve groups data"));
+        } catch (Exception e) {
+            logger.error("Unexpected error while retrieving all groups", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("An unexpected error occurred"));
         }
     }
 
@@ -263,39 +320,92 @@ public class FirebaseController {
     /**
      * Saves a message to Firebase under the specified message key.
      *
-     * @param messageKey The message key.
-     * @param data       The message data.
-     * @return 200 OK on success, 500 on error.
+     * @param messageKey The message key (must not be blank)
+     * @param data       The message data (must not be null)
+     * @return ResponseEntity with 201 Created on success, 400 for invalid input, 500 on server error
      */
     @PostMapping("/GroupsMessages/{messageKey}")
-    public ResponseEntity<Void> saveMessage(@PathVariable String messageKey, @RequestBody Object data) {
+    public ResponseEntity<Object> saveMessage(
+            @PathVariable @NotBlank(message = "Message key cannot be blank") String messageKey,
+            @RequestBody @Valid Object data) {
+        
+        logger.info("Saving message with key: {}", messageKey);
+        logger.debug("Message data: {}", data);
+        
         try {
+            // Validate input
+            if (messageKey.trim().isEmpty()) {
+                logger.warn("Invalid message key provided: empty or whitespace only");
+                return ResponseEntity.badRequest().body(createErrorResponse("Message key cannot be empty"));
+            }
+            
+            if (data == null) {
+                logger.warn("Null message data provided for key: {}", messageKey);
+                return ResponseEntity.badRequest().body(createErrorResponse("Message data cannot be null"));
+            }
+            
             firebaseService.saveData("GroupsMessages/" + messageKey, data).get();
-            return ResponseEntity.ok().build();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            logger.info("Message saved successfully with key: {}", messageKey);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (InterruptedException e) {
+            logger.error("Thread interrupted while saving message: {}", messageKey, e);
+            Thread.currentThread().interrupt();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Request was interrupted"));
+        } catch (ExecutionException e) {
+            logger.error("Execution error while saving message: {}", messageKey, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Failed to save message"));
+        } catch (Exception e) {
+            logger.error("Unexpected error while saving message: {}", messageKey, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("An unexpected error occurred"));
         }
     }
 
     /**
      * Updates a group in Firebase (e.g., for updating MessageKeys).
      *
-     * @param groupId The group ID.
-     * @param updates The updates to apply.
-     * @return 200 OK on success, 500 on error.
+     * @param groupId The group ID (must not be blank)
+     * @param updates The updates to apply (must not be empty)
+     * @return ResponseEntity with 200 OK on success, 400 for invalid input, 500 on server error
      */
     @PutMapping("/Groups/{groupId}")
-    public ResponseEntity<Void> updateGroup(@PathVariable String groupId, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<Object> updateGroup(
+            @PathVariable @NotBlank(message = "Group ID cannot be blank") String groupId,
+            @RequestBody @NotEmpty(message = "Updates cannot be empty") Map<String, Object> updates) {
+        
+        logger.info("Updating group {} with {} fields", groupId, updates.size());
+        logger.debug("Update data: {}", updates);
+        
         try {
-            System.out.println("DEBUG: Updating group " + groupId + " with data: " + updates);
+            // Validate input
+            if (groupId.trim().isEmpty()) {
+                logger.warn("Invalid group ID provided for update: empty or whitespace only");
+                return ResponseEntity.badRequest().body(createErrorResponse("Group ID cannot be empty"));
+            }
+            
+            if (updates.isEmpty()) {
+                logger.warn("Empty updates provided for group: {}", groupId);
+                return ResponseEntity.badRequest().body(createErrorResponse("Updates cannot be empty"));
+            }
+            
             firebaseService.updateData("Groups/" + groupId, updates).get();
-            System.out.println("DEBUG: Group " + groupId + " updated successfully");
+            logger.info("Group {} updated successfully", groupId);
             return ResponseEntity.ok().build();
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("DEBUG: Failed to update group " + groupId + ": " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        } catch (InterruptedException e) {
+            logger.error("Thread interrupted while updating group: {}", groupId, e);
+            Thread.currentThread().interrupt();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Request was interrupted"));
+        } catch (ExecutionException e) {
+            logger.error("Execution error while updating group: {}", groupId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("Failed to update group"));
+        } catch (Exception e) {
+            logger.error("Unexpected error while updating group: {}", groupId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("An unexpected error occurred"));
         }
     }
 
