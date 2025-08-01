@@ -2,7 +2,6 @@ package com.example.partymaker.data.api;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import com.example.partymaker.utils.async.AsyncTaskReplacement;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -10,13 +9,10 @@ import androidx.preference.PreferenceManager;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
+import com.example.partymaker.utils.async.AsyncTaskReplacement;
+import com.example.partymaker.utils.data.Constants;
 import com.example.partymaker.utils.security.SSLPinningManager;
 import com.google.gson.Gson;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,6 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,12 +46,8 @@ public class FirebaseServerClient {
   /** Tag for logging. */
   private static final String TAG = "FirebaseServerClient";
 
-  /** Default server URL (for emulator). */
-  private static final String DEFAULT_SERVER_URL =
-      "https://partymaker.onrender.com"; // Changed to Render URL
-
-  /** SharedPreferences key for server URL. */
-  private static final String PREF_SERVER_URL = "server_url";
+  /** Default timeout values moved to Constants */
+  // Using constants from Constants.Network class
 
   /** Singleton instance. */
   private static FirebaseServerClient instance;
@@ -66,15 +63,15 @@ public class FirebaseServerClient {
 
   /** NetworkManager instance for network operations. */
   private final NetworkManager networkManager = NetworkManager.getInstance();
-  
+
   /** SSL Pinning Manager for secure connections. */
   private SSLPinningManager sslPinningManager;
-  
+
   /** Secure OkHttpClient for network requests. */
   private OkHttpClient secureClient;
 
   /** The current server URL. */
-  private String serverUrl = DEFAULT_SERVER_URL;
+  private String serverUrl = Constants.Network.DEFAULT_SERVER_URL;
 
   /** Application context - using WeakReference to prevent memory leaks. */
   private WeakReference<Context> contextRef;
@@ -104,14 +101,19 @@ public class FirebaseServerClient {
   public void initialize(Context context) {
     this.contextRef = new WeakReference<>(context.getApplicationContext());
     loadServerUrl();
-    
+
     // Initialize SSL pinning for production URLs
     boolean isProduction = serverUrl.contains("onrender.com") || serverUrl.contains("https://");
     sslPinningManager = SSLPinningManager.getInstance(isProduction);
     secureClient = sslPinningManager.createSecureClient();
-    
-    Log.i(TAG, "FirebaseServerClient initialized with server URL: " + serverUrl + 
-             " (SSL Pinning: " + isProduction + ")");
+
+    Log.i(
+        TAG,
+        "FirebaseServerClient initialized with server URL: "
+            + serverUrl
+            + " (SSL Pinning: "
+            + isProduction
+            + ")");
   }
 
   /**
@@ -129,17 +131,21 @@ public class FirebaseServerClient {
     if (context != null) {
       serverUrl =
           PreferenceManager.getDefaultSharedPreferences(context)
-              .getString(PREF_SERVER_URL, DEFAULT_SERVER_URL);
+              .getString(Constants.Preferences.SERVER_URL, Constants.Network.DEFAULT_SERVER_URL);
       Log.d(TAG, "Server URL loaded from preferences: " + serverUrl);
     } else {
-      Log.w(TAG, "Context is null, using default server URL: " + DEFAULT_SERVER_URL);
-      serverUrl = DEFAULT_SERVER_URL;
+      Log.w(
+          TAG,
+          "Context is null, using default server URL: " + Constants.Network.DEFAULT_SERVER_URL);
+      serverUrl = Constants.Network.DEFAULT_SERVER_URL;
     }
   }
 
   // Helper method to log API calls
   private void logApiCall(String method, String path) {
-    Log.d(TAG, String.format("API %s: %s/api/firebase/%s", method, serverUrl, path));
+    Log.d(
+        TAG,
+        String.format("API %s: %s%s%s", method, serverUrl, Constants.Network.API_BASE_PATH, path));
   }
 
   // Groups methods
@@ -1233,8 +1239,10 @@ public class FirebaseServerClient {
                 Group group = gson.fromJson(groupJson.toString(), Group.class);
 
                 // Check if user is in friendKeys or is the admin (using original userId)
-                if ((group.getFriendKeys() != null && group.getFriendKeys().containsKey(originalUserId))
-                    || (group.getAdminKey() != null && group.getAdminKey().equals(originalUserId))) {
+                if ((group.getFriendKeys() != null
+                        && group.getFriendKeys().containsKey(originalUserId))
+                    || (group.getAdminKey() != null
+                        && group.getAdminKey().equals(originalUserId))) {
                   userGroups.put(key, group);
                   Log.d(TAG, "Added group " + key + " to user's groups: " + group.getGroupName());
                 }
@@ -1248,7 +1256,8 @@ public class FirebaseServerClient {
             }
           } else {
             Log.w(TAG, "Failed to fetch groups, server may be down");
-            throw new RuntimeException("Failed to connect to server. Please check your internet connection.");
+            throw new RuntimeException(
+                "Failed to connect to server. Please check your internet connection.");
           }
         },
         new AsyncTaskReplacement.SimpleUICallback<Map<String, Group>>() {
@@ -1271,7 +1280,7 @@ public class FirebaseServerClient {
 
   // Helper methods for HTTP requests
   private String makeGetRequest(String path) {
-    return makeGetRequest(path, 10000); // Default timeout 10 seconds
+    return makeGetRequest(path, Constants.Network.DEFAULT_TIMEOUT_MS);
   }
 
   private String makeGetRequest(String path, int timeout) {
@@ -1280,7 +1289,7 @@ public class FirebaseServerClient {
     BufferedReader reader = null;
 
     try {
-      URL url = new URL(serverUrl + "/api/firebase/" + path);
+      URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
       Log.d(TAG, "Making GET request to URL: " + url);
 
       connection = (HttpURLConnection) url.openConnection();
@@ -1347,7 +1356,7 @@ public class FirebaseServerClient {
   }
 
   private boolean makePostRequest(String path, String jsonBody) {
-    return makePostRequest(path, jsonBody, 10000); // Default timeout 10 seconds
+    return makePostRequest(path, jsonBody, Constants.Network.DEFAULT_TIMEOUT_MS);
   }
 
   private boolean makePostRequest(String path, String jsonBody, int timeout) {
@@ -1355,7 +1364,7 @@ public class FirebaseServerClient {
     HttpURLConnection connection = null;
 
     try {
-      URL url = new URL(serverUrl + "/api/firebase/" + path);
+      URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
       Log.d(TAG, "Making POST request to URL: " + url + " with body: " + jsonBody);
 
       connection = (HttpURLConnection) url.openConnection();
@@ -1437,7 +1446,7 @@ public class FirebaseServerClient {
   }
 
   private boolean makePutRequest(String path, String jsonBody) {
-    return makePutRequest(path, jsonBody, 10000); // Default timeout 10 seconds
+    return makePutRequest(path, jsonBody, Constants.Network.DEFAULT_TIMEOUT_MS);
   }
 
   private boolean makePutRequest(String path, String jsonBody, int timeout) {
@@ -1445,7 +1454,7 @@ public class FirebaseServerClient {
     HttpURLConnection connection = null;
 
     try {
-      URL url = new URL(serverUrl + "/api/firebase/" + path);
+      URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
 
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("PUT");
@@ -1473,7 +1482,7 @@ public class FirebaseServerClient {
   }
 
   private boolean makeDeleteRequest(String path) {
-    return makeDeleteRequest(path, 10000); // Default timeout 10 seconds
+    return makeDeleteRequest(path, Constants.Network.DEFAULT_TIMEOUT_MS);
   }
 
   private boolean makeDeleteRequest(String path, int timeout) {
@@ -1481,7 +1490,7 @@ public class FirebaseServerClient {
     HttpURLConnection connection = null;
 
     try {
-      URL url = new URL(serverUrl + "/api/firebase/" + path);
+      URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
 
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("DELETE");
@@ -1508,21 +1517,19 @@ public class FirebaseServerClient {
     NetworkUtils.cancelAllOperations();
   }
 
-  /**
-   * Generic HTTP request method using secure OkHttpClient with SSL pinning
-   */
+  /** Generic HTTP request method using secure OkHttpClient with SSL pinning */
   private String makeHttpRequest(String url, String method, String jsonBody) throws Exception {
     if (secureClient == null) {
       throw new Exception("HTTP client not initialized - call initialize() first");
     }
 
     Request.Builder requestBuilder = new Request.Builder().url(url);
-    
+
     // Set request body for POST/PUT requests
     if (jsonBody != null && (method.equals("POST") || method.equals("PUT"))) {
       MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
       RequestBody body = RequestBody.create(jsonBody, mediaType);
-      
+
       if (method.equals("POST")) {
         requestBuilder.post(body);
       } else if (method.equals("PUT")) {
@@ -1535,7 +1542,7 @@ public class FirebaseServerClient {
     }
 
     Request request = requestBuilder.build();
-    
+
     try (Response response = secureClient.newCall(request).execute()) {
       int responseCode = response.code();
       Log.d(TAG, method + " response code: " + responseCode + " for URL: " + url);
@@ -1545,10 +1552,19 @@ public class FirebaseServerClient {
         return responseBody;
       } else {
         String errorBody = response.body() != null ? response.body().string() : "";
-        Log.e(TAG, method + " request failed with response code: " + responseCode + 
-                   ", error: " + errorBody);
-        throw new Exception("HTTP " + responseCode + ": " + response.message() + 
-                           (errorBody.isEmpty() ? "" : " - " + errorBody));
+        Log.e(
+            TAG,
+            method
+                + " request failed with response code: "
+                + responseCode
+                + ", error: "
+                + errorBody);
+        throw new Exception(
+            "HTTP "
+                + responseCode
+                + ": "
+                + response.message()
+                + (errorBody.isEmpty() ? "" : " - " + errorBody));
       }
     } catch (IOException e) {
       Log.e(TAG, "Network error during " + method + " request to " + url, e);
@@ -1623,7 +1639,7 @@ public class FirebaseServerClient {
       StringBuilder result = new StringBuilder();
 
       try {
-        URL url = new URL(serverUrl + "/api/firebase/" + path);
+        URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
         connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(timeout);
@@ -1701,7 +1717,7 @@ public class FirebaseServerClient {
     private boolean makePostRequest(String path, String jsonBody, int timeout) {
       HttpURLConnection connection = null;
       try {
-        URL url = new URL(serverUrl + "/api/firebase/" + path);
+        URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
         connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -1768,7 +1784,7 @@ public class FirebaseServerClient {
     private boolean makePutRequest(String path, String jsonBody, int timeout) {
       HttpURLConnection connection = null;
       try {
-        URL url = new URL(serverUrl + "/api/firebase/" + path);
+        URL url = new URL(serverUrl + Constants.Network.API_BASE_PATH + path);
         connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("PUT");
         connection.setRequestProperty("Content-Type", "application/json");
