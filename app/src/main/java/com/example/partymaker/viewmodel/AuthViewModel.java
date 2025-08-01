@@ -25,9 +25,35 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * ViewModel for managing user authentication operations.
+ *
+ * <p>This ViewModel handles all authentication-related functionality including:
+ *
+ * <ul>
+ *   <li>Email/password authentication (login and registration)
+ *   <li>Google Sign-In integration
+ *   <li>Password reset functionality
+ *   <li>User profile management
+ *   <li>Authentication state management
+ * </ul>
+ *
+ * <p>Extends BaseViewModel to inherit common UI state management functionality.
+ *
+ * @author PartyMaker Team
+ * @version 2.0
+ * @see BaseViewModel
+ * @since 1.0
+ */
 public class AuthViewModel extends BaseViewModel {
+  /** Tag for logging specific to AuthViewModel */
   private static final String TAG = "AuthViewModel";
+
+  /** Request code for Google Sign-In */
   private static final int RC_SIGN_IN = 9001;
+
+  /** Minimum username length */
+  private static final int MIN_USERNAME_LENGTH = 2;
 
   private final MutableLiveData<Boolean> isAuthenticated = new MutableLiveData<>(false);
   private final MutableLiveData<FirebaseUser> currentUser = new MutableLiveData<>();
@@ -37,12 +63,19 @@ public class AuthViewModel extends BaseViewModel {
   private final FirebaseAuth auth;
   private GoogleSignInClient googleSignInClient;
 
+  /**
+   * Constructor for AuthViewModel.
+   *
+   * @param application The application context
+   */
   public AuthViewModel(@NonNull Application application) {
     super(application);
     auth = FirebaseAuth.getInstance();
 
+    // Check if user is already authenticated
     FirebaseUser user = auth.getCurrentUser();
     if (user != null) {
+      Log.d(TAG, "User already authenticated: " + user.getEmail());
       currentUser.setValue(user);
       isAuthenticated.setValue(true);
     }
@@ -50,42 +83,86 @@ public class AuthViewModel extends BaseViewModel {
     setupGoogleSignIn();
   }
 
+  /** Sets up Google Sign-In configuration. */
   private void setupGoogleSignIn() {
-    GoogleSignInOptions gso =
-        new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(
-                getApplication().getString(com.example.partymaker.R.string.default_web_client_id))
-            .requestEmail()
-            .build();
+    try {
+      GoogleSignInOptions gso =
+          new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+              .requestIdToken(
+                  getApplication().getString(com.example.partymaker.R.string.default_web_client_id))
+              .requestEmail()
+              .build();
 
-    googleSignInClient = GoogleSignIn.getClient(getApplication(), gso);
+      googleSignInClient = GoogleSignIn.getClient(getApplication(), gso);
+      Log.d(TAG, "Google Sign-In configured successfully");
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to setup Google Sign-In", e);
+    }
   }
 
+  /**
+   * Returns the authentication state as LiveData.
+   *
+   * @return LiveData<Boolean> indicating whether user is authenticated
+   */
   public LiveData<Boolean> getIsAuthenticated() {
     return isAuthenticated;
   }
 
+  /**
+   * Returns the current FirebaseUser as LiveData.
+   *
+   * @return LiveData<FirebaseUser> containing current user, null if not authenticated
+   */
   public LiveData<FirebaseUser> getCurrentUser() {
     return currentUser;
   }
 
+  /**
+   * Returns whether the auth UI is in registration mode.
+   *
+   * @return LiveData<Boolean> indicating registration mode state
+   */
   public LiveData<Boolean> getIsRegistrationMode() {
     return isRegistrationMode;
   }
 
+  /**
+   * Returns whether a password reset email has been sent.
+   *
+   * @return LiveData<Boolean> indicating password reset email status
+   */
   public LiveData<Boolean> getIsPasswordResetSent() {
     return isPasswordResetSent;
   }
 
+  /**
+   * Returns the configured Google Sign-In client.
+   *
+   * @return GoogleSignInClient for initiating Google Sign-In flow
+   */
   public GoogleSignInClient getGoogleSignInClient() {
     return googleSignInClient;
   }
 
+  /**
+   * Sets the registration mode state.
+   *
+   * @param isRegistration true to show registration UI, false for login UI
+   */
   public void setRegistrationMode(boolean isRegistration) {
+    Log.d(TAG, "Setting registration mode: " + isRegistration);
     isRegistrationMode.setValue(isRegistration);
   }
 
-  public void loginWithEmail(String email, String password) {
+  /**
+   * Authenticates user with email and password.
+   *
+   * @param email The user's email address
+   * @param password The user's password
+   */
+  public void loginWithEmail(@NonNull String email, @NonNull String password) {
+    // Input validation
     if (email == null || email.trim().isEmpty()) {
       setError("Email is required");
       return;
@@ -96,39 +173,32 @@ public class AuthViewModel extends BaseViewModel {
       return;
     }
 
-    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+    if (!isValidEmail(email)) {
       setError("Please enter a valid email address");
       return;
     }
 
     Log.d(TAG, "Attempting to login with email: " + email);
-    setLoading(true);
-    clearMessages();
 
-    auth.signInWithEmailAndPassword(email.trim(), password)
-        .addOnCompleteListener(
-            task -> {
-              ThreadUtils.runOnMainThread(
-                  () -> {
-                    setLoading(false);
-                    if (task.isSuccessful()) {
-                      Log.d(TAG, "Email login successful");
-                      FirebaseUser user = auth.getCurrentUser();
-                      if (user != null) {
-                        currentUser.setValue(user);
-                        isAuthenticated.setValue(true);
-                        setSuccess("Login successful");
-                      }
-                    } else {
-                      Log.e(TAG, "Email login failed", task.getException());
-                      String error =
-                          task.getException() != null
-                              ? task.getException().getMessage()
-                              : "Login failed";
-                      setError(error);
-                    }
+    executeIfNotLoading(
+        () -> {
+          setLoading(true);
+          clearMessages();
+
+          auth.signInWithEmailAndPassword(email.trim(), password)
+              .addOnCompleteListener(
+                  task -> {
+                    ThreadUtils.runOnMainThread(
+                        () -> {
+                          setLoading(false);
+                          if (task.isSuccessful()) {
+                            handleSuccessfulLogin("Email login successful");
+                          } else {
+                            handleAuthError("Email login failed", task.getException());
+                          }
+                        });
                   });
-            });
+        });
   }
 
   public void registerWithEmail(
@@ -340,20 +410,41 @@ public class AuthViewModel extends BaseViewModel {
             });
   }
 
-  public void signOut(Context context) {
+  /**
+   * Signs out the current user and clears all authentication data.
+   *
+   * @param context The application context for clearing secure data
+   */
+  public void signOut(@NonNull Context context) {
     Log.d(TAG, "Signing out user");
 
-    auth.signOut();
+    executeIfNotLoading(
+        () -> {
+          setLoading(true);
 
-    if (googleSignInClient != null) {
-      googleSignInClient.signOut();
-    }
+          // Sign out from Firebase
+          auth.signOut();
 
-    SecureAuthHelper.clearAuthData(context);
+          // Sign out from Google if available
+          if (googleSignInClient != null) {
+            googleSignInClient
+                .signOut()
+                .addOnCompleteListener(
+                    task -> {
+                      Log.d(TAG, "Google sign out completed");
+                    });
+          }
 
-    currentUser.setValue(null);
-    isAuthenticated.setValue(false);
-    setSuccess("Signed out successfully");
+          // Clear secure storage
+          SecureAuthHelper.clearAuthData(context);
+
+          // Update UI state
+          currentUser.setValue(null);
+          isAuthenticated.setValue(false);
+          clearMessages();
+          setLoading(false);
+          setSuccess("Signed out successfully");
+        });
   }
 
   public void clearPasswordResetStatus() {
@@ -372,6 +463,44 @@ public class AuthViewModel extends BaseViewModel {
 
   public boolean isValidUsername(String username) {
     return username != null && username.trim().length() >= 2;
+  }
+
+  /**
+   * Handles successful login operations.
+   *
+   * @param message Success message to display
+   */
+  private void handleSuccessfulLogin(String message) {
+    FirebaseUser user = auth.getCurrentUser();
+    if (user != null) {
+      currentUser.setValue(user);
+      isAuthenticated.setValue(true);
+      setSuccess(message);
+      Log.d(TAG, "Login successful: " + message);
+    } else {
+      setError("Authentication error: User not found");
+      Log.e(TAG, "Login success but user is null");
+    }
+  }
+
+  /**
+   * Handles authentication errors with proper error messaging.
+   *
+   * @param baseMessage Base error message
+   * @param exception The exception that occurred
+   */
+  private void handleAuthError(String baseMessage, Exception exception) {
+    String errorMessage = baseMessage;
+    if (exception != null) {
+      String exceptionMessage = exception.getMessage();
+      if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+        errorMessage = exceptionMessage;
+      }
+      Log.e(TAG, baseMessage, exception);
+    } else {
+      Log.e(TAG, baseMessage);
+    }
+    setError(errorMessage);
   }
 
   @Override
