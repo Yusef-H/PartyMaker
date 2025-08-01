@@ -24,7 +24,7 @@ dependencies {
     // --- Testing ---
     testImplementation libs.spring.boot.starter.test
     // --- Validation ---
-    implementation libs.spring.boot.starter.validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 test {
