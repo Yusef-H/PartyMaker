@@ -50,6 +50,7 @@ circleimageview = "3.1.0"
 # --- Testing ---
 preference = "1.2.1"
 junitKtx = "1.2.1"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 # --- AndroidX Core ---
@@ -114,6 +115,7 @@ androidx-preference = { group = "androidx.preference", name = "preference", vers
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

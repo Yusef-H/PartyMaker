@@ -1,27 +1,52 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-# http://developer.android.com/guide/developing/tools/proguard.html
+# Enhanced ProGuard rules for PartyMaker with security hardening
+# ========================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
-
-# Optimization level
+# General configuration
 -optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+# Security: Obfuscate package structure
+-repackageclasses ''
+-allowaccessmodification
+
+# Security: Hide original source file names
+-renamesourcefileattribute SourceFile
+
+# Keep line numbers for crash reporting (but hide source files)
+-keepattributes SourceFile,LineNumberTable
+
+# ========== SECURITY CRITICAL - DO NOT MODIFY ==========
+# Aggressively obfuscate security-related classes
+-keep,allowobfuscation class com.example.partymaker.utils.security.** { *; }
+-keep,allowobfuscation class com.example.partymaker.utils.auth.** { *; }
+
+# Keep encrypted preferences working
+-keep class androidx.security.crypto.** { *; }
+-keep class com.google.crypto.tink.** { *; }
+
+# Security: Remove sensitive log statements
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+}
+
+# Security: Remove print statements
+-assumenosideeffects class java.io.PrintStream {
+    public void println(...);
+    public void print(...);
+}
+
+# Security: Remove toString() that might expose sensitive data
+-assumenosideeffects class java.lang.Object {
+    public java.lang.String toString();
+}
 
 # Keep the application class and its methods
 -keep public class com.example.partymaker.PartyApplication { *; }

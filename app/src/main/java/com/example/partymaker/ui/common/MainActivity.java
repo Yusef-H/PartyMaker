@@ -12,13 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
@@ -30,487 +28,636 @@ import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
-import com.example.partymaker.viewmodel.GroupViewModel;
+import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.ui.LoadingStateManager;
+import com.example.partymaker.utils.ui.UiStateManager;
+import com.example.partymaker.utils.ui.UserFeedback;
+import com.example.partymaker.viewmodel.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Constants
-    private static final String TAG = "MainActivity";
-    private static final String ACTION_BAR_START_COLOR = "#0E81D1";
-    private static final String ACTION_BAR_END_COLOR = "#0E81D1";
-    private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
-    private static final float ACTION_BAR_ELEVATION = 15f;
+  // Constants
+  private static final String TAG = "MainActivity";
+  private static final String ACTION_BAR_START_COLOR = "#0E81D1";
+  private static final String ACTION_BAR_END_COLOR = "#0E81D1";
+  private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
+  private static final float ACTION_BAR_ELEVATION = 15f;
 
-    // UI Components
-    private RecyclerView lv1;
-    private FloatingActionButton fabChat;
+  // UI Components
+  private RecyclerView lv1;
+  private FloatingActionButton fabChat;
+  private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
+  private View rootView;
 
-    // Data Components
-    private GroupViewModel viewModel;
-    private String UserKey;
-    private GroupAdapter groupAdapter;
+  // Data Components
+  private MainActivityViewModel viewModel;
+  private String UserKey;
+  private GroupAdapter groupAdapter;
 
-    // Variable to track if we've shown the loading toast already
-    private boolean loadingToastShown = false;
+  // UI State Management
+  private LoadingStateManager loadingStateManager;
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            setContentView(R.layout.activity_main);
+  // Variable to track if we've shown the loading toast already
+  private boolean loadingToastShown = false;
+  
+  // Track when we last refreshed to avoid excessive server calls
+  private long lastRefreshTime = 0;
+  private static final long REFRESH_COOLDOWN_MS = 30000; // 30 seconds cooldown
 
-            // Force set server URL to Render
-            forceSetServerUrl();
+  @SuppressLint("ClickableViewAccessibility")
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    try {
+      setContentView(R.layout.activity_main);
 
-            if (!initializeUser()) {
-                return; // Exit if user initialization failed
-            }
+      // Force set server URL to Render
+      forceSetServerUrl();
 
-            // Initialize ViewModel
-            viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
+      if (!initializeUser()) {
+        return; // Exit if user initialization failed
+      }
 
-            initializeViews();
-            setupActionBar();
-            setupEventHandlers();
-            setupFloatingChatButton();
-            setupBottomNavigation();
+      // Initialize ViewModel
+      viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-            // Observe group data from ViewModel
-            observeViewModel();
+      initializeViews();
+      setupActionBar();
+      setupEventHandlers();
+      setupFloatingChatButton();
+      setupBottomNavigation();
 
-            // Show loading indicator without toast
-            showLoading(true, false);
+      // Observe group data from ViewModel
+      observeViewModel();
 
-            // Load groups for current user
-            viewModel.loadUserGroups(UserKey, true);
-        } catch (Exception e) {
-            Log.e(TAG, "Fatal error in onCreate", e);
-            showError("An unexpected error occurred. Please restart the app.");
-        }
+      // Show loading indicator without toast
+      showLoading(true, false);
+
+      // Load groups for current user
+      Log.d(TAG, "Starting to load groups for user: " + UserKey);
+      viewModel.loadUserGroups(UserKey, true);
+      lastRefreshTime = System.currentTimeMillis();
+    } catch (Exception e) {
+      Log.e(TAG, "Fatal error in onCreate", e);
+      showError("An unexpected error occurred. Please restart the app.");
     }
+  }
 
-    /**
-     * Shows or hides a loading indicator
-     *
-     * @param show      True to show loading, false to hide
-     * @param showToast True to show a toast message, false to hide
-     */
-    private void showLoading(boolean show, boolean showToast) {
-        try {
-            // Simple implementation without dedicated loading view
-            if (lv1 != null) {
-                lv1.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
+  /**
+   * Shows or hides a loading indicator
+   *
+   * @param show True to show loading, false to hide
+   * @param showToast True to show a toast message, false to hide
+   */
+  private void showLoading(boolean show, boolean showToast) {
+    try {
+      // Simple implementation without dedicated loading view
+      if (lv1 != null) {
+        lv1.setVisibility(show ? View.GONE : View.VISIBLE);
+      }
 
-            // Show a toast only if requested and if we haven't shown it already
-            if (show && showToast && !loadingToastShown) {
-                Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
-                loadingToastShown = true;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error toggling loading state", e);
-        }
+      // Show a toast only if requested and if we haven't shown it already
+      if (show && showToast && !loadingToastShown) {
+        Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
+        loadingToastShown = true;
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error toggling loading state", e);
     }
+  }
 
-    /**
-     * Overloaded method for backward compatibility
-     *
-     * @param show True to show loading, false to hide
-     */
-    private void showLoading(boolean show) {
-        showLoading(show, false);
+  /**
+   * Overloaded method for backward compatibility
+   *
+   * @param show True to show loading, false to hide
+   */
+  private void showLoading(boolean show) {
+    showLoading(show, false);
+  }
+
+  /** Forces the server URL to be set to Render */
+  private void forceSetServerUrl() {
+    try {
+      String renderUrl = "https://partymaker.onrender.com";
+      androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+          .edit()
+          .putString("server_url", renderUrl)
+          .apply();
+      Log.d(TAG, "Forced server URL to: " + renderUrl);
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting server URL", e);
+      // Non-critical error, continue execution
     }
+  }
 
-    /**
-     * Forces the server URL to be set to Render
-     */
-    private void forceSetServerUrl() {
-        try {
-            String renderUrl = "https://partymaker.onrender.com";
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putString("server_url", renderUrl)
-                    .apply();
-            Log.d(TAG, "Forced server URL to: " + renderUrl);
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting server URL", e);
-            // Non-critical error, continue execution
-        }
-    }
-
-    /**
-     * Initializes and validates the current user.
-     *
-     * @return true if user is valid and initialized, false otherwise
-     */
-    private boolean initializeUser() {
-        try {
-            String userEmail = AuthHelper.getCurrentUserEmail(this);
-            if (userEmail != null) {
-                UserKey = userEmail.replace('.', ' ');
-                Log.d(TAG, "User initialized successfully: " + UserKey);
-                return true;
-            } else {
-                Log.e(TAG, "User not logged in or email is null");
-                showError("Authentication error. Please login again.");
-                navigateToLogin();
-                return false;
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error initializing user", e);
-            showError("User initialization failed");
-            navigateToLogin();
-            return false;
-        }
-    }
-
-    // Initializes all view components.
-    private void initializeViews() {
-        lv1 = findViewById(R.id.lv1);
-        fabChat = findViewById(R.id.fabChat);
-
-        if (lv1 == null) {
-            Log.e(TAG, "Critical view lv1 not found");
-            showError("UI initialization failed");
-            finish();
-            return;
-        }
-
-        // RecyclerView setup
-        lv1.setLayoutManager(new LinearLayoutManager(this));
-        groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
-        lv1.setAdapter(groupAdapter);
-    }
-
-    // Sets up the action bar with custom gradient background and styling.
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar == null) {
-            Log.w(TAG, "ActionBar not available");
-            return;
-        }
-
-        try {
-            GradientDrawable gradient = createActionBarGradient();
-            actionBar.setBackgroundDrawable(gradient);
-
-            String styledTitle = createStyledTitle();
-            actionBar.setTitle(Html.fromHtml(styledTitle, Html.FROM_HTML_MODE_LEGACY));
-
-            configureActionBarProperties(actionBar);
-
-            Log.d(TAG, "ActionBar setup completed");
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting up ActionBar", e);
-        }
-    }
-
-    // Creates a gradient drawable for the action bar background.
-    private GradientDrawable createActionBarGradient() {
-        GradientDrawable gradient = new GradientDrawable();
-        gradient.setShape(GradientDrawable.RECTANGLE);
-        gradient.setColors(
-                new int[]{
-                        Color.parseColor(ACTION_BAR_START_COLOR), Color.parseColor(ACTION_BAR_END_COLOR)
-                });
-        gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
-        return gradient;
-    }
-
-    // Creates a styled HTML title string.
-    private String createStyledTitle() {
-        return String.format(
-                "<font color='%s'><b>%s</b></font>", MainActivity.ACTION_BAR_TITLE_COLOR, "My Parties");
-    }
-
-    // Configures action bar properties.
-    private void configureActionBarProperties(ActionBar actionBar) {
-        actionBar.setElevation(ACTION_BAR_ELEVATION);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-    }
-
-    // Observes LiveData from the ViewModel
-    private void observeViewModel() {
-        try {
-            // Observe group list
-            viewModel
-                    .getGroups()
-                    .observe(
-                            this,
-                            groups -> {
-                                try {
-                                    if (groups != null) {
-                                        groupAdapter.updateItems(groups);
-                                        Log.d(TAG, "Group list updated with " + groups.size() + " groups");
-
-                                        // Hide loading indicator
-                                        showLoading(false);
-
-                                        // Show empty state if needed
-                                        if (groups.isEmpty()) {
-                                            showEmptyState();
-                                        }
-                                    } else {
-                                        Log.w(TAG, "Received null groups list from ViewModel");
-                                        showEmptyState();
-                                        showLoading(false);
-                                    }
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error processing groups data", e);
-                                    showError("Error displaying groups");
-                                    showLoading(false);
-                                }
-                            });
-
-            // Observe loading state
-            viewModel
-                    .getIsLoading()
-                    .observe(
-                            this,
-                            isLoading -> {
-                                try {
-                                    showLoading(isLoading);
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error updating loading state", e);
-                                }
-                            });
-
-            // Observe error messages
-            viewModel
-                    .getErrorMessage()
-                    .observe(
-                            this,
-                            errorMsg -> {
-                                try {
-                                    if (errorMsg != null && !errorMsg.isEmpty()) {
-                                        showError(errorMsg);
-                                        viewModel.clearError(); // Clear the error after showing it
-                                        showLoading(false);
-                                    }
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error displaying error message", e);
-                                }
-                            });
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting up observers", e);
-            showError("Error initializing data observers");
-        }
-    }
-
-    // Sets up all event handlers for UI components.
-    private void setupEventHandlers() {
-        // אין צורך ב-setOnItemClickListener, הכל עובר דרך ה-Listener של GroupAdapter החדש
-    }
-
-    // Sets up the floating chat button with click and touch handlers.
-    @SuppressLint("ClickableViewAccessibility")
-    private void setupFloatingChatButton() {
-        if (fabChat == null) {
-            Log.w(TAG, "FloatingActionButton not found");
-            return;
-        }
-
-        fabChat.setOnClickListener(view -> navigateToChat());
-        fabChat.setOnTouchListener(Common::dragChatButtonOnTouch);
-    }
-
-    private void setupBottomNavigation() {
-        BottomNavigationHelper.setupBottomNavigation(this, "myparties");
-    }
-
-    // Navigates to the chat activity.
-    private void navigateToChat() {
-        try {
-            Intent intent = new Intent(MainActivity.this, GptChatActivity.class);
-            startActivity(intent);
-        } catch (Exception e) {
-            Log.e(TAG, "Error navigating to chat", e);
-            showError("Failed to open chat");
-        }
-    }
-
-    // Navigates to the group screen with all necessary data.
-    private void navigateToGroupScreen(Group group) {
-        if (group == null) {
-            Log.e(TAG, "Cannot navigate to null group");
-            return;
-        }
-
-        try {
-            Log.d(
-                    TAG,
-                    "Attempting to navigate to PartyMainActivity for group: "
-                            + group.getGroupName()
-                            + " with key: "
-                            + group.getGroupKey());
-            Intent intent = new Intent(getBaseContext(), PartyMainActivity.class);
-
-            // Add GroupKey directly to intent
-            intent.putExtra("GroupKey", group.getGroupKey());
-            Log.d(TAG, "Added GroupKey to intent: " + group.getGroupKey());
-
-            // Also add ExtrasMetadata for backward compatibility
-            ExtrasMetadata extras = createExtrasFromGroup(group);
-            Common.addExtrasToIntent(intent, extras);
-
-            // Add UserKey to intent
-            intent.putExtra("UserKey", UserKey);
-            Log.d(TAG, "Added UserKey to intent: " + UserKey);
-
-            Log.d(TAG, "Starting PartyMainActivity...");
-            startActivity(intent);
-            Log.d(TAG, "PartyMainActivity started successfully");
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error navigating to group screen", e);
-            showError("Failed to open group: " + e.getMessage());
-        }
-    }
-
-    // Creates ExtrasMetadata object from Group data.
-    private ExtrasMetadata createExtrasFromGroup(Group group) {
-        return new ExtrasMetadata(
-                group.getGroupName(),
-                group.getGroupKey(),
-                group.getGroupDays(),
-                group.getGroupMonths(),
-                group.getGroupYears(),
-                group.getGroupHours(),
-                group.getGroupLocation(),
-                group.getAdminKey(),
-                group.getCreatedAt(),
-                group.getGroupPrice(),
-                group.getGroupType(),
-                group.isCanAdd(),
-                group.getFriendKeys(),
-                group.getComingKeys(),
-                group.getMessageKeys());
-    }
-
-    // Shows an empty state when no groups are available
-    private void showEmptyState() {
-        try {
-            runOnUiThread(
-                    () -> {
-                        if (lv1 != null && groupAdapter != null && groupAdapter.getItemCount() == 0) {
-                            // Check if we're still loading
-                            if (viewModel.getIsLoading().getValue() != null
-                                    && viewModel.getIsLoading().getValue()) {
-                                // Don't show empty state while loading
-                                return;
-                            }
-
-                            // Show a simple text view instead of a Snackbar
-                            TextView emptyView = findViewById(R.id.emptyGroupsView);
-                            if (emptyView != null) {
-                                emptyView.setVisibility(View.VISIBLE);
-                                emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
-                            }
-                        } else {
-                            // Hide empty view if we have groups
-                            TextView emptyView = findViewById(R.id.emptyGroupsView);
-                            if (emptyView != null) {
-                                emptyView.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-        } catch (Exception e) {
-            Log.e(TAG, "Error showing empty state", e);
-        }
-    }
-
-    // Checks if the current user is a member of the given group.
-    private boolean isUserInGroup(Group group) {
-        HashMap<String, Object> userKeys = group.getFriendKeys();
-        if (userKeys == null || UserKey == null) {
-            return false;
-        }
-
-        return userKeys.containsKey(UserKey);
-    }
-
-    // Sorts groups by creation date and updates the adapter.
-    private void sortAndDisplayGroups() {
-        // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
-    }
-
-    // Validates if the given position is within bounds.
-    private boolean isValidPosition(int position) {
-        return groupAdapter != null && position >= 0 && position < groupAdapter.getItemCount();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        Intent goToNextActivity;
-
-        if (itemId == R.id.settings) {
-            goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
-            startActivity(goToNextActivity);
-        } else if (itemId == R.id.logout) {
-            AuthHelper.clearAuthData(this);
-            goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(goToNextActivity);
-            finish();
-        }
-
+  /**
+   * Initializes and validates the current user.
+   *
+   * @return true if user is valid and initialized, false otherwise
+   */
+  private boolean initializeUser() {
+    try {
+      String userEmail = AuthHelper.getCurrentUserEmail(this);
+      if (userEmail != null) {
+        UserKey = userEmail.replace('.', ' ');
+        Log.d(TAG, "User initialized successfully. Original email: " + userEmail + ", UserKey: " + UserKey);
         return true;
+      } else {
+        Log.e(TAG, "User not logged in or email is null");
+        showError("Authentication error. Please login again.");
+        navigateToLogin();
+        return false;
+      }
+
+    } catch (Exception e) {
+      Log.e(TAG, "Error initializing user", e);
+      showError("User initialization failed");
+      navigateToLogin();
+      return false;
+    }
+  }
+
+  // Initializes all view components.
+  private void initializeViews() {
+    rootView = findViewById(android.R.id.content);
+    lv1 = findViewById(R.id.lv1);
+    fabChat = findViewById(R.id.fabChat);
+    swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+    if (lv1 == null) {
+      Log.e(TAG, "Critical view lv1 not found");
+      UserFeedback.showErrorDialog(this, "UI initialization failed");
+      finish();
+      return;
     }
 
-    // Navigates to the specified activity class.
-    private void navigateToActivity(Class<?> activityClass) {
-        Intent intent = new Intent(getApplicationContext(), activityClass);
-        startActivity(intent);
+    // RecyclerView setup
+    lv1.setLayoutManager(new LinearLayoutManager(this));
+    groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
+    lv1.setAdapter(groupAdapter);
+
+    // Initialize loading state manager
+    setupLoadingStateManager();
+    
+    // Setup pull-to-refresh functionality
+    setupSwipeRefresh();
+  }
+
+  private void setupLoadingStateManager() {
+    // Find or create loading views
+    android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
+    android.widget.TextView loadingText = null; // Optional loading text view
+
+    // Create progress bar if not found
+    if (progressBar == null) {
+      progressBar = new android.widget.ProgressBar(this);
+      progressBar.setId(R.id.progressBar);
+      progressBar.setVisibility(View.GONE);
+
+      // Add to root layout
+      if (rootView instanceof android.widget.FrameLayout) {
+        ((android.widget.FrameLayout) rootView).addView(progressBar);
+      }
     }
 
-    // Handles user logout process
-    private void handleLogout() {
-        try {
-            AuthHelper.clearAuthData(this);
-            navigateToLogin();
-            Log.d(TAG, "User logged out successfully");
-        } catch (Exception e) {
+    loadingStateManager =
+        new LoadingStateManager.Builder()
+            .contentView(lv1)
+            .progressBar(progressBar)
+            .loadingText(loadingText)
+            .build();
+  }
+
+  private void setupSwipeRefresh() {
+    if (swipeRefreshLayout != null) {
+      // Set the colors for the refresh indicator
+      swipeRefreshLayout.setColorSchemeColors(
+          getResources().getColor(android.R.color.holo_blue_bright),
+          getResources().getColor(android.R.color.holo_green_light),
+          getResources().getColor(android.R.color.holo_orange_light),
+          getResources().getColor(android.R.color.holo_red_light)
+      );
+      
+      // Set the refresh listener
+      swipeRefreshLayout.setOnRefreshListener(() -> {
+        Log.d(TAG, "Pull-to-refresh triggered: refreshing user groups");
+        if (viewModel != null && UserKey != null) {
+          viewModel.loadUserGroups(UserKey, true); // Force refresh from server
+          lastRefreshTime = System.currentTimeMillis(); // Update refresh time
+        }
+      });
+    }
+  }
+
+  // Sets up the action bar with custom gradient background and styling.
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar == null) {
+      Log.w(TAG, "ActionBar not available");
+      return;
+    }
+
+    try {
+      GradientDrawable gradient = createActionBarGradient();
+      actionBar.setBackgroundDrawable(gradient);
+
+      String styledTitle = createStyledTitle();
+      actionBar.setTitle(Html.fromHtml(styledTitle, Html.FROM_HTML_MODE_LEGACY));
+
+      configureActionBarProperties(actionBar);
+
+      Log.d(TAG, "ActionBar setup completed");
+
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up ActionBar", e);
+    }
+  }
+
+  // Creates a gradient drawable for the action bar background.
+  private GradientDrawable createActionBarGradient() {
+    GradientDrawable gradient = new GradientDrawable();
+    gradient.setShape(GradientDrawable.RECTANGLE);
+    gradient.setColors(
+        new int[] {
+          Color.parseColor(ACTION_BAR_START_COLOR), Color.parseColor(ACTION_BAR_END_COLOR)
+        });
+    gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+    return gradient;
+  }
+
+  // Creates a styled HTML title string.
+  private String createStyledTitle() {
+    return String.format(
+        "<font color='%s'><b>%s</b></font>", MainActivity.ACTION_BAR_TITLE_COLOR, "My Parties");
+  }
+
+  // Configures action bar properties.
+  private void configureActionBarProperties(ActionBar actionBar) {
+    actionBar.setElevation(ACTION_BAR_ELEVATION);
+    actionBar.setDisplayShowHomeEnabled(true);
+    actionBar.setDisplayHomeAsUpEnabled(false);
+  }
+
+  // Observes LiveData from the ViewModel
+  private void observeViewModel() {
+    try {
+      // Observe group list
+      viewModel
+          .getGroups()
+          .observe(
+              this,
+              groups -> {
+                try {
+                  Log.d(TAG, "observeViewModel: received groups data, groups = " + groups);
+                  if (groups != null) {
+                    Log.d(TAG, "Group list size: " + groups.size());
+                    for (int i = 0; i < groups.size() && i < 3; i++) {
+                      Group g = groups.get(i);
+                      Log.d(TAG, "Group " + i + ": " + g.getGroupName() + " (key: " + g.getGroupKey() + ")");
+                    }
+                    
+                    groupAdapter.updateItems(groups);
+                    Log.d(TAG, "Group list updated with " + groups.size() + " groups");
+
+                    // Update UI state
+                    if (groups.isEmpty()) {
+                      Log.d(TAG, "Groups list is empty - showing empty state");
+                      loadingStateManager.showEmpty();
+                      showEmptyState();
+                    } else {
+                      Log.d(TAG, "Groups list has " + groups.size() + " items - showing content");
+                      loadingStateManager.showContent();
+                      hideEmptyState();
+                    }
+                  } else {
+                    Log.d(TAG, "Received null groups list from ViewModel - data not loaded yet, staying in loading state");
+                    // Don't show empty state when data is null - it means data hasn't loaded yet
+                    // Keep showing loading state until we get actual data (empty list or populated list)
+                  }
+                } catch (Exception e) {
+                  Log.e(TAG, "Error processing groups data", e);
+                  UiStateManager.showError(
+                      rootView,
+                      "Error displaying groups",
+                      () -> viewModel.loadUserGroups(UserKey, true));
+                  loadingStateManager.showError("Error loading groups");
+                }
+              });
+
+      // Observe loading state
+      viewModel
+          .getIsLoading()
+          .observe(
+              this,
+              isLoading -> {
+                try {
+                  Log.d(TAG, "observeViewModel: loading state changed to: " + isLoading);
+                  if (isLoading) {
+                    loadingStateManager.showLoading("Loading your parties...");
+                  } else {
+                    // Stop pull-to-refresh indicator when loading is done
+                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                      swipeRefreshLayout.setRefreshing(false);
+                    }
+                  }
+                } catch (Exception e) {
+                  Log.e(TAG, "Error updating loading state", e);
+                }
+              });
+
+      // Observe error messages
+      viewModel
+          .getErrorMessage()
+          .observe(
+              this,
+              errorMsg -> {
+                try {
+                  Log.d(TAG, "observeViewModel: received error message: " + errorMsg);
+                  if (errorMsg != null && !errorMsg.isEmpty()) {
+                    Log.e(TAG, "Showing error to user: " + errorMsg);
+                    UiStateManager.showError(
+                        rootView, errorMsg, () -> viewModel.loadUserGroups(UserKey, true));
+                    loadingStateManager.showError(errorMsg);
+                    viewModel.clearError(); // Clear the error after showing it
+                  }
+                } catch (Exception e) {
+                  Log.e(TAG, "Error displaying error message", e);
+                }
+              });
+    } catch (Exception e) {
+      Log.e(TAG, "Error setting up observers", e);
+      UserFeedback.showErrorDialog(this, "Error initializing data observers");
+    }
+  }
+
+  // Sets up all event handlers for UI components.
+  private void setupEventHandlers() {
+    // אין צורך ב-setOnItemClickListener, הכל עובר דרך ה-Listener של GroupAdapter החדש
+  }
+
+  // Sets up the floating chat button with click and touch handlers.
+  @SuppressLint("ClickableViewAccessibility")
+  private void setupFloatingChatButton() {
+    if (fabChat == null) {
+      Log.w(TAG, "FloatingActionButton not found");
+      return;
+    }
+
+    fabChat.setOnClickListener(view -> navigateToChat());
+    fabChat.setOnTouchListener(Common::dragChatButtonOnTouch);
+  }
+
+  private void setupBottomNavigation() {
+    BottomNavigationHelper.setupBottomNavigation(this, "myparties");
+  }
+
+  // Navigates to the chat activity.
+  private void navigateToChat() {
+    try {
+      Intent intent = new Intent(MainActivity.this, GptChatActivity.class);
+      startActivity(intent);
+    } catch (Exception e) {
+      Log.e(TAG, "Error navigating to chat", e);
+      showError("Failed to open chat");
+    }
+  }
+
+  // Navigates to the group screen with all necessary data.
+  private void navigateToGroupScreen(Group group) {
+    if (group == null) {
+      Log.e(TAG, "Cannot navigate to null group");
+      return;
+    }
+
+    try {
+      Log.d(
+          TAG,
+          "Attempting to navigate to PartyMainActivity for group: "
+              + group.getGroupName()
+              + " with key: "
+              + group.getGroupKey());
+      Intent intent = new Intent(getBaseContext(), PartyMainActivity.class);
+
+      // Add GroupKey directly to intent
+      intent.putExtra("GroupKey", group.getGroupKey());
+      Log.d(TAG, "Added GroupKey to intent: " + group.getGroupKey());
+
+      // Also add ExtrasMetadata for backward compatibility
+      ExtrasMetadata extras = createExtrasFromGroup(group);
+      Common.addExtrasToIntent(intent, extras);
+
+      // Add UserKey to intent
+      intent.putExtra("UserKey", UserKey);
+      Log.d(TAG, "Added UserKey to intent: " + UserKey);
+
+      Log.d(TAG, "Starting PartyMainActivity...");
+      startActivity(intent);
+      Log.d(TAG, "PartyMainActivity started successfully");
+
+    } catch (Exception e) {
+      Log.e(TAG, "Error navigating to group screen", e);
+      showError("Failed to open group: " + e.getMessage());
+    }
+  }
+
+  // Creates ExtrasMetadata object from Group data.
+  private ExtrasMetadata createExtrasFromGroup(Group group) {
+    return new ExtrasMetadata(
+        group.getGroupName(),
+        group.getGroupKey(),
+        group.getGroupDays(),
+        group.getGroupMonths(),
+        group.getGroupYears(),
+        group.getGroupHours(),
+        group.getGroupLocation(),
+        group.getAdminKey(),
+        group.getCreatedAt(),
+        group.getGroupPrice(),
+        group.getGroupType(),
+        group.isCanAdd(),
+        group.getFriendKeys(),
+        group.getComingKeys(),
+        group.getMessageKeys());
+  }
+
+  // Shows an empty state when no groups are available
+  private void showEmptyState() {
+    try {
+      ThreadUtils.runOnMainThread(
+          () -> {
+            if (lv1 != null && groupAdapter != null && groupAdapter.getItemCount() == 0) {
+              // Check if we're still loading
+              if (viewModel.getIsLoading().getValue() != null
+                  && viewModel.getIsLoading().getValue()) {
+                // Don't show empty state while loading
+                return;
+              }
+
+              // Show empty state message
+              TextView emptyView = findViewById(R.id.emptyGroupsView);
+              if (emptyView != null) {
+                emptyView.setVisibility(View.VISIBLE);
+                emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+              } else {
+                // Show snackbar as fallback
+                UiStateManager.showInfo(rootView, "לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+              }
+            }
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing empty state", e);
+    }
+  }
+
+  // Hides the empty state
+  private void hideEmptyState() {
+    try {
+      ThreadUtils.runOnMainThread(
+          () -> {
+            TextView emptyView = findViewById(R.id.emptyGroupsView);
+            if (emptyView != null) {
+              emptyView.setVisibility(View.GONE);
+            }
+          });
+    } catch (Exception e) {
+      Log.e(TAG, "Error hiding empty state", e);
+    }
+  }
+
+  // Checks if the current user is a member of the given group.
+  private boolean isUserInGroup(Group group) {
+    HashMap<String, Object> userKeys = group.getFriendKeys();
+    if (userKeys == null || UserKey == null) {
+      return false;
+    }
+
+    return userKeys.containsKey(UserKey);
+  }
+
+  // Sorts groups by creation date and updates the adapter.
+  private void sortAndDisplayGroups() {
+    // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
+  }
+
+  // Validates if the given position is within bounds.
+  private boolean isValidPosition(int position) {
+    return groupAdapter != null && position >= 0 && position < groupAdapter.getItemCount();
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int itemId = item.getItemId();
+    Intent goToNextActivity;
+
+    if (itemId == R.id.settings) {
+      goToNextActivity = new Intent(getApplicationContext(), ServerSettingsActivity.class);
+      startActivity(goToNextActivity);
+    } else if (itemId == R.id.logout) {
+      handleLogout();
+    }
+
+    return true;
+  }
+
+  // Navigates to the specified activity class.
+  private void navigateToActivity(Class<?> activityClass) {
+    Intent intent = new Intent(getApplicationContext(), activityClass);
+    startActivity(intent);
+  }
+
+  // Handles user logout process
+  private void handleLogout() {
+    UserFeedback.showConfirmationDialog(
+        this,
+        "Logout",
+        "Are you sure you want to logout?",
+        () -> {
+          try {
+            // Show logout progress
+            loadingStateManager.showLoading("Logging out...");
+
+            // Clear ViewModel data first
+            if (viewModel != null) {
+              viewModel.clearAllData();
+            }
+
+            // Clear all user data including Room database
+            AuthHelper.logout(this);
+
+            // Show success message briefly before navigating
+            UiStateManager.showSuccess(rootView, "Logged out successfully");
+
+            // Navigate after a short delay
+            ThreadUtils.runOnMainThreadDelayed(
+                () -> {
+                  navigateToLogin();
+                  Log.d(TAG, "User logged out successfully");
+                },
+                1000);
+
+          } catch (Exception e) {
             Log.e(TAG, "Error during logout", e);
-            showError("Logout failed");
-        }
-    }
+            UiStateManager.showError(rootView, "Logout failed", this::handleLogout);
+            loadingStateManager.showError("Logout failed");
+          }
+        });
+  }
 
-    // Navigates to the login activity and finishes current activity.
-    private void navigateToLogin() {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
+  // Navigates to the login activity and finishes current activity.
+  private void navigateToLogin() {
+    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+    startActivity(intent);
+    finish();
+  }
 
-    /**
-     * Shows an error message to the user.
-     *
-     * @param message The error message to display
-     */
-    private void showError(String message) {
-        try {
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            Log.e(TAG, "Error shown to user: " + message);
-        } catch (Exception e) {
-            Log.e(TAG, "Error showing error message", e);
-        }
+  /**
+   * Shows an error message to the user.
+   *
+   * @param message The error message to display
+   */
+  private void showError(String message) {
+    try {
+      UiStateManager.showError(rootView, message);
+      Log.e(TAG, "Error shown to user: " + message);
+    } catch (Exception e) {
+      Log.e(TAG, "Error showing error message", e);
+      // Fallback to toast if snackbar fails
+      Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu, menu);
+    return true;
+  }
 
-    // Update the UI with the current group list
-    private void updateUI() {
-        // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
+  // Update the UI with the current group list
+  private void updateUI() {
+    // הסר את כל השימושים ב-groupList ו-GroupAdapter הישן (כולל updateUI, sortAndDisplayGroups וכו')
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    
+    // Refresh groups when returning to the activity, but only if enough time has passed
+    // This catches cases where user was added to a group while away
+    if (viewModel != null && UserKey != null) {
+      long currentTime = System.currentTimeMillis();
+      long timeSinceLastRefresh = currentTime - lastRefreshTime;
+      
+      if (timeSinceLastRefresh > REFRESH_COOLDOWN_MS) {
+        Log.d(TAG, "onResume: Refreshing user groups to catch any new invitations (last refresh: " + 
+              timeSinceLastRefresh + "ms ago)");
+        viewModel.loadUserGroups(UserKey, true); // Force refresh from server
+        lastRefreshTime = currentTime;
+      } else {
+        Log.d(TAG, "onResume: Skipping refresh - too soon since last refresh (" + 
+              timeSinceLastRefresh + "ms ago, cooldown: " + REFRESH_COOLDOWN_MS + "ms)");
+      }
     }
+  }
 }

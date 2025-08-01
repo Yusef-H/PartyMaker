@@ -1,0 +1,36 @@
+# Properties Template for PartyMaker
+# ==================================
+# You can use EITHER:
+# 1. Copy this file to local.properties
+# 2. Copy this file to secrets.properties (used by secrets-gradle-plugin)
+# 
+# NEVER commit local.properties or secrets.properties to version control!
+
+# Android SDK location (auto-generated, don't modify)
+sdk.dir=/path/to/your/Android/sdk
+
+# API Keys - Replace with your actual keys
+# ========================================
+# The app will look for these keys in this order:
+# 1. local.properties (with lowercase format)
+# 2. secrets.properties (with either format)
+# 3. Environment variables
+#
+# You can use either format:
+# - Lowercase with dots: openai.api.key, maps.api.key
+# - Uppercase with underscores: OPENAI_API_KEY, MAPS_API_KEY
+
+# OpenAI API Key
+# Get your key from: https://platform.openai.com/api-keys
+openai.api.key=YOUR_OPENAI_API_KEY_HERE
+# OR
+# OPENAI_API_KEY=YOUR_OPENAI_API_KEY_HERE
+
+# Google Maps API Key  
+# Get your key from: https://console.cloud.google.com/
+maps.api.key=YOUR_GOOGLE_MAPS_API_KEY_HERE
+# OR
+# MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY_HERE
+
+# Optional: Override server URL for development
+# server.url=https://your-dev-server.com

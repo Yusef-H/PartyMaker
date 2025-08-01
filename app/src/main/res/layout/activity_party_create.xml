@@ -24,7 +24,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="21dp"
             android:contentDescription="@string/create_group_logo"
-            app:srcCompat="@drawable/ic_cake_create_party" />
+            app:srcCompat="@drawable/ic_cake_cyan" />
 
         <TextView
             android:id="@+id/tvPartyName"

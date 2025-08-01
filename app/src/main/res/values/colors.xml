@@ -27,6 +27,12 @@
     <color name="green">#4CAF50</color>
     <color name="darkSlate">#455A64</color>
 
+    <!-- UI State Colors -->
+    <color name="success_green">#4CAF50</color>
+    <color name="error_red">#F44336</color>
+    <color name="warning_orange">#FF9800</color>
+    <color name="info_blue">#2196F3</color>
+
     <!-- Screens background -->
     <color name="bg_screen1">#4f8500fa</color>
     <color name="bg_screen2">#4fed00fa</color>

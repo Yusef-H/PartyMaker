@@ -8,8 +8,9 @@
     <string name="password">Password</string>
     <string name="stay_connected">Stay connected!</string>
 
-    <!-- Google Auth -->
-    <string name="default_web_client_id">147371928837-clr49oghmdrdbhk5aqfuinu4rekl19dt.apps.googleusercontent.com</string>
+    <!-- Google Auth - Client ID will be loaded from secure config -->
+    <string name="default_web_client_id">@string/google_web_client_id_placeholder</string>
+    <string name="google_web_client_id_placeholder">YOUR_WEB_CLIENT_ID</string>
 
     <!-- Email Input -->
     <string name="hint_email">Email</string>
