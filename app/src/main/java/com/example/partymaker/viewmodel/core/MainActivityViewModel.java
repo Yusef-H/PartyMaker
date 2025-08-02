@@ -1,4 +1,4 @@
-package com.example.partymaker.viewmodel;
+package com.example.partymaker.viewmodel.core;
 
 import android.app.Application;
 import android.util.Log;
@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.repository.GroupRepository;
+import com.example.partymaker.viewmodel.BaseViewModel;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

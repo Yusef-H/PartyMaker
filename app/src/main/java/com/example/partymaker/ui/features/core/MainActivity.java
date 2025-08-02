@@ -34,7 +34,7 @@ import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
-import com.example.partymaker.viewmodel.MainActivityViewModel;
+import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
 

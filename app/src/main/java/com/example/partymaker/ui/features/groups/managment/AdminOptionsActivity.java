@@ -22,7 +22,6 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.features.groups.ChangeDateActivity;
 import com.example.partymaker.ui.features.groups.members.FriendsRemoveActivity;
 import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;

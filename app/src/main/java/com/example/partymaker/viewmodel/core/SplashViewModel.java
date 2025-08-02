@@ -1,4 +1,4 @@
-package com.example.partymaker.viewmodel;
+package com.example.partymaker.viewmodel.core;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.utils.core.AppConstants;
+import com.example.partymaker.viewmodel.BaseViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

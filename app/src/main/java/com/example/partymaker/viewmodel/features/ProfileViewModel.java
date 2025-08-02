@@ -1,4 +1,4 @@
-package com.example.partymaker.viewmodel;
+package com.example.partymaker.viewmodel.features;
 
 import android.content.Context;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.example.partymaker.viewmodel;
+package com.example.partymaker.viewmodel.features;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.example.partymaker.viewmodel.BaseViewModel;
 
 /** ViewModel for ServerSettingsActivity handling server configuration */
 public class ServerSettingsViewModel extends BaseViewModel {

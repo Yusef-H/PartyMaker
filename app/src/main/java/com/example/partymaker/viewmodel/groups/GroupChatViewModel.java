@@ -1,22 +1,24 @@
-package com.example.partymaker.viewmodel;
+package com.example.partymaker.viewmodel.groups;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.model.ChatMessage;
+import com.example.partymaker.viewmodel.BaseViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /** Simplified ViewModel for ChatActivity handling chat messages */
-public class SimplifiedChatViewModel extends BaseViewModel {
+public class GroupChatViewModel extends BaseViewModel {
 
   private final MutableLiveData<List<ChatMessage>> messages =
       new MutableLiveData<>(new ArrayList<>());
   private final MutableLiveData<String> groupKey = new MutableLiveData<>();
   private final MutableLiveData<Boolean> isMessageSent = new MutableLiveData<>(false);
 
-  public SimplifiedChatViewModel(@NonNull Application application) {
+  public GroupChatViewModel(@NonNull Application application) {
     super(application);
   }
 

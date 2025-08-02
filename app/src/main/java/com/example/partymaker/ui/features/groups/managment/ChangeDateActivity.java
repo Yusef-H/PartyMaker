@@ -1,4 +1,4 @@
-package com.example.partymaker.ui.features.groups;
+package com.example.partymaker.ui.features.groups.managment;
 
 import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
 import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;
@@ -16,7 +16,6 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.features.groups.managment.AdminOptionsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;

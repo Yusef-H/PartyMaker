@@ -16,7 +16,7 @@ import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessageGpt;
 import com.example.partymaker.ui.adapters.ChatbotAdapter;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.GptViewModel;
+import com.example.partymaker.viewmodel.features.GptViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import java.io.IOException;
 import java.io.InputStream;

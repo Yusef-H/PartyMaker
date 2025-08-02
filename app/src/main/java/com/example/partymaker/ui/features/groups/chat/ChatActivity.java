@@ -29,7 +29,7 @@ import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.security.encryption.GroupMessageEncryption;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.SimplifiedChatViewModel;
+import com.example.partymaker.viewmodel.groups.GroupChatViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class ChatActivity extends AppCompatActivity {
   private FirebaseServerClient serverClient;
   private ChatAdapter adapter;
   private String UserKey;
-  private SimplifiedChatViewModel viewModel;
+  private GroupChatViewModel viewModel;
   private GroupKeyManager groupKeyManager;
   private GroupMessageEncryption groupEncryption;
 
@@ -68,7 +68,7 @@ public class ChatActivity extends AppCompatActivity {
     serverClient = FirebaseServerClient.getInstance();
 
     // Initialize ViewModel
-    viewModel = new ViewModelProvider(this).get(SimplifiedChatViewModel.class);
+    viewModel = new ViewModelProvider(this).get(GroupChatViewModel.class);
     setupViewModelObservers();
 
     // Actionbar settings

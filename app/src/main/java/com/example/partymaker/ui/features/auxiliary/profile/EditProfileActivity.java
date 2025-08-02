@@ -33,7 +33,7 @@ import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.ProfileViewModel;
+import com.example.partymaker.viewmodel.features.ProfileViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;

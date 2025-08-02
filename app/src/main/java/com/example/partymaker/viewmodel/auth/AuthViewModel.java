@@ -1,4 +1,4 @@
-package com.example.partymaker.viewmodel;
+package com.example.partymaker.viewmodel.auth;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,6 +11,7 @@ import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.SecureAuthenticationManager;
 import com.example.partymaker.utils.security.core.PasswordValidator;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.example.partymaker.viewmodel.BaseViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

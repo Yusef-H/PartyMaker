@@ -18,7 +18,7 @@ import com.example.partymaker.ui.features.auth.LoginActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.security.core.SecureConfigManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.SplashViewModel;
+import com.example.partymaker.viewmodel.core.SplashViewModel;
 
 /**
  * SplashActivity displays the initial splash screen with animations, then navigates the user to the

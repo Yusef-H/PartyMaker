@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import com.example.partymaker.R;
-import com.example.partymaker.viewmodel.IntroViewModel;
+import com.example.partymaker.viewmodel.auth.IntroViewModel;
 
 /**
  * Activity for displaying the intro/welcome slides to new users. Handles ViewPager navigation and

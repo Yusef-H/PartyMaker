@@ -17,7 +17,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
-import com.example.partymaker.viewmodel.AuthViewModel;
+import com.example.partymaker.viewmodel.auth.AuthViewModel;
 
 /**
  * Activity for resetting user password via email. Handles UI theme switching and password reset

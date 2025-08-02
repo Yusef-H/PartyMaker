@@ -35,7 +35,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.AuthViewModel;
+import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
