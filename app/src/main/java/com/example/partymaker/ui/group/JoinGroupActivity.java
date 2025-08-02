@@ -21,7 +21,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.sharing.ShareHelper;
+import com.example.partymaker.utils.business.sharing.ContentSharingManager;
 import com.example.partymaker.utils.ui.MapUtilities;
 import java.util.HashMap;
 import java.util.Objects;
@@ -337,19 +337,19 @@ public class JoinGroupActivity extends AppCompatActivity {
               (dialog, which) -> {
                 switch (which) {
                   case 0: // Share via Text
-                    ShareHelper.sharePartyText(JoinGroupActivity.this, group);
+                    ContentSharingManager.sharePartyText(JoinGroupActivity.this, group);
                     break;
                   case 1: // Share to WhatsApp
-                    ShareHelper.shareToWhatsApp(JoinGroupActivity.this, group);
+                    ContentSharingManager.shareToWhatsApp(JoinGroupActivity.this, group);
                     break;
                   case 2: // Share to Facebook
-                    ShareHelper.shareToFacebook(JoinGroupActivity.this, group);
+                    ContentSharingManager.shareToFacebook(JoinGroupActivity.this, group);
                     break;
                   case 3: // Share via SMS
-                    ShareHelper.shareViaSMS(JoinGroupActivity.this, group);
+                    ContentSharingManager.shareViaSMS(JoinGroupActivity.this, group);
                     break;
                   case 4: // Share via Email
-                    ShareHelper.shareViaEmail(JoinGroupActivity.this, group);
+                    ContentSharingManager.shareViaEmail(JoinGroupActivity.this, group);
                     break;
                 }
               })

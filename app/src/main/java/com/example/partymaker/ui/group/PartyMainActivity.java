@@ -31,7 +31,7 @@ import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
-import com.example.partymaker.utils.sharing.ShareHelper;
+import com.example.partymaker.utils.business.sharing.ContentSharingManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -1674,19 +1674,19 @@ public class PartyMainActivity extends AppCompatActivity {
         (dialog, which) -> {
           switch (which) {
             case 0: // Share via Text
-              ShareHelper.sharePartyText(PartyMainActivity.this, currentGroup);
+              ContentSharingManager.sharePartyText(PartyMainActivity.this, currentGroup);
               break;
             case 1: // Share to WhatsApp
-              ShareHelper.shareToWhatsApp(PartyMainActivity.this, currentGroup);
+              ContentSharingManager.shareToWhatsApp(PartyMainActivity.this, currentGroup);
               break;
             case 2: // Share to Facebook
-              ShareHelper.shareToFacebook(PartyMainActivity.this, currentGroup);
+              ContentSharingManager.shareToFacebook(PartyMainActivity.this, currentGroup);
               break;
             case 3: // Share via SMS
-              ShareHelper.shareViaSMS(PartyMainActivity.this, currentGroup);
+              ContentSharingManager.shareViaSMS(PartyMainActivity.this, currentGroup);
               break;
             case 4: // Share via Email
-              ShareHelper.shareViaEmail(PartyMainActivity.this, currentGroup);
+              ContentSharingManager.shareViaEmail(PartyMainActivity.this, currentGroup);
               break;
           }
         });

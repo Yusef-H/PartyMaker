@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.media.GlideImageLoader;
-import com.example.partymaker.utils.sharing.ShareHelper;
+import com.example.partymaker.utils.business.sharing.ContentSharingManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import java.util.Objects;
@@ -114,7 +114,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
               Group group = getItem(position);
-              ShareHelper.sharePartyText(context, group);
+              ContentSharingManager.sharePartyText(context, group);
             }
             return true;
           });

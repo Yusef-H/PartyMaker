@@ -45,8 +45,8 @@ import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
-import com.example.partymaker.utils.group.GroupBuilder;
-import com.example.partymaker.utils.group.GroupDateTime;
+import com.example.partymaker.utils.business.group.GroupDataManager;
+import com.example.partymaker.utils.business.group.GroupDateTimeManager;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
@@ -473,8 +473,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   // Group creation logic
   private Group createGroupFromForm() {
-    GroupBuilder builder =
-        new GroupBuilder()
+    GroupDataManager builder =
+        new GroupDataManager()
             .setName(etPartyName.getText().toString())
             .setAdmin(getCurrentUserEmail())
             .setType(determineGroupType())
@@ -621,12 +621,12 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     }
   }
 
-  private GroupDateTime getSelectedDateTime() {
+  private GroupDateTimeManager getSelectedDateTime() {
     int hour = timePicker.getHour();
     int minute = timePicker.getMinute();
     String timeString = String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
 
-    return new GroupDateTime(DaysSelected, MonthsSelected, YearsSelected, timeString);
+    return new GroupDateTimeManager(DaysSelected, MonthsSelected, YearsSelected, timeString);
   }
 
   private String generateGroupKey() {
