@@ -26,7 +26,7 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.group.PartyMainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
       }
 
-      String userEmail = AuthHelper.getCurrentUserEmail(this);
+      String userEmail = AuthenticationManager.getCurrentUserEmail(this);
       if (userEmail != null) {
         UserKey = userEmail.replace('.', ' ');
         Log.d(
@@ -612,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Clear all user data including Room database
-            AuthHelper.logout(this);
+            AuthenticationManager.logout(this);
 
             // Clear the explicit login flag
             SharedPreferences prefs = getSharedPreferences("PartyMakerPrefs", Context.MODE_PRIVATE);

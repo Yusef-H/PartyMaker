@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -78,7 +78,7 @@ public class InvitedAdapter extends ArrayAdapter<User> {
     String email = UserImageProfile.replace('.', ' ');
 
     // Only try to load image if Firebase Auth is available
-    if (AuthHelper.isFirebaseAuthAvailable(context)) {
+    if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
       DBRef.refStorage
           .child("Users/" + email)
           .getDownloadUrl()

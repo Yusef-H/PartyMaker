@@ -29,7 +29,7 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
@@ -251,7 +251,7 @@ public class EditProfileActivity extends AppCompatActivity {
     if (isOffline) {
       // Try to load from local cache
       try {
-        String userKey = AuthHelper.getCurrentUserKey(this);
+        String userKey = AuthenticationManager.getCurrentUserKey(this);
         if (!userKey.isEmpty()) {
           // Load profile image from cache if available
           loadProfileImageFromStorage(userKey);
@@ -262,7 +262,7 @@ public class EditProfileActivity extends AppCompatActivity {
             updateUI(cachedUser);
           }
         }
-      } catch (AuthHelper.AuthException e) {
+      } catch (AuthenticationManager.AuthException e) {
         Log.e(TAG, "Authentication error in offline mode", e);
         // Don't show error in offline mode
       }
@@ -275,7 +275,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Direct load from Firebase as backup
     try {
-      String userKey = AuthHelper.getCurrentUserKey(this);
+      String userKey = AuthenticationManager.getCurrentUserKey(this);
       if (!userKey.isEmpty()) {
         DBRef.refUsers
             .child(userKey)
@@ -306,7 +306,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 })
             .addOnFailureListener(e -> Log.e(TAG, "Error loading user data directly", e));
       }
-    } catch (AuthHelper.AuthException e) {
+    } catch (AuthenticationManager.AuthException e) {
       Log.e(TAG, "Authentication error", e);
       showError("Authentication error: " + e.getMessage());
       progressBar.setVisibility(View.GONE);
@@ -585,7 +585,7 @@ public class EditProfileActivity extends AppCompatActivity {
     String userKey;
     try {
       // Get user key directly from AuthHelper instead of relying on ViewModel
-      userKey = AuthHelper.getCurrentUserKey(this);
+      userKey = AuthenticationManager.getCurrentUserKey(this);
       if (userKey.isEmpty()) {
         showError("Authentication error. Please login again.");
         progressBar.setVisibility(View.GONE);
@@ -844,7 +844,7 @@ public class EditProfileActivity extends AppCompatActivity {
       startActivity(intent);
       return true;
     } else if (item.getItemId() == R.id.logout) {
-      AuthHelper.logout(this);
+      AuthenticationManager.logout(this);
       Intent intent = new Intent(EditProfileActivity.this, LoginActivity.class);
       startActivity(intent);
       finish();

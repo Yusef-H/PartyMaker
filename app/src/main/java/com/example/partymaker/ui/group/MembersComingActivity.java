@@ -12,7 +12,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.InvitedAdapter;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class MembersComingActivity extends AppCompatActivity {
     // Get UserKey from AuthHelper instead of Firebase Auth
     String userKey;
     try {
-      userKey = AuthHelper.getCurrentUserKey(this);
+      userKey = AuthenticationManager.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {
       userKey = getIntent().getStringExtra("UserKey");

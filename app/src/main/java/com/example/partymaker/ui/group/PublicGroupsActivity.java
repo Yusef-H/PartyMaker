@@ -23,7 +23,7 @@ import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
@@ -110,7 +110,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
   private void initializeUser() {
     try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
+      UserKey = AuthenticationManager.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
@@ -240,7 +240,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
       startActivity(intent);
       return true;
     } else if (itemId == R.id.logout) {
-      AuthHelper.logout(this);
+      AuthenticationManager.logout(this);
       Intent intent = new Intent(this, LoginActivity.class);
       startActivity(intent);
       finish();

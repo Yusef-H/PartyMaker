@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utils.auth.SecureAuthHelper;
+import com.example.partymaker.utils.auth.SecureAuthenticationManager;
 import com.example.partymaker.utils.security.PasswordValidator;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -439,7 +439,7 @@ public class AuthViewModel extends BaseViewModel {
           }
 
           // Clear secure storage
-          SecureAuthHelper.clearAuthData(context);
+          SecureAuthenticationManager.clearAuthData(context);
 
           // Update UI state
           currentUser.setValue(null);

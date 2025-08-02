@@ -12,11 +12,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /** Secure version of AuthHelper using EncryptedSharedPreferences */
-public final class SecureAuthHelper {
+public final class SecureAuthenticationManager {
   private static final String TAG = "SecureAuthHelper";
 
   // Private constructor to prevent instantiation
-  private SecureAuthHelper() {
+  private SecureAuthenticationManager() {
     throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
   }
 
@@ -72,11 +72,11 @@ public final class SecureAuthHelper {
   }
 
   /** Gets the current user's key (email with dots replaced by spaces) */
-  public static String getCurrentUserKey(Context context) throws AuthHelper.AuthException {
+  public static String getCurrentUserKey(Context context) throws AuthenticationManager.AuthException {
     String email = getCurrentUserEmail(context);
     if (email == null || email.isEmpty()) {
       Log.e(TAG, "getCurrentUserKey: No user email found");
-      throw new AuthHelper.AuthException("User not authenticated");
+      throw new AuthenticationManager.AuthException("User not authenticated");
     }
 
     String key = email.replace('.', ' ');

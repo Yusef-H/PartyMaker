@@ -23,7 +23,7 @@ import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.ChatAdapter;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
@@ -113,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Get UserKey from AuthHelper instead of Firebase Auth
     try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
+      UserKey = AuthenticationManager.getCurrentUserKey(this);
       Log.d(TAG, "UserKey initialized from AuthHelper: " + UserKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);

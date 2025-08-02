@@ -19,7 +19,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.LoadingStateManager;
 import com.example.partymaker.utils.ui.UiStateManager;
@@ -357,7 +357,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // Set user session using AuthHelper when login succeeds
             if (!email.isEmpty()) {
-              AuthHelper.setCurrentUserSession(LoginActivity.this, email);
+              AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
             }
           }
         });

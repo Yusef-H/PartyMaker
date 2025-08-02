@@ -27,7 +27,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.repository.GroupRepository;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
@@ -110,7 +110,7 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Try to get UserKey from AuthHelper first
       try {
-        UserKey = AuthHelper.getCurrentUserKey(this);
+        UserKey = AuthenticationManager.getCurrentUserKey(this);
         Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
       } catch (Exception e) {
         Log.e(TAG, "Failed to get current user email", e);

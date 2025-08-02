@@ -43,7 +43,7 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;
@@ -588,7 +588,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   private String getCurrentUserEmail() {
     // Get current user using AuthHelper
-    String currentUserEmail = AuthHelper.getCurrentUserEmail(this);
+    String currentUserEmail = AuthenticationManager.getCurrentUserEmail(this);
 
     if (currentUserEmail != null) {
       // Return the email in Firebase key format (replace dots with spaces)
@@ -707,7 +707,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
    */
   private void initializeGroupEncryption(String groupKey) {
     try {
-      String currentUserId = AuthHelper.getCurrentUserKey(this);
+      String currentUserId = AuthenticationManager.getCurrentUserKey(this);
       if (currentUserId == null) {
         Log.w(TAG, "Cannot initialize group encryption: no current user");
         return;
@@ -809,7 +809,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
       startActivity(intent);
       return true;
     } else if (item.getItemId() == R.id.logout) {
-      AuthHelper.clearAuthData(this);
+      AuthenticationManager.clearAuthData(this);
       Intent intent = new Intent(CreateGroupActivity.this, LoginActivity.class);
       startActivity(intent);
       finish();

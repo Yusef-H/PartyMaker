@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.auth.IntroActivity;
 import com.example.partymaker.ui.auth.LoginActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.security.SecureConfig;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.viewmodel.SplashViewModel;
@@ -149,16 +149,16 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     // Check if session is valid
-    if (!AuthHelper.isSessionValid(this)) {
+    if (!AuthenticationManager.isSessionValid(this)) {
       // Clear expired session
-      AuthHelper.clearAuthData(this);
+      AuthenticationManager.clearAuthData(this);
       return false;
     }
 
     // Check if user is authenticated
-    if (AuthHelper.isUserAuthenticated(this)) {
+    if (AuthenticationManager.isUserAuthenticated(this)) {
       // Refresh session for continued use
-      AuthHelper.refreshSession(this);
+      AuthenticationManager.refreshSession(this);
       return true;
     }
 
