@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.SecureAuthenticationManager;
-import com.example.partymaker.utils.security.PasswordValidator;
+import com.example.partymaker.utils.security.core.PasswordValidator;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

@@ -11,7 +11,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.partymaker.utils.security.SSLPinningManager;
+import com.example.partymaker.utils.security.network.SSLPinningManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;

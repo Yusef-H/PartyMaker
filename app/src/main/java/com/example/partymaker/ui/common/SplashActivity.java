@@ -16,7 +16,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.ui.auth.IntroActivity;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.security.SecureConfig;
+import com.example.partymaker.utils.security.core.SecureConfigManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.viewmodel.SplashViewModel;
 
@@ -53,7 +53,7 @@ public class SplashActivity extends AppCompatActivity {
   /** Initialize secure configuration */
   private void initializeSecureConfig() {
     try {
-      SecureConfig config = SecureConfig.getInstance(this);
+      SecureConfigManager config = SecureConfigManager.getInstance(this);
       // Server URL is now managed through SecureConfig
       String serverUrl = config.getServerUrl();
       android.util.Log.d("SplashActivity", "Server URL: " + serverUrl);

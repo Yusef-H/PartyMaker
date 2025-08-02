@@ -11,7 +11,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.async.AsyncTaskReplacement;
 import com.example.partymaker.utils.core.AppConstants;
-import com.example.partymaker.utils.security.SSLPinningManager;
+import com.example.partymaker.utils.security.network.SSLPinningManager;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;

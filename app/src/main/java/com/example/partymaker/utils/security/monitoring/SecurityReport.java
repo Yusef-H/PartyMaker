@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.monitoring;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

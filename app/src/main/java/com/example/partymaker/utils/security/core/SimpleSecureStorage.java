@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.core;
 
 import android.content.Context;
 import android.content.SharedPreferences;

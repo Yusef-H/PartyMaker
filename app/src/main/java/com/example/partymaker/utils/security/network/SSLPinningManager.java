@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.network;
 
 import android.util.Log;
 import java.security.MessageDigest;

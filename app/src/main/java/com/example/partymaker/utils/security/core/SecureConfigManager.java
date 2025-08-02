@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.core;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.util.Log;
 import com.example.partymaker.BuildConfig;
 
 /** Secure configuration manager for API keys and sensitive configuration */
-public class SecureConfig {
+public class SecureConfigManager {
   private static final String TAG = "SecureConfig";
   private static final String PREFS_FILE_NAME = "secure_prefs";
 
@@ -16,10 +16,10 @@ public class SecureConfig {
   private static final String KEY_SERVER_URL = "server_url";
   private static final String KEY_DEFAULT_SERVER_URL = "default_server_url";
 
-  private static SecureConfig instance;
+  private static SecureConfigManager instance;
   private final SharedPreferences prefs;
 
-  private SecureConfig(Context context) {
+  private SecureConfigManager(Context context) {
     // For now, use regular SharedPreferences with MODE_PRIVATE
     // In production, you should use EncryptedSharedPreferences when available
     prefs = context.getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
@@ -28,9 +28,9 @@ public class SecureConfig {
     initializeDefaults();
   }
 
-  public static synchronized SecureConfig getInstance(Context context) {
+  public static synchronized SecureConfigManager getInstance(Context context) {
     if (instance == null) {
-      instance = new SecureConfig(context.getApplicationContext());
+      instance = new SecureConfigManager(context.getApplicationContext());
     }
     return instance;
   }

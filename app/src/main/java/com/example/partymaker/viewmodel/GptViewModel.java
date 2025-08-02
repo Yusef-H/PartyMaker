@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessage;
-import com.example.partymaker.utils.security.SecureConfig;
+import com.example.partymaker.utils.security.core.SecureConfigManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class GptViewModel extends BaseViewModel {
 
   private void initializeOpenAiApi() {
     try {
-      SecureConfig config = SecureConfig.getInstance(getApplication());
+      SecureConfigManager config = SecureConfigManager.getInstance(getApplication());
       String apiKey = config.getOpenAiApiKey();
 
       if (apiKey != null && !apiKey.isEmpty()) {

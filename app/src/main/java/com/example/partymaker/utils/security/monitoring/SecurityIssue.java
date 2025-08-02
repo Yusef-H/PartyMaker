@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.monitoring;
 
 /** Represents a security issue found during scanning */
 public class SecurityIssue {

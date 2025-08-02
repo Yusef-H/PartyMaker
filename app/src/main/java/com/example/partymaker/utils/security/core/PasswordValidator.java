@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.core;
 
 import com.example.partymaker.utils.core.AppConstants;
 import java.util.ArrayList;

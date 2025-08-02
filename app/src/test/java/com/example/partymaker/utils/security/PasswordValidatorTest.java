@@ -2,6 +2,8 @@ package com.example.partymaker.utils.security;
 
 import static org.junit.Assert.*;
 
+import com.example.partymaker.utils.security.core.PasswordValidator;
+
 import org.junit.Test;
 
 /**

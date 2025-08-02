@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.monitoring;
 
 import android.content.Context;
 import android.util.Log;
