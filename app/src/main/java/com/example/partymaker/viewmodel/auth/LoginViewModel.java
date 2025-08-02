@@ -20,21 +20,28 @@ import com.google.firebase.auth.GoogleAuthProvider;
 /**
  * ViewModel for user login functionality.
  * 
- * <p>Handles user authentication including email/password login, Google Sign-In,
- * remember me functionality, and proper session management.
+ * <p>This ViewModel is specifically designed for LOGIN operations only.
+ * It includes timeout handling and offline fallback for better user experience.
+ * 
+ * <p><strong>Usage Note:</strong> This app has specialized auth ViewModels:
+ * <ul>
+ *   <li><strong>LoginViewModel</strong> - Use for login screens (THIS CLASS)</li>
+ *   <li><strong>RegisterViewModel</strong> - Use for registration screens</li>
+ * </ul>
  * 
  * <p>Features:
  * <ul>
- *   <li>Email/password authentication</li>
+ *   <li>Email/password authentication with timeout handling</li>
  *   <li>Google Sign-In integration</li>
  *   <li>Remember me functionality</li>
  *   <li>User session management</li>
  *   <li>Login state persistence</li>
+ *   <li>Offline fallback when server is unavailable</li>
  *   <li>Comprehensive error handling</li>
  * </ul>
  * 
  * @author PartyMaker Team
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 public class LoginViewModel extends BaseViewModel {
@@ -348,6 +355,9 @@ public class LoginViewModel extends BaseViewModel {
     private void handleLoginSuccess(FirebaseUser firebaseUser, String email) {
         Log.d(TAG, "Email/password login successful, loading user profile");
         
+        // Show loading message to user
+        setInfo("Loading profile... (may take a few seconds)");
+        
         // Save email if remember me is enabled
         Boolean remember = rememberMe.getValue();
         if (remember != null && remember) {
@@ -365,6 +375,9 @@ public class LoginViewModel extends BaseViewModel {
     private void handleGoogleLoginSuccess(FirebaseUser firebaseUser) {
         Log.d(TAG, "Google Sign-In successful, checking user profile");
         
+        // Show loading message to user  
+        setInfo("Loading profile... (may take a few seconds)");
+        
         // Set explicit login flag
         preferences.edit().putBoolean(KEY_USER_EXPLICITLY_LOGGED_IN, true).apply();
         
@@ -375,9 +388,23 @@ public class LoginViewModel extends BaseViewModel {
     private void loadUserProfile(FirebaseUser firebaseUser) {
         String userKey = firebaseUser.getUid();
         
+        // Add timeout handling
+        final boolean[] isCompleted = {false};
+        
+        // Set a timeout for the operation
+        ThreadUtils.runOnMainThreadDelayed(() -> {
+            if (!isCompleted[0]) {
+                Log.w(TAG, "User profile load timed out, proceeding with offline mode");
+                handleOfflineLogin(firebaseUser);
+            }
+        }, 10000); // 10 second timeout
+        
         userRepository.getUser(userKey, new UserRepository.Callback<User>() {
             @Override
             public void onSuccess(User user) {
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
+                
                 Log.d(TAG, "User profile loaded successfully");
                 
                 ThreadUtils.runOnMainThread(() -> {
@@ -390,10 +417,13 @@ public class LoginViewModel extends BaseViewModel {
             
             @Override
             public void onError(Exception error) {
-                Log.w(TAG, "User profile not found, creating new profile", error);
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
                 
-                // Create user profile if it doesn't exist
-                createUserProfileFromFirebase(firebaseUser);
+                Log.w(TAG, "User profile not found, trying to create new profile", error);
+                
+                // Try to create user profile with timeout
+                createUserProfileFromFirebaseWithTimeout(firebaseUser);
             }
         });
     }
@@ -401,9 +431,22 @@ public class LoginViewModel extends BaseViewModel {
     private void checkAndCreateUserProfile(FirebaseUser firebaseUser) {
         String userKey = firebaseUser.getUid();
         
+        // Add timeout handling for Google Sign-In
+        final boolean[] isCompleted = {false};
+        
+        ThreadUtils.runOnMainThreadDelayed(() -> {
+            if (!isCompleted[0]) {
+                Log.w(TAG, "Google Sign-In profile check timed out, proceeding with offline mode");
+                handleOfflineLogin(firebaseUser);
+            }
+        }, 10000); // 10 second timeout
+        
         userRepository.getUser(userKey, new UserRepository.Callback<User>() {
             @Override
             public void onSuccess(User user) {
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
+                
                 Log.d(TAG, "Existing user profile found");
                 
                 ThreadUtils.runOnMainThread(() -> {
@@ -416,13 +459,20 @@ public class LoginViewModel extends BaseViewModel {
             
             @Override
             public void onError(Exception error) {
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
+                
                 Log.d(TAG, "Creating new user profile for Google Sign-In user");
-                createUserProfileFromFirebase(firebaseUser);
+                createUserProfileFromFirebaseWithTimeout(firebaseUser);
             }
         });
     }
     
     private void createUserProfileFromFirebase(FirebaseUser firebaseUser) {
+        createUserProfileFromFirebaseWithTimeout(firebaseUser);
+    }
+    
+    private void createUserProfileFromFirebaseWithTimeout(FirebaseUser firebaseUser) {
         User newUser = new User();
         newUser.setUserKey(firebaseUser.getUid());
         newUser.setEmail(firebaseUser.getEmail());
@@ -431,9 +481,22 @@ public class LoginViewModel extends BaseViewModel {
         newUser.setFullName(firebaseUser.getDisplayName());
         newUser.setCreatedAt(String.valueOf(System.currentTimeMillis()));
         
+        // Add timeout handling for user creation
+        final boolean[] isCompleted = {false};
+        
+        ThreadUtils.runOnMainThreadDelayed(() -> {
+            if (!isCompleted[0]) {
+                Log.w(TAG, "User profile creation timed out, using offline mode");
+                handleOfflineLogin(firebaseUser, newUser);
+            }
+        }, 8000); // 8 second timeout for creation
+        
         userRepository.createUser(newUser, new UserRepository.Callback<User>() {
             @Override
             public void onSuccess(User user) {
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
+                
                 Log.d(TAG, "User profile created successfully");
                 
                 ThreadUtils.runOnMainThread(() -> {
@@ -446,15 +509,41 @@ public class LoginViewModel extends BaseViewModel {
             
             @Override
             public void onError(Exception error) {
-                Log.e(TAG, "Failed to create user profile", error);
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
                 
-                ThreadUtils.runOnMainThread(() -> {
-                    setLoading(false);
-                    loginSuccess.setValue(true);
-                    loggedInUser.setValue(newUser);
-                    setInfo("Login successful, but profile setup needs completion");
-                });
+                Log.e(TAG, "Failed to create user profile, using offline mode", error);
+                handleOfflineLogin(firebaseUser, newUser);
             }
+        });
+    }
+    
+    /**
+     * Handles login when server is unavailable (offline mode).
+     */
+    private void handleOfflineLogin(FirebaseUser firebaseUser) {
+        User offlineUser = new User();
+        offlineUser.setUserKey(firebaseUser.getUid());
+        offlineUser.setEmail(firebaseUser.getEmail());
+        offlineUser.setUsername(firebaseUser.getDisplayName() != null ? 
+                               firebaseUser.getDisplayName() : "User");
+        offlineUser.setFullName(firebaseUser.getDisplayName());
+        offlineUser.setCreatedAt(String.valueOf(System.currentTimeMillis()));
+        
+        handleOfflineLogin(firebaseUser, offlineUser);
+    }
+    
+    /**
+     * Handles login when server is unavailable (offline mode) with existing user data.
+     */
+    private void handleOfflineLogin(FirebaseUser firebaseUser, User userData) {
+        Log.i(TAG, "Proceeding with offline login for user: " + firebaseUser.getEmail());
+        
+        ThreadUtils.runOnMainThread(() -> {
+            setLoading(false);
+            loginSuccess.setValue(true);
+            loggedInUser.setValue(userData);
+            setInfo("Welcome, " + userData.getUsername() + "! (Offline mode - server unavailable)");
         });
     }
     

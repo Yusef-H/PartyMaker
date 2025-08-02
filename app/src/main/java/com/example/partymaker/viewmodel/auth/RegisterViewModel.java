@@ -19,8 +19,14 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * ViewModel for user registration functionality.
  * 
- * <p>Handles user registration process including validation, Firebase authentication,
- * and user profile creation with proper error handling and loading states.
+ * <p>This ViewModel is specifically designed for REGISTRATION operations only.
+ * 
+ * <p><strong>Usage Note:</strong> This app has multiple auth ViewModels:
+ * <ul>
+ *   <li><strong>LoginViewModel</strong> - Use for login screens</li>
+ *   <li><strong>RegisterViewModel</strong> - Use for registration screens (THIS CLASS)</li>
+ *   <li><strong>AuthViewModel</strong> - Legacy general auth (consider deprecating)</li>
+ * </ul>
  * 
  * <p>Features:
  * <ul>
@@ -32,7 +38,7 @@ import com.google.firebase.auth.FirebaseUser;
  * </ul>
  * 
  * @author PartyMaker Team
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 public class RegisterViewModel extends BaseViewModel {
@@ -344,10 +350,30 @@ public class RegisterViewModel extends BaseViewModel {
         newUser.setFullName(fullName != null ? fullName : username);
         newUser.setCreatedAt(String.valueOf(System.currentTimeMillis()));
         
-        // Save user profile to server
+        // Save user profile to server with timeout handling
+        final boolean[] isCompleted = {false};
+        
+        // Set timeout for user profile creation
+        ThreadUtils.runOnMainThreadDelayed(() -> {
+            if (!isCompleted[0]) {
+                Log.w(TAG, "User profile creation timed out during registration, proceeding with offline mode");
+                isCompleted[0] = true;
+                
+                ThreadUtils.runOnMainThread(() -> {
+                    setLoading(false);
+                    registrationSuccess.setValue(true);
+                    registeredUser.setValue(newUser);
+                    setInfo("Registration successful! (Offline mode - server unavailable)");
+                });
+            }
+        }, 8000); // 8 second timeout
+        
         userRepository.createUser(newUser, new UserRepository.Callback<User>() {
             @Override
             public void onSuccess(User result) {
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
+                
                 Log.d(TAG, "User profile created successfully");
                 
                 ThreadUtils.runOnMainThread(() -> {
@@ -360,7 +386,10 @@ public class RegisterViewModel extends BaseViewModel {
             
             @Override
             public void onError(Exception error) {
-                Log.e(TAG, "Failed to create user profile", error);
+                if (isCompleted[0]) return;
+                isCompleted[0] = true;
+                
+                Log.e(TAG, "Failed to create user profile, using offline mode", error);
                 
                 // Registration succeeded but profile creation failed
                 // Still consider it a success but show warning
@@ -368,7 +397,7 @@ public class RegisterViewModel extends BaseViewModel {
                     setLoading(false);
                     registrationSuccess.setValue(true);
                     registeredUser.setValue(newUser);
-                    setInfo("Registration successful, but profile setup needs completion");
+                    setInfo("Registration successful! (Offline mode - server unavailable)");
                 });
             }
         });
