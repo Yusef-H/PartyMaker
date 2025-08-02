@@ -48,6 +48,7 @@ import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;
 import com.example.partymaker.utils.media.ImageCompressor;
+import com.example.partymaker.utils.security.GroupKeyManager;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.MapUtilities;
@@ -511,6 +512,9 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
             // Initialize group chat
             initializeGroupChat(group);
+            
+            // Initialize group encryption
+            initializeGroupEncryption(groupKey);
 
             // Show success message and transition to next step on the UI thread
             ThreadUtils.runOnMainThread(
@@ -696,6 +700,34 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
             Log.e(TAG, "Error initializing group chat: " + errorMessage);
           }
         });
+  }
+  
+  /**
+   * Initialize group encryption when creating a new group
+   */
+  private void initializeGroupEncryption(String groupKey) {
+    try {
+      String currentUserId = AuthHelper.getCurrentUserKey(this);
+      if (currentUserId == null) {
+        Log.w(TAG, "Cannot initialize group encryption: no current user");
+        return;
+      }
+      
+      GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
+      
+      // Create encryption for new group
+      groupKeyManager.createGroupWithEncryption(groupKey)
+        .thenAccept(success -> {
+          if (success) {
+            Log.i(TAG, "Group encryption initialized successfully for: " + groupKey);
+          } else {
+            Log.w(TAG, "Failed to initialize group encryption for: " + groupKey);
+          }
+        });
+        
+    } catch (Exception e) {
+      Log.e(TAG, "Error initializing group encryption", e);
+    }
   }
 
   private void showSuccessMessage() {
