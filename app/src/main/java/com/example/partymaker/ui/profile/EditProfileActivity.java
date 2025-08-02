@@ -31,7 +31,7 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.media.ImageCompressor;
-import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.viewmodel.ProfileViewModel;
 import com.google.android.material.snackbar.Snackbar;

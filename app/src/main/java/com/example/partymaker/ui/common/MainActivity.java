@@ -29,11 +29,11 @@ import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.ui.LoadingStateManager;
-import com.example.partymaker.utils.ui.UiStateManager;
-import com.example.partymaker.utils.ui.UserFeedback;
+import com.example.partymaker.utils.ui.components.LoadingStateManager;
+import com.example.partymaker.utils.ui.components.UiStateManager;
+import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.viewmodel.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
     if (lv1 == null) {
       Log.e(TAG, "Critical view lv1 not found");
-      UserFeedback.showErrorDialog(this, "UI initialization failed");
+      UserFeedbackManager.showErrorDialog(this, "UI initialization failed");
       finish();
       return;
     }
@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
               });
     } catch (Exception e) {
       Log.e(TAG, "Error setting up observers", e);
-      UserFeedback.showErrorDialog(this, "Error initializing data observers");
+      UserFeedbackManager.showErrorDialog(this, "Error initializing data observers");
     }
   }
 
@@ -597,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
 
   // Handles user logout process
   private void handleLogout() {
-    UserFeedback.showConfirmationDialog(
+    UserFeedbackManager.showConfirmationDialog(
         this,
         "Logout",
         "Are you sure you want to logout?",

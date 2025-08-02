@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.navigation;
+package com.example.partymaker.utils.ui.navigation;
 
 import android.app.Activity;
 import android.content.Intent;

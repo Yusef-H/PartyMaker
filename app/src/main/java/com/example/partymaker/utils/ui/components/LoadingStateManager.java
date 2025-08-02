@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.ui;
+package com.example.partymaker.utils.ui.components;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

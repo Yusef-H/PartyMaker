@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.ui;
+package com.example.partymaker.utils.ui.components;
 
 import android.content.Context;
 import android.view.View;

@@ -25,7 +25,7 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.ui.MapUtilities;
+import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -308,10 +308,10 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
           }
 
           mainContent.setVisibility(View.INVISIBLE);
-          MapUtilities.centerMapOnChosenPlace(
+          MapUtilitiesManager.centerMapOnChosenPlace(
               map,
               Place.builder()
-                  .setLatLng(MapUtilities.decodeStringLocationToCoordinates(GroupLocation))
+                  .setLatLng(MapUtilitiesManager.decodeStringLocationToCoordinates(GroupLocation))
                   .build());
           mapContainer.setVisibility(View.VISIBLE);
 
@@ -329,7 +329,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
                 if (chosenLatLng != null) {
                   String locationValue =
-                      MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+                      MapUtilitiesManager.encodeCoordinatesToStringLocation(chosenLatLng);
                   DBRef.refGroups.child(GroupKey).child("groupLocation").setValue(locationValue);
                   GroupLocation = locationValue;
                   Toast.makeText(AdminOptionsActivity.this, "Location Changed", Toast.LENGTH_SHORT)
@@ -465,7 +465,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
         new PlaceSelectionListener() {
           @Override
           public void onPlaceSelected(@NonNull Place place) {
-            chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
+            chosenLatLng = MapUtilitiesManager.centerMapOnChosenPlace(map, place);
           }
 
           @Override

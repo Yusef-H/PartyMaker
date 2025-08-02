@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.ui;
+package com.example.partymaker.utils.ui.feedback;
 
 import android.content.Context;
 import android.view.View;
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkUtils;
 import com.example.partymaker.data.api.Result;
+import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -15,7 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
  * Utility class for providing user feedback through various UI components. Includes dialogs,
  * snackbars, toasts, and confirmation messages.
  */
-public class UserFeedback {
+public class UserFeedbackManager {
 
   /** Shows a confirmation dialog with custom title and message */
   public static void showConfirmationDialog(

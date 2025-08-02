@@ -1,7 +1,6 @@
-package com.example.partymaker.utils.ui;
+package com.example.partymaker.utils.ui.feedback;
 
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +19,7 @@ import java.util.Map;
  * Helper class for handling notifications in the app. This class provides methods for creating
  * notification channels and displaying notifications.
  */
-public class NotificationHelper {
+public class NotificationManager {
   // Notification channel IDs
   public static final String CHANNEL_PARTIES = "channel_parties";
   public static final String CHANNEL_MESSAGES = "channel_messages";
@@ -37,13 +36,13 @@ public class NotificationHelper {
    */
   public static void createNotificationChannels(Context context) {
     // Only needed for Android O and above
-    NotificationManager notificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    android.app.NotificationManager notificationManager =
+        (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
     // Party updates channel
     NotificationChannel partyChannel =
         new NotificationChannel(
-            CHANNEL_PARTIES, "Party Updates", NotificationManager.IMPORTANCE_HIGH);
+            CHANNEL_PARTIES, "Party Updates", android.app.NotificationManager.IMPORTANCE_HIGH);
     partyChannel.setDescription("Notifications about party updates");
     partyChannel.enableLights(true);
     partyChannel.setLightColor(Color.BLUE);
@@ -52,7 +51,7 @@ public class NotificationHelper {
 
     // Messages channel
     NotificationChannel messagesChannel =
-        new NotificationChannel(CHANNEL_MESSAGES, "Messages", NotificationManager.IMPORTANCE_HIGH);
+        new NotificationChannel(CHANNEL_MESSAGES, "Messages", android.app.NotificationManager.IMPORTANCE_HIGH);
     messagesChannel.setDescription("Notifications about new messages");
     messagesChannel.enableLights(true);
     messagesChannel.setLightColor(Color.GREEN);
@@ -62,7 +61,7 @@ public class NotificationHelper {
     // General updates channel
     NotificationChannel updatesChannel =
         new NotificationChannel(
-            CHANNEL_UPDATES, "General Updates", NotificationManager.IMPORTANCE_DEFAULT);
+            CHANNEL_UPDATES, "General Updates", android.app.NotificationManager.IMPORTANCE_DEFAULT);
     updatesChannel.setDescription("General app updates and announcements");
     notificationManager.createNotificationChannel(updatesChannel);
 
@@ -211,8 +210,8 @@ public class NotificationHelper {
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-    NotificationManager notificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    android.app.NotificationManager notificationManager =
+        (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
     notificationManager.notify(notificationId, notificationBuilder.build());
 

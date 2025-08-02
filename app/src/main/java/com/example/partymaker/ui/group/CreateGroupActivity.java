@@ -49,10 +49,10 @@ import com.example.partymaker.utils.business.group.GroupDataManager;
 import com.example.partymaker.utils.business.group.GroupDateTimeManager;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
-import com.example.partymaker.utils.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.ui.MapUtilities;
-import com.example.partymaker.utils.ui.NotificationHelper;
+import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
+import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -274,7 +274,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   // Handle successful place selection from autocomplete
   private void handlePlaceSelection(@NonNull Place place) {
     try {
-      chosenLatLng = MapUtilities.centerMapOnChosenPlace(map, place);
+      chosenLatLng = MapUtilitiesManager.centerMapOnChosenPlace(map, place);
       Log.d(TAG, "Place selected: " + place.getName());
     } catch (Exception e) {
       Log.e(TAG, "Error handling place selection", e);
@@ -502,7 +502,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
             Log.d(TAG, "Group saved successfully via server client");
 
             // Show success notification
-            NotificationHelper.showUpdateNotification(
+            NotificationManager.showUpdateNotification(
                 CreateGroupActivity.this,
                 "Party Created",
                 "Party '" + group.getGroupName() + "' created successfully!");
@@ -547,7 +547,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private void showMapAndLocationSearch() {
     findViewById(R.id.mapFragment).setVisibility(View.VISIBLE);
     findViewById(R.id.autocomplete_fragment).setVisibility(View.VISIBLE);
-    MapUtilities.requestLocationPermission(this, map, locationClient, FINE_PERMISSION_CODE);
+    MapUtilitiesManager.requestLocationPermission(this, map, locationClient, FINE_PERMISSION_CODE);
   }
 
   private void hideMapAndLocationSearch() {
@@ -614,7 +614,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   private String getSelectedLocation() {
     if (chosenLatLng != null) {
-      return MapUtilities.encodeCoordinatesToStringLocation(chosenLatLng);
+      return MapUtilitiesManager.encodeCoordinatesToStringLocation(chosenLatLng);
     } else {
       showLocationWarning();
       return null;
@@ -858,7 +858,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   public void onRequestPermissionsResult(
       int code, @NonNull String[] perms, @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(code, perms, grantResults);
-    MapUtilities.handlePermissionsResult(
+    MapUtilitiesManager.handlePermissionsResult(
         this, code, grantResults, FINE_PERMISSION_CODE, map, locationClient);
   }
 

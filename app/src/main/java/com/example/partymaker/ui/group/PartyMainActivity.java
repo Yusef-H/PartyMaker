@@ -33,7 +33,7 @@ import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.business.sharing.ContentSharingManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.ui.NotificationHelper;
+import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
 import java.util.Map;
@@ -1694,7 +1694,7 @@ public class PartyMainActivity extends AppCompatActivity {
     builder.show();
 
     // Subscribe to group notifications when sharing
-    NotificationHelper.subscribeToGroup(currentGroup.getGroupKey());
+    NotificationManager.subscribeToGroup(currentGroup.getGroupKey());
   }
 
   /** Initialize group encryption proactively */

@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.ui;
+package com.example.partymaker.utils.ui.maps;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,7 +19,7 @@ import com.google.android.libraries.places.api.model.Place;
 import java.util.Locale;
 
 /** Utility methods for working with maps, locations, and permissions in PartyMaker. */
-public class MapUtilities {
+public class MapUtilitiesManager {
 
   /** Encodes a LatLng into a simple "latitude,longitude" string. */
   public static String encodeCoordinatesToStringLocation(LatLng latLng) {
@@ -48,7 +48,7 @@ public class MapUtilities {
 
   public static void showGroupLocationOnGoogleMaps(String groupLocation, Context ctx) {
     // 1) Decode your saved string into a LatLng:
-    LatLng latLng = MapUtilities.decodeStringLocationToCoordinates(groupLocation);
+    LatLng latLng = MapUtilitiesManager.decodeStringLocationToCoordinates(groupLocation);
 
     if (latLng != null) {
       // 2) Build a geo: URI. The format “geo:lat,lng?q=lat,lng(label)”
