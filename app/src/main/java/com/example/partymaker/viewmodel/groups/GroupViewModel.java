@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Simplified ViewModel for group-related activities */
-public class SimplifiedGroupViewModel extends BaseViewModel {
+public class GroupViewModel extends BaseViewModel {
 
   private final MutableLiveData<Group> currentGroup = new MutableLiveData<>();
   private final MutableLiveData<List<Group>> publicGroups =
@@ -22,7 +22,7 @@ public class SimplifiedGroupViewModel extends BaseViewModel {
   private final MutableLiveData<Boolean> isGroupJoined = new MutableLiveData<>(false);
   private final MutableLiveData<String> groupKey = new MutableLiveData<>();
 
-  public SimplifiedGroupViewModel(@NonNull Application application) {
+  public GroupViewModel(@NonNull Application application) {
     super(application);
   }
 

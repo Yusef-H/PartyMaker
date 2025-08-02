@@ -71,7 +71,7 @@
 
         <!-- Group-related screens -->
         <activity android:name=".ui.features.groups.members.FriendsAddActivity" />
-        <activity android:name=".ui.features.groups.management.CreateGroupActivity" />
+        <activity android:name=".ui.features.groups.creation.CreateGroupActivity" />
         <activity android:name=".ui.features.groups.management.AdminOptionsActivity" />
         <activity android:name=".ui.features.groups.management.ChangeDateActivity" />
         <activity android:name=".ui.features.groups.chat.ChatActivity" />
