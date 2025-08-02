@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
  * Helper class for authentication related operations. Provides methods for getting current user
  * information and clearing auth data.
  */
-public class AuthHelper {
+public class AuthenticationManager {
   private static final String TAG = "AuthHelper";
   private static final String PREFS_NAME = "PartyMakerPrefs";
   private static final String KEY_USER_EMAIL = "user_email";

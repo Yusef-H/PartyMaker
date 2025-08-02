@@ -17,7 +17,7 @@ import com.example.partymaker.data.model.User;
  */
 @Database(
     entities = {Group.class, User.class, ChatMessage.class},
-    version = 4, // Updated to latest version
+    version = 6, // Updated for encryption field schema fix in ChatMessage
     exportSchema = false) // Disable schema export to avoid build warnings
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -46,15 +46,15 @@ public abstract class AppDatabase extends RoomDatabase {
   private static AppDatabase createDatabase(Context context) {
     return Room.databaseBuilder(
             context.getApplicationContext(), AppDatabase.class, "partymaker_database")
-        // Skip migrations for now - use destructive migration
-        // .addMigrations(DatabaseMigrations.getAllMigrations())
         // Add callback for database events
         .addCallback(databaseCallback)
         // Enable WAL mode for better performance
         .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
-        // Use destructive migration for development - this will recreate DB with correct schema
+        // Use destructive migration - this will recreate DB with correct schema
         .fallbackToDestructiveMigration()
         .fallbackToDestructiveMigrationOnDowngrade()
+        // Force destructive migration from any version
+        .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5)
         .build();
   }
 
@@ -86,7 +86,7 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onDestructiveMigration(SupportSQLiteDatabase db) {
           super.onDestructiveMigration(db);
           Log.w(TAG, "Destructive migration occurred - all data lost");
-          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), 4);
+          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), 6);
         }
       };
 

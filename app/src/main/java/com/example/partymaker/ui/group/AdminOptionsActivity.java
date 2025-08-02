@@ -22,7 +22,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import com.example.partymaker.utils.ui.MapUtilities;
@@ -111,7 +111,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // Get current user key for admin verification
     try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
+      UserKey = AuthenticationManager.getCurrentUserKey(this);
     } catch (Exception e) {
       Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
       finish();

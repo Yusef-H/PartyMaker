@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.ChatMessage;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,7 +92,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     View view = layoutInflater.inflate(R.layout.item_chat_message, parent, false);
     ChatMessage temp = messageList.get(position);
 
-    String currentUser = AuthHelper.getCurrentUserEmail(context);
+    String currentUser = AuthenticationManager.getCurrentUserEmail(context);
     // Convert to the same format as messageUser (dots replaced with spaces)
     String currentUserKey = currentUser != null ? currentUser.replace('.', ' ') : null;
     boolean isMine = temp.getMessageUser() != null && temp.getMessageUser().equals(currentUserKey);

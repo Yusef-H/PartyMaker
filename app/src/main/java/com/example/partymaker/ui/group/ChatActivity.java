@@ -3,7 +3,6 @@ package com.example.partymaker.ui.group;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +23,11 @@ import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.ChatAdapter;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.security.encryption.GroupKeyManager;
+import com.example.partymaker.utils.security.encryption.GroupMessageEncryption;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.viewmodel.SimplifiedChatViewModel;
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class ChatActivity extends AppCompatActivity {
   private ChatAdapter adapter;
   private String UserKey;
   private SimplifiedChatViewModel viewModel;
+  private GroupKeyManager groupKeyManager;
+  private GroupMessageEncryption groupEncryption;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Get UserKey from AuthHelper instead of Firebase Auth
     try {
-      UserKey = AuthHelper.getCurrentUserKey(this);
+      UserKey = AuthenticationManager.getCurrentUserKey(this);
       Log.d(TAG, "UserKey initialized from AuthHelper: " + UserKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
@@ -138,6 +141,51 @@ public class ChatActivity extends AppCompatActivity {
 
     // Set the group key in ViewModel
     viewModel.setGroupKey(GroupKey);
+    
+    // Initialize encryption for this group
+    initializeGroupEncryption();
+  }
+
+  /** Initialize group encryption for secure messaging */
+  private void initializeGroupEncryption() {
+    if (UserKey == null || GroupKey == null) {
+      Log.w(TAG, "Cannot initialize encryption: missing UserKey or GroupKey");
+      return;
+    }
+    
+    try {
+      // Initialize encryption managers
+      groupKeyManager = new GroupKeyManager(this, UserKey);
+      groupEncryption = groupKeyManager.getEncryptionManager();
+      
+      // Check if user is already a member of this group's encryption
+      groupKeyManager.isGroupMember(GroupKey).thenAccept(isMember -> {
+        if (!isMember) {
+          Log.i(TAG, "User not in group encryption, adding automatically");
+          // Auto-add current user to group encryption
+          groupKeyManager.addUserToGroupEncryption(GroupKey, UserKey).thenAccept(success -> {
+            if (success) {
+              Log.i(TAG, "Successfully added user to group encryption");
+              // Now initialize for existing group
+              groupKeyManager.initializeForExistingGroup(GroupKey);
+            } else {
+              Log.e(TAG, "Failed to add user to group encryption");
+              Toast.makeText(this, "Warning: Could not setup message encryption", Toast.LENGTH_SHORT).show();
+            }
+          });
+        } else {
+          Log.i(TAG, "User already in group encryption, initializing");
+          // Initialize encryption for existing group
+          groupKeyManager.initializeForExistingGroup(GroupKey);
+        }
+      });
+      
+      Log.i(TAG, "Group encryption initialization started for: " + GroupKey);
+      
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to initialize group encryption", e);
+      Toast.makeText(this, "Warning: Message encryption not available", Toast.LENGTH_SHORT).show();
+    }
   }
 
   /** Sets up observers for ViewModel LiveData */
@@ -311,7 +359,7 @@ public class ChatActivity extends AppCompatActivity {
     ChatMessage botMsg = new ChatMessage();
     botMsg.setMessageUser("PartyBot");
     Calendar c = Calendar.getInstance();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
+    android.icu.text.SimpleDateFormat sdf = new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     String strDate = sdf.format(c.getTime());
 
     // Generate a unique key for the bot message
@@ -371,14 +419,52 @@ public class ChatActivity extends AppCompatActivity {
             if (messages != null && !messages.isEmpty()) {
               Log.d(TAG, "ShowData: Received " + messages.size() + " messages from server");
 
-              // Sort messages by timestamp
+              // Ensure messageTime is populated from timestamp for sorting
+              for (ChatMessage message : messages) {
+                if (message != null && message.getMessageTime() == null) {
+                  // Convert timestamp to messageTime for sorting
+                  android.icu.text.SimpleDateFormat dateFormat = new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                  String timeString = dateFormat.format(new Date(message.getTimestamp()));
+                  message.setMessageTime(timeString);
+                  Log.d(TAG, "ShowData: Set messageTime from timestamp: " + timeString);
+                }
+              }
+
+              // Decrypt messages if encryption is available
+              if (groupEncryption != null && groupEncryption.hasGroupKey(GroupKey)) {
+                Log.d(TAG, "ShowData: Decrypting messages for group: " + GroupKey);
+                for (int i = 0; i < messages.size(); i++) {
+                  ChatMessage message = messages.get(i);
+                  if (message != null && message.isEncrypted()) {
+                    ChatMessage decryptedMessage = groupEncryption.decryptChatMessage(message);
+                    if (decryptedMessage != null) {
+                      messages.set(i, decryptedMessage);
+                      Log.d(TAG, "ShowData: Message decrypted: " + message.getLogSafeSummary());
+                    } else {
+                      Log.w(TAG, "ShowData: Failed to decrypt message: " + message.getLogSafeSummary());
+                    }
+                  }
+                }
+              } else {
+                Log.d(TAG, "ShowData: Group encryption not available, displaying messages as-is");
+              }
+
+              // Sort messages by timestamp (oldest first, newest last)
               messages.sort(
                   (m1, m2) -> {
-                    if (m1.getMessageTime() == null || m2.getMessageTime() == null) {
-                      return 0;
-                    }
-                    return m1.getMessageTime().compareTo(m2.getMessageTime());
+                    // Use timestamp for reliable sorting
+                    long t1 = m1.getTimestamp();
+                    long t2 = m2.getTimestamp();
+                    return Long.compare(t1, t2); // Oldest first (ascending order)
                   });
+
+              // Debug: Log message order
+              Log.d(TAG, "ShowData: Message order after sorting:");
+              for (int i = 0; i < Math.min(5, messages.size()); i++) {
+                ChatMessage msg = messages.get(i);
+                Log.d(TAG, "  [" + i + "] " + new Date(msg.getTimestamp()) + " - " + 
+                      (msg.getMessage() != null ? msg.getMessage().substring(0, Math.min(20, msg.getMessage().length())) : "null"));
+              }
 
               // Update the adapter
               ThreadUtils.runOnMainThread(
@@ -388,9 +474,23 @@ public class ChatActivity extends AppCompatActivity {
                     adapter.addAll(messages);
                     adapter.notifyDataSetChanged();
 
-                    // Scroll to the bottom
-                    lv4.setSelection(adapter.getCount() - 1);
-                    Log.d(TAG, "ShowData: Adapter updated and scrolled to bottom");
+                    // Scroll to the bottom (newest message)
+                    if (adapter.getCount() > 0) {
+                      int lastPosition = adapter.getCount() - 1;
+                      Log.d(TAG, "ShowData: Scrolling to position " + lastPosition + " out of " + adapter.getCount() + " messages");
+                      
+                      // Check what's the last message
+                      ChatMessage lastMessage = messages.get(lastPosition);
+                      Log.d(TAG, "ShowData: Last message at position " + lastPosition + ": " + 
+                            new Date(lastMessage.getTimestamp()) + " - " + 
+                            (lastMessage.getMessage() != null ? lastMessage.getMessage().substring(0, Math.min(20, lastMessage.getMessage().length())) : "null"));
+                      
+                      lv4.post(() -> {
+                        lv4.setSelection(lastPosition);
+                        lv4.smoothScrollToPosition(lastPosition);
+                      });
+                    }
+                    Log.d(TAG, "ShowData: Adapter updated successfully");
                   });
             } else {
               Log.d(TAG, "ShowData: No messages found or messages list is null");
@@ -479,17 +579,37 @@ public class ChatActivity extends AppCompatActivity {
       // Create the message object
       ChatMessage message = new ChatMessage();
       message.setMessageKey(messageId);
-      message.setMessageText(messageText);
-      message.setMessageUser(UserKey);
-
-      // Format the current time
-      SimpleDateFormat dateFormat =
-          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+      message.setGroupKey(GroupKey);
+      message.setSenderKey(UserKey);
+      message.setSenderName(UserKey); // For now, use UserKey as display name
+      message.setMessage(messageText);
+      message.setTimestamp(System.currentTimeMillis());
+      
+      // Format the current time for legacy compatibility
+      android.icu.text.SimpleDateFormat dateFormat =
+          new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
       String currentTime = dateFormat.format(new Date());
       message.setMessageTime(currentTime);
-
-      // Set the group ID
+      
+      // Set legacy fields for compatibility
+      message.setMessageText(messageText);
+      message.setMessageUser(UserKey);
       message.setGroupId(GroupKey);
+
+      // Encrypt the message if encryption is available
+      ChatMessage messageToSend = message;
+      if (groupEncryption != null && groupEncryption.hasGroupKey(GroupKey)) {
+        Log.d(TAG, "Encrypting message for group: " + GroupKey);
+        ChatMessage encryptedMessage = groupEncryption.encryptChatMessage(message);
+        if (encryptedMessage != null) {
+          messageToSend = encryptedMessage;
+          Log.d(TAG, "Message encrypted successfully");
+        } else {
+          Log.w(TAG, "Message encryption failed, sending plain text");
+        }
+      } else {
+        Log.d(TAG, "Group encryption not available, sending plain text");
+      }
 
       Log.d(
           TAG,
@@ -504,7 +624,7 @@ public class ChatActivity extends AppCompatActivity {
 
       Log.d(TAG, "About to call serverClient.saveMessage");
       serverClient.saveMessage(
-          message,
+          messageToSend,
           new FirebaseServerClient.DataCallback<>() {
             @Override
             public void onSuccess(Boolean success) {

@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ public class GroupRepository {
 
   private LocalGroupDataSource localDataSource;
   private final RemoteGroupDataSource remoteDataSource;
+  private Context context;
   private boolean isInitialized = false;
 
   /** Private constructor to prevent direct instantiation. */
@@ -58,6 +60,7 @@ public class GroupRepository {
    */
   public void initialize(Context context) {
     if (context != null && !isInitialized) {
+      this.context = context.getApplicationContext();
       this.localDataSource = new LocalGroupDataSource(context);
       this.isInitialized = true;
       Log.d(TAG, "GroupRepository initialized with local and remote data sources");
@@ -714,7 +717,39 @@ public class GroupRepository {
     Map<String, Object> updates = new HashMap<>();
     updates.put("friendKeys/" + userKey, true);
 
-    updateGroup(groupKey, updates, callback);
+    updateGroup(groupKey, updates, new OperationCallback() {
+      @Override
+      public void onComplete() {
+        Log.d(TAG, "User added to group, now adding to encryption");
+        
+        // Add user to group encryption
+        if (context != null) {
+          try {
+            GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
+            groupKeyManager.addUserToGroupEncryption(groupKey, userKey).thenAccept(success -> {
+              if (success) {
+                Log.i(TAG, "User added to group encryption successfully");
+                callback.onComplete();
+              } else {
+                Log.w(TAG, "Failed to add user to group encryption, but group join succeeded");
+                callback.onComplete(); // Still complete the join, encryption can be retried later
+              }
+            });
+          } catch (Exception e) {
+            Log.e(TAG, "Error adding user to group encryption", e);
+            callback.onComplete(); // Still complete the join
+          }
+        } else {
+          Log.w(TAG, "Context is null, cannot add to group encryption");
+          callback.onComplete();
+        }
+      }
+      
+      @Override
+      public void onError(String error) {
+        callback.onError(error);
+      }
+    });
   }
 
   /**
@@ -741,7 +776,39 @@ public class GroupRepository {
     Map<String, Object> updates = new HashMap<>();
     updates.put("friendKeys/" + userKey, null); // null removes the field in Firebase
 
-    updateGroup(groupKey, updates, callback);
+    updateGroup(groupKey, updates, new OperationCallback() {
+      @Override
+      public void onComplete() {
+        Log.d(TAG, "User removed from group, now removing from encryption and rotating key");
+        
+        // Remove user from group encryption and rotate key for security
+        if (context != null) {
+          try {
+            GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
+            groupKeyManager.removeUserAndRotateKey(groupKey, userKey).thenAccept(success -> {
+              if (success) {
+                Log.i(TAG, "User removed from group encryption and key rotated successfully");
+                callback.onComplete();
+              } else {
+                Log.w(TAG, "Failed to remove user from group encryption, but group leave succeeded");
+                callback.onComplete(); // Still complete the leave
+              }
+            });
+          } catch (Exception e) {
+            Log.e(TAG, "Error removing user from group encryption", e);
+            callback.onComplete(); // Still complete the leave
+          }
+        } else {
+          Log.w(TAG, "Context is null, cannot remove from group encryption");
+          callback.onComplete();
+        }
+      }
+      
+      @Override
+      public void onError(String error) {
+        callback.onError(error);
+      }
+    });
   }
 
   /** Clears all cached data and database entries */

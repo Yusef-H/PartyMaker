@@ -17,7 +17,7 @@ import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
 import java.util.ArrayList;
@@ -127,10 +127,10 @@ public class UsersListActivity extends AppCompatActivity {
     if (userKey.isEmpty()) {
       try {
         // Get current user key for comparison
-        String currentUserKey = AuthHelper.getCurrentUserKey(this);
+        String currentUserKey = AuthenticationManager.getCurrentUserKey(this);
 
         // If this is the current user, use their key
-        if (user.getEmail().equals(AuthHelper.getCurrentUserEmail(this))) {
+        if (user.getEmail().equals(AuthenticationManager.getCurrentUserEmail(this))) {
           userKey = currentUserKey;
           Log.d(TAG, "Using current user key: " + userKey);
         } else {

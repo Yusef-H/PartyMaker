@@ -43,11 +43,12 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;
 import com.example.partymaker.utils.media.ImageCompressor;
+import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.MapUtilities;
@@ -511,6 +512,9 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
             // Initialize group chat
             initializeGroupChat(group);
+            
+            // Initialize group encryption
+            initializeGroupEncryption(groupKey);
 
             // Show success message and transition to next step on the UI thread
             ThreadUtils.runOnMainThread(
@@ -584,7 +588,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   private String getCurrentUserEmail() {
     // Get current user using AuthHelper
-    String currentUserEmail = AuthHelper.getCurrentUserEmail(this);
+    String currentUserEmail = AuthenticationManager.getCurrentUserEmail(this);
 
     if (currentUserEmail != null) {
       // Return the email in Firebase key format (replace dots with spaces)
@@ -697,6 +701,34 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
           }
         });
   }
+  
+  /**
+   * Initialize group encryption when creating a new group
+   */
+  private void initializeGroupEncryption(String groupKey) {
+    try {
+      String currentUserId = AuthenticationManager.getCurrentUserKey(this);
+      if (currentUserId == null) {
+        Log.w(TAG, "Cannot initialize group encryption: no current user");
+        return;
+      }
+      
+      GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
+      
+      // Create encryption for new group
+      groupKeyManager.createGroupWithEncryption(groupKey)
+        .thenAccept(success -> {
+          if (success) {
+            Log.i(TAG, "Group encryption initialized successfully for: " + groupKey);
+          } else {
+            Log.w(TAG, "Failed to initialize group encryption for: " + groupKey);
+          }
+        });
+        
+    } catch (Exception e) {
+      Log.e(TAG, "Error initializing group encryption", e);
+    }
+  }
 
   private void showSuccessMessage() {
     Toast.makeText(this, "Group successfully created", Toast.LENGTH_SHORT).show();
@@ -777,7 +809,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
       startActivity(intent);
       return true;
     } else if (item.getItemId() == R.id.logout) {
-      AuthHelper.clearAuthData(this);
+      AuthenticationManager.clearAuthData(this);
       Intent intent = new Intent(CreateGroupActivity.this, LoginActivity.class);
       startActivity(intent);
       finish();

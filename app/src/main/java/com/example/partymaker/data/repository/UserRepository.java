@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utils.auth.AuthHelper;
+import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.system.ThreadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -228,7 +228,7 @@ public class UserRepository {
   public void getCurrentUser(
       android.content.Context context, DataCallback<User> callback, boolean forceRefresh) {
     try {
-      String currentUserEmail = AuthHelper.getCurrentUserEmail(context);
+      String currentUserEmail = AuthenticationManager.getCurrentUserEmail(context);
       if (currentUserEmail == null || currentUserEmail.isEmpty()) {
         Log.e(TAG, "No current user found");
         callback.onError("No current user found");
