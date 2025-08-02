@@ -19,28 +19,71 @@ public class SecurityIssue {
     }
   }
 
-  private final Severity severity;
-  private final String title;
-  private final String description;
+  private String id;
+  private String type;
+  private String severity;
+  private String title;
+  private String description;
   private String recommendation;
   private String category;
 
-  public SecurityIssue(Severity severity, String title, String description) {
-    this.severity = severity;
+  public SecurityIssue() {
+    // Default constructor
+  }
+  
+  public SecurityIssue(Severity severityEnum, String title, String description) {
+    this.severity = severityEnum.name();
     this.title = title;
     this.description = description;
   }
 
-  public Severity getSeverity() {
+  public String getId() {
+    return id;
+  }
+  
+  public void setId(String id) {
+    this.id = id;
+  }
+  
+  public String getType() {
+    return type;
+  }
+  
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getSeverity() {
     return severity;
+  }
+  
+  public Severity getSeverityEnum() {
+    if (severity == null) return Severity.LOW;
+    try {
+      return Severity.valueOf(severity.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      return Severity.LOW;
+    }
+  }
+  
+  public void setSeverity(String severity) {
+    this.severity = severity;
   }
 
   public String getTitle() {
     return title;
   }
+  
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
   public String getDescription() {
     return description;
+  }
+  
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public String getRecommendation() {
@@ -61,6 +104,6 @@ public class SecurityIssue {
 
   @Override
   public String toString() {
-    return String.format("[%s] %s: %s", severity.getDisplayName(), title, description);
+    return String.format("[%s] %s: %s", severity != null ? severity : "UNKNOWN", title != null ? title : type, description);
   }
 }

@@ -11,12 +11,19 @@ import java.util.Map;
 
 /** Security report containing scan results */
 public class SecurityReport {
-  private Date timestamp;
+  private long timestamp;
   private Map<String, String> deviceInfo;
   private Map<String, String> appInfo;
+  private List<SecurityIssue> issues;
   private List<SecurityIssue> securityIssues;
   private int overallScore;
   private String scanDuration;
+  private int totalIssues;
+  private int criticalIssues;
+  private int highIssues;
+  private int mediumIssues;
+  private int lowIssues;
+  private List<String> recommendations;
 
   public SecurityReport() {
     this.deviceInfo = new HashMap<>();
@@ -24,12 +31,69 @@ public class SecurityReport {
   }
 
   // Getters and Setters
-  public Date getTimestamp() {
+  public long getTimestamp() {
     return timestamp;
   }
 
-  public void setTimestamp(Date timestamp) {
+  public void setTimestamp(long timestamp) {
     this.timestamp = timestamp;
+  }
+  
+  public List<SecurityIssue> getIssues() {
+    return issues;
+  }
+  
+  public void setIssues(List<SecurityIssue> issues) {
+    this.issues = issues;
+    this.securityIssues = issues; // Keep both for compatibility
+  }
+  
+  public int getTotalIssues() {
+    return totalIssues;
+  }
+  
+  public void setTotalIssues(int totalIssues) {
+    this.totalIssues = totalIssues;
+  }
+  
+  public int getCriticalIssues() {
+    return criticalIssues;
+  }
+  
+  public void setCriticalIssues(int criticalIssues) {
+    this.criticalIssues = criticalIssues;
+  }
+  
+  public int getHighIssues() {
+    return highIssues;
+  }
+  
+  public void setHighIssues(int highIssues) {
+    this.highIssues = highIssues;
+  }
+  
+  public int getMediumIssues() {
+    return mediumIssues;
+  }
+  
+  public void setMediumIssues(int mediumIssues) {
+    this.mediumIssues = mediumIssues;
+  }
+  
+  public int getLowIssues() {
+    return lowIssues;
+  }
+  
+  public void setLowIssues(int lowIssues) {
+    this.lowIssues = lowIssues;
+  }
+  
+  public List<String> getRecommendations() {
+    return recommendations;
+  }
+  
+  public void setRecommendations(List<String> recommendations) {
+    this.recommendations = recommendations;
   }
 
   public Map<String, String> getDeviceInfo() {
@@ -89,7 +153,7 @@ public class SecurityReport {
     }
 
     for (SecurityIssue issue : securityIssues) {
-      counts.put(issue.getSeverity(), counts.get(issue.getSeverity()) + 1);
+      counts.put(issue.getSeverityEnum(), counts.get(issue.getSeverityEnum()) + 1);
     }
 
     return counts;
@@ -169,9 +233,9 @@ public class SecurityReport {
       html.append("<tr><th>Severity</th><th>Title</th><th>Description</th></tr>\n");
       for (SecurityIssue issue : securityIssues) {
         html.append("<tr class='")
-            .append(issue.getSeverity().toString().toLowerCase())
+            .append(issue.getSeverityEnum().toString().toLowerCase())
             .append("'>");
-        html.append("<td>").append(issue.getSeverity().getDisplayName()).append("</td>");
+        html.append("<td>").append(issue.getSeverityEnum().getDisplayName()).append("</td>");
         html.append("<td>").append(issue.getTitle()).append("</td>");
         html.append("<td>").append(issue.getDescription()).append("</td>");
         html.append("</tr>\n");
@@ -234,7 +298,7 @@ public class SecurityReport {
       md.append("| Severity | Title | Description |\n");
       md.append("|----------|-------|-------------|\n");
       for (SecurityIssue issue : securityIssues) {
-        md.append("| ").append(issue.getSeverity().getDisplayName());
+        md.append("| ").append(issue.getSeverityEnum().getDisplayName());
         md.append(" | ").append(issue.getTitle());
         md.append(" | ").append(issue.getDescription()).append(" |\n");
       }
@@ -257,7 +321,7 @@ public class SecurityReport {
     List<Map<String, Object>> issuesList = new java.util.ArrayList<>();
     for (SecurityIssue issue : securityIssues) {
       Map<String, Object> issueMap = new HashMap<>();
-      issueMap.put("severity", issue.getSeverity().toString());
+      issueMap.put("severity", issue.getSeverityEnum().toString());
       issueMap.put("title", issue.getTitle());
       issueMap.put("description", issue.getDescription());
       issueMap.put("recommendation", issue.getRecommendation());

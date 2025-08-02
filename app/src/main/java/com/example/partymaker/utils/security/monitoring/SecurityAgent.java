@@ -320,7 +320,7 @@ public class SecurityAgent {
   /** Generate comprehensive security report */
   private SecurityReport generateSecurityReport() {
     SecurityReport report = new SecurityReport();
-    report.setTimestamp(new Date());
+    report.setTimestamp(System.currentTimeMillis());
     report.setDeviceInfo(getDeviceInfo());
     report.setAppInfo(getAppInfo());
     report.setSecurityIssues(new ArrayList<>(securityIssues));
@@ -337,7 +337,7 @@ public class SecurityAgent {
 
     int totalDeductions = 0;
     for (SecurityIssue issue : securityIssues) {
-      switch (issue.getSeverity()) {
+      switch (issue.getSeverityEnum()) {
         case HIGH:
           totalDeductions += 20;
           break;
