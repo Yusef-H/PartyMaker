@@ -1,4 +1,4 @@
-package com.example.partymaker.ui.features.groups;
+package com.example.partymaker.ui.features.groups.members;
 
 import android.content.Context;
 import android.graphics.Color;
