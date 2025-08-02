@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
-import com.example.partymaker.ui.settings.ServerSettingsActivity;
+import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
 
 /**
  * Class for handling application-specific network errors. Provides methods for displaying

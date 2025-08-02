@@ -8,7 +8,7 @@
     android:background="@drawable/bg_party_screen"
     android:fitsSystemWindows="true"
     android:padding="16dp"
-    tools:context="com.example.partymaker.ui.auth.ResetPasswordActivity">
+    tools:context="com.example.partymaker.ui.features.auth.ResetPasswordActivity">
 
 
     <ImageView

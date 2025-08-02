@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@drawable/bg_party_screen"
-    tools:context=".ui.settings.ServerSettingsActivity">
+    tools:context=".ui.features.auxiliary.settings.ServerSettingsActivity">
 
     <TextView
         android:layout_width="match_parent"

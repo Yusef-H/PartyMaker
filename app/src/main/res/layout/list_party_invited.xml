@@ -6,7 +6,7 @@
     android:background="#6cd7efff"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ui.group.MembersInvitedActivity">
+    tools:context=".ui.features.groups.members.MembersInvitedActivity">
 
     <ListView
         android:id="@+id/lv2"

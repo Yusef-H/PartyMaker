@@ -8,8 +8,8 @@ import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
-import com.example.partymaker.utils.system.MemoryManager;
-import com.example.partymaker.utils.ui.NotificationHelper;
+import com.example.partymaker.utils.infrastructure.system.MemoryManager;
+import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.google.firebase.FirebaseApp;
 
 /** Application class for PartyMaker. Initializes repositories and other app-wide components. */
@@ -33,8 +33,8 @@ public class PartyApplication extends Application {
     }
 
     // Initialize notification channels
-    NotificationHelper.createNotificationChannels(this);
-    NotificationHelper.subscribeToGlobalAnnouncements();
+    NotificationManager.createNotificationChannels(this);
+    NotificationManager.subscribeToGlobalAnnouncements();
 
     // Initialize network manager
     NetworkManager networkManager = NetworkManager.getInstance();
