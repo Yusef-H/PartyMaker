@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
       // Show a toast only if requested and if we haven't shown it already
       if (show && showToast && !loadingToastShown) {
-        Toast.makeText(this, "Loading groups...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Loading your groups... (may take a few seconds)", Toast.LENGTH_LONG).show();
         loadingToastShown = true;
       }
     } catch (Exception e) {

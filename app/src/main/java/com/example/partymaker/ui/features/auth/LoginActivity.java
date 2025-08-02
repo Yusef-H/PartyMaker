@@ -325,7 +325,7 @@ public class LoginActivity extends AppCompatActivity {
 
             NetworkManager networkManager = NetworkManager.getInstance();
             boolean isReachable =
-                networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
+                networkManager.isServerReachable(serverUrl + "/api/firebase/health", 3000);
 
             ThreadUtils.runOnMainThread(
                 () -> {
@@ -335,17 +335,19 @@ public class LoginActivity extends AppCompatActivity {
                     // UiStateManager.showInfo(rootView, "Connected to server");
                   } else {
                     Log.w("LoginActivity", "Server is not reachable");
-                    // Don't show warning message after logout to avoid confusing users
-                    // UiStateManager.showWarning(
-                    //     rootView, "Server connection issues - some features may be limited");
+                    // Show subtle info message about offline mode
+                    if (rootView != null) {
+                      UiStateManager.showInfo(rootView, "Working in offline mode - server unavailable");
+                    }
                   }
                 });
           } catch (Exception e) {
             Log.e("LoginActivity", "Error checking server connectivity", e);
             ThreadUtils.runOnMainThread(
                 () -> {
-                  // Don't show warning message after logout to avoid confusing users
-                  // UiStateManager.showWarning(rootView, "Unable to verify server connection");
+                  if (rootView != null) {
+                    UiStateManager.showInfo(rootView, "Working in offline mode - connection check failed");
+                  }
                 });
           }
         });
