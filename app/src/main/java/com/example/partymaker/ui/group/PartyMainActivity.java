@@ -30,6 +30,7 @@ import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.security.GroupKeyManager;
 import com.example.partymaker.utils.sharing.ShareHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.NotificationHelper;
@@ -225,6 +226,10 @@ public class PartyMainActivity extends AppCompatActivity {
                       try {
                         updateGroupUI(group);
                         setupClickListeners();
+                        
+                        // Initialize group encryption proactively
+                        initializeGroupEncryption();
+                        
                         showLoading(false);
                       } catch (Exception e) {
                         Log.e(TAG, "Error updating UI with group data", e);
@@ -1690,6 +1695,45 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Subscribe to group notifications when sharing
     NotificationHelper.subscribeToGroup(currentGroup.getGroupKey());
+  }
+
+  /** Initialize group encryption proactively */
+  private void initializeGroupEncryption() {
+    if (UserKey == null || GroupKey == null) {
+      Log.w(TAG, "Cannot initialize encryption: missing UserKey or GroupKey");
+      return;
+    }
+    
+    try {
+      // Initialize encryption managers proactively
+      GroupKeyManager groupKeyManager = new GroupKeyManager(this, UserKey);
+      
+      // Check if user is already a member of this group's encryption
+      groupKeyManager.isGroupMember(GroupKey).thenAccept(isMember -> {
+        if (!isMember) {
+          Log.i(TAG, "User not in group encryption, adding automatically");
+          // Auto-add current user to group encryption
+          groupKeyManager.addUserToGroupEncryption(GroupKey, UserKey).thenAccept(success -> {
+            if (success) {
+              Log.i(TAG, "Successfully added user to group encryption in main screen");
+              // Now initialize for existing group
+              groupKeyManager.initializeForExistingGroup(GroupKey);
+            } else {
+              Log.e(TAG, "Failed to add user to group encryption in main screen");
+            }
+          });
+        } else {
+          Log.i(TAG, "User already in group encryption, initializing in main screen");
+          // Initialize encryption for existing group
+          groupKeyManager.initializeForExistingGroup(GroupKey);
+        }
+      });
+      
+      Log.i(TAG, "Group encryption initialization started proactively for: " + GroupKey);
+      
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to initialize group encryption proactively", e);
+    }
   }
 
   @Override
