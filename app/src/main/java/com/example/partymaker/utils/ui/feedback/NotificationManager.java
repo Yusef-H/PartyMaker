@@ -11,7 +11,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.group.PartyMainActivity;
+import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
 import java.util.HashMap;
 import java.util.Map;
 

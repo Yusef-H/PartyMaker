@@ -7,7 +7,7 @@
     android:background="@drawable/bg_party_screen"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context="com.example.partymaker.ui.group.FriendsAddActivity">
+    tools:context="com.example.partymaker.ui.features.groups.members.FriendsAddActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

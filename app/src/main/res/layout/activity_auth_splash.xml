@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_splash_gradient"
-    tools:context="com.example.partymaker.ui.common.SplashActivity">
+    tools:context="com.example.partymaker.ui.features.core.SplashActivity">
 
     <!-- Container for the logo and text -->
     <LinearLayout

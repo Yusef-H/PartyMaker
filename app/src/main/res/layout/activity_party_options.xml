@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.partymaker.ui.group.AdminOptionsActivity">
+    tools:context="com.example.partymaker.ui.features.groups.managment.AdminOptionsActivity">
 
     <LinearLayout
         android:id="@+id/mainContent"
@@ -14,7 +14,7 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:weightSum="10"
-        tools:context="com.example.partymaker.ui.group.AdminOptionsActivity">
+        tools:context="com.example.partymaker.ui.features.groups.managment.AdminOptionsActivity">
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -7,7 +7,7 @@
     android:background="@drawable/bg_party_screen_reverse"
     android:fillViewport="true"
     android:theme="@style/Theme.Material3.Register"
-    tools:context="com.example.partymaker.ui.auth.RegisterActivity">
+    tools:context="com.example.partymaker.ui.features.auth.RegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

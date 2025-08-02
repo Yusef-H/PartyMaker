@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:weightSum="1"
-    tools:context="com.example.partymaker.ui.group.ChatActivity">
+    tools:context="com.example.partymaker.ui.features.groups.chat.ChatActivity">
 
 
     <ListView

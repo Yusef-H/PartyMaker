@@ -1,7 +1,7 @@
 package com.example.partymaker.utils.business.group;
 
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.group.CreateGroupActivity;
+import com.example.partymaker.ui.features.groups.managment.CreateGroupActivity;
 
 // Builder pattern for Group creation
 public class GroupDataManager {

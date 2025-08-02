@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#6cd7efff"
     android:fitsSystemWindows="true"
-    tools:context=".ui.group.FriendsRemoveActivity">
+    tools:context=".ui.features.groups.members.FriendsRemoveActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

@@ -7,7 +7,7 @@
     android:background="@drawable/bg_party_screen"
     android:fillViewport="true"
     android:theme="@style/Theme.Material3.Login"
-    tools:context="com.example.partymaker.ui.auth.LoginActivity">
+    tools:context="com.example.partymaker.ui.features.auth.LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
