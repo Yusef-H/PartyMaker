@@ -561,4 +561,23 @@ public class UserRepository {
     
     void onError(Exception error);
   }
+  
+  /**
+   * Gets all users (ViewModel wrapper).
+   * 
+   * @param callback Callback to receive the users
+   */
+  public void getAllUsers(final Callback<List<User>> callback) {
+    getAllUsers(new DataCallback<List<User>>() {
+      @Override
+      public void onDataLoaded(List<User> users) {
+        callback.onSuccess(users);
+      }
+      
+      @Override
+      public void onError(String error) {
+        callback.onError(new Exception(error));
+      }
+    }, false);
+  }
 }
