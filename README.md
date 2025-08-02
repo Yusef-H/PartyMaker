@@ -24,28 +24,28 @@ PartyMaker follows a **multi-tier enterprise architecture** with clear separatio
 │                     CLIENT TIER                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │  📱 Android Native Client (MVVM + Repository Pattern)           │
-│  • UI Layer (Activities, Fragments, Adapters)                  │
-│  • Presentation Layer (ViewModels, LiveData)                   │
-│  • Domain Layer (Use Cases, Business Logic)                    │
-│  • Data Layer (Repositories, Data Sources)                     │
+│  • UI Layer (Activities, Fragments, Adapters)                   │
+│  • Presentation Layer (ViewModels, LiveData)                    │
+│  • Domain Layer (Use Cases, Business Logic)                     │
+│  • Data Layer (Repositories, Data Sources)                      │
 └─────────────────────────────────────────────────────────────────┘
                                  ↕ HTTPS/REST
 ┌─────────────────────────────────────────────────────────────────┐
 │                   APPLICATION TIER                              │
 ├─────────────────────────────────────────────────────────────────┤
 │  🖥️ Spring Boot Server (MVC Pattern)                            │
-│  • Controller Layer (REST Controllers)                         │
-│  • Service Layer (Business Logic)                              │
-│  • Configuration Layer (Firebase Admin, Security)              │
+│  • Controller Layer (REST Controllers)                          │
+│  • Service Layer (Business Logic)                               │
+│  • Configuration Layer (Firebase Admin, Security)               │
 └─────────────────────────────────────────────────────────────────┘
                                  ↕ Firebase SDK
 ┌─────────────────────────────────────────────────────────────────┐
 │                      DATA TIER                                  │
 ├─────────────────────────────────────────────────────────────────┤
 │  🔥 Firebase Ecosystem                                          │
-│  • Authentication Service (User Management)                    │
-│  • Realtime Database (NoSQL Data Storage)                      │
-│  • Cloud Storage (File & Image Management)                     │
+│  • Authentication Service (User Management)                     │
+│  • Realtime Database (NoSQL Data Storage)                       │
+│  • Cloud Storage (File & Image Management)                      │
 │  📱 Local Storage (Room Database - Offline Support)             │
 └─────────────────────────────────────────────────────────────────┘
 ```
