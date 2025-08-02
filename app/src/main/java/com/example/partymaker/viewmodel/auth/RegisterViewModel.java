@@ -11,7 +11,7 @@ import com.example.partymaker.data.model.User;
 import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.security.core.PasswordValidator;
+import com.example.partymaker.utils.validation.PasswordValidator;
 import com.example.partymaker.viewmodel.BaseViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
