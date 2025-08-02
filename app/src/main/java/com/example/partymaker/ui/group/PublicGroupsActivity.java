@@ -26,7 +26,7 @@ import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.ui.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -173,7 +173,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   private void setupBottomNavigation() {
-    BottomNavigationHelper.setupBottomNavigation(this, "publicparties");
+    NavigationManager.setupBottomNavigation(this, "publicparties");
   }
 
   public void loadPublicGroups() {

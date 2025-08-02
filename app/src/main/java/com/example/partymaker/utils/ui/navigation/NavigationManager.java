@@ -11,7 +11,7 @@ import com.example.partymaker.ui.group.CreateGroupActivity;
 import com.example.partymaker.ui.group.PublicGroupsActivity;
 import com.example.partymaker.ui.profile.EditProfileActivity;
 
-public class BottomNavigationHelper {
+public class NavigationManager {
 
   /**
    * Sets up the bottom navigation with the current page highlighted

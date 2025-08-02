@@ -49,7 +49,7 @@ import com.example.partymaker.utils.business.group.GroupDataManager;
 import com.example.partymaker.utils.business.group.GroupDateTimeManager;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
-import com.example.partymaker.utils.ui.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
@@ -875,7 +875,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   private void setupBottomNavigation() {
-    BottomNavigationHelper.setupBottomNavigation(this, "creategroup");
+    NavigationManager.setupBottomNavigation(this, "creategroup");
   }
 
   // Inner classes for better organization

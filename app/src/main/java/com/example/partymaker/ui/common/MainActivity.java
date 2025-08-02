@@ -29,7 +29,7 @@ import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.ui.navigation.BottomNavigationHelper;
+import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupBottomNavigation() {
-    BottomNavigationHelper.setupBottomNavigation(this, "myparties");
+    NavigationManager.setupBottomNavigation(this, "myparties");
   }
 
   // Navigates to the chat activity.

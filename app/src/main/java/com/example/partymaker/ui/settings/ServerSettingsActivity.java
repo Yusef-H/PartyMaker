@@ -12,7 +12,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
 import com.example.partymaker.R;
 import com.example.partymaker.utils.media.FileManager;
-import com.example.partymaker.utils.server.ServerModeHelper;
+import com.example.partymaker.utils.server.ServerModeManager;
 
 public class ServerSettingsActivity extends AppCompatActivity {
 
@@ -63,7 +63,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
   private void saveSettings() {
     // Server mode is always enabled
-    ServerModeHelper.setServerModeEnabled(this, true);
+    ServerModeManager.setServerModeEnabled(this, true);
 
     // Save server URL
     String serverUrl = editServerUrl.getText().toString().trim();

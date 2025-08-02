@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
  * Helper class to manage server mode settings for PartyMaker. Allows toggling between server and
  * local modes.
  */
-public class ServerModeHelper {
+public class ServerModeManager {
   private static final String PREF_USE_SERVER_MODE = "use_server_mode";
 
   /**
