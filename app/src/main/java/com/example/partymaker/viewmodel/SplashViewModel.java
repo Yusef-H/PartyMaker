@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.partymaker.utils.data.Constants;
+import com.example.partymaker.utils.core.AppConstants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -28,7 +28,7 @@ public class SplashViewModel extends BaseViewModel {
   public SplashViewModel(@NonNull Application application) {
     super(application);
     auth = FirebaseAuth.getInstance();
-    sharedPreferences = application.getSharedPreferences(Constants.Preferences.PREFS_NAME, 0);
+    sharedPreferences = application.getSharedPreferences(AppConstants.Preferences.PREFS_NAME, 0);
   }
 
   public LiveData<NavigationDestination> getNavigationDestination() {
@@ -55,7 +55,7 @@ public class SplashViewModel extends BaseViewModel {
 
   private void checkAuthenticationStatus() {
     FirebaseUser currentUser = auth.getCurrentUser();
-    boolean isChecked = sharedPreferences.getBoolean(Constants.Preferences.IS_CHECKED, false);
+    boolean isChecked = sharedPreferences.getBoolean(AppConstants.Preferences.IS_CHECKED, false);
 
     if (currentUser != null && isChecked) {
       // User is signed in and remember me was checked

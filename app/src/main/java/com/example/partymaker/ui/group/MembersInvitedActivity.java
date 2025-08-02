@@ -15,8 +15,8 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.InvitedAdapter;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
 
     // Get extras from intent
     Intent intent = getIntent();
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
     if (extras != null) {
       FriendKeys = extras.getFriendKeys();
       adminKey = extras.getAdminKey();

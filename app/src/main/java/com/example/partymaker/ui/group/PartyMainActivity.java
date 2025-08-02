@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.data.Common.hideViews;
-import static com.example.partymaker.utils.data.Common.showViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -28,8 +28,8 @@ import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.sharing.ShareHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
@@ -99,7 +99,7 @@ public class PartyMainActivity extends AppCompatActivity {
       // If not found, try to get it from ExtrasMetadata
       if (GroupKey == null || GroupKey.isEmpty()) {
         Log.d(TAG, "GroupKey not found directly in intent, checking ExtrasMetadata");
-        ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
+        ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
         if (extras != null) {
           GroupKey = extras.getGroupKey();
           Log.d(TAG, "GroupKey from ExtrasMetadata: " + GroupKey);
@@ -1105,9 +1105,9 @@ public class PartyMainActivity extends AppCompatActivity {
       Intent intent = new Intent(this, AdminOptionsActivity.class);
 
       // Pass the same extras that we received
-      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+      ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
       if (extras != null) {
-        Common.addExtrasToIntent(intent, extras);
+        IntentExtrasManager.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
         startActivity(intent);
       } else {
@@ -1142,7 +1142,7 @@ public class PartyMainActivity extends AppCompatActivity {
                 currentGroup.getFriendKeys(),
                 currentGroup.getComingKeys(),
                 currentGroup.getMessageKeys());
-        Common.addExtrasToIntent(intent, extras);
+        IntentExtrasManager.addExtrasToIntent(intent, extras);
         startActivity(intent);
       } else {
         Toast.makeText(this, "Group data not available", Toast.LENGTH_SHORT).show();
@@ -1197,7 +1197,7 @@ public class PartyMainActivity extends AppCompatActivity {
                     : new HashMap<>(),
                 new HashMap<>(MessageKeys));
 
-        Common.addExtrasToIntent(intent, extras);
+        IntentExtrasManager.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
         startActivity(intent);
       } else {
@@ -1268,7 +1268,7 @@ public class PartyMainActivity extends AppCompatActivity {
                 comingKeysToPass,
                 new HashMap<>(MessageKeys));
 
-        Common.addExtrasToIntent(intent, extras);
+        IntentExtrasManager.addExtrasToIntent(intent, extras);
         intent.putExtra("UserKey", UserKey);
 
         // Debug: Also add ComingKeys directly to intent as backup

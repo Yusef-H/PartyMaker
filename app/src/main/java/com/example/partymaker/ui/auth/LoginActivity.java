@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.auth;
 
-import static com.example.partymaker.utils.data.Constants.Preferences.IS_CHECKED;
-import static com.example.partymaker.utils.data.Constants.Preferences.PREFS_NAME;
+import static com.example.partymaker.utils.core.AppConstants.Preferences.IS_CHECKED;
+import static com.example.partymaker.utils.core.AppConstants.Preferences.PREFS_NAME;
 
 import android.content.Context;
 import android.content.Intent;

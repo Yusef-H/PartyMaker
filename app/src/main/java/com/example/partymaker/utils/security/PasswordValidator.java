@@ -1,6 +1,6 @@
 package com.example.partymaker.utils.security;
 
-import com.example.partymaker.utils.data.Constants;
+import com.example.partymaker.utils.core.AppConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -14,7 +14,7 @@ public final class PasswordValidator {
   }
 
   // Minimum password length from constants
-  private static final int MIN_LENGTH = Constants.Security.MIN_PASSWORD_LENGTH;
+  private static final int MIN_LENGTH = AppConstants.Security.MIN_PASSWORD_LENGTH;
 
   // Maximum password length (to prevent DoS attacks)
   private static final int MAX_LENGTH = 128;

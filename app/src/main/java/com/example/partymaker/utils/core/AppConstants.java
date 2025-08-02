@@ -1,13 +1,13 @@
-package com.example.partymaker.utils.data;
+package com.example.partymaker.utils.core;
 
 /**
  * Constants used throughout the PartyMaker application. Includes keys for SharedPreferences, Intent
  * extras, network configuration, and default values.
  */
-public final class Constants {
+public final class AppConstants {
 
   // Private constructor to prevent instantiation
-  private Constants() {
+  private AppConstants() {
     throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
   }
 

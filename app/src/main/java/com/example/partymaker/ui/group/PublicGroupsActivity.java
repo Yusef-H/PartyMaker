@@ -24,8 +24,8 @@ import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,7 +161,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
                         FriendKeys,
                         ComingKeys,
                         MessageKeys);
-                Common.addExtrasToIntent(intent, extras);
+                IntentExtrasManager.addExtrasToIntent(intent, extras);
                 startActivity(intent);
               });
       lv1.setAdapter(allGroupsAdapter);

@@ -18,8 +18,8 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class UsersListActivity extends AppCompatActivity {
     serverClient = FirebaseServerClient.getInstance();
 
     // Get group data from intent
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras != null) {
       GroupKey = extras.getGroupKey();
       String adminKey = extras.getAdminKey();

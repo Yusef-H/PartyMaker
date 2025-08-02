@@ -6,7 +6,7 @@ import android.util.Log;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
-import com.example.partymaker.utils.data.Constants;
+import com.example.partymaker.utils.core.AppConstants;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -262,8 +262,8 @@ public final class SecureAuthenticationManager {
       prefs.edit().putInt(key, attempts).apply();
 
       // Check if we need to lock out the user
-      if (attempts >= Constants.Security.MAX_LOGIN_ATTEMPTS) {
-        long lockoutUntil = System.currentTimeMillis() + Constants.Security.LOCKOUT_DURATION_MS;
+      if (attempts >= AppConstants.Security.MAX_LOGIN_ATTEMPTS) {
+        long lockoutUntil = System.currentTimeMillis() + AppConstants.Security.LOCKOUT_DURATION_MS;
         prefs.edit().putLong(KEY_LOCKOUT_UNTIL + "_" + email.hashCode(), lockoutUntil).apply();
 
         Log.w(TAG, "User locked out due to too many failed attempts: " + email);

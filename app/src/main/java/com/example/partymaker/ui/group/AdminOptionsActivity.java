@@ -23,8 +23,8 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.ui.MapUtilities;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
@@ -70,7 +70,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
     setContentView(R.layout.activity_party_options);
 
     // Initialize Places API with proper error handling
-    String apiKey = Common.getApiKey(this, "MAPS_KEY");
+    String apiKey = IntentExtrasManager.getApiKey(this, "MAPS_KEY");
     if (apiKey.isEmpty()) {
       // Use a default key from resources or show an error message
       Toast.makeText(
@@ -120,7 +120,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // Get Values from GroupScreen By intent + connection between intent and current
     // activity objects
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
       Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
       finish();
@@ -236,7 +236,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
             FriendKeys,
             ComingKeys,
             MessageKeys);
-    Common.addExtrasToIntent(intent, extras);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity to prevent it from staying in the back stack
   }
@@ -378,7 +378,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                       FriendKeys,
                       ComingKeys,
                       MessageKeys);
-              Common.addExtrasToIntent(intent, extras);
+              IntentExtrasManager.addExtrasToIntent(intent, extras);
               startActivity(intent);
             } else if (finalI == 2) // open 2,1 (3) Delete People
             {
@@ -400,7 +400,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                       FriendKeys,
                       ComingKeys,
                       MessageKeys);
-              Common.addExtrasToIntent(intent, extras);
+              IntentExtrasManager.addExtrasToIntent(intent, extras);
               intent.putExtra("groupID", GroupKey); // Add groupID for FriendsRemoveActivity
               startActivity(intent);
             }
@@ -426,7 +426,7 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                       FriendKeys,
                       ComingKeys,
                       MessageKeys);
-              Common.addExtrasToIntent(intent, extras);
+              IntentExtrasManager.addExtrasToIntent(intent, extras);
               startActivity(intent);
             } else if (finalI == 5) // open 2,2 (4) Back
             {

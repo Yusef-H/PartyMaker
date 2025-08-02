@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.data.Common.hideViews;
-import static com.example.partymaker.utils.data.Common.showViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -44,7 +44,7 @@ import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
+import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;
 import com.example.partymaker.utils.media.ImageCompressor;
@@ -127,7 +127,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   // Initialize Google Places API if not already initialized
   private void initializePlacesAPI() {
     if (!Places.isInitialized()) {
-      String apiKey = Common.getApiKey(this, "MAPS_KEY");
+      String apiKey = IntentExtrasManager.getApiKey(this, "MAPS_KEY");
       if (apiKey.isEmpty()) {
         // Use a default key from resources or show an error message
         Toast.makeText(
@@ -468,7 +468,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   @SuppressLint("ClickableViewAccessibility")
   private boolean handleChatFabTouch(View view, MotionEvent event) {
-    return Common.dragChatButtonOnTouch(view, event);
+    return IntentExtrasManager.dragChatButtonOnTouch(view, event);
   }
 
   // Group creation logic

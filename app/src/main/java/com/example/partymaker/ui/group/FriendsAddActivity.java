@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.data.Common.hideViews;
-import static com.example.partymaker.utils.data.Common.showViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +58,7 @@ public class FriendsAddActivity extends AppCompatActivity {
 
     // Get Values from MainActivity By intent + connection between intent and
     // current activity objects
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
       Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
       finish();
@@ -119,7 +119,7 @@ public class FriendsAddActivity extends AppCompatActivity {
             FriendKeys,
             ComingKeys,
             MessageKeys);
-    Common.addExtrasToIntent(intent, extras);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
   }
@@ -143,7 +143,7 @@ public class FriendsAddActivity extends AppCompatActivity {
             FriendKeys,
             ComingKeys,
             MessageKeys);
-    Common.addExtrasToIntent(intent, extras);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
   }
@@ -167,7 +167,7 @@ public class FriendsAddActivity extends AppCompatActivity {
             FriendKeys,
             ComingKeys,
             MessageKeys);
-    Common.addExtrasToIntent(intent, extras);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
   }
@@ -241,7 +241,7 @@ public class FriendsAddActivity extends AppCompatActivity {
                   FriendKeys,
                   ComingKeys,
                   MessageKeys);
-          Common.addExtrasToIntent(intent, extras);
+          IntentExtrasManager.addExtrasToIntent(intent, extras);
           startActivity(intent);
         });
     btnYes.setOnClickListener(

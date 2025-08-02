@@ -13,8 +13,8 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.InvitedAdapter;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class MembersComingActivity extends AppCompatActivity {
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
       Log.e(TAG, "No extras received from intent");
       Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();

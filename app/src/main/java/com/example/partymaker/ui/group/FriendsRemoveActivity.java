@@ -18,8 +18,8 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     serverClient = FirebaseServerClient.getInstance();
 
     Intent intent = getIntent();
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
     if (extras == null) {
       Toast.makeText(this, "Error loading group data", Toast.LENGTH_SHORT).show();
       finish();
@@ -149,7 +149,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
             FriendKeys,
             ComingKeys,
             MessageKeys);
-    Common.addExtrasToIntent(intent, extras);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
   }

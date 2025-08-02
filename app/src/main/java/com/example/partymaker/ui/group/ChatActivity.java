@@ -24,8 +24,8 @@ import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.ChatAdapter;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.security.encryption.GroupMessageEncryption;
 import com.example.partymaker.utils.system.ThreadUtils;
@@ -87,7 +87,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Try to get data from ExtrasMetadata only if direct intent extra is null
     if (GroupKey == null || GroupKey.isEmpty()) {
-      ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(intent);
+      ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
       if (extras != null) {
         Log.d(TAG, "Found ExtrasMetadata in intent");
         MessageKeys = extras.getMessageKeys();

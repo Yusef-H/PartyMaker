@@ -27,8 +27,8 @@ import com.example.partymaker.ui.chatbot.GptChatActivity;
 import com.example.partymaker.ui.group.PartyMainActivity;
 import com.example.partymaker.ui.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.LoadingStateManager;
@@ -434,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     fabChat.setOnClickListener(view -> navigateToChat());
-    fabChat.setOnTouchListener(Common::dragChatButtonOnTouch);
+    fabChat.setOnTouchListener(IntentExtrasManager::dragChatButtonOnTouch);
   }
 
   private void setupBottomNavigation() {
@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
 
       // Also add ExtrasMetadata for backward compatibility
       ExtrasMetadata extras = createExtrasFromGroup(group);
-      Common.addExtrasToIntent(intent, extras);
+      IntentExtrasManager.addExtrasToIntent(intent, extras);
 
       // Add UserKey to intent
       intent.putExtra("UserKey", UserKey);

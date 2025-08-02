@@ -1,7 +1,7 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.data.Common.hideViews;
-import static com.example.partymaker.utils.data.Common.showViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
+import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -17,8 +17,8 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -68,7 +68,7 @@ public class ChangeDateActivity extends AppCompatActivity {
 
     // Get Values from MainActivity By intent + connection between intent and
     // current activity objects
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
       Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
       finish();
@@ -300,7 +300,7 @@ public class ChangeDateActivity extends AppCompatActivity {
                   FriendKeys,
                   ComingKeys,
                   MessageKeys);
-          Common.addExtrasToIntent(intent, extras);
+          IntentExtrasManager.addExtrasToIntent(intent, extras);
           startActivity(intent);
         });
   }

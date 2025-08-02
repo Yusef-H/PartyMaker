@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.data;
+package com.example.partymaker.utils.core;
 
 import java.io.Serializable;
 import java.util.HashMap;

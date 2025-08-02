@@ -1,6 +1,6 @@
 package com.example.partymaker.ui.group;
 
-import static com.example.partymaker.utils.data.Constants.Extras.GROUP_NAME;
+import static com.example.partymaker.utils.core.AppConstants.Extras.GROUP_NAME;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,8 +22,8 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.ui.common.MainActivity;
-import com.example.partymaker.utils.data.Common;
-import com.example.partymaker.utils.data.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.google.firebase.database.DataSnapshot;
@@ -65,7 +65,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
 
     // Get Values from GroupScreen By intent + connection between intent and current
     // activity objects
-    ExtrasMetadata extras = Common.getExtrasMetadataFromIntent(getIntent());
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
       Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
       finish();
@@ -169,7 +169,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
             FriendKeys,
             ComingKeys,
             MessageKeys);
-    Common.addExtrasToIntent(intent, extras);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity to prevent it from staying in the back stack
   }
