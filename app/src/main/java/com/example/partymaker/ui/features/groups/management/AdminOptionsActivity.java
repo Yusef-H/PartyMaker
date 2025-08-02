@@ -1,4 +1,4 @@
-package com.example.partymaker.ui.features.groups.managment;
+package com.example.partymaker.ui.features.groups.management;
 
 import android.content.Intent;
 import android.os.Bundle;

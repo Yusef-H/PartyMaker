@@ -18,7 +18,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.adapters.UserAdapter;
-import com.example.partymaker.ui.features.groups.managment.AdminOptionsActivity;
+import com.example.partymaker.ui.features.groups.management.AdminOptionsActivity;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
 import java.util.ArrayList;

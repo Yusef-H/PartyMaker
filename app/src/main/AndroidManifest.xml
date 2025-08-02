@@ -71,9 +71,9 @@
 
         <!-- Group-related screens -->
         <activity android:name=".ui.features.groups.members.FriendsAddActivity" />
-        <activity android:name=".ui.features.groups.managment.CreateGroupActivity" />
-        <activity android:name=".ui.features.groups.managment.AdminOptionsActivity" />
-        <activity android:name=".ui.features.groups.managment.ChangeDateActivity" />
+        <activity android:name=".ui.features.groups.management.CreateGroupActivity" />
+        <activity android:name=".ui.features.groups.management.AdminOptionsActivity" />
+        <activity android:name=".ui.features.groups.management.ChangeDateActivity" />
         <activity android:name=".ui.features.groups.chat.ChatActivity" />
         <activity android:name=".ui.features.groups.members.MembersComingActivity" />
         <activity android:name=".ui.features.groups.members.MembersInvitedActivity" />
@@ -82,7 +82,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.features.groups.members.UsersListActivity" />
         <activity android:name=".ui.features.groups.discovery.JoinGroupActivity" />
-        <activity android:name=".ui.features.groups.managment.AdminSettingsActivity" />
+        <activity android:name=".ui.features.groups.management.AdminSettingsActivity" />
         <activity android:name=".ui.features.groups.main.PartyMainActivity" />
         <activity
             android:name=".ui.features.groups.discovery.PublicGroupsActivity"

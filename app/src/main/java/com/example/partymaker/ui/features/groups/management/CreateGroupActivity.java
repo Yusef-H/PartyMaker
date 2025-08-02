@@ -1,4 +1,4 @@
-package com.example.partymaker.ui.features.groups.managment;
+package com.example.partymaker.ui.features.groups.management;
 
 import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
 import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;

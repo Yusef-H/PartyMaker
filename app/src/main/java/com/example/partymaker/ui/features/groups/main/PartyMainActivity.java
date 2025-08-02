@@ -28,7 +28,7 @@ import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.ui.features.core.MainActivity;
-import com.example.partymaker.ui.features.groups.managment.AdminOptionsActivity;
+import com.example.partymaker.ui.features.groups.management.AdminOptionsActivity;
 import com.example.partymaker.ui.features.groups.chat.ChatActivity;
 import com.example.partymaker.ui.features.groups.members.FriendsAddActivity;
 import com.example.partymaker.ui.features.groups.members.MembersComingActivity;
