@@ -145,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
     btnAbout.startAnimation(myFadeInAnimation);
 
     eventHandler();
+    setupTextWatchers();
   }
 
   /** Initialize UI components for better UX */
@@ -163,11 +164,9 @@ public class LoginActivity extends AppCompatActivity {
       progressBar.setVisibility(View.GONE);
     }
 
-    loadingStateManager =
-        new LoadingStateManager.Builder()
-            .contentView(findViewById(R.id.etEmailL)) // Use existing view as content
-            .progressBar(progressBar)
-            .build();
+    // Don't use LoadingStateManager for login form - it interferes with user input
+    // Just use the progress bar directly
+    loadingStateManager = null;
   }
 
   /** Sets up observers for LoginViewModel LiveData */
@@ -180,10 +179,10 @@ public class LoginActivity extends AppCompatActivity {
               btnLogin.setEnabled(!isLoading);
               btnGoogleSignIn.setEnabled(!isLoading);
 
-              if (isLoading) {
-                loadingStateManager.showLoading("Signing in...");
-              } else {
-                loadingStateManager.showContent();
+              // Show/hide progress bar without interfering with input fields
+              android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
+              if (progressBar != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
               }
             });
 
@@ -332,22 +331,17 @@ public class LoginActivity extends AppCompatActivity {
                   if (isReachable) {
                     Log.d("LoginActivity", "Server is reachable");
                     // Don't show info message to avoid cluttering UI
-                    // UiStateManager.showInfo(rootView, "Connected to server");
                   } else {
                     Log.w("LoginActivity", "Server is not reachable");
-                    // Show subtle info message about offline mode
-                    if (rootView != null) {
-                      UiStateManager.showInfo(rootView, "Working in offline mode - server unavailable");
-                    }
+                    // Don't show offline mode message in login screen - it's not relevant to users
                   }
                 });
           } catch (Exception e) {
             Log.e("LoginActivity", "Error checking server connectivity", e);
             ThreadUtils.runOnMainThread(
                 () -> {
-                  if (rootView != null) {
-                    UiStateManager.showInfo(rootView, "Working in offline mode - connection check failed");
-                  }
+                  // Don't show offline mode message - just log it
+                  Log.d("LoginActivity", "Connection check failed - continuing silently");
                 });
           }
         });
@@ -364,8 +358,22 @@ public class LoginActivity extends AppCompatActivity {
 
           // connection between firebase and login button using ViewModel
           private void SignIn() {
-            String email = Objects.requireNonNull(etEmail.getText()).toString();
-            String password = Objects.requireNonNull(etPassword.getText()).toString();
+            // Safely get email and password values
+            String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+            String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
+
+            // Validate input before proceeding
+            if (email.isEmpty()) {
+              etEmail.setError("Please enter your email");
+              etEmail.requestFocus();
+              return;
+            }
+            
+            if (password.isEmpty()) {
+              etPassword.setError("Please enter your password");
+              etPassword.requestFocus();
+              return;
+            }
 
             // Set remember me preference
             loginViewModel.setRememberMe(cbRememberMe.isChecked());
@@ -374,9 +382,7 @@ public class LoginActivity extends AppCompatActivity {
             loginViewModel.loginWithEmail(email, password);
 
             // Set user session using AuthHelper when login succeeds
-            if (!email.isEmpty()) {
-              AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
-            }
+            AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
           }
         });
 
@@ -426,6 +432,51 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel.handleError(e);
       }
     }
+  }
+
+  /** Setup text watchers for real-time validation */
+  private void setupTextWatchers() {
+    etEmail.addTextChangedListener(new android.text.TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Clear error when user starts typing
+        etEmail.setError(null);
+        
+        // Validate email format in real-time
+        String email = s.toString().trim();
+        if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+          etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
+        }
+      }
+
+      @Override
+      public void afterTextChanged(android.text.Editable s) {
+        // Validate using ViewModel
+        String email = s.toString().trim();
+        loginViewModel.validateEmail(email);
+      }
+    });
+
+    etPassword.addTextChangedListener(new android.text.TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Clear error when user starts typing
+        etPassword.setError(null);
+      }
+
+      @Override
+      public void afterTextChanged(android.text.Editable s) {
+        // Validate using ViewModel
+        String password = s.toString();
+        loginViewModel.validatePassword(password);
+      }
+    });
   }
 
   /** Clears previous authentication state to prevent auto-login */

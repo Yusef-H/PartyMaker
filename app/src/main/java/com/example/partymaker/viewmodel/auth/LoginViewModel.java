@@ -185,8 +185,13 @@ public class LoginViewModel extends BaseViewModel {
             Log.d(TAG, "Starting email/password login for: " + email);
             
             // Validate input
+            if (email.trim().isEmpty()) {
+                handleLoginError("Please enter your email address");
+                return;
+            }
+            
             if (!isValidEmail(email)) {
-                handleLoginError("Please enter a valid email address");
+                handleLoginError("Please enter a valid email address (e.g., name@example.com)");
                 return;
             }
             
@@ -356,7 +361,7 @@ public class LoginViewModel extends BaseViewModel {
         Log.d(TAG, "Email/password login successful, loading user profile");
         
         // Show loading message to user
-        setInfo("Loading profile... (may take a few seconds)");
+        setInfo("Loading profile...");
         
         // Save email if remember me is enabled
         Boolean remember = rememberMe.getValue();
@@ -376,7 +381,7 @@ public class LoginViewModel extends BaseViewModel {
         Log.d(TAG, "Google Sign-In successful, checking user profile");
         
         // Show loading message to user  
-        setInfo("Loading profile... (may take a few seconds)");
+        setInfo("Loading profile...");
         
         // Set explicit login flag
         preferences.edit().putBoolean(KEY_USER_EXPLICITLY_LOGGED_IN, true).apply();
@@ -397,7 +402,7 @@ public class LoginViewModel extends BaseViewModel {
                 Log.w(TAG, "User profile load timed out, proceeding with offline mode");
                 handleOfflineLogin(firebaseUser);
             }
-        }, 10000); // 10 second timeout
+        }, 3000); // 3 second timeout
         
         userRepository.getUser(userKey, new UserRepository.Callback<User>() {
             @Override
@@ -439,7 +444,7 @@ public class LoginViewModel extends BaseViewModel {
                 Log.w(TAG, "Google Sign-In profile check timed out, proceeding with offline mode");
                 handleOfflineLogin(firebaseUser);
             }
-        }, 10000); // 10 second timeout
+        }, 3000); // 3 second timeout
         
         userRepository.getUser(userKey, new UserRepository.Callback<User>() {
             @Override
@@ -489,7 +494,7 @@ public class LoginViewModel extends BaseViewModel {
                 Log.w(TAG, "User profile creation timed out, using offline mode");
                 handleOfflineLogin(firebaseUser, newUser);
             }
-        }, 8000); // 8 second timeout for creation
+        }, 3000); // 3 second timeout for creation
         
         userRepository.createUser(newUser, new UserRepository.Callback<User>() {
             @Override

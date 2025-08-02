@@ -1268,7 +1268,7 @@ public class FirebaseServerClient {
 
           // TEMPORARILY skip UserGroups endpoint to test fallback logic
           Log.d(TAG, "TEMPORARILY skipping UserGroups endpoint and going directly to all groups for debugging");
-          String result = makeGetRequest("Groups", 15000); // Longer timeout for all groups
+          String result = makeGetRequest("Groups", 5000); // Reduced timeout for faster response
           Log.d(TAG, "All groups endpoint result: " + (result != null ? "Got " + result.length() + " chars" : "null"));
           if (result != null && !result.equals("null") && !result.trim().isEmpty()) {
             Log.d(TAG, "All groups result preview: " + (result.length() > 100 ? result.substring(0, 100) + "..." : result));
@@ -1692,7 +1692,7 @@ public class FirebaseServerClient {
 
     // Helper method for making GET requests
     private String makeGetRequest(String path) {
-      return makeGetRequest(path, 15000);
+      return makeGetRequest(path, 5000); // Reduced from 15000 to 5000ms
     }
 
     private String makeGetRequest(String path, int timeout) {

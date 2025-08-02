@@ -751,9 +751,9 @@ public class RegisterActivity extends AppCompatActivity {
     tilUsername.setError(null);
     tilPassword.setError(null);
 
-    String email = Objects.requireNonNull(etEmail.getText()).toString().trim();
-    String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
-    String password = Objects.requireNonNull(etPassword.getText()).toString();
+    String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+    String username = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
+    String password = etPassword.getText() != null ? etPassword.getText().toString() : "";
 
     // Email validation with animation
     if (TextUtils.isEmpty(email)) {
@@ -799,9 +799,15 @@ public class RegisterActivity extends AppCompatActivity {
   }
 
   private void signUp() {
-    final String email = Objects.requireNonNull(etEmail.getText()).toString().trim().toLowerCase();
-    final String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
-    String password = Objects.requireNonNull(etPassword.getText()).toString();
+    final String email = etEmail.getText() != null ? etEmail.getText().toString().trim().toLowerCase() : "";
+    final String username = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
+    String password = etPassword.getText() != null ? etPassword.getText().toString() : "";
+
+    // Validate input before proceeding
+    if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
+      Log.w("RegisterActivity", "signUp called with empty fields - validation should have caught this");
+      return;
+    }
 
     // Use RegisterViewModel for registration
     registerViewModel.registerUser(email, password, username, username);
