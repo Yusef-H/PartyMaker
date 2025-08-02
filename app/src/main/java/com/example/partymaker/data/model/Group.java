@@ -52,6 +52,14 @@ public class Group {
   @ColumnInfo(name = "group_hours")
   private String groupHours;
 
+  /** The minute(s) of the event. */
+  @ColumnInfo(name = "group_minutes")
+  private String groupMinutes;
+
+  /** The image URL of the group. */
+  @ColumnInfo(name = "group_image_url")
+  private String groupImageUrl;
+
   /** The price of the event. */
   @ColumnInfo(name = "group_price")
   private String groupPrice;
@@ -266,6 +274,22 @@ public class Group {
 
   public void setGroupHours(String groupHours) {
     this.groupHours = groupHours;
+  }
+
+  public String getGroupMinutes() {
+    return groupMinutes;
+  }
+
+  public void setGroupMinutes(String groupMinutes) {
+    this.groupMinutes = groupMinutes;
+  }
+
+  public String getGroupImageUrl() {
+    return groupImageUrl;
+  }
+
+  public void setGroupImageUrl(String groupImageUrl) {
+    this.groupImageUrl = groupImageUrl;
   }
 
   /**
