@@ -133,6 +133,9 @@ public class GroupRepository {
           @Override
           public void onDataLoaded(Group group) {
             if (group != null && isInitialized) {
+              // Decode URL-encoded group data
+              decodeGroupData(group);
+              
               // Cache the group locally
               localDataSource.saveItem(
                   groupKey,
@@ -1001,6 +1004,31 @@ public class GroupRepository {
 
   public interface OperationCallback extends DataSource.OperationCallback {}
   
+  /**
+   * Decodes URL-encoded strings in group data.
+   */
+  private void decodeGroupData(Group group) {
+    if (group == null) return;
+    
+    try {
+      // Decode group name if it contains URL-encoded characters
+      if (group.getGroupName() != null) {
+        String decodedName = java.net.URLDecoder.decode(group.getGroupName(), "UTF-8");
+        group.setGroupName(decodedName);
+      }
+      
+      // Decode group description if it contains URL-encoded characters
+      if (group.getGroupDescription() != null) {
+        String decodedDescription = java.net.URLDecoder.decode(group.getGroupDescription(), "UTF-8");
+        group.setGroupDescription(decodedDescription);
+      }
+      
+      // Add more fields as needed
+    } catch (Exception e) {
+      Log.w(TAG, "Failed to decode group data", e);
+    }
+  }
+
   /** Interface for generic callbacks used by ViewModels */
   public interface Callback<T> {
     void onSuccess(T result);

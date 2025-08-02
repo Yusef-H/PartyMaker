@@ -260,7 +260,12 @@ public class NetworkManager {
   /** Checks server reachability using secure SSL-pinned connection */
   private boolean isServerReachableSecure(String url, int timeout) {
     try {
-      OkHttpClient client = sslPinningManager.createSecureClient();
+      OkHttpClient client = sslPinningManager.createSecureClient()
+          .newBuilder()
+          .connectTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
+          .readTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
+          .writeTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
+          .build();
       Request request = new Request.Builder().url(url).head().build();
 
       try (Response response = client.newCall(request).execute()) {

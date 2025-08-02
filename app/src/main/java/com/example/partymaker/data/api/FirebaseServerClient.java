@@ -570,7 +570,9 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            String url = serverUrl + "/api/firebase/user/" + userId;
+            // URL encode the userId to handle special characters like @ and .
+            String encodedUserId = java.net.URLEncoder.encode(userId, "UTF-8");
+            String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String response = makeHttpRequest(url, "GET", null);
             return gson.fromJson(response, User.class);
           } catch (Exception e) {
@@ -603,7 +605,9 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            String url = serverUrl + "/api/firebase/user/" + userId;
+            // URL encode the userId to handle special characters like @ and .
+            String encodedUserId = java.net.URLEncoder.encode(userId, "UTF-8");
+            String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
             String response = makeHttpRequest(url, "PUT", json);
             return response != null && !response.isEmpty();
@@ -641,10 +645,13 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            String url = serverUrl + "/api/firebase/user";
+            // URL encode the userId to handle special characters like @ and .
+            String encodedUserId = java.net.URLEncoder.encode(user.getUserKey(), "UTF-8");
+            String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
             String response = makeHttpRequest(url, "POST", json);
-            return gson.fromJson(response, User.class);
+            // Server returns empty response for POST, so return the original user object
+            return user;
           } catch (Exception e) {
             throw new RuntimeException("Failed to create user", e);
           }
@@ -676,7 +683,9 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            String url = serverUrl + "/api/firebase/user/" + userId;
+            // URL encode the userId to handle special characters like @ and .
+            String encodedUserId = java.net.URLEncoder.encode(userId, "UTF-8");
+            String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(updates);
             String response = makeHttpRequest(url, "PUT", json);
             return response != null && !response.isEmpty();
@@ -1257,33 +1266,52 @@ public class FirebaseServerClient {
           String originalUserId = userId;
           Log.d(TAG, "Getting groups for user: " + originalUserId);
 
-          // First try to get all groups
-          String result = makeGetRequest("Groups");
+          // TEMPORARILY skip UserGroups endpoint to test fallback logic
+          Log.d(TAG, "TEMPORARILY skipping UserGroups endpoint and going directly to all groups for debugging");
+          String result = makeGetRequest("Groups", 15000); // Longer timeout for all groups
+          Log.d(TAG, "All groups endpoint result: " + (result != null ? "Got " + result.length() + " chars" : "null"));
+          if (result != null && !result.equals("null") && !result.trim().isEmpty()) {
+            Log.d(TAG, "All groups result preview: " + (result.length() > 100 ? result.substring(0, 100) + "..." : result));
+          }
 
           if (result != null) {
             try {
               JSONObject jsonObject = new JSONObject(result);
-              Map<String, Group> userGroups = new HashMap<>();
+              Map<String, Group> userGroupsMap = new HashMap<>();
 
               // Filter groups that the user is part of
               Iterator<String> keys = jsonObject.keys();
+              int totalGroups = 0;
+              int userGroupsCount = 0;
               while (keys.hasNext()) {
                 String key = keys.next();
+                totalGroups++;
                 JSONObject groupJson = jsonObject.getJSONObject(key);
                 Group group = gson.fromJson(groupJson.toString(), Group.class);
 
+                // Debug the group and user relationship
+                boolean isAdmin = group.getAdminKey() != null && group.getAdminKey().equals(originalUserId);
+                boolean isMember = group.getFriendKeys() != null && group.getFriendKeys().containsKey(originalUserId);
+                
+                Log.d(TAG, "Checking group " + key + " (" + group.getGroupName() + "):");
+                Log.d(TAG, "  Admin key: " + group.getAdminKey() + " (user is admin: " + isAdmin + ")");
+                Log.d(TAG, "  Friend keys: " + (group.getFriendKeys() != null ? group.getFriendKeys().keySet() : "null") + " (user is member: " + isMember + ")");
+                Log.d(TAG, "  Looking for user: " + originalUserId);
+
                 // Check if user is in friendKeys or is the admin (using original userId)
-                if ((group.getFriendKeys() != null
-                        && group.getFriendKeys().containsKey(originalUserId))
-                    || (group.getAdminKey() != null
-                        && group.getAdminKey().equals(originalUserId))) {
-                  userGroups.put(key, group);
+                if (isAdmin || isMember) {
+                  userGroupsMap.put(key, group);
+                  userGroupsCount++;
                   Log.d(TAG, "Added group " + key + " to user's groups: " + group.getGroupName());
+                } else {
+                  Log.d(TAG, "User " + originalUserId + " is not part of group " + key + " (" + group.getGroupName() + ")");
                 }
               }
+              
+              Log.d(TAG, "Processed " + totalGroups + " total groups, found " + userGroupsCount + " groups for user " + originalUserId);
 
-              Log.d(TAG, "Found " + userGroups.size() + " groups for user: " + originalUserId);
-              return userGroups;
+              Log.d(TAG, "Found " + userGroupsMap.size() + " groups for user: " + originalUserId);
+              return userGroupsMap;
             } catch (JSONException e) {
               Log.e(TAG, "Error parsing groups", e);
               throw new RuntimeException("Error parsing groups: " + e.getMessage(), e);
