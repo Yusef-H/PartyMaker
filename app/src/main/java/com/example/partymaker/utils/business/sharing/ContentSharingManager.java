@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.sharing;
+package com.example.partymaker.utils.business.sharing;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
  * Helper class for sharing party information with other apps. This class provides methods for
  * sharing party details via text, generating shareable images, and sharing to specific platforms.
  */
-public class ShareHelper {
+public class ContentSharingManager {
   private static final String TAG = "ShareHelper";
 
   /**

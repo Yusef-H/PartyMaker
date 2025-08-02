@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.utils.security.core.SecureConfigManager;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import java.util.ArrayList;
 import java.util.List;
 

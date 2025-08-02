@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 import com.example.partymaker.data.api.NetworkManager;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 
 /** ViewModel for ServerSettingsActivity handling server configuration */
 public class ServerSettingsViewModel extends BaseViewModel {

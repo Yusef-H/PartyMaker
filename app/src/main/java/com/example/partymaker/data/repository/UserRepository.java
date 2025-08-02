@@ -8,7 +8,7 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

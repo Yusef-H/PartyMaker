@@ -32,7 +32,7 @@ import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.business.sharing.ContentSharingManager;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;

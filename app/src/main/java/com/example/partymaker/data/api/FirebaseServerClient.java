@@ -9,7 +9,7 @@ import androidx.preference.PreferenceManager;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utils.async.AsyncTaskReplacement;
+import com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement;
 import com.example.partymaker.utils.core.AppConstants;
 import com.example.partymaker.utils.security.network.SSLPinningManager;
 import com.google.gson.Gson;

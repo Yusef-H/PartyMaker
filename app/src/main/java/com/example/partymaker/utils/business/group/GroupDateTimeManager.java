@@ -1,12 +1,12 @@
-package com.example.partymaker.utils.group;
+package com.example.partymaker.utils.business.group;
 
-public class GroupDateTime {
+public class GroupDateTimeManager {
   private final String day;
   private final String month;
   private final String year;
   private final String time;
 
-  public GroupDateTime(String day, String month, String year, String time) {
+  public GroupDateTimeManager(String day, String month, String year, String time) {
     this.day = day;
     this.month = month;
     this.year = year;

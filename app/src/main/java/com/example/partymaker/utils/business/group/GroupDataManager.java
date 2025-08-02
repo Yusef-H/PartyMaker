@@ -1,44 +1,44 @@
-package com.example.partymaker.utils.group;
+package com.example.partymaker.utils.business.group;
 
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.group.CreateGroupActivity;
 
 // Builder pattern for Group creation
-public class GroupBuilder {
+public class GroupDataManager {
   private final Group group = new Group();
 
-  public GroupBuilder setName(String name) {
+  public GroupDataManager setName(String name) {
     group.setGroupName(name);
     return this;
   }
 
-  public GroupBuilder setAdmin(String adminKey) {
+  public GroupDataManager setAdmin(String adminKey) {
     group.setAdminKey(adminKey);
     return this;
   }
 
-  public GroupBuilder setType(int type) {
+  public GroupDataManager setType(int type) {
     group.setGroupType(type);
     group.setCanAdd(type == CreateGroupActivity.GroupType.PUBLIC);
     return this;
   }
 
-  public GroupBuilder setCreationTime(String timestamp) {
+  public GroupDataManager setCreationTime(String timestamp) {
     group.setCreatedAt(timestamp);
     return this;
   }
 
-  public GroupBuilder setPrice(String price) {
+  public GroupDataManager setPrice(String price) {
     group.setGroupPrice(price);
     return this;
   }
 
-  public GroupBuilder setLocation(String location) {
+  public GroupDataManager setLocation(String location) {
     group.setGroupLocation(location);
     return this;
   }
 
-  public GroupBuilder setDateTime(GroupDateTime dateTime) {
+  public GroupDataManager setDateTime(GroupDateTimeManager dateTime) {
     group.setGroupDays(dateTime.getDay());
     group.setGroupMonths(dateTime.getMonth());
     group.setGroupYears(dateTime.getYear());

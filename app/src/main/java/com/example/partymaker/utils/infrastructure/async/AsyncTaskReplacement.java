@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.async;
+package com.example.partymaker.utils.infrastructure.async;
 
 import android.os.Handler;
 import android.os.Looper;

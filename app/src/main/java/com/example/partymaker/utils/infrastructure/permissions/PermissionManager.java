@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.permissions;
+package com.example.partymaker.utils.infrastructure.permissions;
 
 import android.Manifest;
 import android.app.Activity;

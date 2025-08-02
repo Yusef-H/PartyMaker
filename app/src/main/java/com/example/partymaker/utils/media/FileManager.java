@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

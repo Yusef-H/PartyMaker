@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.system;
+package com.example.partymaker.utils.infrastructure.system;
 
 import android.os.Handler;
 import android.os.Looper;

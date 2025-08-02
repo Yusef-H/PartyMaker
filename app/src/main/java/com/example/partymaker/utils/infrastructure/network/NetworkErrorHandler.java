@@ -1,4 +1,4 @@
-package com.example.partymaker.utils.network;
+package com.example.partymaker.utils.infrastructure.network;
 
 import android.content.Context;
 import com.example.partymaker.data.api.NetworkUtils;
@@ -11,9 +11,9 @@ import javax.net.ssl.SSLException;
  * Centralized error handling utility for network operations and API calls. Provides consistent
  * error categorization and user-friendly error messages.
  */
-public final class ErrorHandler {
+public final class NetworkErrorHandler {
 
-  private ErrorHandler() {
+  private NetworkErrorHandler() {
     throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
   }
 

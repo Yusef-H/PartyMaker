@@ -20,7 +20,7 @@ import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.common.MainActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.LoadingStateManager;
 import com.example.partymaker.utils.ui.UiStateManager;
 import com.example.partymaker.viewmodel.AuthViewModel;

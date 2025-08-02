@@ -50,7 +50,7 @@ import com.example.partymaker.utils.business.group.GroupDateTimeManager;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.MapUtilities;
 import com.example.partymaker.utils.ui.NotificationHelper;
 import com.google.android.gms.common.api.Status;

@@ -17,7 +17,7 @@ import com.example.partymaker.ui.auth.IntroActivity;
 import com.example.partymaker.ui.auth.LoginActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.security.core.SecureConfigManager;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.viewmodel.SplashViewModel;
 
 /**

@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import com.example.partymaker.data.local.AppDatabase;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.utils.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import java.util.List;
 import java.util.Map;
 
