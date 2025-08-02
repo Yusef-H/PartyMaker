@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.utils.security.GroupKeyManager;
+import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

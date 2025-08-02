@@ -1,9 +1,10 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.encryption;
 
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 import com.example.partymaker.data.model.ChatMessage;
+
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;

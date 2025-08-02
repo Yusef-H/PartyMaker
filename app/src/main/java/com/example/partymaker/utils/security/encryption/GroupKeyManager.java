@@ -1,7 +1,8 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.encryption;
 
 import android.content.Context;
 import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

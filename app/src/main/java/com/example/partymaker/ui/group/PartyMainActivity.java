@@ -30,7 +30,7 @@ import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.utils.auth.AuthHelper;
 import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.data.ExtrasMetadata;
-import com.example.partymaker.utils.security.GroupKeyManager;
+import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.sharing.ShareHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.NotificationHelper;

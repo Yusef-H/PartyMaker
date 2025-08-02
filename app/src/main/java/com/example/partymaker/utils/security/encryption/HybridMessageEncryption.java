@@ -1,7 +1,6 @@
-package com.example.partymaker.utils.security;
+package com.example.partymaker.utils.security.encryption;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
@@ -20,11 +19,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.json.JSONObject;
-import org.json.JSONException;
-import java.util.List;
-import java.util.ArrayList;
+
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Hybrid encryption system using RSA for key exchange and AES for message encryption.

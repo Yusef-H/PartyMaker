@@ -48,7 +48,7 @@ import com.example.partymaker.utils.data.Common;
 import com.example.partymaker.utils.group.GroupBuilder;
 import com.example.partymaker.utils.group.GroupDateTime;
 import com.example.partymaker.utils.media.ImageCompressor;
-import com.example.partymaker.utils.security.GroupKeyManager;
+import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.navigation.BottomNavigationHelper;
 import com.example.partymaker.utils.system.ThreadUtils;
 import com.example.partymaker.utils.ui.MapUtilities;
