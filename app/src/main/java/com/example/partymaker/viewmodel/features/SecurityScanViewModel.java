@@ -73,7 +73,7 @@ public class SecurityScanViewModel extends BaseViewModel {
      */
     public SecurityScanViewModel(@NonNull Application application) {
         super(application);
-        this.securityAgent = new SecurityAgent();
+        this.securityAgent = SecurityAgent.getInstance(application);
         
         // Initialize state
         scanInProgress.setValue(false);
@@ -298,21 +298,21 @@ public class SecurityScanViewModel extends BaseViewModel {
                 
                 List<SecurityIssue> issues = securityIssues.getValue();
                 if (issues != null) {
-                    int fixableIssues = 0;
-                    int fixedIssues = 0;
+                    final int[] fixableIssues = {0};
+                    final int[] fixedIssues = {0};
                     
                     for (SecurityIssue issue : issues) {
                         // Check if issue is auto-fixable (you'd implement this logic)
                         if (isAutoFixable(issue)) {
-                            fixableIssues++;
+                            fixableIssues[0]++;
                             
                             // Simulate fix application
                             ThreadUtils.runOnMainThreadDelayed(() -> {
                                 updateScanStep("Fixing " + issue.getType() + "...", 
-                                             (fixedIssues * 100) / fixableIssues);
-                            }, fixedIssues * 500);
+                                             (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0]));
+                            }, fixedIssues[0] * 500);
                             
-                            fixedIssues++;
+                            fixedIssues[0]++;
                         }
                     }
                     
@@ -321,15 +321,15 @@ public class SecurityScanViewModel extends BaseViewModel {
                         setLoading(false);
                         updateScanStep("Auto-fixes completed", 100);
                         
-                        if (fixedIssues > 0) {
-                            setSuccess(fixedIssues + " security issues fixed automatically");
+                        if (fixedIssues[0] > 0) {
+                            setSuccess(fixedIssues[0] + " security issues fixed automatically");
                             // Refresh scan results
                             startQuickScan();
                         } else {
                             setInfo("No auto-fixable issues found");
                         }
                         
-                    }, fixableIssues * 500 + 1000);
+                    }, fixableIssues[0] * 500 + 1000);
                 }
                 
             } catch (Exception e) {

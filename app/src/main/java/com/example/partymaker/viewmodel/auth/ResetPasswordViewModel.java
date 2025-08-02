@@ -88,6 +88,10 @@ public class ResetPasswordViewModel extends BaseViewModel {
         return isEmailValid;
     }
     
+    public LiveData<Boolean> getResetSuccess() {
+        return resetEmailSent;
+    }
+    
     /**
      * Validates email format for password reset.
      * 
@@ -102,6 +106,15 @@ public class ResetPasswordViewModel extends BaseViewModel {
         } else {
             targetEmail.setValue(null);
         }
+    }
+    
+    /**
+     * Sends a password reset email to the specified address.
+     * 
+     * @param email The email address to send the reset link to
+     */
+    public void resetPassword(@NonNull String email) {
+        sendPasswordResetEmail(email);
     }
     
     /**

@@ -633,6 +633,40 @@ public class FirebaseServerClient {
         });
   }
 
+  public void createUser(User user, final DataCallback<User> callback) {
+    final String serverUrl = this.serverUrl;
+    final Gson gson = this.gson;
+
+    AsyncTaskReplacement.execute(
+        () -> {
+          // Background operation
+          try {
+            String url = serverUrl + "/api/firebase/user";
+            String json = gson.toJson(user);
+            String response = makeHttpRequest(url, "POST", json);
+            return gson.fromJson(response, User.class);
+          } catch (Exception e) {
+            throw new RuntimeException("Failed to create user", e);
+          }
+        },
+        new AsyncTaskReplacement.SimpleUICallback<User>() {
+          @Override
+          public void onPostExecute(User result) {
+            if (callback != null) {
+              callback.onSuccess(result);
+            }
+          }
+
+          @Override
+          public void onError(Exception error) {
+            Log.e(TAG, "Error creating user", error);
+            if (callback != null) {
+              callback.onError(error.getMessage());
+            }
+          }
+        });
+  }
+
   public void updateUser(
       String userId, Map<String, Object> updates, final OperationCallback callback) {
     final String serverUrl = this.serverUrl;

@@ -13,6 +13,7 @@ import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.viewmodel.BaseViewModel;
+import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -254,22 +255,25 @@ public class GroupCreationViewModel extends BaseViewModel {
             try {
                 imageUploadInProgress.postValue(true);
                 
-                String compressedPath = imageCompressor.compressImage(
-                    getApplication(), imageUri, 512, 512, 80);
-                
-                if (compressedPath != null) {
-                    selectedImagePath.postValue(compressedPath);
+                imageCompressor.compressImage(getApplication(), imageUri, new ImageCompressor.CompressCallback() {
+                    @Override
+                    public void onCompressSuccess(File compressedFile) {
+                        selectedImagePath.postValue(compressedFile.getAbsolutePath());
+                        
+                        ThreadUtils.runOnMainThread(() -> {
+                            imageUploadInProgress.setValue(false);
+                            setSuccess("Image selected and compressed successfully");
+                        });
+                    }
                     
-                    ThreadUtils.runOnMainThread(() -> {
-                        imageUploadInProgress.setValue(false);
-                        setSuccess("Image selected and compressed successfully");
-                    });
-                } else {
-                    ThreadUtils.runOnMainThread(() -> {
-                        imageUploadInProgress.setValue(false);
-                        setError("Failed to process selected image");
-                    });
-                }
+                    @Override
+                    public void onCompressError(String error) {
+                        ThreadUtils.runOnMainThread(() -> {
+                            imageUploadInProgress.setValue(false);
+                            setError("Failed to process selected image: " + error);
+                        });
+                    }
+                });
                 
             } catch (Exception e) {
                 Log.e(TAG, "Error processing selected image", e);
@@ -451,7 +455,7 @@ public class GroupCreationViewModel extends BaseViewModel {
         group.setGroupMinutes(selectedMinute.getValue());
         
         // Optional information
-        group.setGroupType(isPublicGroup.getValue() != null && isPublicGroup.getValue() ? "public" : "private");
+        group.setGroupType(isPublicGroup.getValue() != null && isPublicGroup.getValue() ? 0 : 1);
         group.setGroupPrice(groupPrice.getValue() != null ? groupPrice.getValue() : "0");
         
         // Image path
