@@ -35,7 +35,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.auth.AuthViewModel;
+import com.example.partymaker.viewmodel.auth.RegisterViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -104,8 +104,8 @@ public class RegisterActivity extends AppCompatActivity {
   /** Number of completed fields. */
   private int completedFields = 0;
 
-  /** Authentication ViewModel */
-  private AuthViewModel authViewModel;
+  /** Registration ViewModel */
+  private RegisterViewModel registerViewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity {
     initializeViews();
 
     // Initialize ViewModel
-    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+    registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
     setupViewModelObservers();
 
     // Create notification channel
@@ -142,72 +142,155 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Set up form progress tracking
     setupFormProgressTracking();
+    
+    // Set up real-time validation
+    setupRealTimeValidation();
   }
 
-  /** Sets up observers for AuthViewModel LiveData */
+  /** Sets up observers for RegisterViewModel LiveData */
   private void setupViewModelObservers() {
-    authViewModel
-        .getIsLoading()
-        .observe(
-            this,
-            isLoading -> {
-              btnRegister.setEnabled(!isLoading);
-              if (isLoading) {
-                animateLoadingButton();
-              } else {
-                btnRegister.setText(getString(R.string.register));
-              }
-            });
-
-    authViewModel
-        .getErrorMessage()
-        .observe(
-            this,
-            errorMessage -> {
-              if (errorMessage != null) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
-                // Re-enable button after error is shown
-                btnRegister.setEnabled(true);
-                btnRegister.setText(getString(R.string.register));
-              }
-            });
-
-    authViewModel
-        .getSuccessMessage()
-        .observe(
-            this,
-            successMessage -> {
-              if (successMessage != null
-                  && successMessage.contains("Account created successfully")) {
-                String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
-
-                // Show celebration animation
-                showCelebrationAnimation(username);
-
-                // Send success notification
-                sendSuccessNotification(username);
-
-                // Navigate to login screen after celebration
-                ThreadUtils.runOnMainThreadDelayed(
-                    () -> {
-                      Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                      startActivity(intent);
-                      finish();
-                    },
-                    3000);
-              }
-            });
-
-    authViewModel
-        .getIsRegistrationMode()
-        .observe(
-            this,
-            isRegistrationMode -> {
-              // Set registration mode to true for this activity
-              if (!isRegistrationMode) {
-                authViewModel.setRegistrationMode(true);
-              }
-            });
+    // Observe registration success
+    registerViewModel.getRegistrationSuccess().observe(this, success -> {
+      if (success != null && success) {
+        handleRegistrationSuccess();
+      }
+    });
+    
+    // Observe loading state
+    registerViewModel.getIsLoading().observe(this, isLoading -> {
+      if (isLoading != null) {
+        if (isLoading) {
+          showProgressIndicator(true);
+          btnRegister.setEnabled(false);
+        } else {
+          showProgressIndicator(false);
+          btnRegister.setEnabled(true);
+        }
+      }
+    });
+    
+    // Observe error messages
+    registerViewModel.getErrorMessage().observe(this, error -> {
+      if (error != null && !error.isEmpty()) {
+        showErrorMessage(error);
+      }
+    });
+    
+    // Observe success messages
+    registerViewModel.getSuccessMessage().observe(this, message -> {
+      if (message != null && !message.isEmpty()) {
+        showSuccessMessage(message);
+      }
+    });
+    
+    // Observe validation states
+    registerViewModel.getIsFormValid().observe(this, isValid -> {
+      if (isValid != null) {
+        btnRegister.setEnabled(isValid && !isLoading());
+      }
+    });
+    
+    // Observe individual field validation
+    registerViewModel.getIsEmailValid().observe(this, isValid -> {
+      updateFieldValidation(tilEmail, isValid);
+    });
+    
+    registerViewModel.getIsPasswordValid().observe(this, isValid -> {
+      updateFieldValidation(tilPassword, isValid);
+    });
+    
+    registerViewModel.getIsUsernameValid().observe(this, isValid -> {
+      updateFieldValidation(tilUsername, isValid);
+    });
+  }
+  
+  private boolean isLoading() {
+    Boolean loading = registerViewModel.getIsLoading().getValue();
+    return loading != null && loading;
+  }
+  
+  private void showErrorMessage(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+  }
+  
+  private void showSuccessMessage(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+  }
+  
+  private void updateFieldValidation(TextInputLayout layout, Boolean isValid) {
+    if (isValid != null) {
+      if (isValid) {
+        layout.setError(null);
+        layout.setHelperText("✓");
+      } else if (layout.getEditText() != null && 
+                 !layout.getEditText().getText().toString().trim().isEmpty()) {
+        layout.setHelperText(null);
+      }
+    }
+  }
+  
+  private void handleRegistrationSuccess() {
+    showCelebrationAnimation("");
+    // Navigate to login or main activity after delay
+    ThreadUtils.runOnMainThreadDelayed(() -> {
+      Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+      startActivity(intent);
+      finish();
+    }, 2000);
+  }
+  
+  private void showProgressIndicator(boolean show) {
+    if (progressIndicator != null) {
+      progressIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+    if (show) {
+      animateLoadingButton();
+    } else {
+      btnRegister.setText("Register");
+      btnRegister.clearAnimation();
+    }
+  }
+  
+  // Add text watchers for real-time validation
+  private void setupRealTimeValidation() {
+    etEmail.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      
+      @Override
+      public void afterTextChanged(Editable s) {
+        registerViewModel.validateEmail(s.toString());
+      }
+    });
+    
+    etUsername.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      
+      @Override
+      public void afterTextChanged(Editable s) {
+        registerViewModel.validateUsername(s.toString());
+      }
+    });
+    
+    etPassword.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      
+      @Override
+      public void afterTextChanged(Editable s) {
+        registerViewModel.validatePassword(s.toString());
+      }
+    });
   }
 
   /** Creates a test user for debugging purposes */
@@ -584,13 +667,9 @@ public class RegisterActivity extends AppCompatActivity {
           public void onTextChanged(CharSequence s, int start, int before, int count) {
             updateFormProgress();
             // Clear previous errors when user starts typing
-            if (authViewModel != null) {
-              authViewModel.clearError();
-            }
+            registerViewModel.clearMessages();
             // Ensure button is enabled when user types (unless in loading state)
-            if (authViewModel != null
-                && authViewModel.getIsLoading().getValue() != null
-                && !authViewModel.getIsLoading().getValue()) {
+            if (!isLoading()) {
               btnRegister.setEnabled(true);
             }
           }
@@ -720,19 +799,12 @@ public class RegisterActivity extends AppCompatActivity {
   }
 
   private void signUp() {
-    // Disable button during registration with loading animation
-    btnRegister.setEnabled(false);
-
-    // Create loading animation
-    animateLoadingButton();
-
     final String email = Objects.requireNonNull(etEmail.getText()).toString().trim().toLowerCase();
     final String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
     String password = Objects.requireNonNull(etPassword.getText()).toString();
-    String confirmPassword = password; // In this case, we don't have a separate confirm field
 
-    // Use AuthViewModel for registration
-    authViewModel.registerWithEmail(email, password, confirmPassword, username);
+    // Use RegisterViewModel for registration
+    registerViewModel.registerUser(email, password, username, username);
   }
 
   @SuppressLint("SetTextI18n")

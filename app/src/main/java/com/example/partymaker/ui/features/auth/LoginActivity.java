@@ -23,7 +23,7 @@ import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
-import com.example.partymaker.viewmodel.auth.AuthViewModel;
+import com.example.partymaker.viewmodel.auth.LoginViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -79,8 +79,8 @@ public class LoginActivity extends AppCompatActivity {
   /** Firebase authentication instance. */
   private FirebaseAuth mAuth;
 
-  /** Authentication ViewModel */
-  private AuthViewModel authViewModel;
+  /** Login ViewModel */
+  private LoginViewModel loginViewModel;
 
   /** Loading state manager */
   private LoadingStateManager loadingStateManager;
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
     mAuth = FirebaseAuth.getInstance();
 
     // Initialize ViewModel
-    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+    loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
     // Initialize UI components
     initializeUiComponents();
@@ -170,9 +170,9 @@ public class LoginActivity extends AppCompatActivity {
             .build();
   }
 
-  /** Sets up observers for AuthViewModel LiveData */
+  /** Sets up observers for LoginViewModel LiveData */
   private void setupViewModelObservers() {
-    authViewModel
+    loginViewModel
         .getIsLoading()
         .observe(
             this,
@@ -187,40 +187,40 @@ public class LoginActivity extends AppCompatActivity {
               }
             });
 
-    authViewModel
+    loginViewModel
         .getErrorMessage()
         .observe(
             this,
             errorMessage -> {
-              if (errorMessage != null) {
+              if (errorMessage != null && !errorMessage.isEmpty()) {
                 UiStateManager.showError(
                     rootView,
                     errorMessage,
                     () -> {
                       // Retry logic - clear error and enable retry
-                      authViewModel.clearError();
+                      loginViewModel.clearMessages();
                     });
                 loadingStateManager.showError(errorMessage);
                 btnResetPass.setVisibility(View.VISIBLE);
               }
             });
 
-    authViewModel
+    loginViewModel
         .getSuccessMessage()
         .observe(
             this,
             successMessage -> {
-              if (successMessage != null) {
+              if (successMessage != null && !successMessage.isEmpty()) {
                 UiStateManager.showSuccess(rootView, successMessage);
               }
             });
 
-    authViewModel
-        .getIsAuthenticated()
+    loginViewModel
+        .getLoginSuccess()
         .observe(
             this,
-            isAuthenticated -> {
-              if (isAuthenticated) {
+            loginSuccess -> {
+              if (loginSuccess != null && loginSuccess) {
                 UiStateManager.showSuccess(rootView, "Login successful!");
 
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -244,6 +244,18 @@ public class LoginActivity extends AppCompatActivity {
                     800);
               }
             });
+            
+    // Observer for email validation
+    loginViewModel.getIsEmailValid().observe(this, isValid -> {
+      // Update email field validation UI if needed
+    });
+    
+    // Observer for remember me state
+    loginViewModel.getRememberMe().observe(this, remember -> {
+      if (remember != null) {
+        cbRememberMe.setChecked(remember);
+      }
+    });
   }
 
   /** Forces the server URL to be set to Render */
@@ -353,7 +365,11 @@ public class LoginActivity extends AppCompatActivity {
             String email = Objects.requireNonNull(etEmail.getText()).toString();
             String password = Objects.requireNonNull(etPassword.getText()).toString();
 
-            authViewModel.loginWithEmail(email, password);
+            // Set remember me preference
+            loginViewModel.setRememberMe(cbRememberMe.isChecked());
+            
+            // Perform login
+            loginViewModel.loginWithEmail(email, password);
 
             // Set user session using AuthHelper when login succeeds
             if (!email.isEmpty()) {
@@ -362,10 +378,10 @@ public class LoginActivity extends AppCompatActivity {
           }
         });
 
-    // Google Sign In button click listener - use ViewModel's GoogleSignInClient
+    // Google Sign In button click listener
     btnGoogleSignIn.setOnClickListener(
         v -> {
-          Intent signInIntent = authViewModel.getGoogleSignInClient().getSignInIntent();
+          Intent signInIntent = mGoogleSignInClient.getSignInIntent();
           startActivityForResult(signInIntent, RC_SIGN_IN);
         });
 
@@ -398,7 +414,15 @@ public class LoginActivity extends AppCompatActivity {
 
     if (requestCode == RC_SIGN_IN) {
       Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-      authViewModel.signInWithGoogle(task);
+      try {
+        GoogleSignInAccount account = task.getResult(Exception.class);
+        if (account != null && account.getIdToken() != null) {
+          loginViewModel.loginWithGoogle(account.getIdToken());
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "Google sign-in failed", e);
+        loginViewModel.handleError(e);
+      }
     }
   }
 
@@ -408,8 +432,8 @@ public class LoginActivity extends AppCompatActivity {
       Log.d(TAG, "Clearing previous authentication state to prevent auto-login");
 
       // Reset the ViewModel's authentication state
-      if (authViewModel != null) {
-        authViewModel.clearAuthenticationState();
+      if (loginViewModel != null) {
+        loginViewModel.clearMessages();
       }
 
       Log.d(TAG, "Authentication state cleared successfully");
