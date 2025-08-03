@@ -120,12 +120,10 @@
     <style name="Theme.Material3.Register.NoWindowBackground" parent="Theme.Material3.Register">
         <item name="android:windowBackground">@null</item>
     </style>
-    
-    <!-- AppTheme variants -->
-    <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+
+    <!-- Additional NoWindowBackground themes for intro sliders -->
+    <style name="Theme.PartyMaker.IntroSlider" parent="Theme.PartyMaker">
         <item name="android:windowBackground">@null</item>
     </style>
 </resources>

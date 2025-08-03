@@ -729,9 +729,9 @@ public class GroupRepository {
             Log.d(TAG, "User added to group, now adding to encryption");
 
             // Add user to group encryption
-            if (context != null) {
+            if (applicationContext != null) {
               try {
-                GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
+                GroupKeyManager groupKeyManager = new GroupKeyManager(applicationContext, userKey);
                 groupKeyManager
                     .addUserToGroupEncryption(groupKey, userKey)
                     .thenAccept(
@@ -753,7 +753,7 @@ public class GroupRepository {
                 callback.onComplete(); // Still complete the join
               }
             } else {
-              Log.w(TAG, "Context is null, cannot add to group encryption");
+              Log.w(TAG, "Application context is null, cannot add to group encryption");
               callback.onComplete();
             }
           }
@@ -798,9 +798,9 @@ public class GroupRepository {
             Log.d(TAG, "User removed from group, now removing from encryption and rotating key");
 
             // Remove user from group encryption and rotate key for security
-            if (context != null) {
+            if (applicationContext != null) {
               try {
-                GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
+                GroupKeyManager groupKeyManager = new GroupKeyManager(applicationContext, userKey);
                 groupKeyManager
                     .removeUserAndRotateKey(groupKey, userKey)
                     .thenAccept(
@@ -822,7 +822,7 @@ public class GroupRepository {
                 callback.onComplete(); // Still complete the leave
               }
             } else {
-              Log.w(TAG, "Context is null, cannot remove from group encryption");
+              Log.w(TAG, "Application context is null, cannot remove from group encryption");
               callback.onComplete();
             }
           }

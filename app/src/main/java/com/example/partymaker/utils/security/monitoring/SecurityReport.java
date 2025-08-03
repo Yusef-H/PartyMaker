@@ -152,7 +152,8 @@ public class SecurityReport {
     }
 
     for (SecurityIssue issue : securityIssues) {
-      counts.put(issue.getSeverityEnum(), counts.get(issue.getSeverityEnum()) + 1);
+      Integer currentCount = counts.get(issue.getSeverityEnum());
+      counts.put(issue.getSeverityEnum(), (currentCount != null ? currentCount : 0) + 1);
     }
 
     return counts;

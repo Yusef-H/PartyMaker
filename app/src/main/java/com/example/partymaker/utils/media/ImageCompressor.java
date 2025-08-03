@@ -112,7 +112,9 @@ public class ImageCompressor {
 
       InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
       BitmapFactory.decodeStream(inputStream, null, options);
-      inputStream.close();
+      if (inputStream != null) {
+        inputStream.close();
+      }
 
       // Calculate the sample size
       int sampleSize = calculateInSampleSize(options, maxWidth, maxHeight);
@@ -124,7 +126,9 @@ public class ImageCompressor {
 
       inputStream = context.getContentResolver().openInputStream(imageUri);
       Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, options);
-      inputStream.close();
+      if (inputStream != null) {
+        inputStream.close();
+      }
 
       return bitmap;
     } catch (Exception e) {

@@ -577,7 +577,7 @@ public class EditProfileActivity extends AppCompatActivity {
         uri,
         new ImageCompressor.CompressCallback() {
           @Override
-          public void onCompressSuccess(File compressedFile) {
+          public void onCompressSuccess(@NonNull File compressedFile) {
             ThreadUtils.runOnMainThread(
                 () -> {
                   showSuccess("Image compressed successfully. Uploading...");

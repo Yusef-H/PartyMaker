@@ -71,6 +71,14 @@
         <activity android:name=".ui.features.core.MainActivity"
             android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
 
+        <!-- Intro sliders -->
+        <activity android:name=".ui.features.intro.IntroSlider1Activity"
+            android:theme="@style/Theme.PartyMaker.IntroSlider" />
+        <activity android:name=".ui.features.intro.IntroSlider2Activity"
+            android:theme="@style/Theme.PartyMaker.IntroSlider" />
+        <activity android:name=".ui.features.intro.IntroSlider3Activity"
+            android:theme="@style/Theme.PartyMaker.IntroSlider" />
+
         <!-- Group-related screens -->
         <activity android:name=".ui.features.groups.members.FriendsAddActivity"
             android:theme="@style/Theme.PartyMaker.NoWindowBackground" />

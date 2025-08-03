@@ -2,6 +2,7 @@ package com.example.partymaker.data.local;
 
 import android.content.Context;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -62,14 +63,14 @@ public abstract class AppDatabase extends RoomDatabase {
   private static final RoomDatabase.Callback databaseCallback =
       new RoomDatabase.Callback() {
         @Override
-        public void onCreate(SupportSQLiteDatabase db) {
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
           super.onCreate(db);
           Log.i(TAG, "Database created for the first time");
           // Add any initial data setup here if needed
         }
 
         @Override
-        public void onOpen(SupportSQLiteDatabase db) {
+        public void onOpen(@NonNull SupportSQLiteDatabase db) {
           super.onOpen(db);
           Log.d(TAG, "Database opened, version: " + db.getVersion());
 
@@ -83,7 +84,7 @@ public abstract class AppDatabase extends RoomDatabase {
         }
 
         @Override
-        public void onDestructiveMigration(SupportSQLiteDatabase db) {
+        public void onDestructiveMigration(@NonNull SupportSQLiteDatabase db) {
           super.onDestructiveMigration(db);
           Log.w(TAG, "Destructive migration occurred - all data lost");
           DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), 6);

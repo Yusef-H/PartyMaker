@@ -594,7 +594,7 @@ public class LoginViewModel extends BaseViewModel {
             errorType = NetworkUtils.ErrorType.NETWORK_ERROR;
           } else if (errorMessage.toLowerCase().contains("email")
               || errorMessage.toLowerCase().contains("password")) {
-            errorType = NetworkUtils.ErrorType.AUTHENTICATION_ERROR;
+            // errorType is already AUTHENTICATION_ERROR, no need to reassign
           }
 
           setError(errorMessage, errorType);

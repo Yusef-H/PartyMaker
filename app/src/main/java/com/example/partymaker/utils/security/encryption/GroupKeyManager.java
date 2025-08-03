@@ -2,6 +2,7 @@ package com.example.partymaker.utils.security.encryption;
 
 import android.content.Context;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -114,7 +115,7 @@ public class GroupKeyManager {
           .addListenerForSingleValueEvent(
               new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                   try {
                     String groupKeyBase64 = null;
 
@@ -166,7 +167,7 @@ public class GroupKeyManager {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                   Log.e(TAG, "Failed to get existing group key", databaseError.toException());
                   future.complete(false);
                 }
@@ -205,7 +206,7 @@ public class GroupKeyManager {
           .addListenerForSingleValueEvent(
               new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                   try {
                     Map<String, Object> updates = new HashMap<>();
                     Map<String, Object> newMembers = new HashMap<>();
@@ -214,7 +215,7 @@ public class GroupKeyManager {
                     for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
                       String userId = memberSnapshot.getKey();
 
-                      if (!userId.equals(removedUserId)) {
+                      if (userId != null && !userId.equals(removedUserId)) {
                         // Add remaining member with new key
                         // Simplified: should encrypt per user's personal key
                         newMembers.put(userId, newGroupKeyBase64);
@@ -249,7 +250,7 @@ public class GroupKeyManager {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                   Log.e(TAG, "Failed to get group members", databaseError.toException());
                   future.complete(false);
                 }
@@ -280,7 +281,7 @@ public class GroupKeyManager {
           .addListenerForSingleValueEvent(
               new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                   try {
                     String encryptedGroupKey = dataSnapshot.getValue(String.class);
                     if (encryptedGroupKey == null) {
@@ -311,7 +312,7 @@ public class GroupKeyManager {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                   Log.e(TAG, "Failed to load group key", databaseError.toException());
                   future.complete(false);
                 }
@@ -342,13 +343,13 @@ public class GroupKeyManager {
           .addListenerForSingleValueEvent(
               new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                   boolean exists = dataSnapshot.exists();
                   future.complete(exists);
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                   Log.e(TAG, "Failed to check group membership", databaseError.toException());
                   future.complete(false);
                 }

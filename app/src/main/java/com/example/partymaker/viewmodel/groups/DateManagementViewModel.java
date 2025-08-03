@@ -671,7 +671,12 @@ public class DateManagementViewModel extends BaseViewModel {
       if (date != null && time != null) {
         Calendar selectedCal = Calendar.getInstance();
         Date parsedDate = dateFormat.parse(date);
-        selectedCal.setTime(parsedDate);
+        if (parsedDate != null) {
+          selectedCal.setTime(parsedDate);
+        } else {
+          Log.e(TAG, "Failed to parse date: " + date);
+          return;
+        }
 
         String[] timeParts = time.split(":");
         int hour = Integer.parseInt(timeParts[0]);

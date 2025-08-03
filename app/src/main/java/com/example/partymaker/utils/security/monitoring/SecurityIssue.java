@@ -37,6 +37,14 @@ public class SecurityIssue {
     this.description = description;
   }
 
+  public SecurityIssue(
+      Severity severityEnum, String title, String description, String recommendation) {
+    this.severity = severityEnum.name();
+    this.title = title;
+    this.description = description;
+    this.recommendation = recommendation;
+  }
+
   public String getId() {
     return id;
   }

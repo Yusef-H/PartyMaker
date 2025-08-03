@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.partymaker.BuildConfig;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
@@ -218,6 +219,12 @@ public class RegisterActivity extends AppCompatActivity {
 
   /** Creates a test user for debugging purposes */
   private void createTestUserIfNeeded() {
+    // WARNING: This method contains hardcoded credentials - FOR DEBUGGING ONLY
+    if (!BuildConfig.DEBUG) {
+      Log.w("RegisterActivity", "Test user creation skipped - not in debug mode");
+      return;
+    }
+
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     String testEmail = "1@1.com";
     String testPassword = "123456";

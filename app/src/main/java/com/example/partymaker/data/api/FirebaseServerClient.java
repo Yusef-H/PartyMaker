@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import androidx.preference.PreferenceManager;
+import com.example.partymaker.BuildConfig;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
@@ -1410,6 +1411,13 @@ public class FirebaseServerClient {
       connection.setConnectTimeout(timeout);
       connection.setReadTimeout(timeout);
 
+      // Set security headers
+      connection.setRequestProperty("User-Agent", "PartyMaker-Android/" + BuildConfig.VERSION_NAME);
+      connection.setRequestProperty("Accept", "application/json");
+
+      // Disable automatic redirects for security
+      connection.setInstanceFollowRedirects(false);
+
       Log.d(TAG, "Executing GET request to " + url + " with timeout: " + timeout + "ms");
       int responseCode = connection.getResponseCode();
       Log.d(TAG, "GET response code: " + responseCode + " for URL: " + url);
@@ -1483,9 +1491,12 @@ public class FirebaseServerClient {
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("POST");
       connection.setRequestProperty("Content-Type", "application/json");
+      connection.setRequestProperty("User-Agent", "PartyMaker-Android/" + BuildConfig.VERSION_NAME);
+      connection.setRequestProperty("Accept", "application/json");
       connection.setConnectTimeout(timeout);
       connection.setReadTimeout(timeout);
       connection.setDoOutput(true);
+      connection.setInstanceFollowRedirects(false);
 
       try (OutputStream os = connection.getOutputStream()) {
         byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);

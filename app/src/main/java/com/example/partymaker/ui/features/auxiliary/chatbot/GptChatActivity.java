@@ -133,7 +133,8 @@ public class GptChatActivity extends AppCompatActivity {
                   chatAdapter.notifyItemRangeInserted(0, visibleMessages.size());
                 } else if (visibleMessages.size() > previousSize) {
                   // New messages added
-                  chatAdapter.notifyItemRangeInserted(previousSize, visibleMessages.size() - previousSize);
+                  chatAdapter.notifyItemRangeInserted(
+                      previousSize, visibleMessages.size() - previousSize);
                 } else {
                   // Full refresh needed (rare case)
                   chatAdapter.notifyDataSetChanged();

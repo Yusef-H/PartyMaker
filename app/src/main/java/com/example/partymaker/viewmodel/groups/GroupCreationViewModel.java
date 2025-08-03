@@ -381,7 +381,7 @@ public class GroupCreationViewModel extends BaseViewModel {
                 && year >= Calendar.getInstance().get(Calendar.YEAR);
 
       } catch (NumberFormatException e) {
-        valid = false;
+        // valid is already false by default
       }
     }
 
@@ -401,7 +401,7 @@ public class GroupCreationViewModel extends BaseViewModel {
         valid = hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
 
       } catch (NumberFormatException e) {
-        valid = false;
+        // valid is already false by default
       }
     }
 

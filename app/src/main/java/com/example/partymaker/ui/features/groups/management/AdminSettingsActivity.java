@@ -237,7 +237,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
               uri,
               new ImageCompressor.CompressCallback() {
                 @Override
-                public void onCompressSuccess(File compressedFile) {
+                public void onCompressSuccess(@NonNull File compressedFile) {
                   ThreadUtils.runOnMainThread(
                       () -> {
                         Uri compressedUri = Uri.fromFile(compressedFile);
