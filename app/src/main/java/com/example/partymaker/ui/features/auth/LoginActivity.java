@@ -23,7 +23,7 @@ import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
-import com.example.partymaker.viewmodel.auth.LoginViewModel;
+import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -73,14 +73,13 @@ public class LoginActivity extends AppCompatActivity {
   /** Google sign-in button. */
   private SignInButton btnGoogleSignIn;
 
-  /** Google sign-in client. */
-  private GoogleSignInClient mGoogleSignInClient;
+  // Google Sign-In client now handled by AuthViewModel
 
   /** Firebase authentication instance. */
   private FirebaseAuth mAuth;
 
   /** Login ViewModel */
-  private LoginViewModel loginViewModel;
+  private AuthViewModel authViewModel;
 
   /** Loading state manager */
   private LoadingStateManager loadingStateManager;
@@ -100,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
     mAuth = FirebaseAuth.getInstance();
 
     // Initialize ViewModel
-    loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
     // Initialize UI components
     initializeUiComponents();
@@ -115,14 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     // Check server connectivity
     checkServerConnectivity();
 
-    // Configure Google Sign In
-    GoogleSignInOptions gso =
-        new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build();
-
-    mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    // Google Sign-In now configured in AuthViewModel
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
@@ -169,9 +161,9 @@ public class LoginActivity extends AppCompatActivity {
     loadingStateManager = null;
   }
 
-  /** Sets up observers for LoginViewModel LiveData */
+  /** Sets up observers for AuthViewModel LiveData */
   private void setupViewModelObservers() {
-    loginViewModel
+    authViewModel
         .getIsLoading()
         .observe(
             this,
@@ -186,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
               }
             });
 
-    loginViewModel
+    authViewModel
         .getErrorMessage()
         .observe(
             this,
@@ -197,14 +189,14 @@ public class LoginActivity extends AppCompatActivity {
                     errorMessage,
                     () -> {
                       // Retry logic - clear error and enable retry
-                      loginViewModel.clearMessages();
+                      authViewModel.clearMessages();
                     });
                 loadingStateManager.showError(errorMessage);
                 btnResetPass.setVisibility(View.VISIBLE);
               }
             });
 
-    loginViewModel
+    authViewModel
         .getSuccessMessage()
         .observe(
             this,
@@ -214,12 +206,12 @@ public class LoginActivity extends AppCompatActivity {
               }
             });
 
-    loginViewModel
-        .getLoginSuccess()
+    authViewModel
+        .getIsAuthenticated()
         .observe(
             this,
-            loginSuccess -> {
-              if (loginSuccess != null && loginSuccess) {
+            isAuthenticated -> {
+              if (isAuthenticated != null && isAuthenticated) {
                 UiStateManager.showSuccess(rootView, "Login successful!");
 
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -244,17 +236,8 @@ public class LoginActivity extends AppCompatActivity {
               }
             });
             
-    // Observer for email validation
-    loginViewModel.getIsEmailValid().observe(this, isValid -> {
-      // Update email field validation UI if needed
-    });
-    
-    // Observer for remember me state
-    loginViewModel.getRememberMe().observe(this, remember -> {
-      if (remember != null) {
-        cbRememberMe.setChecked(remember);
-      }
-    });
+    // Email validation and remember me features - simplified for AuthViewModel
+    // TODO: Add these features to AuthViewModel if needed
   }
 
   /** Forces the server URL to be set to Render */
@@ -375,11 +358,8 @@ public class LoginActivity extends AppCompatActivity {
               return;
             }
 
-            // Set remember me preference
-            loginViewModel.setRememberMe(cbRememberMe.isChecked());
-            
-            // Perform login
-            loginViewModel.loginWithEmail(email, password);
+            // Perform login with AuthViewModel
+            authViewModel.loginWithEmail(email, password);
 
             // Set user session using AuthHelper when login succeeds
             AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
@@ -389,8 +369,11 @@ public class LoginActivity extends AppCompatActivity {
     // Google Sign In button click listener
     btnGoogleSignIn.setOnClickListener(
         v -> {
-          Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-          startActivityForResult(signInIntent, RC_SIGN_IN);
+          GoogleSignInClient googleClient = authViewModel.getGoogleSignInClient();
+          if (googleClient != null) {
+            Intent signInIntent = googleClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+          }
         });
 
     // Press Here Onclick
@@ -422,15 +405,8 @@ public class LoginActivity extends AppCompatActivity {
 
     if (requestCode == RC_SIGN_IN) {
       Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-      try {
-        GoogleSignInAccount account = task.getResult(Exception.class);
-        if (account != null && account.getIdToken() != null) {
-          loginViewModel.loginWithGoogle(account.getIdToken());
-        }
-      } catch (Exception e) {
-        Log.e(TAG, "Google sign-in failed", e);
-        loginViewModel.handleError(e);
-      }
+      // Use AuthViewModel's Google Sign-In method
+      authViewModel.signInWithGoogle(task);
     }
   }
 
@@ -454,9 +430,8 @@ public class LoginActivity extends AppCompatActivity {
 
       @Override
       public void afterTextChanged(android.text.Editable s) {
-        // Validate using ViewModel
-        String email = s.toString().trim();
-        loginViewModel.validateEmail(email);
+        // Clear any previous errors when user types
+        authViewModel.clearMessages();
       }
     });
 
@@ -472,9 +447,8 @@ public class LoginActivity extends AppCompatActivity {
 
       @Override
       public void afterTextChanged(android.text.Editable s) {
-        // Validate using ViewModel
-        String password = s.toString();
-        loginViewModel.validatePassword(password);
+        // Clear any previous errors when user types
+        authViewModel.clearMessages();
       }
     });
   }
@@ -485,8 +459,8 @@ public class LoginActivity extends AppCompatActivity {
       Log.d(TAG, "Clearing previous authentication state to prevent auto-login");
 
       // Reset the ViewModel's authentication state
-      if (loginViewModel != null) {
-        loginViewModel.clearMessages();
+      if (authViewModel != null) {
+        authViewModel.clearMessages();
       }
 
       Log.d(TAG, "Authentication state cleared successfully");
