@@ -35,7 +35,7 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.viewmodel.auth.RegisterViewModel;
+import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -98,14 +98,17 @@ public class RegisterActivity extends AppCompatActivity {
   /** Progress indicator view. */
   private View progressIndicator;
 
+  /** Progress bar for loading state. */
+  private android.widget.ProgressBar progressBar;
+
   /** Animation state flag. */
   private boolean isAnimating = false;
 
   /** Number of completed fields. */
   private int completedFields = 0;
 
-  /** Registration ViewModel */
-  private RegisterViewModel registerViewModel;
+  /** Authentication ViewModel */
+  private AuthViewModel authViewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
     initializeViews();
 
     // Initialize ViewModel
-    registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
+    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
     setupViewModelObservers();
 
     // Create notification channel
@@ -142,155 +145,75 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Set up form progress tracking
     setupFormProgressTracking();
-    
-    // Set up real-time validation
-    setupRealTimeValidation();
   }
 
-  /** Sets up observers for RegisterViewModel LiveData */
+  /** Sets up observers for AuthViewModel LiveData */
   private void setupViewModelObservers() {
-    // Observe registration success
-    registerViewModel.getRegistrationSuccess().observe(this, success -> {
-      if (success != null && success) {
-        handleRegistrationSuccess();
-      }
-    });
-    
-    // Observe loading state
-    registerViewModel.getIsLoading().observe(this, isLoading -> {
-      if (isLoading != null) {
-        if (isLoading) {
-          showProgressIndicator(true);
-          btnRegister.setEnabled(false);
-        } else {
-          showProgressIndicator(false);
-          btnRegister.setEnabled(true);
-        }
-      }
-    });
-    
-    // Observe error messages
-    registerViewModel.getErrorMessage().observe(this, error -> {
-      if (error != null && !error.isEmpty()) {
-        showErrorMessage(error);
-      }
-    });
-    
-    // Observe success messages
-    registerViewModel.getSuccessMessage().observe(this, message -> {
-      if (message != null && !message.isEmpty()) {
-        showSuccessMessage(message);
-      }
-    });
-    
-    // Observe validation states
-    registerViewModel.getIsFormValid().observe(this, isValid -> {
-      if (isValid != null) {
-        btnRegister.setEnabled(isValid && !isLoading());
-      }
-    });
-    
-    // Observe individual field validation
-    registerViewModel.getIsEmailValid().observe(this, isValid -> {
-      updateFieldValidation(tilEmail, isValid);
-    });
-    
-    registerViewModel.getIsPasswordValid().observe(this, isValid -> {
-      updateFieldValidation(tilPassword, isValid);
-    });
-    
-    registerViewModel.getIsUsernameValid().observe(this, isValid -> {
-      updateFieldValidation(tilUsername, isValid);
-    });
-  }
-  
-  private boolean isLoading() {
-    Boolean loading = registerViewModel.getIsLoading().getValue();
-    return loading != null && loading;
-  }
-  
-  private void showErrorMessage(String message) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-  }
-  
-  private void showSuccessMessage(String message) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-  }
-  
-  private void updateFieldValidation(TextInputLayout layout, Boolean isValid) {
-    if (isValid != null) {
-      if (isValid) {
-        layout.setError(null);
-        layout.setHelperText("✓");
-      } else if (layout.getEditText() != null && 
-                 !layout.getEditText().getText().toString().trim().isEmpty()) {
-        layout.setHelperText(null);
-      }
-    }
-  }
-  
-  private void handleRegistrationSuccess() {
-    showCelebrationAnimation("");
-    // Navigate to login or main activity after delay
-    ThreadUtils.runOnMainThreadDelayed(() -> {
-      Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-      startActivity(intent);
-      finish();
-    }, 2000);
-  }
-  
-  private void showProgressIndicator(boolean show) {
-    if (progressIndicator != null) {
-      progressIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-    if (show) {
-      animateLoadingButton();
-    } else {
-      btnRegister.setText("Register");
-      btnRegister.clearAnimation();
-    }
-  }
-  
-  // Add text watchers for real-time validation
-  private void setupRealTimeValidation() {
-    etEmail.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-      
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {}
-      
-      @Override
-      public void afterTextChanged(Editable s) {
-        registerViewModel.validateEmail(s.toString());
-      }
-    });
-    
-    etUsername.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-      
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {}
-      
-      @Override
-      public void afterTextChanged(Editable s) {
-        registerViewModel.validateUsername(s.toString());
-      }
-    });
-    
-    etPassword.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-      
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {}
-      
-      @Override
-      public void afterTextChanged(Editable s) {
-        registerViewModel.validatePassword(s.toString());
-      }
-    });
+    authViewModel
+            .getIsLoading()
+            .observe(
+                    this,
+                    isLoading -> {
+                      btnRegister.setEnabled(!isLoading);
+                      if (progressBar != null) {
+                        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                      }
+                      if (isLoading) {
+                        animateLoadingButton();
+                      } else {
+                        btnRegister.setText(getString(R.string.register));
+                      }
+                    });
+
+    authViewModel
+            .getErrorMessage()
+            .observe(
+                    this,
+                    errorMessage -> {
+                      if (errorMessage != null) {
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                        // Re-enable button after error is shown
+                        btnRegister.setEnabled(true);
+                        btnRegister.setText(getString(R.string.register));
+                      }
+                    });
+
+    authViewModel
+            .getSuccessMessage()
+            .observe(
+                    this,
+                    successMessage -> {
+                      if (successMessage != null
+                              && successMessage.contains("Account created successfully")) {
+                        String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
+
+                        // Show celebration animation
+                        showCelebrationAnimation(username);
+
+                        // Send success notification
+                        sendSuccessNotification(username);
+
+                        // Navigate to login screen after celebration
+                        ThreadUtils.runOnMainThreadDelayed(
+                                () -> {
+                                  Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                  startActivity(intent);
+                                  finish();
+                                },
+                                3000);
+                      }
+                    });
+
+    authViewModel
+            .getIsRegistrationMode()
+            .observe(
+                    this,
+                    isRegistrationMode -> {
+                      // Set registration mode to true for this activity
+                      if (!isRegistrationMode) {
+                        authViewModel.setRegistrationMode(true);
+                      }
+                    });
   }
 
   /** Creates a test user for debugging purposes */
@@ -300,24 +223,24 @@ public class RegisterActivity extends AppCompatActivity {
     String testPassword = "123456";
 
     mAuth
-        .createUserWithEmailAndPassword(testEmail, testPassword)
-        .addOnCompleteListener(
-            task -> {
-              if (task.isSuccessful()) {
-                Log.d("RegisterActivity", "Test user created successfully");
-                // Create user in database
-                User testUser = new User("Test User", testEmail);
-                DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
-              } else {
-                // User might already exist, that's fine
-                Log.d(
-                    "RegisterActivity",
-                    "Test user creation failed: "
-                        + (task.getException() != null
-                            ? task.getException().getMessage()
-                            : "unknown error"));
-              }
-            });
+            .createUserWithEmailAndPassword(testEmail, testPassword)
+            .addOnCompleteListener(
+                    task -> {
+                      if (task.isSuccessful()) {
+                        Log.d("RegisterActivity", "Test user created successfully");
+                        // Create user in database
+                        User testUser = new User("Test User", testEmail);
+                        DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
+                      } else {
+                        // User might already exist, that's fine
+                        Log.d(
+                                "RegisterActivity",
+                                "Test user creation failed: "
+                                        + (task.getException() != null
+                                        ? task.getException().getMessage()
+                                        : "unknown error"));
+                      }
+                    });
   }
 
   /** Initializes all view components. */
@@ -340,6 +263,7 @@ public class RegisterActivity extends AppCompatActivity {
     imgRegister = findViewById(R.id.imgRegister);
     headerCard = findViewById(R.id.headerCard);
     formCard = findViewById(R.id.formCard);
+    progressBar = findViewById(R.id.progressBar);
 
     // Create password strength indicator
     createPasswordStrengthIndicator();
@@ -364,7 +288,7 @@ public class RegisterActivity extends AppCompatActivity {
     passwordStrengthBar.setProgress(0);
 
     LinearLayout.LayoutParams barParams =
-        new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+            new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
     barParams.weight = 1;
     barParams.rightMargin = 32;
     passwordStrengthBar.setLayoutParams(barParams);
@@ -430,8 +354,8 @@ public class RegisterActivity extends AppCompatActivity {
     // Add to root layout
     ViewGroup rootLayout = findViewById(android.R.id.content);
     ViewGroup.LayoutParams params =
-        new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     rootLayout.addView(celebrationLayout, params);
   }
 
@@ -496,26 +420,26 @@ public class RegisterActivity extends AppCompatActivity {
   private void setupEventHandlers() {
     // Register button click with animation
     btnRegister.setOnClickListener(
-        view -> {
-          if (!isAnimating && validateInputs()) {
-            animateButtonClick(btnRegister, this::signUp);
-          }
-        });
+            view -> {
+              if (!isAnimating && validateInputs()) {
+                animateButtonClick(btnRegister, this::signUp);
+              }
+            });
 
     // Login link click with animation
     btnPress.setOnClickListener(
-        view -> {
-          if (!isAnimating) {
-            animateButtonClick(
-                btnPress,
-                () -> {
-                  Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                  startActivity(intent);
-                  overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-                  finish();
-                });
-          }
-        });
+            view -> {
+              if (!isAnimating) {
+                animateButtonClick(
+                        btnPress,
+                        () -> {
+                          Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                          startActivity(intent);
+                          overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+                          finish();
+                        });
+              }
+            });
 
     // Add focus change animations
     setupFieldFocusAnimations();
@@ -523,10 +447,10 @@ public class RegisterActivity extends AppCompatActivity {
 
   private void setupFieldFocusAnimations() {
     View.OnFocusChangeListener focusListener =
-        (view, hasFocus) -> {
-          TextInputLayout layout = (TextInputLayout) view.getParent().getParent();
-          animateFieldFocus(layout, hasFocus);
-        };
+            (view, hasFocus) -> {
+              TextInputLayout layout = (TextInputLayout) view.getParent().getParent();
+              animateFieldFocus(layout, hasFocus);
+            };
 
     etEmail.setOnFocusChangeListener(focusListener);
     etUsername.setOnFocusChangeListener(focusListener);
@@ -569,39 +493,39 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Chain animations
     scaleDownSet.addListener(
-        new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(Animator animation) {
-            scaleUpSet.start();
-          }
-        });
+            new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                scaleUpSet.start();
+              }
+            });
 
     scaleUpSet.addListener(
-        new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(Animator animation) {
-            isAnimating = false;
-            action.run();
-          }
-        });
+            new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                isAnimating = false;
+                action.run();
+              }
+            });
 
     scaleDownSet.start();
   }
 
   private void setupPasswordStrengthIndicator() {
     etPassword.addTextChangedListener(
-        new TextWatcher() {
-          @Override
-          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            new TextWatcher() {
+              @Override
+              public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before, int count) {
-            updatePasswordStrength(s.toString());
-          }
+              @Override
+              public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updatePasswordStrength(s.toString());
+              }
 
-          @Override
-          public void afterTextChanged(Editable s) {}
-        });
+              @Override
+              public void afterTextChanged(Editable s) {}
+            });
   }
 
   @SuppressLint("SetTextI18n")
@@ -610,10 +534,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Animate progress bar
     ValueAnimator progressAnimator =
-        ValueAnimator.ofInt(passwordStrengthBar.getProgress(), strength);
+            ValueAnimator.ofInt(passwordStrengthBar.getProgress(), strength);
     progressAnimator.setDuration(300);
     progressAnimator.addUpdateListener(
-        animation -> passwordStrengthBar.setProgress((Integer) animation.getAnimatedValue()));
+            animation -> passwordStrengthBar.setProgress((Integer) animation.getAnimatedValue()));
     progressAnimator.start();
 
     // Update colors and text
@@ -637,8 +561,8 @@ public class RegisterActivity extends AppCompatActivity {
     passwordStrengthText.setText("Password strength:" + strengthText);
     passwordStrengthText.setTextColor(color);
     passwordStrengthBar
-        .getProgressDrawable()
-        .setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
+            .getProgressDrawable()
+            .setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
   }
 
   private int calculatePasswordStrength(String password) {
@@ -659,24 +583,28 @@ public class RegisterActivity extends AppCompatActivity {
 
   private void setupFormProgressTracking() {
     TextWatcher progressWatcher =
-        new TextWatcher() {
-          @Override
-          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            new TextWatcher() {
+              @Override
+              public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before, int count) {
-            updateFormProgress();
-            // Clear previous errors when user starts typing
-            registerViewModel.clearMessages();
-            // Ensure button is enabled when user types (unless in loading state)
-            if (!isLoading()) {
-              btnRegister.setEnabled(true);
-            }
-          }
+              @Override
+              public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateFormProgress();
+                // Clear previous errors when user starts typing
+                if (authViewModel != null) {
+                  authViewModel.clearError();
+                }
+                // Ensure button is enabled when user types (unless in loading state)
+                if (authViewModel != null
+                        && authViewModel.getIsLoading().getValue() != null
+                        && !authViewModel.getIsLoading().getValue()) {
+                  btnRegister.setEnabled(true);
+                }
+              }
 
-          @Override
-          public void afterTextChanged(Editable s) {}
-        };
+              @Override
+              public void afterTextChanged(Editable s) {}
+            };
 
     etEmail.addTextChangedListener(progressWatcher);
     etUsername.addTextChangedListener(progressWatcher);
@@ -687,12 +615,12 @@ public class RegisterActivity extends AppCompatActivity {
     int newCompletedFields = 0;
 
     if (!TextUtils.isEmpty(etEmail.getText())
-        && Patterns.EMAIL_ADDRESS.matcher(etEmail.getText().toString()).matches()) {
+            && Patterns.EMAIL_ADDRESS.matcher(etEmail.getText().toString()).matches()) {
       newCompletedFields++;
     }
 
     if (!TextUtils.isEmpty(etUsername.getText())
-        && etUsername.getText().toString().trim().length() >= 3) {
+            && etUsername.getText().toString().trim().length() >= 3) {
       newCompletedFields++;
     }
 
@@ -716,18 +644,18 @@ public class RegisterActivity extends AppCompatActivity {
     ValueAnimator widthAnimator = ValueAnimator.ofFloat(progressIndicator.getWidth(), targetWidth);
     widthAnimator.setDuration(300);
     widthAnimator.addUpdateListener(
-        animation -> {
-          ViewGroup.LayoutParams params = progressIndicator.getLayoutParams();
-          params.width = Math.round((Float) animation.getAnimatedValue());
-          progressIndicator.setLayoutParams(params);
-        });
+            animation -> {
+              ViewGroup.LayoutParams params = progressIndicator.getLayoutParams();
+              params.width = Math.round((Float) animation.getAnimatedValue());
+              progressIndicator.setLayoutParams(params);
+            });
     widthAnimator.start();
 
     // Change color based on progress
     int color =
-        completedFields == 3
-            ? Color.GREEN
-            : completedFields >= 2 ? Color.BLUE : completedFields == 1 ? Color.RED : Color.GRAY;
+            completedFields == 3
+                    ? Color.GREEN
+                    : completedFields >= 2 ? Color.BLUE : completedFields == 1 ? Color.RED : Color.GRAY;
 
     progressIndicator.setBackgroundColor(color);
   }
@@ -751,9 +679,9 @@ public class RegisterActivity extends AppCompatActivity {
     tilUsername.setError(null);
     tilPassword.setError(null);
 
-    String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
-    String username = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
-    String password = etPassword.getText() != null ? etPassword.getText().toString() : "";
+    String email = Objects.requireNonNull(etEmail.getText()).toString().trim();
+    String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
+    String password = Objects.requireNonNull(etPassword.getText()).toString();
 
     // Email validation with animation
     if (TextUtils.isEmpty(email)) {
@@ -791,7 +719,7 @@ public class RegisterActivity extends AppCompatActivity {
   private void setErrorWithAnimation(TextInputLayout layout, String error) {
     // Shake animation for error
     ObjectAnimator shake =
-        ObjectAnimator.ofFloat(layout, "translationX", 0, 25, -25, 25, -25, 15, -15, 6, -6, 0);
+            ObjectAnimator.ofFloat(layout, "translationX", 0, 25, -25, 25, -25, 15, -15, 6, -6, 0);
     shake.setDuration(600);
     shake.start();
 
@@ -799,18 +727,19 @@ public class RegisterActivity extends AppCompatActivity {
   }
 
   private void signUp() {
-    final String email = etEmail.getText() != null ? etEmail.getText().toString().trim().toLowerCase() : "";
-    final String username = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
-    String password = etPassword.getText() != null ? etPassword.getText().toString() : "";
+    // Disable button during registration with loading animation
+    btnRegister.setEnabled(false);
 
-    // Validate input before proceeding
-    if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
-      Log.w("RegisterActivity", "signUp called with empty fields - validation should have caught this");
-      return;
-    }
+    // Create loading animation
+    animateLoadingButton();
 
-    // Use RegisterViewModel for registration
-    registerViewModel.registerUser(email, password, username, username);
+    final String email = Objects.requireNonNull(etEmail.getText()).toString().trim().toLowerCase();
+    final String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
+    String password = Objects.requireNonNull(etPassword.getText()).toString();
+    String confirmPassword = password; // In this case, we don't have a separate confirm field
+
+    // Use AuthViewModel for registration
+    authViewModel.registerWithEmail(email, password, confirmPassword, username);
   }
 
   @SuppressLint("SetTextI18n")
@@ -870,7 +799,7 @@ public class RegisterActivity extends AppCompatActivity {
     for (int i = 0; i < 10; i++) {
       View confetti = new View(this);
       confetti.setBackgroundColor(
-          Color.HSVToColor(new float[] {(float) (Math.random() * 360), 1f, 1f}));
+              Color.HSVToColor(new float[] {(float) (Math.random() * 360), 1f, 1f}));
       confetti.setLayoutParams(new ViewGroup.LayoutParams(20, 20));
 
       // Random position
@@ -890,12 +819,12 @@ public class RegisterActivity extends AppCompatActivity {
       confettiSet.setStartDelay((long) (Math.random() * 500));
 
       confettiSet.addListener(
-          new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-              rootLayout.removeView(confetti);
-            }
-          });
+              new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                  rootLayout.removeView(confetti);
+                }
+              });
 
       confettiSet.start();
     }
@@ -925,15 +854,15 @@ public class RegisterActivity extends AppCompatActivity {
 
   private void sendSuccessNotification(String username) {
     NotificationCompat.Builder builder =
-        new NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_cake)
-            .setContentTitle("Registration completed successfully!")
-            .setContentText("Welcome " + username + "! Start creating amazing parties")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true);
+            new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_cake)
+                    .setContentTitle("Registration completed successfully!")
+                    .setContentText("Welcome " + username + "! Start creating amazing parties")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
 
     NotificationManager notificationManager =
-        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     notificationManager.notify(1, builder.build());
   }
 }
