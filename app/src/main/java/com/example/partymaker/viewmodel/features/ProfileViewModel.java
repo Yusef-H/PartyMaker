@@ -301,8 +301,9 @@ public class ProfileViewModel extends ViewModel {
                     // Create a User object manually from the Map
                     User user = new User();
 
-                    // Set the userKey
+                    // Set the userKey - ensure it's using the correct format
                     user.setUserKey(userKey);
+                    Log.d(TAG, "Set userKey to: " + userKey + " (from email: " + userEmail + ")");
 
                     // Set email
                     if (userData.containsKey("email")) {
@@ -372,7 +373,18 @@ public class ProfileViewModel extends ViewModel {
       return;
     }
 
-    String userId = user.getUserKey();
+    // Get the user key from the current user's email to ensure consistency
+    String userEmail = user.getEmail();
+    if (userEmail == null || userEmail.isEmpty()) {
+      Log.e(TAG, "Cannot update current user: No email found");
+      errorMessage.setValue("No email found for current user");
+      return;
+    }
+    
+    // Use the same email-to-key conversion as in loadCurrentUser
+    String userId = userEmail.replace('.', ' ');
+    Log.d(TAG, "Using userKey for update: " + userId + " (from email: " + userEmail + ")");
+    
     if (userId.isEmpty()) {
       Log.e(TAG, "Cannot update current user: Invalid user key");
       errorMessage.setValue("Invalid user key");

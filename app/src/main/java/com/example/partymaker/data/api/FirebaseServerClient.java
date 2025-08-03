@@ -570,8 +570,8 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            // URL encode the userId to handle special characters like @ and .
-            String encodedUserId = java.net.URLEncoder.encode(userId, "UTF-8");
+            // Manually encode only problematic characters, preserve spaces as-is
+            String encodedUserId = userId.replace("@", "%40").replace("/", "%2F").replace("?", "%3F").replace("#", "%23");
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String response = makeHttpRequest(url, "GET", null);
             return gson.fromJson(response, User.class);
@@ -605,8 +605,8 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            // URL encode the userId to handle special characters like @ and .
-            String encodedUserId = java.net.URLEncoder.encode(userId, "UTF-8");
+            // Manually encode only problematic characters, preserve spaces as-is
+            String encodedUserId = userId.replace("@", "%40").replace("/", "%2F").replace("?", "%3F").replace("#", "%23");
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
             String response = makeHttpRequest(url, "PUT", json);
@@ -683,8 +683,8 @@ public class FirebaseServerClient {
         () -> {
           // Background operation
           try {
-            // URL encode the userId to handle special characters like @ and .
-            String encodedUserId = java.net.URLEncoder.encode(userId, "UTF-8");
+            // Manually encode only problematic characters, preserve spaces as-is
+            String encodedUserId = userId.replace("@", "%40").replace("/", "%2F").replace("?", "%3F").replace("#", "%23");
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(updates);
             String response = makeHttpRequest(url, "PUT", json);
