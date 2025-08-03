@@ -19,9 +19,9 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.core.IntentExtrasManager;
-import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.business.sharing.ContentSharingManager;
+import com.example.partymaker.utils.core.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import java.util.HashMap;
 import java.util.Objects;
@@ -138,7 +138,8 @@ public class JoinGroupActivity extends AppCompatActivity {
           view -> {
             if (finalI == 0) // open 1,1 (1) Location
             {
-              MapUtilitiesManager.showGroupLocationOnGoogleMaps(GroupLocation, JoinGroupActivity.this);
+              MapUtilitiesManager.showGroupLocationOnGoogleMaps(
+                  GroupLocation, JoinGroupActivity.this);
             } else if (finalI == 1) // open 1,2 (2) Date
             {
               IsClicked = isClicked(IsClicked);

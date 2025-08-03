@@ -202,7 +202,7 @@
                     app:helperTextTextColor="?attr/colorOnSurfaceVariant"
                     app:hintTextColor="?attr/colorPrimary"
                     app:placeholderText="@string/enter_secure_password"
-                    app:startIconDrawable="@drawable/ic_password"
+                    app:startIconDrawable="@drawable/ic_password_custom"
                     app:startIconTint="?attr/colorPrimary"
                     tools:ignore="PrivateResource">
 

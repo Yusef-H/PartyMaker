@@ -27,7 +27,6 @@ import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -36,7 +35,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Activity for user login, including email/password and Google sign-in. Handles authentication,
@@ -235,7 +233,7 @@ public class LoginActivity extends AppCompatActivity {
                     800);
               }
             });
-            
+
     // Email validation and remember me features - simplified for AuthViewModel
     // TODO: Add these features to AuthViewModel if needed
   }
@@ -343,7 +341,8 @@ public class LoginActivity extends AppCompatActivity {
           private void SignIn() {
             // Safely get email and password values
             String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
-            String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
+            String password =
+                etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
 
             // Validate input before proceeding
             if (email.isEmpty()) {
@@ -351,7 +350,7 @@ public class LoginActivity extends AppCompatActivity {
               etEmail.requestFocus();
               return;
             }
-            
+
             if (password.isEmpty()) {
               etPassword.setError("Please enter your password");
               etPassword.requestFocus();
@@ -412,45 +411,47 @@ public class LoginActivity extends AppCompatActivity {
 
   /** Setup text watchers for real-time validation */
   private void setupTextWatchers() {
-    etEmail.addTextChangedListener(new android.text.TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    etEmail.addTextChangedListener(
+        new android.text.TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // Clear error when user starts typing
-        etEmail.setError(null);
-        
-        // Validate email format in real-time
-        String email = s.toString().trim();
-        if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-          etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
-        }
-      }
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // Clear error when user starts typing
+            etEmail.setError(null);
 
-      @Override
-      public void afterTextChanged(android.text.Editable s) {
-        // Clear any previous errors when user types
-        authViewModel.clearMessages();
-      }
-    });
+            // Validate email format in real-time
+            String email = s.toString().trim();
+            if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+              etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
+            }
+          }
 
-    etPassword.addTextChangedListener(new android.text.TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+          @Override
+          public void afterTextChanged(android.text.Editable s) {
+            // Clear any previous errors when user types
+            authViewModel.clearMessages();
+          }
+        });
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // Clear error when user starts typing
-        etPassword.setError(null);
-      }
+    etPassword.addTextChangedListener(
+        new android.text.TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      @Override
-      public void afterTextChanged(android.text.Editable s) {
-        // Clear any previous errors when user types
-        authViewModel.clearMessages();
-      }
-    });
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // Clear error when user starts typing
+            etPassword.setError(null);
+          }
+
+          @Override
+          public void afterTextChanged(android.text.Editable s) {
+            // Clear any previous errors when user types
+            authViewModel.clearMessages();
+          }
+        });
   }
 
   /** Clears previous authentication state to prevent auto-login */

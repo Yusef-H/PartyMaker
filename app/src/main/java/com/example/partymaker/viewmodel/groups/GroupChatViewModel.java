@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.viewmodel.BaseViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -24,16 +24,16 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
 import com.example.partymaker.ui.features.auth.LoginActivity;
 import com.example.partymaker.ui.features.auxiliary.chatbot.GptChatActivity;
-import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
 import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
+import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.ui.navigation.NavigationManager;
+import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
+import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
 
       // Show a toast only if requested and if we haven't shown it already
       if (show && showToast && !loadingToastShown) {
-        Toast.makeText(this, "Loading your groups... (may take a few seconds)", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Loading your groups... (may take a few seconds)", Toast.LENGTH_LONG)
+            .show();
         loadingToastShown = true;
       }
     } catch (Exception e) {

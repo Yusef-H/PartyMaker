@@ -11,11 +11,13 @@
     <domain-config>
         <!-- PartyMaker backend server -->
         <domain includeSubdomains="true">partymaker.onrender.com</domain>
+        <!-- Removed pin-set as it was empty and causing errors -->
+        <!-- To add certificate pinning later, uncomment and add actual pins:
         <pin-set expiration="2025-12-31">
-            <!-- Add your server's certificate pins here -->
-            <!-- Example: <pin digest="SHA-256">base64==</pin> -->
-            <!-- You'll need to get these from your server's SSL certificate -->
+            <pin digest="SHA-256">actual_pin_here</pin>
+            <pin digest="SHA-256">backup_pin_here</pin>
         </pin-set>
+        -->
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

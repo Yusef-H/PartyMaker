@@ -135,7 +135,7 @@ public class GroupRepository {
             if (group != null && isInitialized) {
               // Decode URL-encoded group data
               decodeGroupData(group);
-              
+
               // Cache the group locally
               localDataSource.saveItem(
                   groupKey,
@@ -720,39 +720,49 @@ public class GroupRepository {
     Map<String, Object> updates = new HashMap<>();
     updates.put("friendKeys/" + userKey, true);
 
-    updateGroup(groupKey, updates, new OperationCallback() {
-      @Override
-      public void onComplete() {
-        Log.d(TAG, "User added to group, now adding to encryption");
-        
-        // Add user to group encryption
-        if (context != null) {
-          try {
-            GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
-            groupKeyManager.addUserToGroupEncryption(groupKey, userKey).thenAccept(success -> {
-              if (success) {
-                Log.i(TAG, "User added to group encryption successfully");
-                callback.onComplete();
-              } else {
-                Log.w(TAG, "Failed to add user to group encryption, but group join succeeded");
-                callback.onComplete(); // Still complete the join, encryption can be retried later
+    updateGroup(
+        groupKey,
+        updates,
+        new OperationCallback() {
+          @Override
+          public void onComplete() {
+            Log.d(TAG, "User added to group, now adding to encryption");
+
+            // Add user to group encryption
+            if (context != null) {
+              try {
+                GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
+                groupKeyManager
+                    .addUserToGroupEncryption(groupKey, userKey)
+                    .thenAccept(
+                        success -> {
+                          if (success) {
+                            Log.i(TAG, "User added to group encryption successfully");
+                            callback.onComplete();
+                          } else {
+                            Log.w(
+                                TAG,
+                                "Failed to add user to group encryption, but group join succeeded");
+                            callback
+                                .onComplete(); // Still complete the join, encryption can be retried
+                            // later
+                          }
+                        });
+              } catch (Exception e) {
+                Log.e(TAG, "Error adding user to group encryption", e);
+                callback.onComplete(); // Still complete the join
               }
-            });
-          } catch (Exception e) {
-            Log.e(TAG, "Error adding user to group encryption", e);
-            callback.onComplete(); // Still complete the join
+            } else {
+              Log.w(TAG, "Context is null, cannot add to group encryption");
+              callback.onComplete();
+            }
           }
-        } else {
-          Log.w(TAG, "Context is null, cannot add to group encryption");
-          callback.onComplete();
-        }
-      }
-      
-      @Override
-      public void onError(String error) {
-        callback.onError(error);
-      }
-    });
+
+          @Override
+          public void onError(String error) {
+            callback.onError(error);
+          }
+        });
   }
 
   /**
@@ -779,39 +789,49 @@ public class GroupRepository {
     Map<String, Object> updates = new HashMap<>();
     updates.put("friendKeys/" + userKey, null); // null removes the field in Firebase
 
-    updateGroup(groupKey, updates, new OperationCallback() {
-      @Override
-      public void onComplete() {
-        Log.d(TAG, "User removed from group, now removing from encryption and rotating key");
-        
-        // Remove user from group encryption and rotate key for security
-        if (context != null) {
-          try {
-            GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
-            groupKeyManager.removeUserAndRotateKey(groupKey, userKey).thenAccept(success -> {
-              if (success) {
-                Log.i(TAG, "User removed from group encryption and key rotated successfully");
-                callback.onComplete();
-              } else {
-                Log.w(TAG, "Failed to remove user from group encryption, but group leave succeeded");
+    updateGroup(
+        groupKey,
+        updates,
+        new OperationCallback() {
+          @Override
+          public void onComplete() {
+            Log.d(TAG, "User removed from group, now removing from encryption and rotating key");
+
+            // Remove user from group encryption and rotate key for security
+            if (context != null) {
+              try {
+                GroupKeyManager groupKeyManager = new GroupKeyManager(context, userKey);
+                groupKeyManager
+                    .removeUserAndRotateKey(groupKey, userKey)
+                    .thenAccept(
+                        success -> {
+                          if (success) {
+                            Log.i(
+                                TAG,
+                                "User removed from group encryption and key rotated successfully");
+                            callback.onComplete();
+                          } else {
+                            Log.w(
+                                TAG,
+                                "Failed to remove user from group encryption, but group leave succeeded");
+                            callback.onComplete(); // Still complete the leave
+                          }
+                        });
+              } catch (Exception e) {
+                Log.e(TAG, "Error removing user from group encryption", e);
                 callback.onComplete(); // Still complete the leave
               }
-            });
-          } catch (Exception e) {
-            Log.e(TAG, "Error removing user from group encryption", e);
-            callback.onComplete(); // Still complete the leave
+            } else {
+              Log.w(TAG, "Context is null, cannot remove from group encryption");
+              callback.onComplete();
+            }
           }
-        } else {
-          Log.w(TAG, "Context is null, cannot remove from group encryption");
-          callback.onComplete();
-        }
-      }
-      
-      @Override
-      public void onError(String error) {
-        callback.onError(error);
-      }
-    });
+
+          @Override
+          public void onError(String error) {
+            callback.onError(error);
+          }
+        });
   }
 
   /** Clears all cached data and database entries */
@@ -826,30 +846,33 @@ public class GroupRepository {
   }
 
   // ViewModel-compatible wrapper methods
-  
+
   /**
    * Gets a group by its key (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param callback Callback to receive the group
    */
   public void getGroup(String groupKey, final Callback<Group> callback) {
-    getGroup(groupKey, new DataCallback<Group>() {
-      @Override
-      public void onDataLoaded(Group group) {
-        callback.onSuccess(group);
-      }
-      
-      @Override
-      public void onError(String error) {
-        callback.onError(new Exception(error));
-      }
-    }, false);
+    getGroup(
+        groupKey,
+        new DataCallback<Group>() {
+          @Override
+          public void onDataLoaded(Group group) {
+            callback.onSuccess(group);
+          }
+
+          @Override
+          public void onError(String error) {
+            callback.onError(new Exception(error));
+          }
+        },
+        false);
   }
-  
+
   /**
    * Gets public groups (ViewModel wrapper).
-   * 
+   *
    * @param forceRefresh Whether to force refresh
    * @param callback Callback to receive the groups
    */
@@ -858,10 +881,10 @@ public class GroupRepository {
     List<Group> emptyList = new ArrayList<>();
     callback.onSuccess(emptyList);
   }
-  
+
   /**
    * Creates a new group (ViewModel wrapper).
-   * 
+   *
    * @param group The group to create
    * @param callback Callback to receive the created group
    */
@@ -870,14 +893,14 @@ public class GroupRepository {
       callback.onError(new Exception("Group cannot be null"));
       return;
     }
-    
+
     // Use existing functionality or add implementation
     callback.onSuccess(group);
   }
-  
+
   /**
    * Updates a group (ViewModel wrapper).
-   * 
+   *
    * @param group The group to update
    * @param callback Callback to receive the updated group
    */
@@ -886,67 +909,74 @@ public class GroupRepository {
       callback.onError(new Exception("Invalid group"));
       return;
     }
-    
+
     callback.onSuccess(group);
   }
-  
+
   /**
    * Joins a group (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param userKey The user key
    * @param callback Callback for operation result
    */
   public void joinGroup(String groupKey, String userKey, final Callback<Boolean> callback) {
-    joinGroup(groupKey, userKey, new OperationCallback() {
-      @Override
-      public void onComplete() {
-        callback.onSuccess(true);
-      }
-      
-      @Override
-      public void onError(String error) {
-        callback.onError(new Exception(error));
-      }
-    });
+    joinGroup(
+        groupKey,
+        userKey,
+        new OperationCallback() {
+          @Override
+          public void onComplete() {
+            callback.onSuccess(true);
+          }
+
+          @Override
+          public void onError(String error) {
+            callback.onError(new Exception(error));
+          }
+        });
   }
-  
+
   /**
    * Leaves a group (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param userKey The user key
    * @param callback Callback for operation result
    */
   public void leaveGroup(String groupKey, String userKey, final Callback<Boolean> callback) {
-    leaveGroup(groupKey, userKey, new OperationCallback() {
-      @Override
-      public void onComplete() {
-        callback.onSuccess(true);
-      }
-      
-      @Override
-      public void onError(String error) {
-        callback.onError(new Exception(error));
-      }
-    });
+    leaveGroup(
+        groupKey,
+        userKey,
+        new OperationCallback() {
+          @Override
+          public void onComplete() {
+            callback.onSuccess(true);
+          }
+
+          @Override
+          public void onError(String error) {
+            callback.onError(new Exception(error));
+          }
+        });
   }
-  
+
   /**
    * Invites a member to group (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param userKey The user key to invite
    * @param callback Callback for operation result
    */
-  public void inviteMemberToGroup(String groupKey, String userKey, final Callback<Boolean> callback) {
+  public void inviteMemberToGroup(
+      String groupKey, String userKey, final Callback<Boolean> callback) {
     // Simplified implementation
     callback.onSuccess(true);
   }
-  
+
   /**
    * Adds a member to group (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param userKey The user key to add
    * @param callback Callback for operation result
@@ -954,75 +984,78 @@ public class GroupRepository {
   public void addMemberToGroup(String groupKey, String userKey, final Callback<Boolean> callback) {
     joinGroup(groupKey, userKey, callback);
   }
-  
+
   /**
    * Removes a member from group (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param userKey The user key to remove
    * @param callback Callback for operation result
    */
-  public void removeMemberFromGroup(String groupKey, String userKey, final Callback<Boolean> callback) {
+  public void removeMemberFromGroup(
+      String groupKey, String userKey, final Callback<Boolean> callback) {
     leaveGroup(groupKey, userKey, callback);
   }
-  
+
   /**
    * Updates attendance status (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param userKey The user key
    * @param isComing Whether the user is coming
    * @param callback Callback for operation result
    */
-  public void updateAttendanceStatus(String groupKey, String userKey, boolean isComing, final Callback<Boolean> callback) {
+  public void updateAttendanceStatus(
+      String groupKey, String userKey, boolean isComing, final Callback<Boolean> callback) {
     // Simplified implementation
     callback.onSuccess(true);
   }
-  
+
   /**
    * Deletes a group (ViewModel wrapper).
-   * 
+   *
    * @param groupKey The group key
    * @param callback Callback for operation result
    */
   public void deleteGroup(String groupKey, final Callback<Boolean> callback) {
-    deleteGroup(groupKey, new OperationCallback() {
-      @Override
-      public void onComplete() {
-        callback.onSuccess(true);
-      }
-      
-      @Override
-      public void onError(String error) {
-        callback.onError(new Exception(error));
-      }
-    });
+    deleteGroup(
+        groupKey,
+        new OperationCallback() {
+          @Override
+          public void onComplete() {
+            callback.onSuccess(true);
+          }
+
+          @Override
+          public void onError(String error) {
+            callback.onError(new Exception(error));
+          }
+        });
   }
 
   // Re-use DataSource interfaces for consistency
   public interface DataCallback<T> extends DataSource.DataCallback<T> {}
 
   public interface OperationCallback extends DataSource.OperationCallback {}
-  
-  /**
-   * Decodes URL-encoded strings in group data.
-   */
+
+  /** Decodes URL-encoded strings in group data. */
   private void decodeGroupData(Group group) {
     if (group == null) return;
-    
+
     try {
       // Decode group name if it contains URL-encoded characters
       if (group.getGroupName() != null) {
         String decodedName = java.net.URLDecoder.decode(group.getGroupName(), "UTF-8");
         group.setGroupName(decodedName);
       }
-      
+
       // Decode group description if it contains URL-encoded characters
       if (group.getGroupDescription() != null) {
-        String decodedDescription = java.net.URLDecoder.decode(group.getGroupDescription(), "UTF-8");
+        String decodedDescription =
+            java.net.URLDecoder.decode(group.getGroupDescription(), "UTF-8");
         group.setGroupDescription(decodedDescription);
       }
-      
+
       // Add more fields as needed
     } catch (Exception e) {
       Log.w(TAG, "Failed to decode group data", e);
@@ -1032,7 +1065,7 @@ public class GroupRepository {
   /** Interface for generic callbacks used by ViewModels */
   public interface Callback<T> {
     void onSuccess(T result);
-    
+
     void onError(Exception error);
   }
 }

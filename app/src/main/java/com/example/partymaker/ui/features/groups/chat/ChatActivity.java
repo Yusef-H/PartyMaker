@@ -24,11 +24,11 @@ import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.ChatAdapter;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.security.encryption.GroupMessageEncryption;
-import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.viewmodel.groups.GroupChatViewModel;
 import java.util.ArrayList;
 import java.util.Date;
@@ -141,7 +141,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Set the group key in ViewModel
     viewModel.setGroupKey(GroupKey);
-    
+
     // Initialize encryption for this group
     initializeGroupEncryption();
   }
@@ -152,36 +152,46 @@ public class ChatActivity extends AppCompatActivity {
       Log.w(TAG, "Cannot initialize encryption: missing UserKey or GroupKey");
       return;
     }
-    
+
     try {
       // Initialize encryption managers
       groupKeyManager = new GroupKeyManager(this, UserKey);
       groupEncryption = groupKeyManager.getEncryptionManager();
-      
+
       // Check if user is already a member of this group's encryption
-      groupKeyManager.isGroupMember(GroupKey).thenAccept(isMember -> {
-        if (!isMember) {
-          Log.i(TAG, "User not in group encryption, adding automatically");
-          // Auto-add current user to group encryption
-          groupKeyManager.addUserToGroupEncryption(GroupKey, UserKey).thenAccept(success -> {
-            if (success) {
-              Log.i(TAG, "Successfully added user to group encryption");
-              // Now initialize for existing group
-              groupKeyManager.initializeForExistingGroup(GroupKey);
-            } else {
-              Log.e(TAG, "Failed to add user to group encryption");
-              Toast.makeText(this, "Warning: Could not setup message encryption", Toast.LENGTH_SHORT).show();
-            }
-          });
-        } else {
-          Log.i(TAG, "User already in group encryption, initializing");
-          // Initialize encryption for existing group
-          groupKeyManager.initializeForExistingGroup(GroupKey);
-        }
-      });
-      
+      groupKeyManager
+          .isGroupMember(GroupKey)
+          .thenAccept(
+              isMember -> {
+                if (!isMember) {
+                  Log.i(TAG, "User not in group encryption, adding automatically");
+                  // Auto-add current user to group encryption
+                  groupKeyManager
+                      .addUserToGroupEncryption(GroupKey, UserKey)
+                      .thenAccept(
+                          success -> {
+                            if (success) {
+                              Log.i(TAG, "Successfully added user to group encryption");
+                              // Now initialize for existing group
+                              groupKeyManager.initializeForExistingGroup(GroupKey);
+                            } else {
+                              Log.e(TAG, "Failed to add user to group encryption");
+                              Toast.makeText(
+                                      this,
+                                      "Warning: Could not setup message encryption",
+                                      Toast.LENGTH_SHORT)
+                                  .show();
+                            }
+                          });
+                } else {
+                  Log.i(TAG, "User already in group encryption, initializing");
+                  // Initialize encryption for existing group
+                  groupKeyManager.initializeForExistingGroup(GroupKey);
+                }
+              });
+
       Log.i(TAG, "Group encryption initialization started for: " + GroupKey);
-      
+
     } catch (Exception e) {
       Log.e(TAG, "Failed to initialize group encryption", e);
       Toast.makeText(this, "Warning: Message encryption not available", Toast.LENGTH_SHORT).show();
@@ -359,7 +369,8 @@ public class ChatActivity extends AppCompatActivity {
     ChatMessage botMsg = new ChatMessage();
     botMsg.setMessageUser("PartyBot");
     Calendar c = Calendar.getInstance();
-    android.icu.text.SimpleDateFormat sdf = new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
+    android.icu.text.SimpleDateFormat sdf =
+        new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     String strDate = sdf.format(c.getTime());
 
     // Generate a unique key for the bot message
@@ -423,7 +434,9 @@ public class ChatActivity extends AppCompatActivity {
               for (ChatMessage message : messages) {
                 if (message != null && message.getMessageTime() == null) {
                   // Convert timestamp to messageTime for sorting
-                  android.icu.text.SimpleDateFormat dateFormat = new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                  android.icu.text.SimpleDateFormat dateFormat =
+                      new android.icu.text.SimpleDateFormat(
+                          "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                   String timeString = dateFormat.format(new Date(message.getTimestamp()));
                   message.setMessageTime(timeString);
                   Log.d(TAG, "ShowData: Set messageTime from timestamp: " + timeString);
@@ -441,7 +454,9 @@ public class ChatActivity extends AppCompatActivity {
                       messages.set(i, decryptedMessage);
                       Log.d(TAG, "ShowData: Message decrypted: " + message.getLogSafeSummary());
                     } else {
-                      Log.w(TAG, "ShowData: Failed to decrypt message: " + message.getLogSafeSummary());
+                      Log.w(
+                          TAG,
+                          "ShowData: Failed to decrypt message: " + message.getLogSafeSummary());
                     }
                   }
                 }
@@ -462,8 +477,16 @@ public class ChatActivity extends AppCompatActivity {
               Log.d(TAG, "ShowData: Message order after sorting:");
               for (int i = 0; i < Math.min(5, messages.size()); i++) {
                 ChatMessage msg = messages.get(i);
-                Log.d(TAG, "  [" + i + "] " + new Date(msg.getTimestamp()) + " - " + 
-                      (msg.getMessage() != null ? msg.getMessage().substring(0, Math.min(20, msg.getMessage().length())) : "null"));
+                Log.d(
+                    TAG,
+                    "  ["
+                        + i
+                        + "] "
+                        + new Date(msg.getTimestamp())
+                        + " - "
+                        + (msg.getMessage() != null
+                            ? msg.getMessage().substring(0, Math.min(20, msg.getMessage().length()))
+                            : "null"));
               }
 
               // Update the adapter
@@ -477,18 +500,34 @@ public class ChatActivity extends AppCompatActivity {
                     // Scroll to the bottom (newest message)
                     if (adapter.getCount() > 0) {
                       int lastPosition = adapter.getCount() - 1;
-                      Log.d(TAG, "ShowData: Scrolling to position " + lastPosition + " out of " + adapter.getCount() + " messages");
-                      
+                      Log.d(
+                          TAG,
+                          "ShowData: Scrolling to position "
+                              + lastPosition
+                              + " out of "
+                              + adapter.getCount()
+                              + " messages");
+
                       // Check what's the last message
                       ChatMessage lastMessage = messages.get(lastPosition);
-                      Log.d(TAG, "ShowData: Last message at position " + lastPosition + ": " + 
-                            new Date(lastMessage.getTimestamp()) + " - " + 
-                            (lastMessage.getMessage() != null ? lastMessage.getMessage().substring(0, Math.min(20, lastMessage.getMessage().length())) : "null"));
-                      
-                      lv4.post(() -> {
-                        lv4.setSelection(lastPosition);
-                        lv4.smoothScrollToPosition(lastPosition);
-                      });
+                      Log.d(
+                          TAG,
+                          "ShowData: Last message at position "
+                              + lastPosition
+                              + ": "
+                              + new Date(lastMessage.getTimestamp())
+                              + " - "
+                              + (lastMessage.getMessage() != null
+                                  ? lastMessage
+                                      .getMessage()
+                                      .substring(0, Math.min(20, lastMessage.getMessage().length()))
+                                  : "null"));
+
+                      lv4.post(
+                          () -> {
+                            lv4.setSelection(lastPosition);
+                            lv4.smoothScrollToPosition(lastPosition);
+                          });
                     }
                     Log.d(TAG, "ShowData: Adapter updated successfully");
                   });
@@ -584,13 +623,13 @@ public class ChatActivity extends AppCompatActivity {
       message.setSenderName(UserKey); // For now, use UserKey as display name
       message.setMessage(messageText);
       message.setTimestamp(System.currentTimeMillis());
-      
+
       // Format the current time for legacy compatibility
       android.icu.text.SimpleDateFormat dateFormat =
           new android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
       String currentTime = dateFormat.format(new Date());
       message.setMessageTime(currentTime);
-      
+
       // Set legacy fields for compatibility
       message.setMessageText(messageText);
       message.setMessageUser(UserKey);

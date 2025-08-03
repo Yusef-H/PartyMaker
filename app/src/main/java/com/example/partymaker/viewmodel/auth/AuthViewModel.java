@@ -9,8 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.auth.SecureAuthenticationManager;
-import com.example.partymaker.utils.security.core.PasswordValidator;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.example.partymaker.utils.security.core.PasswordValidator;
 import com.example.partymaker.viewmodel.BaseViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -90,11 +90,11 @@ public class AuthViewModel extends BaseViewModel {
   private void setupGoogleSignIn() {
     try {
       GoogleSignInOptions gso =
-              new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                      .requestIdToken(
-                              getApplication().getString(com.example.partymaker.R.string.default_web_client_id))
-                      .requestEmail()
-                      .build();
+          new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+              .requestIdToken(
+                  getApplication().getString(com.example.partymaker.R.string.default_web_client_id))
+              .requestEmail()
+              .build();
 
       googleSignInClient = GoogleSignIn.getClient(getApplication(), gso);
       Log.d(TAG, "Google Sign-In configured successfully");
@@ -184,28 +184,28 @@ public class AuthViewModel extends BaseViewModel {
     Log.d(TAG, "Attempting to login with email: " + email);
 
     executeIfNotLoading(
-            () -> {
-              setLoading(true);
-              clearMessages();
+        () -> {
+          setLoading(true);
+          clearMessages();
 
-              auth.signInWithEmailAndPassword(email.trim(), password)
-                      .addOnCompleteListener(
-                              task -> {
-                                ThreadUtils.runOnMainThread(
-                                        () -> {
-                                          setLoading(false);
-                                          if (task.isSuccessful()) {
-                                            handleSuccessfulLogin("Email login successful");
-                                          } else {
-                                            handleAuthError("Email login failed", task.getException());
-                                          }
-                                        });
-                              });
-            });
+          auth.signInWithEmailAndPassword(email.trim(), password)
+              .addOnCompleteListener(
+                  task -> {
+                    ThreadUtils.runOnMainThread(
+                        () -> {
+                          setLoading(false);
+                          if (task.isSuccessful()) {
+                            handleSuccessfulLogin("Email login successful");
+                          } else {
+                            handleAuthError("Email login failed", task.getException());
+                          }
+                        });
+                  });
+        });
   }
 
   public void registerWithEmail(
-          String email, String password, String confirmPassword, String username) {
+      String email, String password, String confirmPassword, String username) {
     if (email == null || email.trim().isEmpty()) {
       setError("Email is required");
       return;
@@ -248,24 +248,24 @@ public class AuthViewModel extends BaseViewModel {
     clearMessages();
 
     auth.createUserWithEmailAndPassword(email.trim(), password)
-            .addOnCompleteListener(
-                    task -> {
-                      if (task.isSuccessful()) {
-                        Log.d(TAG, "Email registration successful");
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user != null) {
-                          createUserProfile(user, username.trim());
-                        }
-                      } else {
-                        setLoading(false);
-                        Log.e(TAG, "Email registration failed", task.getException());
-                        String error =
-                                task.getException() != null
-                                        ? task.getException().getMessage()
-                                        : "Registration failed";
-                        setError(error);
-                      }
-                    });
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Email registration successful");
+                FirebaseUser user = auth.getCurrentUser();
+                if (user != null) {
+                  createUserProfile(user, username.trim());
+                }
+              } else {
+                setLoading(false);
+                Log.e(TAG, "Email registration failed", task.getException());
+                String error =
+                    task.getException() != null
+                        ? task.getException().getMessage()
+                        : "Registration failed";
+                setError(error);
+              }
+            });
   }
 
   public void signInWithGoogle(Task<GoogleSignInAccount> completedTask) {
@@ -284,29 +284,29 @@ public class AuthViewModel extends BaseViewModel {
     AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
 
     auth.signInWithCredential(credential)
-            .addOnCompleteListener(
-                    task -> {
-                      setLoading(false);
-                      if (task.isSuccessful()) {
-                        Log.d(TAG, "Firebase authentication with Google successful");
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user != null) {
-                          currentUser.setValue(user);
-                          isAuthenticated.setValue(true);
+        .addOnCompleteListener(
+            task -> {
+              setLoading(false);
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Firebase authentication with Google successful");
+                FirebaseUser user = auth.getCurrentUser();
+                if (user != null) {
+                  currentUser.setValue(user);
+                  isAuthenticated.setValue(true);
 
-                          String username =
-                                  user.getDisplayName() != null ? user.getDisplayName() : "Google User";
-                          checkAndCreateUserProfile(user, username);
-                        }
-                      } else {
-                        Log.e(TAG, "Firebase authentication with Google failed", task.getException());
-                        String error =
-                                task.getException() != null
-                                        ? task.getException().getMessage()
-                                        : "Google authentication failed";
-                        setError(error);
-                      }
-                    });
+                  String username =
+                      user.getDisplayName() != null ? user.getDisplayName() : "Google User";
+                  checkAndCreateUserProfile(user, username);
+                }
+              } else {
+                Log.e(TAG, "Firebase authentication with Google failed", task.getException());
+                String error =
+                    task.getException() != null
+                        ? task.getException().getMessage()
+                        : "Google authentication failed";
+                setError(error);
+              }
+            });
   }
 
   private void checkAndCreateUserProfile(FirebaseUser firebaseUser, String username) {
@@ -314,28 +314,28 @@ public class AuthViewModel extends BaseViewModel {
 
     // First check if user already exists
     DBRef.refUsers
-            .child(userKey)
-            .get()
-            .addOnCompleteListener(
-                    task -> {
-                      setLoading(false);
-                      if (task.isSuccessful()) {
-                        if (task.getResult().exists()) {
-                          // User already exists, just sign in
-                          Log.d(TAG, "Existing user signed in with Google");
-                          currentUser.setValue(firebaseUser);
-                          isAuthenticated.setValue(true);
-                          setSuccess("Login successful");
-                        } else {
-                          // New user, create profile
-                          Log.d(TAG, "New user, creating profile");
-                          createNewUserProfile(firebaseUser, username);
-                        }
-                      } else {
-                        Log.e(TAG, "Failed to check if user exists", task.getException());
-                        setError("Failed to verify user profile");
-                      }
-                    });
+        .child(userKey)
+        .get()
+        .addOnCompleteListener(
+            task -> {
+              setLoading(false);
+              if (task.isSuccessful()) {
+                if (task.getResult().exists()) {
+                  // User already exists, just sign in
+                  Log.d(TAG, "Existing user signed in with Google");
+                  currentUser.setValue(firebaseUser);
+                  isAuthenticated.setValue(true);
+                  setSuccess("Login successful");
+                } else {
+                  // New user, create profile
+                  Log.d(TAG, "New user, creating profile");
+                  createNewUserProfile(firebaseUser, username);
+                }
+              } else {
+                Log.e(TAG, "Failed to check if user exists", task.getException());
+                setError("Failed to verify user profile");
+              }
+            });
   }
 
   private void createNewUserProfile(FirebaseUser firebaseUser, String username) {
@@ -358,21 +358,21 @@ public class AuthViewModel extends BaseViewModel {
     }
 
     DBRef.refUsers
-            .child(userKey)
-            .setValue(userMap)
-            .addOnCompleteListener(
-                    task -> {
-                      setLoading(false); // Always stop loading regardless of success/failure
-                      if (task.isSuccessful()) {
-                        Log.d(TAG, "New user profile created successfully");
-                        currentUser.setValue(firebaseUser);
-                        isAuthenticated.setValue(true);
-                        setSuccess("Account created successfully");
-                      } else {
-                        Log.e(TAG, "Failed to create user profile", task.getException());
-                        setError("Failed to create user profile");
-                      }
-                    });
+        .child(userKey)
+        .setValue(userMap)
+        .addOnCompleteListener(
+            task -> {
+              setLoading(false); // Always stop loading regardless of success/failure
+              if (task.isSuccessful()) {
+                Log.d(TAG, "New user profile created successfully");
+                currentUser.setValue(firebaseUser);
+                isAuthenticated.setValue(true);
+                setSuccess("Account created successfully");
+              } else {
+                Log.e(TAG, "Failed to create user profile", task.getException());
+                setError("Failed to create user profile");
+              }
+            });
   }
 
   private void createUserProfile(FirebaseUser firebaseUser, String username) {
@@ -396,22 +396,22 @@ public class AuthViewModel extends BaseViewModel {
     clearMessages();
 
     auth.sendPasswordResetEmail(email.trim())
-            .addOnCompleteListener(
-                    task -> {
-                      setLoading(false);
-                      if (task.isSuccessful()) {
-                        Log.d(TAG, "Password reset email sent successfully");
-                        isPasswordResetSent.setValue(true);
-                        setSuccess("Password reset email sent");
-                      } else {
-                        Log.e(TAG, "Failed to send password reset email", task.getException());
-                        String error =
-                                task.getException() != null
-                                        ? task.getException().getMessage()
-                                        : "Failed to send reset email";
-                        setError(error);
-                      }
-                    });
+        .addOnCompleteListener(
+            task -> {
+              setLoading(false);
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Password reset email sent successfully");
+                isPasswordResetSent.setValue(true);
+                setSuccess("Password reset email sent");
+              } else {
+                Log.e(TAG, "Failed to send password reset email", task.getException());
+                String error =
+                    task.getException() != null
+                        ? task.getException().getMessage()
+                        : "Failed to send reset email";
+                setError(error);
+              }
+            });
   }
 
   /**
@@ -423,32 +423,32 @@ public class AuthViewModel extends BaseViewModel {
     Log.d(TAG, "Signing out user");
 
     executeIfNotLoading(
-            () -> {
-              setLoading(true);
+        () -> {
+          setLoading(true);
 
-              // Sign out from Firebase
-              auth.signOut();
+          // Sign out from Firebase
+          auth.signOut();
 
-              // Sign out from Google if available
-              if (googleSignInClient != null) {
-                googleSignInClient
-                        .signOut()
-                        .addOnCompleteListener(
-                                task -> {
-                                  Log.d(TAG, "Google sign out completed");
-                                });
-              }
+          // Sign out from Google if available
+          if (googleSignInClient != null) {
+            googleSignInClient
+                .signOut()
+                .addOnCompleteListener(
+                    task -> {
+                      Log.d(TAG, "Google sign out completed");
+                    });
+          }
 
-              // Clear secure storage
-              SecureAuthenticationManager.clearAuthData(context);
+          // Clear secure storage
+          SecureAuthenticationManager.clearAuthData(context);
 
-              // Update UI state
-              currentUser.setValue(null);
-              isAuthenticated.setValue(false);
-              clearMessages();
-              setLoading(false);
-              setSuccess("Signed out successfully");
-            });
+          // Update UI state
+          currentUser.setValue(null);
+          isAuthenticated.setValue(false);
+          clearMessages();
+          setLoading(false);
+          setSuccess("Signed out successfully");
+        });
   }
 
   public void clearPasswordResetStatus() {

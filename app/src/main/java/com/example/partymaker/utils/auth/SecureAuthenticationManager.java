@@ -72,7 +72,8 @@ public final class SecureAuthenticationManager {
   }
 
   /** Gets the current user's key (email with dots replaced by spaces) */
-  public static String getCurrentUserKey(Context context) throws AuthenticationManager.AuthException {
+  public static String getCurrentUserKey(Context context)
+      throws AuthenticationManager.AuthException {
     String email = getCurrentUserEmail(context);
     if (email == null || email.isEmpty()) {
       Log.e(TAG, "getCurrentUserKey: No user email found");

@@ -9,8 +9,8 @@ import androidx.preference.PreferenceManager;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
-import com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement;
 import com.example.partymaker.utils.core.AppConstants;
+import com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement;
 import com.example.partymaker.utils.security.network.SSLPinningManager;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
@@ -131,7 +131,8 @@ public class FirebaseServerClient {
     if (context != null) {
       serverUrl =
           PreferenceManager.getDefaultSharedPreferences(context)
-              .getString(AppConstants.Preferences.SERVER_URL, AppConstants.Network.DEFAULT_SERVER_URL);
+              .getString(
+                  AppConstants.Preferences.SERVER_URL, AppConstants.Network.DEFAULT_SERVER_URL);
       Log.d(TAG, "Server URL loaded from preferences: " + serverUrl);
     } else {
       Log.w(
@@ -145,7 +146,8 @@ public class FirebaseServerClient {
   private void logApiCall(String method, String path) {
     Log.d(
         TAG,
-        String.format("API %s: %s%s%s", method, serverUrl, AppConstants.Network.API_BASE_PATH, path));
+        String.format(
+            "API %s: %s%s%s", method, serverUrl, AppConstants.Network.API_BASE_PATH, path));
   }
 
   // Groups methods
@@ -571,7 +573,12 @@ public class FirebaseServerClient {
           // Background operation
           try {
             // Manually encode only problematic characters, preserve spaces as-is
-            String encodedUserId = userId.replace("@", "%40").replace("/", "%2F").replace("?", "%3F").replace("#", "%23");
+            String encodedUserId =
+                userId
+                    .replace("@", "%40")
+                    .replace("/", "%2F")
+                    .replace("?", "%3F")
+                    .replace("#", "%23");
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String response = makeHttpRequest(url, "GET", null);
             return gson.fromJson(response, User.class);
@@ -606,7 +613,12 @@ public class FirebaseServerClient {
           // Background operation
           try {
             // Manually encode only problematic characters, preserve spaces as-is
-            String encodedUserId = userId.replace("@", "%40").replace("/", "%2F").replace("?", "%3F").replace("#", "%23");
+            String encodedUserId =
+                userId
+                    .replace("@", "%40")
+                    .replace("/", "%2F")
+                    .replace("?", "%3F")
+                    .replace("#", "%23");
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
             String response = makeHttpRequest(url, "PUT", json);
@@ -684,7 +696,12 @@ public class FirebaseServerClient {
           // Background operation
           try {
             // Manually encode only problematic characters, preserve spaces as-is
-            String encodedUserId = userId.replace("@", "%40").replace("/", "%2F").replace("?", "%3F").replace("#", "%23");
+            String encodedUserId =
+                userId
+                    .replace("@", "%40")
+                    .replace("/", "%2F")
+                    .replace("?", "%3F")
+                    .replace("#", "%23");
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(updates);
             String response = makeHttpRequest(url, "PUT", json);
@@ -1267,11 +1284,19 @@ public class FirebaseServerClient {
           Log.d(TAG, "Getting groups for user: " + originalUserId);
 
           // TEMPORARILY skip UserGroups endpoint to test fallback logic
-          Log.d(TAG, "TEMPORARILY skipping UserGroups endpoint and going directly to all groups for debugging");
+          Log.d(
+              TAG,
+              "TEMPORARILY skipping UserGroups endpoint and going directly to all groups for debugging");
           String result = makeGetRequest("Groups", 5000); // Reduced timeout for faster response
-          Log.d(TAG, "All groups endpoint result: " + (result != null ? "Got " + result.length() + " chars" : "null"));
+          Log.d(
+              TAG,
+              "All groups endpoint result: "
+                  + (result != null ? "Got " + result.length() + " chars" : "null"));
           if (result != null && !result.equals("null") && !result.trim().isEmpty()) {
-            Log.d(TAG, "All groups result preview: " + (result.length() > 100 ? result.substring(0, 100) + "..." : result));
+            Log.d(
+                TAG,
+                "All groups result preview: "
+                    + (result.length() > 100 ? result.substring(0, 100) + "..." : result));
           }
 
           if (result != null) {
@@ -1290,12 +1315,23 @@ public class FirebaseServerClient {
                 Group group = gson.fromJson(groupJson.toString(), Group.class);
 
                 // Debug the group and user relationship
-                boolean isAdmin = group.getAdminKey() != null && group.getAdminKey().equals(originalUserId);
-                boolean isMember = group.getFriendKeys() != null && group.getFriendKeys().containsKey(originalUserId);
-                
+                boolean isAdmin =
+                    group.getAdminKey() != null && group.getAdminKey().equals(originalUserId);
+                boolean isMember =
+                    group.getFriendKeys() != null
+                        && group.getFriendKeys().containsKey(originalUserId);
+
                 Log.d(TAG, "Checking group " + key + " (" + group.getGroupName() + "):");
-                Log.d(TAG, "  Admin key: " + group.getAdminKey() + " (user is admin: " + isAdmin + ")");
-                Log.d(TAG, "  Friend keys: " + (group.getFriendKeys() != null ? group.getFriendKeys().keySet() : "null") + " (user is member: " + isMember + ")");
+                Log.d(
+                    TAG,
+                    "  Admin key: " + group.getAdminKey() + " (user is admin: " + isAdmin + ")");
+                Log.d(
+                    TAG,
+                    "  Friend keys: "
+                        + (group.getFriendKeys() != null ? group.getFriendKeys().keySet() : "null")
+                        + " (user is member: "
+                        + isMember
+                        + ")");
                 Log.d(TAG, "  Looking for user: " + originalUserId);
 
                 // Check if user is in friendKeys or is the admin (using original userId)
@@ -1304,11 +1340,26 @@ public class FirebaseServerClient {
                   userGroupsCount++;
                   Log.d(TAG, "Added group " + key + " to user's groups: " + group.getGroupName());
                 } else {
-                  Log.d(TAG, "User " + originalUserId + " is not part of group " + key + " (" + group.getGroupName() + ")");
+                  Log.d(
+                      TAG,
+                      "User "
+                          + originalUserId
+                          + " is not part of group "
+                          + key
+                          + " ("
+                          + group.getGroupName()
+                          + ")");
                 }
               }
-              
-              Log.d(TAG, "Processed " + totalGroups + " total groups, found " + userGroupsCount + " groups for user " + originalUserId);
+
+              Log.d(
+                  TAG,
+                  "Processed "
+                      + totalGroups
+                      + " total groups, found "
+                      + userGroupsCount
+                      + " groups for user "
+                      + originalUserId);
 
               Log.d(TAG, "Found " + userGroupsMap.size() + " groups for user: " + originalUserId);
               return userGroupsMap;

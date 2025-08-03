@@ -30,9 +30,9 @@ import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.features.auth.LoginActivity;
 import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
-import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.viewmodel.features.ProfileViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.storage.FirebaseStorage;
@@ -351,22 +351,23 @@ public class EditProfileActivity extends AppCompatActivity {
       etUsername.setError("Username cannot be empty");
       return;
     }
-    
+
     // Allow spaces in username - validate length and basic format
     if (username.length() < 2) {
       etUsername.setError("Username must be at least 2 characters long");
       return;
     }
-    
+
     if (username.length() > 50) {
       etUsername.setError("Username cannot be longer than 50 characters");
       return;
     }
-    
+
     // If it looks like an email, validate it properly
     if (username.contains("@")) {
       if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
-        etUsername.setError("Invalid email format. If using email as username, it must be a valid email address.");
+        etUsername.setError(
+            "Invalid email format. If using email as username, it must be a valid email address.");
         return;
       }
     }

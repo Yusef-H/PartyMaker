@@ -61,6 +61,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Clear Cache" />
+        android:text="@string/clear_cache" />
 
 </LinearLayout>

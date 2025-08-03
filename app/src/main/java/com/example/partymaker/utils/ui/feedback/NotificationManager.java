@@ -51,7 +51,8 @@ public class NotificationManager {
 
     // Messages channel
     NotificationChannel messagesChannel =
-        new NotificationChannel(CHANNEL_MESSAGES, "Messages", android.app.NotificationManager.IMPORTANCE_HIGH);
+        new NotificationChannel(
+            CHANNEL_MESSAGES, "Messages", android.app.NotificationManager.IMPORTANCE_HIGH);
     messagesChannel.setDescription("Notifications about new messages");
     messagesChannel.enableLights(true);
     messagesChannel.setLightColor(Color.GREEN);

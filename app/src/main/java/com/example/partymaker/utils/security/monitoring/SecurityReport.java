@@ -3,7 +3,6 @@ package com.example.partymaker.utils.security.monitoring;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,60 +37,60 @@ public class SecurityReport {
   public void setTimestamp(long timestamp) {
     this.timestamp = timestamp;
   }
-  
+
   public List<SecurityIssue> getIssues() {
     return issues;
   }
-  
+
   public void setIssues(List<SecurityIssue> issues) {
     this.issues = issues;
     this.securityIssues = issues; // Keep both for compatibility
   }
-  
+
   public int getTotalIssues() {
     return totalIssues;
   }
-  
+
   public void setTotalIssues(int totalIssues) {
     this.totalIssues = totalIssues;
   }
-  
+
   public int getCriticalIssues() {
     return criticalIssues;
   }
-  
+
   public void setCriticalIssues(int criticalIssues) {
     this.criticalIssues = criticalIssues;
   }
-  
+
   public int getHighIssues() {
     return highIssues;
   }
-  
+
   public void setHighIssues(int highIssues) {
     this.highIssues = highIssues;
   }
-  
+
   public int getMediumIssues() {
     return mediumIssues;
   }
-  
+
   public void setMediumIssues(int mediumIssues) {
     this.mediumIssues = mediumIssues;
   }
-  
+
   public int getLowIssues() {
     return lowIssues;
   }
-  
+
   public void setLowIssues(int lowIssues) {
     this.lowIssues = lowIssues;
   }
-  
+
   public List<String> getRecommendations() {
     return recommendations;
   }
-  
+
   public void setRecommendations(List<String> recommendations) {
     this.recommendations = recommendations;
   }

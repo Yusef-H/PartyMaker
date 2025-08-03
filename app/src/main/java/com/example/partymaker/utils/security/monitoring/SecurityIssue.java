@@ -30,7 +30,7 @@ public class SecurityIssue {
   public SecurityIssue() {
     // Default constructor
   }
-  
+
   public SecurityIssue(Severity severityEnum, String title, String description) {
     this.severity = severityEnum.name();
     this.title = title;
@@ -40,15 +40,15 @@ public class SecurityIssue {
   public String getId() {
     return id;
   }
-  
+
   public void setId(String id) {
     this.id = id;
   }
-  
+
   public String getType() {
     return type;
   }
-  
+
   public void setType(String type) {
     this.type = type;
   }
@@ -56,7 +56,7 @@ public class SecurityIssue {
   public String getSeverity() {
     return severity;
   }
-  
+
   public Severity getSeverityEnum() {
     if (severity == null) return Severity.LOW;
     try {
@@ -65,7 +65,7 @@ public class SecurityIssue {
       return Severity.LOW;
     }
   }
-  
+
   public void setSeverity(String severity) {
     this.severity = severity;
   }
@@ -73,7 +73,7 @@ public class SecurityIssue {
   public String getTitle() {
     return title;
   }
-  
+
   public void setTitle(String title) {
     this.title = title;
   }
@@ -81,7 +81,7 @@ public class SecurityIssue {
   public String getDescription() {
     return description;
   }
-  
+
   public void setDescription(String description) {
     this.description = description;
   }
@@ -104,6 +104,8 @@ public class SecurityIssue {
 
   @Override
   public String toString() {
-    return String.format("[%s] %s: %s", severity != null ? severity : "UNKNOWN", title != null ? title : type, description);
+    return String.format(
+        "[%s] %s: %s",
+        severity != null ? severity : "UNKNOWN", title != null ? title : type, description);
   }
 }

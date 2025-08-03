@@ -17,8 +17,8 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
-import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
+import com.example.partymaker.utils.core.IntentExtrasManager;
 import java.util.HashMap;
 import java.util.Map;
 
