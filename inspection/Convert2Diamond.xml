@@ -1,0 +1,756 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>589</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.api.FirebaseServerClient$8" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>630</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.api.FirebaseServerClient$9" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>671</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.api.FirebaseServerClient$10" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>713</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.api.FirebaseServerClient$11" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1171</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.api.FirebaseServerClient$14" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1376</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.api.FirebaseServerClient$16" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Map&lt;String, Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>Map&lt;String, Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>103</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>132</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$4" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>164</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$4$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>46</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>208</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$5" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>235</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$8" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>268</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$8$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>46</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>549</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$15" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>615</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$18" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>42</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>656</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$18$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>50</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>859</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.GroupRepository$21" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>25</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/RemoteGroupDataSource.java</file>
+  <line>34</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.RemoteGroupDataSource$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>46</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/RemoteGroupDataSource.java</file>
+  <line>52</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.RemoteGroupDataSource$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Map&lt;String, Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>Map&lt;String, Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>46</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/RemoteGroupDataSource.java</file>
+  <line>177</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.RemoteGroupDataSource$6" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Map&lt;String, Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>Map&lt;String, Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>46</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/UserRepository.java</file>
+  <line>90</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.UserRepository$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;User&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;User&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/UserRepository.java</file>
+  <line>464</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.UserRepository$7" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/UserRepository.java</file>
+  <line>503</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.UserRepository$8" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/UserRepository.java</file>
+  <line>578</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.repository.UserRepository$11" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;User&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;User&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>25</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/main/PartyMainActivity.java</file>
+  <line>193</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.main</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.main.PartyMainActivity$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/infrastructure/async/AsyncTaskReplacement.java</file>
+  <line>91</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.infrastructure.async</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement$6" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument T can be replaced with &lt;&gt;</description>
+  <highlighted_element>T</highlighted_element>
+  <language>JAVA</language>
+  <offset>29</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/infrastructure/async/AsyncTaskReplacement.java</file>
+  <line>136</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.infrastructure.async</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement.NetworkTask$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument String can be replaced with &lt;&gt;</description>
+  <highlighted_element>String</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/infrastructure/async/AsyncTaskReplacement.java</file>
+  <line>192</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.infrastructure.async</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement.DatabaseTask$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument T can be replaced with &lt;&gt;</description>
+  <highlighted_element>T</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/LoginViewModel.java</file>
+  <line>427</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.auth.LoginViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/LoginViewModel.java</file>
+  <line>474</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.auth.LoginViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/LoginViewModel.java</file>
+  <line>529</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.auth.LoginViewModel$3" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/RegisterViewModel.java</file>
+  <line>396</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.auth.RegisterViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>36</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/DateManagementViewModel.java</file>
+  <line>224</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.DateManagementViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/DateManagementViewModel.java</file>
+  <line>337</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.DateManagementViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>45</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupCreationViewModel.java</file>
+  <line>331</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupCreationViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>51</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>172</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;Group&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;Group&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>309</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>349</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel$3" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>179</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>222</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>44</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>264</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$3" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument List&lt;User&gt; can be replaced with &lt;&gt;</description>
+  <highlighted_element>List&lt;User&gt;</highlighted_element>
+  <language>JAVA</language>
+  <offset>42</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>308</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$4" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>353</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$5" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>430</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$6" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>465</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$7" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>233</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>319</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>365</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel$3" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>404</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel$4" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>550</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel$5" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>38</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>201</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>226</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>42</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>266</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel$3" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>302</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel$4" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>349</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel$5" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Boolean can be replaced with &lt;&gt;</description>
+  <highlighted_element>Boolean</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>552</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel$6" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument User can be replaced with &lt;&gt;</description>
+  <highlighted_element>User</highlighted_element>
+  <language>JAVA</language>
+  <offset>38</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>76</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.repository.GroupRepositoryTest$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>41</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>138</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.repository.GroupRepositoryTest$2" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>41</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>178</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.repository.GroupRepositoryTest$3" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Group can be replaced with &lt;&gt;</description>
+  <highlighted_element>Group</highlighted_element>
+  <language>JAVA</language>
+  <offset>41</offset>
+  <length>5</length>
+</problem>
+</problems>

@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>507</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository androidx.lifecycle.LiveData&lt;com.example.partymaker.data.api.Result&lt;java.util.List&lt;com.example.partymaker.data.model.Group&gt;&gt;&gt; getAllGroupsLiveData()" />
+  <problem_class id="ReplaceNullCheck" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Null check can be replaced with method call</problem_class>
+  <description>'if' statement can be replaced with call to 'Objects.requireNonNullElseGet()'</description>
+  <highlighted_element>if</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>2</length>
+</problem>
+</problems>

@@ -1,0 +1,28 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/NetworkUtils.java</file>
+  <line>128</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.NetworkUtils T executeWithRetryInternal(java.util.concurrent.Callable&lt;T&gt; operation, com.example.partymaker.data.api.NetworkUtils.RetryCallback&lt;T&gt; callback, java.util.concurrent.atomic.AtomicInteger attempts, int maxRetries, int retryDelayMs)" />
+  <problem_class id="BusyWait" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Busy wait</problem_class>
+  <description>Call to &lt;code&gt;Thread.sleep()&lt;/code&gt; in a loop, probably busy-waiting #loc</description>
+  <highlighted_element>sleep</highlighted_element>
+  <language>JAVA</language>
+  <offset>15</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/ResetPasswordViewModel.java</file>
+  <line>229</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.ResetPasswordViewModel void startCooldownCountdown()" />
+  <problem_class id="BusyWait" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Busy wait</problem_class>
+  <description>Call to &lt;code&gt;Thread.sleep()&lt;/code&gt; in a loop, probably busy-waiting #loc</description>
+  <highlighted_element>sleep</highlighted_element>
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>5</length>
+</problem>
+</problems>

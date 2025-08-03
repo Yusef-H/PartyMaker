@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgentExample.java</file>
+  <line>66</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgentExample void uploadReportExample(android.content.Context context)" />
+  <problem_class id="Convert2MethodRef" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Lambda can be replaced with method reference</problem_class>
+  <description>Lambda can be replaced with method reference</description>
+  <highlighted_element>agent.uploadReportToFirebase(report)</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>36</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/ui/feedback/UserFeedbackManager.java</file>
+  <line>147</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.ui.feedback</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.ui.feedback.UserFeedbackManager void handleResult(android.content.Context context, android.view.View containerView, com.example.partymaker.data.api.Result&lt;T&gt; result, com.example.partymaker.utils.ui.feedback.UserFeedbackManager.ResultHandler&lt;T&gt; handler)" />
+  <problem_class id="Convert2MethodRef" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Lambda can be replaced with method reference</problem_class>
+  <description>Lambda can be replaced with method reference</description>
+  <highlighted_element>handler.onRetryRequested()</highlighted_element>
+  <language>JAVA</language>
+  <offset>56</offset>
+  <length>26</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/ui/feedback/UserFeedbackManager.java</file>
+  <line>150</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.ui.feedback</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.ui.feedback.UserFeedbackManager void handleResult(android.content.Context context, android.view.View containerView, com.example.partymaker.data.api.Result&lt;T&gt; result, com.example.partymaker.utils.ui.feedback.UserFeedbackManager.ResultHandler&lt;T&gt; handler)" />
+  <problem_class id="Convert2MethodRef" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Lambda can be replaced with method reference</problem_class>
+  <description>Lambda can be replaced with method reference</description>
+  <highlighted_element>handler.onRetryRequested()</highlighted_element>
+  <language>JAVA</language>
+  <offset>52</offset>
+  <length>26</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>612</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void applyFilters()" />
+  <problem_class id="Convert2MethodRef" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Lambda can be replaced with method reference</problem_class>
+  <description>Lambda can be replaced with method reference</description>
+  <highlighted_element>list.add(item)</highlighted_element>
+  <language>JAVA</language>
+  <offset>63</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>622</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void applyFilters()" />
+  <problem_class id="Convert2MethodRef" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Lambda can be replaced with method reference</problem_class>
+  <description>Lambda can be replaced with method reference</description>
+  <highlighted_element>list.add(item)</highlighted_element>
+  <language>JAVA</language>
+  <offset>63</offset>
+  <length>14</length>
+</problem>
+</problems>

@@ -1,0 +1,28 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/activity_party_friends_add.xml</file>
+  <line>76</line>
+  <module>PartyMaker.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/activity_party_friends_add.xml" />
+  <problem_class id="AndroidLintButtonStyle" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Button should be borderless</problem_class>
+  <hints />
+  <description>&lt;html&gt;Buttons in button bars should be borderless; use &lt;code&gt;style=&quot;?android:attr/buttonBarButtonStyle&quot;&lt;/code&gt; (and &lt;code&gt;?android:attr/buttonBarStyle&lt;/code&gt; on the parent)&lt;/html&gt;</description>
+  <highlighted_element>Button</highlighted_element>
+  <language>XML</language>
+  <offset>9</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/activity_party_friends_add.xml</file>
+  <line>86</line>
+  <module>PartyMaker.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/activity_party_friends_add.xml" />
+  <problem_class id="AndroidLintButtonStyle" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Button should be borderless</problem_class>
+  <hints />
+  <description>&lt;html&gt;Buttons in button bars should be borderless; use &lt;code&gt;style=&quot;?android:attr/buttonBarButtonStyle&quot;&lt;/code&gt; (and &lt;code&gt;?android:attr/buttonBarStyle&lt;/code&gt; on the parent)&lt;/html&gt;</description>
+  <highlighted_element>Button</highlighted_element>
+  <language>XML</language>
+  <offset>9</offset>
+  <length>6</length>
+</problem>
+</problems>

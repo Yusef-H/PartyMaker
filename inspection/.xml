@@ -1,0 +1,1481 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/example/partymaker/ExampleInstrumentedTest.kt</file>
+  <line>9</line>
+  <module>PartyMaker.app.androidTest</module>
+  <package>com.example.partymaker</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ExampleInstrumentedTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/example/partymaker/ExampleInstrumentedTest.kt</file>
+  <line>16</line>
+  <module>PartyMaker.app.androidTest</module>
+  <package>com.example.partymaker</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ExampleInstrumentedTest void useAppContext()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/PartyApplication.java</file>
+  <line>16</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.PartyApplication" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>16</length>
+  <highlighted_element>PartyApplication</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/ChatMessageDao.java</file>
+  <line>17</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.local.ChatMessageDao" />
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>14</length>
+  <highlighted_element>ChatMessageDao</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Interface is not implemented.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/Converters.java</file>
+  <line>48</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.Converters java.util.HashMap&lt;java.lang.String,java.lang.Object&gt; fromString(java.lang.String value)" />
+  <language>JAVA</language>
+  <offset>40</offset>
+  <length>10</length>
+  <highlighted_element>fromString</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/Converters.java</file>
+  <line>63</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.Converters java.lang.String mapToString(java.util.Map&lt;java.lang.String,java.lang.Object&gt; map)" />
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>11</length>
+  <highlighted_element>mapToString</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/Converters.java</file>
+  <line>77</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.Converters java.util.Map&lt;java.lang.String,java.lang.Boolean&gt; fromStringToBoolean(java.lang.String value)" />
+  <language>JAVA</language>
+  <offset>37</offset>
+  <length>19</length>
+  <highlighted_element>fromStringToBoolean</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/Converters.java</file>
+  <line>92</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.Converters java.lang.String booleanMapToString(java.util.Map&lt;java.lang.String,java.lang.Boolean&gt; map)" />
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>18</length>
+  <highlighted_element>booleanMapToString</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/GroupDao.java</file>
+  <line>17</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.local.GroupDao" />
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>8</length>
+  <highlighted_element>GroupDao</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Interface is not implemented.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/UserDao.java</file>
+  <line>17</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.data.local.UserDao" />
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>7</length>
+  <highlighted_element>UserDao</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Interface is not implemented.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/model/ChatMessage.java</file>
+  <line>392</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.model.ChatMessage void setMessageContent(java.util.HashMap&lt;java.lang.String,java.lang.Object&gt; messageContent)" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>17</length>
+  <highlighted_element>setMessageContent</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/model/User.java</file>
+  <line>191</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.model.User java.util.Map&lt;java.lang.String,java.lang.Boolean&gt; getFriendKeys()" />
+  <language>JAVA</language>
+  <offset>30</offset>
+  <length>13</length>
+  <highlighted_element>getFriendKeys</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/model/User.java</file>
+  <line>227</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.model.User java.lang.String getCreatedAt()" />
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>12</length>
+  <highlighted_element>getCreatedAt</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/IntroActivity.java</file>
+  <line>27</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auth.IntroActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>13</length>
+  <highlighted_element>IntroActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/IntroActivity.java</file>
+  <line>123</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auth.IntroActivity void btnSkipClick(android.view.View v)" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>12</length>
+  <highlighted_element>btnSkipClick</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/IntroActivity.java</file>
+  <line>127</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auth.IntroActivity void btnNextClick(android.view.View v)" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>12</length>
+  <highlighted_element>btnNextClick</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/LoginActivity.java</file>
+  <line>43</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auth.LoginActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>13</length>
+  <highlighted_element>LoginActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/RegisterActivity.java</file>
+  <line>55</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auth.RegisterActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>16</length>
+  <highlighted_element>RegisterActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/ResetPasswordActivity.java</file>
+  <line>26</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auth.ResetPasswordActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>ResetPasswordActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/chatbot/GptChatActivity.java</file>
+  <line>30</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.chatbot</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auxiliary.chatbot.GptChatActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>15</length>
+  <highlighted_element>GptChatActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/profile/EditProfileActivity.java</file>
+  <line>44</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.profile</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>19</length>
+  <highlighted_element>EditProfileActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>23</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auxiliary.security.SecurityScanActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>20</length>
+  <highlighted_element>SecurityScanActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/settings/ServerSettingsActivity.java</file>
+  <line>17</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.settings</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>22</length>
+  <highlighted_element>ServerSettingsActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/core/MainActivity.java</file>
+  <line>41</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.core</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.core.MainActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>12</length>
+  <highlighted_element>MainActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/core/SplashActivity.java</file>
+  <line>28</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.core</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.core.SplashActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>14</length>
+  <highlighted_element>SplashActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/chat/ChatActivity.java</file>
+  <line>40</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.chat</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.chat.ChatActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>12</length>
+  <highlighted_element>ChatActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/creation/CreateGroupActivity.java</file>
+  <line>78</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.creation</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.creation.CreateGroupActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>19</length>
+  <highlighted_element>CreateGroupActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/discovery/JoinGroupActivity.java</file>
+  <line>29</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.discovery</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.discovery.JoinGroupActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>JoinGroupActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/discovery/PublicGroupsActivity.java</file>
+  <line>34</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.discovery</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.discovery.PublicGroupsActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>20</length>
+  <highlighted_element>PublicGroupsActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/main/PartyMainActivity.java</file>
+  <line>47</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.main</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.main.PartyMainActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>PartyMainActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/management/AdminOptionsActivity.java</file>
+  <line>45</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.management</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.management.AdminOptionsActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>20</length>
+  <highlighted_element>AdminOptionsActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/management/AdminSettingsActivity.java</file>
+  <line>37</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.management</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.management.AdminSettingsActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>AdminSettingsActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/management/ChangeDateActivity.java</file>
+  <line>27</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.management</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.management.ChangeDateActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>18</length>
+  <highlighted_element>ChangeDateActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/members/FriendsAddActivity.java</file>
+  <line>25</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.members</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.members.FriendsAddActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>18</length>
+  <highlighted_element>FriendsAddActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/members/FriendsRemoveActivity.java</file>
+  <line>28</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.members</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.members.FriendsRemoveActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>FriendsRemoveActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/members/MembersComingActivity.java</file>
+  <line>22</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.members</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.members.MembersComingActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>MembersComingActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/members/MembersInvitedActivity.java</file>
+  <line>24</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.members</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.members.MembersInvitedActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>22</length>
+  <highlighted_element>MembersInvitedActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/members/UsersListActivity.java</file>
+  <line>27</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.members</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ui.features.groups.members.UsersListActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>UsersListActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/auth/AuthenticationManager.java</file>
+  <line>274</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.auth.AuthenticationManager boolean isFirebaseAuthAvailable(android.content.Context context)" />
+  <language>JAVA</language>
+  <offset>24</offset>
+  <length>23</length>
+  <highlighted_element>isFirebaseAuthAvailable</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method has 2 usages, but the usages are not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/auth/AuthenticationManager.java</file>
+  <line>290</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.auth.AuthenticationManager void setCurrentUserSession(android.content.Context context, java.lang.String email)" />
+  <language>JAVA</language>
+  <offset>21</offset>
+  <length>21</length>
+  <highlighted_element>setCurrentUserSession</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method has 2 usages, but the usages are not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/auth/AuthenticationManager.java</file>
+  <line>321</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.auth.AuthenticationManager boolean isUserAuthenticated(android.content.Context context)" />
+  <language>JAVA</language>
+  <offset>24</offset>
+  <length>19</length>
+  <highlighted_element>isUserAuthenticated</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method has one usage, but the usage is not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/auth/AuthenticationManager.java</file>
+  <line>331</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.auth.AuthenticationManager boolean isSessionValid(android.content.Context context)" />
+  <language>JAVA</language>
+  <offset>24</offset>
+  <length>14</length>
+  <highlighted_element>isSessionValid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method has one usage, but the usage is not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/auth/AuthenticationManager.java</file>
+  <line>357</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.auth.AuthenticationManager void refreshSession(android.content.Context context)" />
+  <language>JAVA</language>
+  <offset>21</offset>
+  <length>14</length>
+  <highlighted_element>refreshSession</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method has one usage, but the usage is not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SimpleSecureStorage.java</file>
+  <line>18</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.utils.security.core.SimpleSecureStorage" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>19</length>
+  <highlighted_element>SimpleSecureStorage</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SimpleSecureStorage.java</file>
+  <line>28</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SimpleSecureStorage SimpleSecureStorage(android.content.Context context)" />
+  <language>JAVA</language>
+  <offset>9</offset>
+  <length>19</length>
+  <highlighted_element>SimpleSecureStorage</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/ExampleUnitTest.kt</file>
+  <line>6</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.ExampleUnitTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/ExampleUnitTest.kt</file>
+  <line>12</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ExampleUnitTest void addition_isCorrect()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>36</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.repository.GroupRepositoryTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>19</length>
+  <highlighted_element>GroupRepositoryTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>46</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.repository.GroupRepositoryTest void setUp()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>5</length>
+  <highlighted_element>setUp</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>59</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.repository.GroupRepositoryTest void testGetGroup_CacheHit_ReturnsFromCache()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>38</length>
+  <highlighted_element>testGetGroup_CacheHit_ReturnsFromCache</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>100</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.repository.GroupRepositoryTest void testGetGroup_CacheMiss_FallsBackToRemote()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>40</length>
+  <highlighted_element>testGetGroup_CacheMiss_FallsBackToRemote</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>160</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.repository.GroupRepositoryTest void testGetGroup_ForceRefresh_SkipsCache()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>36</length>
+  <highlighted_element>testGetGroup_ForceRefresh_SkipsCache</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>201</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.repository.GroupRepositoryTest void testSaveGroup_Success_SavesRemoteAndLocal()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>41</length>
+  <highlighted_element>testSaveGroup_Success_SavesRemoteAndLocal</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/repository/GroupRepositoryTest.java</file>
+  <line>248</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.repository.GroupRepositoryTest void testObserveGroup_ReturnsLiveData()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>32</length>
+  <highlighted_element>testObserveGroup_ReturnsLiveData</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>21</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>PasswordValidatorTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>24</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_ValidPassword_ReturnsValid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>39</length>
+  <highlighted_element>testValidate_ValidPassword_ReturnsValid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>38</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_NullPassword_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>40</length>
+  <highlighted_element>testValidate_NullPassword_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>50</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_EmptyPassword_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>41</length>
+  <highlighted_element>testValidate_EmptyPassword_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>61</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_TooShort_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>36</length>
+  <highlighted_element>testValidate_TooShort_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>73</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_NoUppercase_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>39</length>
+  <highlighted_element>testValidate_NoUppercase_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>85</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_NoLowercase_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>39</length>
+  <highlighted_element>testValidate_NoLowercase_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>97</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_NoDigit_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>35</length>
+  <highlighted_element>testValidate_NoDigit_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>109</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_NoSpecialChar_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>41</length>
+  <highlighted_element>testValidate_NoSpecialChar_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>121</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_CommonPassword_ReturnsInvalid()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>42</length>
+  <highlighted_element>testValidate_CommonPassword_ReturnsInvalid</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>134</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_RepeatedCharacters_ReducesStrength()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>47</length>
+  <highlighted_element>testValidate_RepeatedCharacters_ReducesStrength</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>146</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_SequentialCharacters_ReducesStrength()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>49</length>
+  <highlighted_element>testValidate_SequentialCharacters_ReducesStrength</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>158</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testGetStrengthText_VariousScores()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>33</length>
+  <highlighted_element>testGetStrengthText_VariousScores</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>168</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testPasswordsMatch_ValidMatching_ReturnsTrue()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>44</length>
+  <highlighted_element>testPasswordsMatch_ValidMatching_ReturnsTrue</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>176</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testPasswordsMatch_NonMatching_ReturnsFalse()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>43</length>
+  <highlighted_element>testPasswordsMatch_NonMatching_ReturnsFalse</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>184</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testPasswordsMatch_NullPasswords_ReturnsFalse()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>45</length>
+  <highlighted_element>testPasswordsMatch_NullPasswords_ReturnsFalse</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>196</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_MaxLength_IsEnforced()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>33</length>
+  <highlighted_element>testValidate_MaxLength_IsEnforced</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>215</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testValidate_StrongPassword_HighScore()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>37</length>
+  <highlighted_element>testValidate_StrongPassword_HighScore</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>32</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>BaseViewModelTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>34</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="field" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest rule" />
+  <language>JAVA</language>
+  <offset>39</offset>
+  <length>4</length>
+  <highlighted_element>rule</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>81</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void setUp()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>5</length>
+  <highlighted_element>setUp</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>93</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testSetLoading_True_UpdatesLiveData()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>35</length>
+  <highlighted_element>testSetLoading_True_UpdatesLiveData</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>103</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testSetLoading_False_UpdatesLiveData()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>36</length>
+  <highlighted_element>testSetLoading_False_UpdatesLiveData</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>117</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testSetError_WithMessage_UpdatesLiveData()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>40</length>
+  <highlighted_element>testSetError_WithMessage_UpdatesLiveData</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>130</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testSetError_WithErrorType_UpdatesLiveDataAndGeneratesMessage()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>61</length>
+  <highlighted_element>testSetError_WithErrorType_UpdatesLiveDataAndGeneratesMessage</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>143</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testSetSuccess_UpdatesLiveData()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>30</length>
+  <highlighted_element>testSetSuccess_UpdatesLiveData</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>155</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testClearError_ClearsErrorRelatedData()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>37</length>
+  <highlighted_element>testClearError_ClearsErrorRelatedData</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>170</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testClearMessages_ClearsAllMessages()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>35</length>
+  <highlighted_element>testClearMessages_ClearsAllMessages</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>187</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testExecuteIfNotLoading_WhenNotLoading_ExecutesOperation()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>56</length>
+  <highlighted_element>testExecuteIfNotLoading_WhenNotLoading_ExecutesOperation</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>200</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testExecuteIfNotLoading_WhenLoading_DoesNotExecuteOperation()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>59</length>
+  <highlighted_element>testExecuteIfNotLoading_WhenLoading_DoesNotExecuteOperation</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>213</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testOnCleared_ClearsAllStatesAndMessages()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>40</length>
+  <highlighted_element>testOnCleared_ClearsAllStatesAndMessages</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>231</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testInitialState_AllValuesAreDefault()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>36</length>
+  <highlighted_element>testInitialState_AllValuesAreDefault</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>242</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testDefaultTimeout_IsSetCorrectly()" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>33</length>
+  <highlighted_element>testDefaultTimeout_IsSetCorrectly</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+</problems>

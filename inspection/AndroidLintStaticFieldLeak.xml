@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>32</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java" />
+  <problem_class id="AndroidLintStaticFieldLeak" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Static Field Leaks</problem_class>
+  <hints />
+  <description>&lt;html&gt;Do not place Android context classes in static fields (static reference to &lt;code&gt;GroupRepository&lt;/code&gt; which has field &lt;code&gt;context&lt;/code&gt; pointing to &lt;code&gt;Context&lt;/code&gt;); this is a memory leak&lt;/html&gt;</description>
+  <highlighted_element>static</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>6</length>
+</problem>
+</problems>

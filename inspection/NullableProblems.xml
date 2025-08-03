@@ -1,0 +1,223 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/AppDatabase.java</file>
+  <line>65</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.AppDatabase$1 void onCreate(androidx.sqlite.db.SupportSQLiteDatabase db)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NotNull parameter</description>
+  <highlighted_element>db</highlighted_element>
+  <language>JAVA</language>
+  <offset>51</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/AppDatabase.java</file>
+  <line>72</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.AppDatabase$1 void onOpen(androidx.sqlite.db.SupportSQLiteDatabase db)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NotNull parameter</description>
+  <highlighted_element>db</highlighted_element>
+  <language>JAVA</language>
+  <offset>49</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/local/AppDatabase.java</file>
+  <line>86</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.local.AppDatabase$1 void onDestructiveMigration(androidx.sqlite.db.SupportSQLiteDatabase db)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NotNull parameter</description>
+  <highlighted_element>db</highlighted_element>
+  <language>JAVA</language>
+  <offset>65</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/profile/EditProfileActivity.java</file>
+  <line>580</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.profile</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity$1 void onCompressSuccess(java.io.File compressedFile)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>compressedFile</highlighted_element>
+  <language>JAVA</language>
+  <offset>45</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/management/AdminSettingsActivity.java</file>
+  <line>240</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.management</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.groups.management.AdminSettingsActivity$1 void onCompressSuccess(java.io.File compressedFile)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>compressedFile</highlighted_element>
+  <language>JAVA</language>
+  <offset>51</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/media/ImageCompressor.java</file>
+  <line>206</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.media</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.media.ImageCompressor.CompressCallback void onCompressSuccess(java.io.File compressedFile)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Overriding method parameters are not annotated</description>
+  <highlighted_element>@NonNull</highlighted_element>
+  <language>JAVA</language>
+  <offset>27</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>117</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$1 void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>dataSnapshot</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>169</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$1 void onCancelled(com.google.firebase.database.DatabaseError databaseError)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>databaseError</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>208</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$2 void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>dataSnapshot</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>252</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$2 void onCancelled(com.google.firebase.database.DatabaseError databaseError)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>databaseError</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>283</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$3 void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>dataSnapshot</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>314</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$3 void onCancelled(com.google.firebase.database.DatabaseError databaseError)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>databaseError</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>345</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$4 void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>dataSnapshot</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>351</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$4 void onCancelled(com.google.firebase.database.DatabaseError databaseError)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>databaseError</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityIssue.java</file>
+  <line>106</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityIssue java.lang.String toString()" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated method overrides method annotated with @RecentlyNonNull</description>
+  <highlighted_element>toString</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/validation/PasswordValidator.java</file>
+  <line>125</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.validation</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.validation.PasswordValidator.ValidationResult java.lang.String toString()" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated method overrides method annotated with @RecentlyNonNull</description>
+  <highlighted_element>toString</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupCreationViewModel.java</file>
+  <line>265</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupCreationViewModel$1 void onCompressSuccess(java.io.File compressedFile)" />
+  <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+  <description>Not annotated parameter overrides @NonNull parameter</description>
+  <highlighted_element>compressedFile</highlighted_element>
+  <language>JAVA</language>
+  <offset>53</offset>
+  <length>14</length>
+</problem>
+</problems>

@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/management/ChangeDateActivity.java</file>
+  <line>187</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.management</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.groups.management.ChangeDateActivity int getMonthNumber(java.lang.String monthName)" />
+  <problem_class id="DuplicateBranchesInSwitch" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Duplicate branches in 'switch'</problem_class>
+  <description>Branch in 'switch' is a duplicate of the default branch</description>
+  <highlighted_element>return 1;</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>9</length>
+</problem>
+</problems>

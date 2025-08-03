@@ -1,0 +1,522 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/chat/ChatActivity.java</file>
+  <line>229</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.chat</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.groups.chat.ChatActivity void setupViewModelObservers()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>25</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgentExample.java</file>
+  <line>27</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgentExample void runBasicScan(android.content.Context context)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgentExample.java</file>
+  <line>68</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgentExample void uploadReportExample(android.content.Context context)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/ui/feedback/UserFeedbackManager.java</file>
+  <line>209</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.ui.feedback</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.ui.feedback.UserFeedbackManager void showSingleChoiceDialog(android.content.Context context, java.lang.String title, java.lang.String[] choices, int selectedIndex, com.example.partymaker.utils.ui.feedback.UserFeedbackManager.SingleChoiceCallback callback)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/AuthViewModel.java</file>
+  <line>193</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.AuthViewModel void loginWithEmail(java.lang.String email, java.lang.String password)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>26</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/AuthViewModel.java</file>
+  <line>437</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.AuthViewModel void signOut(android.content.Context context)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/features/SecurityScanViewModel.java</file>
+  <line>273</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.features</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.features.SecurityScanViewModel void resolveSecurityIssue(com.example.partymaker.utils.security.monitoring.SecurityIssue issue)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/features/SecurityScanViewModel.java</file>
+  <line>311</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.features</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.features.SecurityScanViewModel void applyAutoFixes()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/DateManagementViewModel.java</file>
+  <line>221</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.DateManagementViewModel void loadGroupData()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>169</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel void loadPublicGroups(boolean forceRefresh)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>305</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel void joinGroup(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>345</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel void leaveGroup(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>484</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel void applyFilters()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>176</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void loadGroupData()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>262</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void loadAvailableUsers()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>274</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel$3 void onError(java.lang.Exception error)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>304</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void addMember(com.example.partymaker.data.model.User user)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>349</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void removeMember(com.example.partymaker.data.model.User user)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>427</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void updateGroupSettings(com.example.partymaker.data.model.Group updatedGroup)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>462</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void deleteGroup()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>542</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void handleAvailableUsersLoaded(java.util.List&lt;com.example.partymaker.data.model.User&gt; users)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupManagementViewModel.java</file>
+  <line>547</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupManagementViewModel void handleAvailableUsersLoaded(java.util.List&lt;com.example.partymaker.data.model.User&gt; users)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>230</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void loadGroupData()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>315</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void inviteMember(com.example.partymaker.data.model.User user)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>361</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void removeMember(com.example.partymaker.data.model.User member)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>399</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void updateMemberAttendance(com.example.partymaker.data.model.User member, boolean isComing)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>503</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>515</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>627</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void applyFilters()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/MembersViewModel.java</file>
+  <line>634</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.MembersViewModel void applyFilters()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>198</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadGroupData()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>223</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadCurrentUser()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>262</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void joinGroup()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>298</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void leaveGroup()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>344</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void updateAttendanceStatus(boolean isComing)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>513</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>515</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>26</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>523</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>525</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>26</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/PartyMainViewModel.java</file>
+  <line>532</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.PartyMainViewModel void loadMemberDetails(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>20</offset>
+  <length>1</length>
+</problem>
+</problems>

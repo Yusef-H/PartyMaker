@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/ResetPasswordActivity.java</file>
+  <line>147</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auth.ResetPasswordActivity void setupViewModelObservers()" />
+  <problem_class id="SizeReplaceableByIsEmpty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'size() == 0' can be replaced with 'isEmpty()'</problem_class>
+  <description>&lt;code&gt;etInputEmail.getText().toString().length() &gt; 0&lt;/code&gt; can be replaced with '!etInputEmail.getText().toString().isEmpty()' #loc</description>
+  <highlighted_element>etInputEmail.getText().toString().length() &gt; 0</highlighted_element>
+  <language>JAVA</language>
+  <offset>49</offset>
+  <length>46</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/LoginViewModel.java</file>
+  <line>150</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.LoginViewModel void validatePassword(java.lang.String password)" />
+  <problem_class id="SizeReplaceableByIsEmpty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'size() == 0' can be replaced with 'isEmpty()'</problem_class>
+  <description>&lt;code&gt;password.trim().length() &gt; 0&lt;/code&gt; can be replaced with '!password.trim().isEmpty()' #loc</description>
+  <highlighted_element>password.trim().length() &gt; 0</highlighted_element>
+  <language>JAVA</language>
+  <offset>40</offset>
+  <length>28</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/LoginViewModel.java</file>
+  <line>360</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.LoginViewModel boolean isValidEmail(java.lang.String email)" />
+  <problem_class id="SizeReplaceableByIsEmpty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'size() == 0' can be replaced with 'isEmpty()'</problem_class>
+  <description>&lt;code&gt;email.trim().length() &gt; 0&lt;/code&gt; can be replaced with '!email.trim().isEmpty()' #loc</description>
+  <highlighted_element>email.trim().length() &gt; 0</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>25</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/RegisterViewModel.java</file>
+  <line>333</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.RegisterViewModel boolean isValidEmail(java.lang.String email)" />
+  <problem_class id="SizeReplaceableByIsEmpty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'size() == 0' can be replaced with 'isEmpty()'</problem_class>
+  <description>&lt;code&gt;email.trim().length() &gt; 0&lt;/code&gt; can be replaced with '!email.trim().isEmpty()' #loc</description>
+  <highlighted_element>email.trim().length() &gt; 0</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>25</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/ResetPasswordViewModel.java</file>
+  <line>254</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.ResetPasswordViewModel boolean isValidEmail(java.lang.String email)" />
+  <problem_class id="SizeReplaceableByIsEmpty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'size() == 0' can be replaced with 'isEmpty()'</problem_class>
+  <description>&lt;code&gt;email.trim().length() &gt; 0&lt;/code&gt; can be replaced with '!email.trim().isEmpty()' #loc</description>
+  <highlighted_element>email.trim().length() &gt; 0</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>25</length>
+</problem>
+</problems>

@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupCreationViewModel.java</file>
+  <line>88</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupCreationViewModel GroupCreationViewModel(android.app.Application application)" />
+  <problem_class id="InstantiationOfUtilityClass" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Instantiation of utility class</problem_class>
+  <description>Instantiation of utility class &lt;code&gt;ImageCompressor&lt;/code&gt; #loc</description>
+  <highlighted_element>ImageCompressor</highlighted_element>
+  <language>JAVA</language>
+  <offset>31</offset>
+  <length>15</length>
+</problem>
+</problems>

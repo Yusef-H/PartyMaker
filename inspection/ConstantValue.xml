@@ -1,0 +1,600 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>625</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient void saveUser(java.lang.String userId, com.example.partymaker.data.model.User user, com.example.partymaker.data.api.FirebaseServerClient.OperationCallback callback)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;response != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>response != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>19</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>708</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient void updateUser(java.lang.String userId, java.util.Map&lt;java.lang.String,java.lang.Object&gt; updates, com.example.partymaker.data.api.FirebaseServerClient.OperationCallback callback)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;response != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>response != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>19</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1648</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient java.lang.String makeHttpRequest(java.lang.String url, java.lang.String method, java.lang.String jsonBody)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;method.equals(&quot;PUT&quot;)&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>method.equals(&quot;PUT&quot;)</highlighted_element>
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>20</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1664</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient java.lang.String makeHttpRequest(java.lang.String url, java.lang.String method, java.lang.String jsonBody)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;response.body() != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>response.body() != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>30</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1667</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient java.lang.String makeHttpRequest(java.lang.String url, java.lang.String method, java.lang.String jsonBody)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;response.body() != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>response.body() != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>27</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/OpenAiApi.java</file>
+  <line>67</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.OpenAiApi java.lang.String sendMessage(java.lang.String userMessage)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;response.body() != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>response.body() != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/OpenAiApi.java</file>
+  <line>108</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.OpenAiApi java.lang.String sendMessageWithHistory(java.util.List&lt;com.example.partymaker.data.model.ChatMessageGpt&gt; history)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;response.body() != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>response.body() != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/model/ChatMessage.java</file>
+  <line>519</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.model.ChatMessage java.lang.String getLogSafeSummary()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;messageKey != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>messageKey != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>241</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository$8 void onDataLoaded(java.util.List&lt;com.example.partymaker.data.model.Group&gt; groups)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;group.getGroupKey() != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>group.getGroupKey() != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>20</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>611</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository void getUserGroupsFromServer(java.lang.String userKey, com.example.partymaker.data.repository.GroupRepository.DataCallback&lt;com.example.partymaker.data.api.Result&lt;java.util.List&lt;com.example.partymaker.data.model.Group&gt;&gt;&gt; callback)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;remoteDataSource instanceof RemoteGroupDataSource&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>remoteDataSource instanceof RemoteGroupDataSource</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>49</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>625</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository$18 void onDataLoaded(java.util.List&lt;com.example.partymaker.data.model.Group&gt; groups)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;group.getGroupKey() != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>group.getGroupKey() != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>26</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>908</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository void updateGroup(com.example.partymaker.data.model.Group group, com.example.partymaker.data.repository.GroupRepository.Callback&lt;com.example.partymaker.data.model.Group&gt; callback)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;group.getGroupKey() == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt; when reached</description>
+  <highlighted_element>group.getGroupKey() == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>25</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/LocalGroupDataSource.java</file>
+  <line>84</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.LocalGroupDataSource void saveItem(java.lang.String groupKey, com.example.partymaker.data.model.Group group, com.example.partymaker.data.repository.DataSource.OperationCallback callback)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;group.getGroupKey() == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>group.getGroupKey() == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/RemoteGroupDataSource.java</file>
+  <line>83</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.RemoteGroupDataSource void saveItem(java.lang.String groupKey, com.example.partymaker.data.model.Group group, com.example.partymaker.data.repository.DataSource.OperationCallback callback)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;group.getGroupKey() == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>group.getGroupKey() == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/adapters/GroupAdapter.java</file>
+  <line>153</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.adapters</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.adapters.GroupAdapter.GroupViewHolder void bind(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupKey != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>groupKey != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/core/MainActivity.java</file>
+  <line>247</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.core.MainActivity void setupLoadingStateManager()" />
+  <problem_class id="ConstantValue" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Constant values</problem_class>
+  <description>Value &lt;code&gt;loadingText&lt;/code&gt; is always 'null'</description>
+  <highlighted_element>loadingText</highlighted_element>
+  <language>JAVA</language>
+  <offset>25</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/groups/creation/CreateGroupActivity.java</file>
+  <line>709</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.groups.creation</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.groups.creation.CreateGroupActivity void initializeGroupEncryption(java.lang.String groupKey)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;currentUserId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>currentUserId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SecureConfigManager.java</file>
+  <line>59</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SecureConfigManager java.lang.String getOpenAiApiKey()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;apiKey != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>apiKey != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SecureConfigManager.java</file>
+  <line>59</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SecureConfigManager java.lang.String getOpenAiApiKey()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;apiKey != null &amp;&amp; !apiKey.isEmpty()&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>apiKey != null &amp;&amp; !apiKey.isEmpty()</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>35</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SecureConfigManager.java</file>
+  <line>59</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SecureConfigManager java.lang.String getOpenAiApiKey()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;!apiKey.isEmpty()&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt; when reached</description>
+  <highlighted_element>!apiKey.isEmpty()</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SecureConfigManager.java</file>
+  <line>86</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SecureConfigManager java.lang.String getGoogleMapsApiKey()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;apiKey != null &amp;&amp; !apiKey.isEmpty()&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>apiKey != null &amp;&amp; !apiKey.isEmpty()</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>35</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SecureConfigManager.java</file>
+  <line>86</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SecureConfigManager java.lang.String getGoogleMapsApiKey()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;apiKey != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>apiKey != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/core/SecureConfigManager.java</file>
+  <line>86</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.core.SecureConfigManager java.lang.String getGoogleMapsApiKey()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;!apiKey.isEmpty()&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt; when reached</description>
+  <highlighted_element>!apiKey.isEmpty()</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/ui/components/LoadingStateManager.java</file>
+  <line>105</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.ui.components.LoadingStateManager void showError(java.lang.String errorMessage)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;errorText != null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>errorText != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>10</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/validation/PasswordValidator.java</file>
+  <line>47</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.validation</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.validation.PasswordValidator com.example.partymaker.utils.validation.PasswordValidator.ValidationResult validatePassword(java.lang.String password)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;password.length() &gt;= MIN_LENGTH&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>password.length() &gt;= MIN_LENGTH</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>31</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/AuthViewModel.java</file>
+  <line>169</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.AuthViewModel void loginWithEmail(java.lang.String email, java.lang.String password)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;email == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>email == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/AuthViewModel.java</file>
+  <line>174</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.AuthViewModel void loginWithEmail(java.lang.String email, java.lang.String password)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;password == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>password == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/auth/LoginViewModel.java</file>
+  <line>150</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.auth.LoginViewModel void validatePassword(java.lang.String password)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;password != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>password != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>20</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>106</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void loadUserGroups(java.lang.String userKey, boolean forceRefresh)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;userKey == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>userKey == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>167</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void loadGroup(java.lang.String groupId, boolean forceRefresh)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>202</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void createGroup(java.lang.String groupId, com.example.partymaker.data.model.Group group)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>205</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void createGroup(java.lang.String groupId, com.example.partymaker.data.model.Group group)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;group == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>group == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>237</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void updateGroup(java.lang.String groupId, java.util.Map&lt;java.lang.String,java.lang.Object&gt; updates)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>240</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void updateGroup(java.lang.String groupId, java.util.Map&lt;java.lang.String,java.lang.Object&gt; updates)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;updates == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>updates == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>270</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void deleteGroup(java.lang.String groupId)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>301</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void joinGroup(java.lang.String groupId, java.lang.String userKey)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>304</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void joinGroup(java.lang.String groupId, java.lang.String userKey)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;userKey == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>userKey == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>346</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void leaveGroup(java.lang.String groupId, java.lang.String userKey)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>349</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void leaveGroup(java.lang.String groupId, java.lang.String userKey)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;userKey == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>userKey == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/core/MainActivityViewModel.java</file>
+  <line>391</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.core</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.core.MainActivityViewModel void selectGroup(java.lang.String groupId, boolean forceRefresh)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;groupId == null&lt;/code&gt; is always &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>groupId == null</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/DateManagementViewModel.java</file>
+  <line>560</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.DateManagementViewModel void validateTime(java.lang.String time)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;valid&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt; when reached</description>
+  <highlighted_element>valid</highlighted_element>
+  <language>JAVA</language>
+  <offset>32</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/GroupDiscoveryViewModel.java</file>
+  <line>399</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.GroupDiscoveryViewModel boolean canUserJoinGroup(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Result of &lt;code&gt;&quot;public&quot;.equals(group.getGroupType())&lt;/code&gt; is always 'false'</description>
+  <highlighted_element>&quot;public&quot;.equals(group.getGroupType())</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>186</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testPasswordsMatch_NullPasswords_ReturnsFalse()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Result of &lt;code&gt;PasswordValidator.passwordsMatch(null, null)&lt;/code&gt; is always 'false'</description>
+  <highlighted_element>PasswordValidator.passwordsMatch(null, null)</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>44</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>189</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testPasswordsMatch_NullPasswords_ReturnsFalse()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Result of &lt;code&gt;PasswordValidator.passwordsMatch(&quot;Password123!&quot;, null)&lt;/code&gt; is always 'false'</description>
+  <highlighted_element>PasswordValidator.passwordsMatch(&quot;Password123!&quot;, null)</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>54</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/utils/security/PasswordValidatorTest.java</file>
+  <line>192</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.utils.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.PasswordValidatorTest void testPasswordsMatch_NullPasswords_ReturnsFalse()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Result of &lt;code&gt;PasswordValidator.passwordsMatch(null, &quot;Password123!&quot;)&lt;/code&gt; is always 'false'</description>
+  <highlighted_element>PasswordValidator.passwordsMatch(null, &quot;Password123!&quot;)</highlighted_element>
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>54</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/partymaker/viewmodel/BaseViewModelTest.java</file>
+  <line>245</line>
+  <module>PartyMaker.app.unitTest</module>
+  <package>com.example.partymaker.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.BaseViewModelTest void testDefaultTimeout_IsSetCorrectly()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;BaseViewModel.DEFAULT_TIMEOUT_MS &gt; 0&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>BaseViewModel.DEFAULT_TIMEOUT_MS &gt; 0</highlighted_element>
+  <language>JAVA</language>
+  <offset>53</offset>
+  <length>36</length>
+</problem>
+</problems>

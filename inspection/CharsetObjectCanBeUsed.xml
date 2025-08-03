@@ -1,0 +1,80 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>661</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient void createUser(com.example.partymaker.data.model.User user, com.example.partymaker.data.api.FirebaseServerClient.DataCallback&lt;com.example.partymaker.data.model.User&gt; callback)" />
+  <problem_class id="CharsetObjectCanBeUsed" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Standard 'Charset' object can be used</problem_class>
+  <description>StandardCharsets.UTF_8 can be used instead</description>
+  <highlighted_element>&quot;UTF-8&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>81</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>1048</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository void decodeGroupData(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CharsetObjectCanBeUsed" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Standard 'Charset' object can be used</problem_class>
+  <description>StandardCharsets.UTF_8 can be used instead</description>
+  <highlighted_element>&quot;UTF-8&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>78</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/repository/GroupRepository.java</file>
+  <line>1055</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.repository.GroupRepository void decodeGroupData(com.example.partymaker.data.model.Group group)" />
+  <problem_class id="CharsetObjectCanBeUsed" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Standard 'Charset' object can be used</problem_class>
+  <description>StandardCharsets.UTF_8 can be used instead</description>
+  <highlighted_element>&quot;UTF-8&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>68</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/HybridMessageEncryption.java</file>
+  <line>233</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.HybridMessageEncryption java.lang.String encryptWithAES(java.lang.String plaintext, javax.crypto.SecretKey key)" />
+  <problem_class id="CharsetObjectCanBeUsed" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Standard 'Charset' object can be used</problem_class>
+  <description>StandardCharsets.UTF_8 can be used instead</description>
+  <highlighted_element>&quot;UTF-8&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>58</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/HybridMessageEncryption.java</file>
+  <line>261</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.HybridMessageEncryption java.lang.String decryptWithAES(java.lang.String encryptedText, javax.crypto.SecretKey key)" />
+  <problem_class id="CharsetObjectCanBeUsed" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Standard 'Charset' object can be used</problem_class>
+  <description>StandardCharsets.UTF_8 can be used instead</description>
+  <highlighted_element>&quot;UTF-8&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>33</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/features/ProfileViewModel.java</file>
+  <line>632</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.features</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.features.ProfileViewModel java.lang.Object decodeIfNeeded(java.lang.Object value)" />
+  <problem_class id="CharsetObjectCanBeUsed" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Standard 'Charset' object can be used</problem_class>
+  <description>StandardCharsets.UTF_8 can be used instead</description>
+  <highlighted_element>&quot;UTF-8&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>55</offset>
+  <length>7</length>
+</problem>
+</problems>

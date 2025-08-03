@@ -1,0 +1,100 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>72</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;String literal in &lt;code&gt;setText&lt;/code&gt; can not be translated. Use Android resources instead.&lt;/html&gt;</description>
+  <highlighted_element>&quot;Running security scan...&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>25</offset>
+  <length>26</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>95</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;String literal in &lt;code&gt;setText&lt;/code&gt; can not be translated. Use Android resources instead.&lt;/html&gt;</description>
+  <highlighted_element>&quot;Scan completed successfully&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>43</offset>
+  <length>29</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>103</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;Do not concatenate text displayed with &lt;code&gt;setText&lt;/code&gt;. Use resource string with placeholders.&lt;/html&gt;</description>
+  <highlighted_element>&quot;Scan failed: &quot; + throwable.getMessage()</highlighted_element>
+  <language>JAVA</language>
+  <offset>41</offset>
+  <length>40</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>103</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;String literal in &lt;code&gt;setText&lt;/code&gt; can not be translated. Use Android resources instead.&lt;/html&gt;</description>
+  <highlighted_element>&quot;Scan failed: &quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>41</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>113</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;Do not concatenate text displayed with &lt;code&gt;setText&lt;/code&gt;. Use resource string with placeholders.&lt;/html&gt;</description>
+  <highlighted_element>&quot;Grade: &quot; + report.getSecurityGrade()</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>113</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;String literal in &lt;code&gt;setText&lt;/code&gt; can not be translated. Use Android resources instead.&lt;/html&gt;</description>
+  <highlighted_element>&quot;Grade: &quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>118</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;String literal in &lt;code&gt;setText&lt;/code&gt; can not be translated. Use Android resources instead.&lt;/html&gt;</description>
+  <highlighted_element>&quot;No security issues found!&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>27</length>
+</problem>
+</problems>

@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1283</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient void getUserGroups(java.lang.String userId, com.example.partymaker.data.api.FirebaseServerClient.DataCallback&lt;java.util.Map&lt;java.lang.String,com.example.partymaker.data.model.Group&gt;&gt; callback)" />
+  <problem_class id="UnnecessaryLocalVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant local variable</problem_class>
+  <description>Local variable &lt;code&gt;originalUserId&lt;/code&gt; is redundant #loc</description>
+  <highlighted_element>originalUserId</highlighted_element>
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/api/FirebaseServerClient.java</file>
+  <line>1664</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.api</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.api.FirebaseServerClient java.lang.String makeHttpRequest(java.lang.String url, java.lang.String method, java.lang.String jsonBody)" />
+  <problem_class id="UnnecessaryLocalVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant local variable</problem_class>
+  <description>Local variable &lt;code&gt;responseBody&lt;/code&gt; is redundant #loc</description>
+  <highlighted_element>responseBody</highlighted_element>
+  <language>JAVA</language>
+  <offset>15</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auth/RegisterActivity.java</file>
+  <line>739</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auth</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auth.RegisterActivity void signUp()" />
+  <problem_class id="UnnecessaryLocalVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant local variable</problem_class>
+  <description>Local variable &lt;code&gt;confirmPassword&lt;/code&gt; is redundant #loc</description>
+  <highlighted_element>confirmPassword</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/infrastructure/system/MemoryManager.java</file>
+  <line>73</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.infrastructure.system</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.infrastructure.system.MemoryManager java.lang.String getDetailedMemoryInfo()" />
+  <problem_class id="UnnecessaryLocalVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant local variable</problem_class>
+  <description>Local variable &lt;code&gt;sb&lt;/code&gt; is redundant #loc</description>
+  <highlighted_element>sb</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/encryption/GroupKeyManager.java</file>
+  <line>294</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.encryption</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.encryption.GroupKeyManager$3 void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot)" />
+  <problem_class id="UnnecessaryLocalVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant local variable</problem_class>
+  <description>Local variable &lt;code&gt;groupKeyBase64&lt;/code&gt; is redundant #loc</description>
+  <highlighted_element>groupKeyBase64</highlighted_element>
+  <language>JAVA</language>
+  <offset>27</offset>
+  <length>14</length>
+</problem>
+</problems>

@@ -1,0 +1,41 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>139</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auxiliary.security.SecurityScanActivity void exportReport()" />
+  <problem_class id="IgnoreResultOfCall" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Result of method call ignored</problem_class>
+  <description>Result of &lt;code&gt;File.mkdirs()&lt;/code&gt; is ignored #loc</description>
+  <highlighted_element>mkdirs</highlighted_element>
+  <language>JAVA</language>
+  <offset>19</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/ui/features/auxiliary/security/SecurityScanActivity.java</file>
+  <line>179</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.ui.features.auxiliary.security</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.ui.features.auxiliary.security.SecurityScanActivity void shareReport()" />
+  <problem_class id="IgnoreResultOfCall" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Result of method call ignored</problem_class>
+  <description>Result of &lt;code&gt;File.mkdirs()&lt;/code&gt; is ignored #loc</description>
+  <highlighted_element>mkdirs</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/media/FileManager.java</file>
+  <line>172</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.media</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.media.FileManager void deleteRecursive(java.io.File fileOrDirectory)" />
+  <problem_class id="IgnoreResultOfCall" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Result of method call ignored</problem_class>
+  <description>Result of &lt;code&gt;File.delete()&lt;/code&gt; is ignored #loc</description>
+  <highlighted_element>delete</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>6</length>
+</problem>
+</problems>
