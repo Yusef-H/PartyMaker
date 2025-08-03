@@ -352,9 +352,14 @@ public class EditProfileActivity extends AppCompatActivity {
       return;
     }
     
-    // Validate username format - don't allow email-like formats with spaces
-    if (username.contains(" ")) {
-      etUsername.setError("Username cannot contain spaces");
+    // Allow spaces in username - validate length and basic format
+    if (username.length() < 2) {
+      etUsername.setError("Username must be at least 2 characters long");
+      return;
+    }
+    
+    if (username.length() > 50) {
+      etUsername.setError("Username cannot be longer than 50 characters");
       return;
     }
     
