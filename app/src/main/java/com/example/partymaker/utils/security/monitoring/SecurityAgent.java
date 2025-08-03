@@ -150,15 +150,14 @@ public class SecurityAgent {
 
   /** Check network security configuration */
   private void checkNetworkSecurity() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      // Check if cleartext traffic is allowed
-      if (isCleartextTrafficAllowed()) {
-        addSecurityIssue(
-            new SecurityIssue(
-                SecurityIssue.Severity.MEDIUM,
-                "Cleartext Traffic Allowed",
-                "Application allows cleartext (non-HTTPS) network traffic."));
-      }
+    // No need to check SDK version as minSdk is 33 (Android 13)
+    // Check if cleartext traffic is allowed
+    if (isCleartextTrafficAllowed()) {
+      addSecurityIssue(
+          new SecurityIssue(
+              SecurityIssue.Severity.MEDIUM,
+              "Cleartext Traffic Allowed",
+              "Application allows cleartext (non-HTTPS) network traffic."));
     }
   }
 

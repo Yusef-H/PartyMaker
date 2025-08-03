@@ -106,4 +106,26 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+    <!-- Theme without window background for activities with custom backgrounds -->
+    <style name="Theme.PartyMaker.NoWindowBackground" parent="Theme.PartyMaker">
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <!-- Material3 themes without window background -->
+    <style name="Theme.Material3.Login.NoWindowBackground" parent="Theme.Material3.Login">
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="Theme.Material3.Register.NoWindowBackground" parent="Theme.Material3.Register">
+        <item name="android:windowBackground">@null</item>
+    </style>
+    
+    <!-- AppTheme variants -->
+    <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
 </resources>

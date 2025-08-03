@@ -33,7 +33,7 @@ public class GroupRepository {
 
   private LocalGroupDataSource localDataSource;
   private final RemoteGroupDataSource remoteDataSource;
-  private Context context;
+  private Context applicationContext; // Using application context to avoid memory leaks
   private boolean isInitialized = false;
 
   /** Private constructor to prevent direct instantiation. */
@@ -60,7 +60,7 @@ public class GroupRepository {
    */
   public void initialize(Context context) {
     if (context != null && !isInitialized) {
-      this.context = context.getApplicationContext();
+      this.applicationContext = context.getApplicationContext();
       this.localDataSource = new LocalGroupDataSource(context);
       this.isInitialized = true;
       Log.d(TAG, "GroupRepository initialized with local and remote data sources");

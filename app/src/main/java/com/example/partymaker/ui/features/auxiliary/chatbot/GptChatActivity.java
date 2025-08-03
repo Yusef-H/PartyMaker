@@ -117,6 +117,7 @@ public class GptChatActivity extends AppCompatActivity {
             this,
             messages -> {
               if (messages != null) {
+                int previousSize = visibleMessages.size();
                 visibleMessages.clear();
                 // Convert ChatMessage to ChatMessageGpt
                 for (com.example.partymaker.data.model.ChatMessage msg : messages) {
@@ -126,7 +127,17 @@ public class GptChatActivity extends AppCompatActivity {
                           msg.getMessage());
                   visibleMessages.add(gptMsg);
                 }
-                chatAdapter.notifyDataSetChanged();
+                // Use more specific notify methods for better performance
+                if (previousSize == 0 && !visibleMessages.isEmpty()) {
+                  // First load - insert all items
+                  chatAdapter.notifyItemRangeInserted(0, visibleMessages.size());
+                } else if (visibleMessages.size() > previousSize) {
+                  // New messages added
+                  chatAdapter.notifyItemRangeInserted(previousSize, visibleMessages.size() - previousSize);
+                } else {
+                  // Full refresh needed (rare case)
+                  chatAdapter.notifyDataSetChanged();
+                }
                 scrollToBottom();
               }
             });

@@ -110,7 +110,8 @@ public class SSLPinningManager {
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType)
         throws CertificateException {
-      // Client certificate validation (if needed)
+      // We don't use client certificates, so reject all
+      throw new CertificateException("Client certificates not supported");
     }
 
     @Override

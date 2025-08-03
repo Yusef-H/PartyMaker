@@ -58,22 +58,26 @@
         <!-- Authentication activities -->
         <activity
             android:name=".ui.features.auth.LoginActivity"
-            android:theme="@style/Theme.Material3.Login" />
+            android:theme="@style/Theme.Material3.Login.NoWindowBackground" />
         <activity
             android:name=".ui.features.auth.RegisterActivity"
-            android:theme="@style/Theme.Material3.Register" />
+            android:theme="@style/Theme.Material3.Register.NoWindowBackground" />
         <activity
             android:name=".ui.features.auth.ResetPasswordActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
 
         <!-- Main screen -->
-        <activity android:name=".ui.features.core.MainActivity" />
+        <activity android:name=".ui.features.core.MainActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
 
         <!-- Group-related screens -->
-        <activity android:name=".ui.features.groups.members.FriendsAddActivity" />
+        <activity android:name=".ui.features.groups.members.FriendsAddActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
         <activity android:name=".ui.features.groups.creation.CreateGroupActivity" />
         <activity android:name=".ui.features.groups.management.AdminOptionsActivity" />
-        <activity android:name=".ui.features.groups.management.ChangeDateActivity" />
+        <activity android:name=".ui.features.groups.management.ChangeDateActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
         <activity android:name=".ui.features.groups.chat.ChatActivity" />
         <activity android:name=".ui.features.groups.members.MembersComingActivity" />
         <activity android:name=".ui.features.groups.members.MembersInvitedActivity" />
@@ -81,7 +85,8 @@
             android:name=".ui.features.groups.members.FriendsRemoveActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.features.groups.members.UsersListActivity" />
-        <activity android:name=".ui.features.groups.discovery.JoinGroupActivity" />
+        <activity android:name=".ui.features.groups.discovery.JoinGroupActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
         <activity android:name=".ui.features.groups.management.AdminSettingsActivity" />
         <activity android:name=".ui.features.groups.main.PartyMainActivity" />
         <activity
@@ -89,13 +94,16 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Profile screen -->
-        <activity android:name=".ui.features.auxiliary.profile.EditProfileActivity" />
+        <activity android:name=".ui.features.auxiliary.profile.EditProfileActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
 
         <!-- Settings -->
-        <activity android:name=".ui.features.auxiliary.settings.ServerSettingsActivity" />
+        <activity android:name=".ui.features.auxiliary.settings.ServerSettingsActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
 
         <!-- AI chatbot -->
-        <activity android:name=".ui.features.auxiliary.chatbot.GptChatActivity" />
+        <activity android:name=".ui.features.auxiliary.chatbot.GptChatActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
 
         <!-- Google Maps API key will be loaded from BuildConfig -->
         <meta-data
