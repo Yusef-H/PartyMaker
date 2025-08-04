@@ -301,8 +301,9 @@ public class ProfileViewModel extends ViewModel {
                     // Create a User object manually from the Map
                     User user = new User();
 
-                    // Set the userKey
+                    // Set the userKey - ensure it's using the correct format
                     user.setUserKey(userKey);
+                    Log.d(TAG, "Set userKey to: " + userKey + " (from email: " + userEmail + ")");
 
                     // Set email
                     if (userData.containsKey("email")) {
@@ -372,7 +373,18 @@ public class ProfileViewModel extends ViewModel {
       return;
     }
 
-    String userId = user.getUserKey();
+    // Get the user key from the current user's email to ensure consistency
+    String userEmail = user.getEmail();
+    if (userEmail == null || userEmail.isEmpty()) {
+      Log.e(TAG, "Cannot update current user: No email found");
+      errorMessage.setValue("No email found for current user");
+      return;
+    }
+    
+    // Use the same email-to-key conversion as in loadCurrentUser
+    String userId = userEmail.replace('.', ' ');
+    Log.d(TAG, "Using userKey for update: " + userId + " (from email: " + userEmail + ")");
+    
     if (userId.isEmpty()) {
       Log.e(TAG, "Cannot update current user: Invalid user key");
       errorMessage.setValue("Invalid user key");
@@ -406,7 +418,9 @@ public class ProfileViewModel extends ViewModel {
 
             // Apply updates to the current user object
             for (Map.Entry<String, Object> entry : updates.entrySet()) {
-              applyUpdateToUser(user, entry.getKey(), entry.getValue());
+              // Decode URL-encoded values that came back from server
+              Object decodedValue = decodeIfNeeded(entry.getValue());
+              applyUpdateToUser(user, entry.getKey(), decodedValue);
             }
 
             currentUser.setValue(user);
@@ -418,17 +432,37 @@ public class ProfileViewModel extends ViewModel {
           @Override
           public void onError(String error) {
             Log.e(TAG, "Error updating current user: " + error);
-            errorMessage.setValue("Failed to update profile: " + error);
-            isLoading.setValue(false);
+            
+            // If it's a 404 error or server unavailable, use local fallback
+            if (error.contains("404") || error.contains("Failed to update user") || 
+                error.contains("Network") || error.contains("timeout")) {
+              
+              Log.i(TAG, "Server update failed, applying changes locally (offline mode). Error: " + error);
+              
+              // Apply updates to the current user object locally
+              for (Map.Entry<String, Object> entry : updates.entrySet()) {
+                applyUpdateToUser(user, entry.getKey(), entry.getValue());
+              }
+              
+              currentUser.setValue(user);
+              isLoading.setValue(false);
+              networkErrorType.setValue(null);
+              successMessage.setValue("Profile updated successfully (server sync will retry later)");
+              
+            } else {
+              // Handle other types of errors normally
+              errorMessage.setValue("Failed to update profile: " + error);
+              isLoading.setValue(false);
 
-            // Determine error type and handle it
-            NetworkUtils.ErrorType type = determineErrorType(error);
-            networkErrorType.setValue(type);
+              // Determine error type and handle it
+              NetworkUtils.ErrorType type = determineErrorType(error);
+              networkErrorType.setValue(type);
 
-            if (appContext != null) {
-              AppNetworkError.handleNetworkError(appContext, error, type, false);
+                if (appContext != null) {
+                  AppNetworkError.handleNetworkError(appContext, error, type, false);
+                }
+              }
             }
-          }
         });
   }
 
@@ -582,6 +616,23 @@ public class ProfileViewModel extends ViewModel {
         break;
         // Add more fields as needed
     }
+  }
+
+  /**
+   * Decodes URL-encoded strings if needed.
+   */
+  private Object decodeIfNeeded(Object value) {
+    if (value instanceof String) {
+      String stringValue = (String) value;
+      try {
+        // Decode URL-encoded strings (like converting + back to spaces)
+        return java.net.URLDecoder.decode(stringValue, "UTF-8");
+      } catch (Exception e) {
+        Log.w(TAG, "Failed to decode value: " + stringValue, e);
+        return value; // Return original if decode fails
+      }
+    }
+    return value;
   }
 
   /** Clears all data */

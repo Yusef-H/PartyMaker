@@ -54,7 +54,7 @@
 
     <Button
         android:id="@+id/btnReset"
-        android:layout_width="120dp"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_below="@+id/etInputEmail"
         android:layout_centerHorizontal="true"

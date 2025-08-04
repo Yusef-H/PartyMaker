@@ -221,7 +221,14 @@ public class NetworkUtils {
     TIMEOUT,
     SERVER_ERROR,
     CLIENT_ERROR,
-    UNKNOWN
+    UNKNOWN,
+    AUTHENTICATION_ERROR,
+    NETWORK_ERROR,
+    VALIDATION_ERROR,
+    PERMISSION_ERROR,
+    RATE_LIMIT_ERROR,
+    NOT_FOUND_ERROR,
+    UNKNOWN_ERROR
   }
 
   /** Interface for retry callbacks */

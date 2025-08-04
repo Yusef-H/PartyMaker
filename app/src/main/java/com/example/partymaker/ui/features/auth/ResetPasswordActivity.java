@@ -17,15 +17,15 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
-import com.example.partymaker.viewmodel.auth.AuthViewModel;
+import com.example.partymaker.viewmodel.auth.ResetPasswordViewModel;
 
 /**
  * Activity for resetting user password via email. Handles UI theme switching and password reset
  * logic.
  */
 public class ResetPasswordActivity extends AppCompatActivity {
-  /** Auth ViewModel */
-  private AuthViewModel authViewModel;
+  /** Reset Password ViewModel */
+  private ResetPasswordViewModel resetPasswordViewModel;
 
   /** White theme button. */
   private Button btnWhite;
@@ -74,7 +74,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     actionBar.hide();
 
     // Initialize ViewModel
-    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+    resetPasswordViewModel = new ViewModelProvider(this).get(ResetPasswordViewModel.class);
     setupViewModelObservers();
 
     btnBlack = findViewById(R.id.btnBlack);
@@ -93,51 +93,67 @@ public class ResetPasswordActivity extends AppCompatActivity {
     eventHandler();
   }
 
-  /** Sets up observers for AuthViewModel LiveData */
+  /** Sets up observers for ResetPasswordViewModel LiveData */
   private void setupViewModelObservers() {
-    authViewModel
+    resetPasswordViewModel
         .getIsLoading()
         .observe(
             this,
             isLoading -> {
-              btnReset.setEnabled(!isLoading);
+              btnReset.setEnabled(isLoading == null || !isLoading);
+              btnReset.setText(isLoading != null && isLoading ? "Sending..." : "Reset Password");
             });
 
-    authViewModel
+    resetPasswordViewModel
         .getErrorMessage()
         .observe(
             this,
             errorMessage -> {
-              if (errorMessage != null) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+              if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
               }
             });
 
-    authViewModel
+    resetPasswordViewModel
         .getSuccessMessage()
         .observe(
             this,
             successMessage -> {
-              if (successMessage != null) {
+              if (successMessage != null && !successMessage.isEmpty()) {
                 Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
               }
             });
 
-    authViewModel
-        .getIsPasswordResetSent()
+    resetPasswordViewModel
+        .getResetSuccess()
         .observe(
             this,
-            isResetSent -> {
-              if (isResetSent) {
+            resetSent -> {
+              if (resetSent != null && resetSent) {
+                Toast.makeText(this, "Password reset email sent! Check your inbox.", Toast.LENGTH_LONG).show();
                 finish();
               }
             });
+            
+    // Observer for email validation
+    resetPasswordViewModel.getIsEmailValid().observe(this, isValid -> {
+      // Update UI based on email validation if needed
+      if (isValid != null && !isValid && etInputEmail.getText().toString().length() > 0) {
+        etInputEmail.setError("Please enter a valid email address");
+      } else {
+        etInputEmail.setError(null);
+      }
+    });
   }
 
   /** Sends a password reset email to the user. */
   private void ResetPass() {
-    final String email = etInputEmail.getText().toString();
-    authViewModel.resetPassword(email);
+    final String email = etInputEmail.getText().toString().trim();
+    if (email.isEmpty()) {
+      etInputEmail.setError("Please enter your email address");
+      return;
+    }
+    resetPasswordViewModel.resetPassword(email);
   }
 
   /** Handles all button click events and UI theme switching. */

@@ -143,6 +143,15 @@ public class ThreadUtils {
   }
 
   /**
+   * Runs a task on a background thread (alternative method name).
+   *
+   * @param runnable The task to run
+   */
+  public static void runOnBackground(Runnable runnable) {
+    BACKGROUND_EXECUTOR.execute(runnable);
+  }
+
+  /**
    * Runs a task on the network thread.
    *
    * @param runnable The task to run
@@ -158,6 +167,19 @@ public class ThreadUtils {
    */
   public static boolean isMainThread() {
     return Looper.getMainLooper().getThread() == Thread.currentThread();
+  }
+
+  /**
+   * Sleeps the current thread for the specified time.
+   *
+   * @param milliseconds Time to sleep in milliseconds
+   */
+  public static void sleep(long milliseconds) {
+    try {
+      Thread.sleep(milliseconds);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
   }
 
   /** An executor that runs tasks on the main thread. */

@@ -73,13 +73,12 @@ public class LoginActivity extends AppCompatActivity {
   /** Google sign-in button. */
   private SignInButton btnGoogleSignIn;
 
-  /** Google sign-in client. */
-  private GoogleSignInClient mGoogleSignInClient;
+  // Google Sign-In client now handled by AuthViewModel
 
   /** Firebase authentication instance. */
   private FirebaseAuth mAuth;
 
-  /** Authentication ViewModel */
+  /** Login ViewModel */
   private AuthViewModel authViewModel;
 
   /** Loading state manager */
@@ -115,14 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     // Check server connectivity
     checkServerConnectivity();
 
-    // Configure Google Sign In
-    GoogleSignInOptions gso =
-        new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build();
-
-    mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    // Google Sign-In now configured in AuthViewModel
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
@@ -145,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
     btnAbout.startAnimation(myFadeInAnimation);
 
     eventHandler();
+    setupTextWatchers();
   }
 
   /** Initialize UI components for better UX */
@@ -163,11 +156,9 @@ public class LoginActivity extends AppCompatActivity {
       progressBar.setVisibility(View.GONE);
     }
 
-    loadingStateManager =
-        new LoadingStateManager.Builder()
-            .contentView(findViewById(R.id.etEmailL)) // Use existing view as content
-            .progressBar(progressBar)
-            .build();
+    // Don't use LoadingStateManager for login form - it interferes with user input
+    // Just use the progress bar directly
+    loadingStateManager = null;
   }
 
   /** Sets up observers for AuthViewModel LiveData */
@@ -180,10 +171,10 @@ public class LoginActivity extends AppCompatActivity {
               btnLogin.setEnabled(!isLoading);
               btnGoogleSignIn.setEnabled(!isLoading);
 
-              if (isLoading) {
-                loadingStateManager.showLoading("Signing in...");
-              } else {
-                loadingStateManager.showContent();
+              // Show/hide progress bar without interfering with input fields
+              android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
+              if (progressBar != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
               }
             });
 
@@ -192,13 +183,13 @@ public class LoginActivity extends AppCompatActivity {
         .observe(
             this,
             errorMessage -> {
-              if (errorMessage != null) {
+              if (errorMessage != null && !errorMessage.isEmpty()) {
                 UiStateManager.showError(
                     rootView,
                     errorMessage,
                     () -> {
                       // Retry logic - clear error and enable retry
-                      authViewModel.clearError();
+                      authViewModel.clearMessages();
                     });
                 loadingStateManager.showError(errorMessage);
                 btnResetPass.setVisibility(View.VISIBLE);
@@ -210,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
         .observe(
             this,
             successMessage -> {
-              if (successMessage != null) {
+              if (successMessage != null && !successMessage.isEmpty()) {
                 UiStateManager.showSuccess(rootView, successMessage);
               }
             });
@@ -220,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         .observe(
             this,
             isAuthenticated -> {
-              if (isAuthenticated) {
+              if (isAuthenticated != null && isAuthenticated) {
                 UiStateManager.showSuccess(rootView, "Login successful!");
 
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -244,6 +235,9 @@ public class LoginActivity extends AppCompatActivity {
                     800);
               }
             });
+            
+    // Email validation and remember me features - simplified for AuthViewModel
+    // TODO: Add these features to AuthViewModel if needed
   }
 
   /** Forces the server URL to be set to Render */
@@ -313,27 +307,24 @@ public class LoginActivity extends AppCompatActivity {
 
             NetworkManager networkManager = NetworkManager.getInstance();
             boolean isReachable =
-                networkManager.isServerReachable(serverUrl + "/api/firebase/health", 10000);
+                networkManager.isServerReachable(serverUrl + "/api/firebase/health", 3000);
 
             ThreadUtils.runOnMainThread(
                 () -> {
                   if (isReachable) {
                     Log.d("LoginActivity", "Server is reachable");
                     // Don't show info message to avoid cluttering UI
-                    // UiStateManager.showInfo(rootView, "Connected to server");
                   } else {
                     Log.w("LoginActivity", "Server is not reachable");
-                    // Don't show warning message after logout to avoid confusing users
-                    // UiStateManager.showWarning(
-                    //     rootView, "Server connection issues - some features may be limited");
+                    // Don't show offline mode message in login screen - it's not relevant to users
                   }
                 });
           } catch (Exception e) {
             Log.e("LoginActivity", "Error checking server connectivity", e);
             ThreadUtils.runOnMainThread(
                 () -> {
-                  // Don't show warning message after logout to avoid confusing users
-                  // UiStateManager.showWarning(rootView, "Unable to verify server connection");
+                  // Don't show offline mode message - just log it
+                  Log.d("LoginActivity", "Connection check failed - continuing silently");
                 });
           }
         });
@@ -350,23 +341,39 @@ public class LoginActivity extends AppCompatActivity {
 
           // connection between firebase and login button using ViewModel
           private void SignIn() {
-            String email = Objects.requireNonNull(etEmail.getText()).toString();
-            String password = Objects.requireNonNull(etPassword.getText()).toString();
+            // Safely get email and password values
+            String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+            String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
 
+            // Validate input before proceeding
+            if (email.isEmpty()) {
+              etEmail.setError("Please enter your email");
+              etEmail.requestFocus();
+              return;
+            }
+            
+            if (password.isEmpty()) {
+              etPassword.setError("Please enter your password");
+              etPassword.requestFocus();
+              return;
+            }
+
+            // Perform login with AuthViewModel
             authViewModel.loginWithEmail(email, password);
 
             // Set user session using AuthHelper when login succeeds
-            if (!email.isEmpty()) {
-              AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
-            }
+            AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
           }
         });
 
-    // Google Sign In button click listener - use ViewModel's GoogleSignInClient
+    // Google Sign In button click listener
     btnGoogleSignIn.setOnClickListener(
         v -> {
-          Intent signInIntent = authViewModel.getGoogleSignInClient().getSignInIntent();
-          startActivityForResult(signInIntent, RC_SIGN_IN);
+          GoogleSignInClient googleClient = authViewModel.getGoogleSignInClient();
+          if (googleClient != null) {
+            Intent signInIntent = googleClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+          }
         });
 
     // Press Here Onclick
@@ -398,8 +405,52 @@ public class LoginActivity extends AppCompatActivity {
 
     if (requestCode == RC_SIGN_IN) {
       Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+      // Use AuthViewModel's Google Sign-In method
       authViewModel.signInWithGoogle(task);
     }
+  }
+
+  /** Setup text watchers for real-time validation */
+  private void setupTextWatchers() {
+    etEmail.addTextChangedListener(new android.text.TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Clear error when user starts typing
+        etEmail.setError(null);
+        
+        // Validate email format in real-time
+        String email = s.toString().trim();
+        if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+          etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
+        }
+      }
+
+      @Override
+      public void afterTextChanged(android.text.Editable s) {
+        // Clear any previous errors when user types
+        authViewModel.clearMessages();
+      }
+    });
+
+    etPassword.addTextChangedListener(new android.text.TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Clear error when user starts typing
+        etPassword.setError(null);
+      }
+
+      @Override
+      public void afterTextChanged(android.text.Editable s) {
+        // Clear any previous errors when user types
+        authViewModel.clearMessages();
+      }
+    });
   }
 
   /** Clears previous authentication state to prevent auto-login */
@@ -409,7 +460,7 @@ public class LoginActivity extends AppCompatActivity {
 
       // Reset the ViewModel's authentication state
       if (authViewModel != null) {
-        authViewModel.clearAuthenticationState();
+        authViewModel.clearMessages();
       }
 
       Log.d(TAG, "Authentication state cleared successfully");

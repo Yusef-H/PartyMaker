@@ -437,6 +437,86 @@ public class UserRepository {
   }
 
   /**
+   * Gets a specific user by key
+   *
+   * @param userKey The user key to find
+   * @param callback Callback to return the user
+   */
+  public void getUser(String userKey, Callback<User> callback) {
+    if (userKey == null || userKey.isEmpty()) {
+      callback.onError(new IllegalArgumentException("User key cannot be null or empty"));
+      return;
+    }
+    
+    ThreadUtils.runInBackground(() -> {
+      try {
+        // Check cache first
+        User cachedUser = userCache.get(userKey);
+        if (cachedUser != null) {
+          ThreadUtils.runOnMainThread(() -> callback.onSuccess(cachedUser));
+          return;
+        }
+        
+        // Get from server
+        serverClient.getUser(userKey, new FirebaseServerClient.DataCallback<User>() {
+          @Override
+          public void onSuccess(User user) {
+            if (user != null) {
+              userCache.put(userKey, user);
+            }
+            ThreadUtils.runOnMainThread(() -> callback.onSuccess(user));
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            ThreadUtils.runOnMainThread(() -> 
+              callback.onError(new Exception(errorMessage)));
+          }
+        });
+        
+      } catch (Exception e) {
+        ThreadUtils.runOnMainThread(() -> callback.onError(e));
+      }
+    });
+  }
+  
+  /**
+   * Creates a new user
+   *
+   * @param user The user to create
+   * @param callback Callback to return the created user
+   */
+  public void createUser(User user, Callback<User> callback) {
+    if (user == null) {
+      callback.onError(new IllegalArgumentException("User cannot be null"));
+      return;
+    }
+    
+    ThreadUtils.runInBackground(() -> {
+      try {
+        serverClient.createUser(user, new FirebaseServerClient.DataCallback<User>() {
+          @Override
+          public void onSuccess(User createdUser) {
+            if (createdUser != null) {
+              userCache.put(createdUser.getUserKey(), createdUser);
+            }
+            ThreadUtils.runOnMainThread(() -> callback.onSuccess(createdUser));
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            ThreadUtils.runOnMainThread(() -> 
+              callback.onError(new Exception(errorMessage)));
+          }
+        });
+        
+      } catch (Exception e) {
+        ThreadUtils.runOnMainThread(() -> callback.onError(e));
+      }
+    });
+  }
+
+  /**
    * Gets all users as LiveData
    *
    * @return LiveData containing map of all users
@@ -473,5 +553,31 @@ public class UserRepository {
     void onComplete();
 
     void onError(String error);
+  }
+  
+  /** Interface for generic callbacks */
+  public interface Callback<T> {
+    void onSuccess(T result);
+    
+    void onError(Exception error);
+  }
+  
+  /**
+   * Gets all users (ViewModel wrapper).
+   * 
+   * @param callback Callback to receive the users
+   */
+  public void getAllUsers(final Callback<List<User>> callback) {
+    getAllUsers(new DataCallback<List<User>>() {
+      @Override
+      public void onDataLoaded(List<User> users) {
+        callback.onSuccess(users);
+      }
+      
+      @Override
+      public void onError(String error) {
+        callback.onError(new Exception(error));
+      }
+    }, false);
   }
 }

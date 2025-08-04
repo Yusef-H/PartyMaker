@@ -351,6 +351,25 @@ public class EditProfileActivity extends AppCompatActivity {
       etUsername.setError("Username cannot be empty");
       return;
     }
+    
+    // Allow spaces in username - validate length and basic format
+    if (username.length() < 2) {
+      etUsername.setError("Username must be at least 2 characters long");
+      return;
+    }
+    
+    if (username.length() > 50) {
+      etUsername.setError("Username cannot be longer than 50 characters");
+      return;
+    }
+    
+    // If it looks like an email, validate it properly
+    if (username.contains("@")) {
+      if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
+        etUsername.setError("Invalid email format. If using email as username, it must be a valid email address.");
+        return;
+      }
+    }
 
     // Show loading indicator
     progressBar.setVisibility(View.VISIBLE);
