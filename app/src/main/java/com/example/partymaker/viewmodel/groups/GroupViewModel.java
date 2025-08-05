@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.viewmodel.BaseViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 

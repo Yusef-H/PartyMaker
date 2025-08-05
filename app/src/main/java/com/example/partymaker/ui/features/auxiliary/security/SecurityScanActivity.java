@@ -69,7 +69,7 @@ public class SecurityScanActivity extends AppCompatActivity {
     // Show progress
     progressBar.setVisibility(View.VISIBLE);
     btnRunScan.setEnabled(false);
-    tvScanStatus.setText("Running security scan...");
+    tvScanStatus.setText(getString(R.string.running_security_scan));
 
     // Start scan
     long startTime = System.currentTimeMillis();
@@ -92,7 +92,7 @@ public class SecurityScanActivity extends AppCompatActivity {
                       btnExportReport.setVisibility(View.VISIBLE);
                       btnShareReport.setVisibility(View.VISIBLE);
 
-                      tvScanStatus.setText("Scan completed successfully");
+                      tvScanStatus.setText(getString(R.string.scan_completed_successfully));
                     }))
         .exceptionally(
             throwable -> {
@@ -100,7 +100,7 @@ public class SecurityScanActivity extends AppCompatActivity {
                   () -> {
                     progressBar.setVisibility(View.GONE);
                     btnRunScan.setEnabled(true);
-                    tvScanStatus.setText("Scan failed: " + throwable.getMessage());
+                    tvScanStatus.setText(getString(R.string.scan_failed, throwable.getMessage()));
                     Toast.makeText(this, "Security scan failed", Toast.LENGTH_LONG).show();
                   });
               return null;
@@ -110,12 +110,12 @@ public class SecurityScanActivity extends AppCompatActivity {
   private void displayResults(SecurityReport report) {
     // Display score
     tvSecurityScore.setText(String.format(Locale.getDefault(), "%d/100", report.getOverallScore()));
-    tvSecurityGrade.setText("Grade: " + report.getSecurityGrade());
+    tvSecurityGrade.setText(getString(R.string.grade_with_value, report.getSecurityGrade()));
 
     // Display issues summary
     int totalIssues = report.getSecurityIssues().size();
     if (totalIssues == 0) {
-      tvIssuesFound.setText("No security issues found!");
+      tvIssuesFound.setText(getString(R.string.no_security_issues_found));
       tvIssuesFound.setTextColor(getColor(android.R.color.holo_green_dark));
     } else {
       tvIssuesFound.setText(

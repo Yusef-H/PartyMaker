@@ -6,10 +6,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.example.partymaker.R;
+import com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity;
 import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.ui.features.groups.creation.CreateGroupActivity;
 import com.example.partymaker.ui.features.groups.discovery.PublicGroupsActivity;
-import com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity;
 
 public class NavigationManager {
 

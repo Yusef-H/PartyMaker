@@ -380,11 +380,11 @@ public class ProfileViewModel extends ViewModel {
       errorMessage.setValue("No email found for current user");
       return;
     }
-    
+
     // Use the same email-to-key conversion as in loadCurrentUser
     String userId = userEmail.replace('.', ' ');
     Log.d(TAG, "Using userKey for update: " + userId + " (from email: " + userEmail + ")");
-    
+
     if (userId.isEmpty()) {
       Log.e(TAG, "Cannot update current user: Invalid user key");
       errorMessage.setValue("Invalid user key");
@@ -432,23 +432,28 @@ public class ProfileViewModel extends ViewModel {
           @Override
           public void onError(String error) {
             Log.e(TAG, "Error updating current user: " + error);
-            
+
             // If it's a 404 error or server unavailable, use local fallback
-            if (error.contains("404") || error.contains("Failed to update user") || 
-                error.contains("Network") || error.contains("timeout")) {
-              
-              Log.i(TAG, "Server update failed, applying changes locally (offline mode). Error: " + error);
-              
+            if (error.contains("404")
+                || error.contains("Failed to update user")
+                || error.contains("Network")
+                || error.contains("timeout")) {
+
+              Log.i(
+                  TAG,
+                  "Server update failed, applying changes locally (offline mode). Error: " + error);
+
               // Apply updates to the current user object locally
               for (Map.Entry<String, Object> entry : updates.entrySet()) {
                 applyUpdateToUser(user, entry.getKey(), entry.getValue());
               }
-              
+
               currentUser.setValue(user);
               isLoading.setValue(false);
               networkErrorType.setValue(null);
-              successMessage.setValue("Profile updated successfully (server sync will retry later)");
-              
+              successMessage.setValue(
+                  "Profile updated successfully (server sync will retry later)");
+
             } else {
               // Handle other types of errors normally
               errorMessage.setValue("Failed to update profile: " + error);
@@ -458,11 +463,11 @@ public class ProfileViewModel extends ViewModel {
               NetworkUtils.ErrorType type = determineErrorType(error);
               networkErrorType.setValue(type);
 
-                if (appContext != null) {
-                  AppNetworkError.handleNetworkError(appContext, error, type, false);
-                }
+              if (appContext != null) {
+                AppNetworkError.handleNetworkError(appContext, error, type, false);
               }
             }
+          }
         });
   }
 
@@ -618,9 +623,7 @@ public class ProfileViewModel extends ViewModel {
     }
   }
 
-  /**
-   * Decodes URL-encoded strings if needed.
-   */
+  /** Decodes URL-encoded strings if needed. */
   private Object decodeIfNeeded(Object value) {
     if (value instanceof String) {
       String stringValue = (String) value;

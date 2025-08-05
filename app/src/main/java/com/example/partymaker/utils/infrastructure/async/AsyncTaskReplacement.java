@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -250,6 +251,7 @@ public class AsyncTaskReplacement {
       java.util.concurrent.ThreadPoolExecutor tpe =
           (java.util.concurrent.ThreadPoolExecutor) BACKGROUND_EXECUTOR;
       return String.format(
+          Locale.US,
           "Active: %d, Pool: %d, Queue: %d, Completed: %d",
           tpe.getActiveCount(),
           tpe.getPoolSize(),

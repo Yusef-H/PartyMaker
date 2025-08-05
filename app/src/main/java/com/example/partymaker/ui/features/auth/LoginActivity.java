@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.partymaker.BuildConfig;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
@@ -27,7 +28,6 @@ import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -36,7 +36,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Activity for user login, including email/password and Google sign-in. Handles authentication,
@@ -235,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                     800);
               }
             });
-            
+
     // Email validation and remember me features - simplified for AuthViewModel
     // TODO: Add these features to AuthViewModel if needed
   }
@@ -250,48 +249,54 @@ public class LoginActivity extends AppCompatActivity {
     Log.d("LoginActivity", "Forced server URL to: " + renderUrl);
   }
 
-  /** Resets password for test user (1@1.com) to 123456 This is for debugging purposes only */
+  /** Resets password for test user - FOR DEBUGGING ONLY, REMOVE IN PRODUCTION */
   private void resetTestUserPassword() {
-    String testEmail = "1@1.com";
-    String testPassword = "123456";
+    // WARNING: This method contains hardcoded credentials and should be removed in production
+    String testEmail = BuildConfig.DEBUG ? "1@1.com" : "";
+    String testPassword = BuildConfig.DEBUG ? "123456" : "";
 
-    // Try to sign in with email and password directly
-    mAuth
-        .signInWithEmailAndPassword(testEmail, testPassword)
-        .addOnCompleteListener(
-            task -> {
-              if (task.isSuccessful()) {
-                Log.d("LoginActivity", "Test user login successful");
-              } else {
-                Log.d("LoginActivity", "Test user login failed, attempting to create user");
+    // Only execute in debug mode
+    if (BuildConfig.DEBUG && !testEmail.isEmpty()) {
+      // Try to sign in with email and password directly
+      mAuth
+          .signInWithEmailAndPassword(testEmail, testPassword)
+          .addOnCompleteListener(
+              task -> {
+                if (task.isSuccessful()) {
+                  Log.d("LoginActivity", "Test user login successful");
+                } else {
+                  Log.d("LoginActivity", "Test user login failed, attempting to create user");
 
-                // If login fails, try to create the user
-                mAuth
-                    .createUserWithEmailAndPassword(testEmail, testPassword)
-                    .addOnCompleteListener(
-                        createTask -> {
-                          if (createTask.isSuccessful()) {
-                            Log.d("LoginActivity", "Test user created successfully");
-                            // Create user in database using Map instead of User object
-                            Map<String, Object> testUserData = new HashMap<>();
-                            testUserData.put("username", "Test User");
-                            testUserData.put("email", testEmail);
-                            testUserData.put("userKey", java.util.UUID.randomUUID().toString());
+                  // If login fails, try to create the user
+                  mAuth
+                      .createUserWithEmailAndPassword(testEmail, testPassword)
+                      .addOnCompleteListener(
+                          createTask -> {
+                            if (createTask.isSuccessful()) {
+                              Log.d("LoginActivity", "Test user created successfully");
+                              // Create user in database using Map instead of User object
+                              Map<String, Object> testUserData = new HashMap<>();
+                              testUserData.put("username", "Test User");
+                              testUserData.put("email", testEmail);
+                              testUserData.put("userKey", java.util.UUID.randomUUID().toString());
 
-                            DBRef.refUsers
-                                .child(testEmail.replace('.', ' '))
-                                .setValue(testUserData);
-                          } else {
-                            Log.d(
-                                "LoginActivity",
-                                "Test user creation failed: "
-                                    + (createTask.getException() != null
-                                        ? createTask.getException().getMessage()
-                                        : "unknown error"));
-                          }
-                        });
-              }
-            });
+                              DBRef.refUsers
+                                  .child(testEmail.replace('.', ' '))
+                                  .setValue(testUserData);
+                            } else {
+                              Log.d(
+                                  "LoginActivity",
+                                  "Test user creation failed: "
+                                      + (createTask.getException() != null
+                                          ? createTask.getException().getMessage()
+                                          : "unknown error"));
+                            }
+                          });
+                }
+              });
+    } else {
+      Log.w("LoginActivity", "Test user reset skipped - not in debug mode or empty credentials");
+    }
   }
 
   /** Checks connectivity to the server using NetworkManager */
@@ -343,7 +348,8 @@ public class LoginActivity extends AppCompatActivity {
           private void SignIn() {
             // Safely get email and password values
             String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
-            String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
+            String password =
+                etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
 
             // Validate input before proceeding
             if (email.isEmpty()) {
@@ -351,7 +357,7 @@ public class LoginActivity extends AppCompatActivity {
               etEmail.requestFocus();
               return;
             }
-            
+
             if (password.isEmpty()) {
               etPassword.setError("Please enter your password");
               etPassword.requestFocus();
@@ -412,45 +418,47 @@ public class LoginActivity extends AppCompatActivity {
 
   /** Setup text watchers for real-time validation */
   private void setupTextWatchers() {
-    etEmail.addTextChangedListener(new android.text.TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    etEmail.addTextChangedListener(
+        new android.text.TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // Clear error when user starts typing
-        etEmail.setError(null);
-        
-        // Validate email format in real-time
-        String email = s.toString().trim();
-        if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-          etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
-        }
-      }
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // Clear error when user starts typing
+            etEmail.setError(null);
 
-      @Override
-      public void afterTextChanged(android.text.Editable s) {
-        // Clear any previous errors when user types
-        authViewModel.clearMessages();
-      }
-    });
+            // Validate email format in real-time
+            String email = s.toString().trim();
+            if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+              etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
+            }
+          }
 
-    etPassword.addTextChangedListener(new android.text.TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+          @Override
+          public void afterTextChanged(android.text.Editable s) {
+            // Clear any previous errors when user types
+            authViewModel.clearMessages();
+          }
+        });
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // Clear error when user starts typing
-        etPassword.setError(null);
-      }
+    etPassword.addTextChangedListener(
+        new android.text.TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      @Override
-      public void afterTextChanged(android.text.Editable s) {
-        // Clear any previous errors when user types
-        authViewModel.clearMessages();
-      }
-    });
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // Clear error when user starts typing
+            etPassword.setError(null);
+          }
+
+          @Override
+          public void afterTextChanged(android.text.Editable s) {
+            // Clear any previous errors when user types
+            authViewModel.clearMessages();
+          }
+        });
   }
 
   /** Clears previous authentication state to prevent auto-login */

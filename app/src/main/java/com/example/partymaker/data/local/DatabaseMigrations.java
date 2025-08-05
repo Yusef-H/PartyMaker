@@ -52,38 +52,44 @@ public class DatabaseMigrations {
           try {
             Log.d(TAG, "Starting migration from version 4 to 5 - Adding encryption support");
 
-            // Add encrypted column to chat_messages table - without default to match Room expectations
-            database.execSQL("ALTER TABLE chat_messages ADD COLUMN encrypted INTEGER NOT NULL DEFAULT 0");
-            
-            // Update the table schema to match Room expectations by recreating without explicit default
-            database.execSQL("CREATE TABLE chat_messages_new ("
-                + "messageKey TEXT PRIMARY KEY NOT NULL, "
-                + "groupKey TEXT, "
-                + "senderKey TEXT, "
-                + "senderName TEXT, "
-                + "message TEXT, "
-                + "timestamp INTEGER NOT NULL, "
-                + "imageUrl TEXT, "
-                + "encrypted INTEGER NOT NULL, "
-                + "metadata TEXT, "
-                + "groupId TEXT, "
-                + "messageContent TEXT, "
-                + "messageText TEXT, "
-                + "messageTime TEXT, "
-                + "messageUser TEXT)");
-                
+            // Add encrypted column to chat_messages table - without default to match Room
+            // expectations
+            database.execSQL(
+                "ALTER TABLE chat_messages ADD COLUMN encrypted INTEGER NOT NULL DEFAULT 0");
+
+            // Update the table schema to match Room expectations by recreating without explicit
+            // default
+            database.execSQL(
+                "CREATE TABLE chat_messages_new ("
+                    + "messageKey TEXT PRIMARY KEY NOT NULL, "
+                    + "groupKey TEXT, "
+                    + "senderKey TEXT, "
+                    + "senderName TEXT, "
+                    + "message TEXT, "
+                    + "timestamp INTEGER NOT NULL, "
+                    + "imageUrl TEXT, "
+                    + "encrypted INTEGER NOT NULL, "
+                    + "metadata TEXT, "
+                    + "groupId TEXT, "
+                    + "messageContent TEXT, "
+                    + "messageText TEXT, "
+                    + "messageTime TEXT, "
+                    + "messageUser TEXT)");
+
             // Copy data from old table to new, setting encrypted = 0 for existing messages
-            database.execSQL("INSERT INTO chat_messages_new SELECT "
-                + "messageKey, groupKey, senderKey, senderName, message, timestamp, imageUrl, "
-                + "COALESCE(encrypted, 0) as encrypted, metadata, groupId, messageContent, messageText, messageTime, messageUser "
-                + "FROM chat_messages");
-                
+            database.execSQL(
+                "INSERT INTO chat_messages_new SELECT "
+                    + "messageKey, groupKey, senderKey, senderName, message, timestamp, imageUrl, "
+                    + "COALESCE(encrypted, 0) as encrypted, metadata, groupId, messageContent, messageText, messageTime, messageUser "
+                    + "FROM chat_messages");
+
             // Drop old table and rename new one
             database.execSQL("DROP TABLE chat_messages");
             database.execSQL("ALTER TABLE chat_messages_new RENAME TO chat_messages");
 
             // Create index for encrypted field for better query performance
-            database.execSQL("CREATE INDEX IF NOT EXISTS index_chat_messages_encrypted ON chat_messages(encrypted)");
+            database.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_chat_messages_encrypted ON chat_messages(encrypted)");
 
             Log.d(TAG, "Successfully migrated from version 4 to 5 - Encryption field added");
 
@@ -104,7 +110,7 @@ public class DatabaseMigrations {
 
             // No actual schema changes needed - this is just to fix Room validation
             // The encrypted field should already exist from migration 4->5
-            
+
             Log.d(TAG, "Successfully migrated from version 5 to 6 - Schema validation fixed");
 
           } catch (Exception e) {
@@ -302,7 +308,9 @@ public class DatabaseMigrations {
 
   /** Get all available migrations in order */
   public static Migration[] getAllMigrations() {
-    return new Migration[] {MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6};
+    return new Migration[] {
+      MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6
+    };
   }
 
   /** Get emergency migration for data recovery scenarios */

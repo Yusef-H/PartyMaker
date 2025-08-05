@@ -115,7 +115,7 @@
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:endIconMode="password_toggle"
-                    app:startIconDrawable="@drawable/ic_password"
+                    app:startIconDrawable="@drawable/ic_password_custom"
                     app:startIconTint="?attr/colorPrimary"
                     tools:ignore="PrivateResource">
 
@@ -300,7 +300,7 @@
                         android:layout_height="20dp"
                         android:layout_marginEnd="10dp"
                         android:contentDescription="@string/reset_your_password"
-                        android:src="@drawable/ic_password"
+                        android:src="@drawable/ic_password_custom"
                         app:tint="?attr/colorSecondary"
                         tools:ignore="PrivateResource" />
 

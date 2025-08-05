@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/network/SSLPinningManager.java</file>
+  <line>160</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.network</package>
+  <entry_point TYPE="class" FQNAME="com.example.partymaker.utils.security.network.SSLPinningManager.CustomHostnameVerifier" />
+  <problem_class id="InnerClassMayBeStatic" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Inner class may be 'static'</problem_class>
+  <description>Inner class &lt;code&gt;CustomHostnameVerifier&lt;/code&gt; may be 'static' #loc</description>
+  <highlighted_element>CustomHostnameVerifier</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>22</length>
+</problem>
+</problems>

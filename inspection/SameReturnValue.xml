@@ -1,0 +1,100 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/data/firebase/FirebaseAccessManager.java</file>
+  <line>17</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.data.firebase</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.data.firebase.FirebaseAccessManager boolean isServerModeEnabled()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isServerModeEnabled()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>isServerModeEnabled</highlighted_element>
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgent.java</file>
+  <line>264</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgent boolean isSSLPinningEnabled()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isSSLPinningEnabled()&lt;/code&gt; always returns &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>isSSLPinningEnabled</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgent.java</file>
+  <line>269</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgent boolean isCleartextTrafficAllowed()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isCleartextTrafficAllowed()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>isCleartextTrafficAllowed</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>25</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgent.java</file>
+  <line>274</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgent boolean isDataEncrypted()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isDataEncrypted()&lt;/code&gt; always returns &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>isDataEncrypted</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgent.java</file>
+  <line>279</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgent boolean isSharedPreferencesEncrypted()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isSharedPreferencesEncrypted()&lt;/code&gt; always returns &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>isSharedPreferencesEncrypted</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>28</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgent.java</file>
+  <line>293</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgent boolean isPermissionJustified(java.lang.String permission)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isPermissionJustified()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>isPermissionJustified</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/monitoring/SecurityAgent.java</file>
+  <line>298</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.monitoring</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.utils.security.monitoring.SecurityAgent boolean areFirebaseRulesSecure()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;areFirebaseRulesSecure()&lt;/code&gt; always returns &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>areFirebaseRulesSecure</highlighted_element>
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>22</length>
+</problem>
+</problems>

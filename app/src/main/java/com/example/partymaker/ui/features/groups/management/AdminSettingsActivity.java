@@ -23,10 +23,10 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
-import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
-import com.example.partymaker.utils.media.ImageCompressor;
+import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.example.partymaker.utils.media.ImageCompressor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -237,7 +237,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
               uri,
               new ImageCompressor.CompressCallback() {
                 @Override
-                public void onCompressSuccess(File compressedFile) {
+                public void onCompressSuccess(@NonNull File compressedFile) {
                   ThreadUtils.runOnMainThread(
                       () -> {
                         Uri compressedUri = Uri.fromFile(compressedFile);

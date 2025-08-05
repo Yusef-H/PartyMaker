@@ -4,7 +4,6 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.partymaker.viewmodel.BaseViewModel;
 
 /** ViewModel for IntroActivity handling intro/onboarding state */

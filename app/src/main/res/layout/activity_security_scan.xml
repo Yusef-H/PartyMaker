@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Security Scanner"
+        android:text="@string/security_scanner"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -32,7 +32,7 @@
                 android:id="@+id/tv_security_score"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="--/100"
+                android:text="@string/score_format"
                 android:textSize="48sp"
                 android:textStyle="bold"
                 android:gravity="center" />
@@ -41,7 +41,7 @@
                 android:id="@+id/tv_security_grade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Grade: -"
+                android:text="@string/grade_format"
                 android:textSize="24sp"
                 android:gravity="center"
                 android:layout_marginTop="8dp" />
@@ -54,7 +54,7 @@
         android:id="@+id/tv_issues_found"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tap 'Run Scan' to start"
+        android:text="@string/tap_to_start"
         android:textSize="16sp"
         android:gravity="center"
         android:layout_marginBottom="16dp" />
@@ -63,7 +63,7 @@
         android:id="@+id/tv_scan_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ready to scan"
+        android:text="@string/ready_to_scan"
         android:textSize="14sp"
         android:gravity="center"
         android:layout_marginBottom="16dp" />
@@ -80,7 +80,7 @@
         android:id="@+id/btn_run_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Run Security Scan"
+        android:text="@string/run_security_scan"
         android:textAllCaps="false"
         android:layout_marginBottom="8dp" />
 
@@ -88,7 +88,7 @@
         android:id="@+id/btn_export_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Export Report"
+        android:text="@string/export_report"
         android:textAllCaps="false"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
@@ -97,7 +97,7 @@
         android:id="@+id/btn_share_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Share Report"
+        android:text="@string/share_report"
         android:textAllCaps="false"
         android:visibility="gone" />
 

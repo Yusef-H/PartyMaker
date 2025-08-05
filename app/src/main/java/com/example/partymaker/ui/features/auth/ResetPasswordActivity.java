@@ -130,20 +130,26 @@ public class ResetPasswordActivity extends AppCompatActivity {
             this,
             resetSent -> {
               if (resetSent != null && resetSent) {
-                Toast.makeText(this, "Password reset email sent! Check your inbox.", Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        this, "Password reset email sent! Check your inbox.", Toast.LENGTH_LONG)
+                    .show();
                 finish();
               }
             });
-            
+
     // Observer for email validation
-    resetPasswordViewModel.getIsEmailValid().observe(this, isValid -> {
-      // Update UI based on email validation if needed
-      if (isValid != null && !isValid && etInputEmail.getText().toString().length() > 0) {
-        etInputEmail.setError("Please enter a valid email address");
-      } else {
-        etInputEmail.setError(null);
-      }
-    });
+    resetPasswordViewModel
+        .getIsEmailValid()
+        .observe(
+            this,
+            isValid -> {
+              // Update UI based on email validation if needed
+              if (isValid != null && !isValid && etInputEmail.getText().toString().length() > 0) {
+                etInputEmail.setError("Please enter a valid email address");
+              } else {
+                etInputEmail.setError(null);
+              }
+            });
   }
 
   /** Sends a password reset email to the user. */

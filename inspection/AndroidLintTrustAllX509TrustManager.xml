@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/network/SSLPinningManager.java</file>
+  <line>111</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.utils.security.network</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/utils/security/network/SSLPinningManager.java" />
+  <problem_class id="AndroidLintTrustAllX509TrustManager" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Insecure TLS/SSL trust manager</problem_class>
+  <hints />
+  <description>&lt;html&gt;&lt;code&gt;checkClientTrusted&lt;/code&gt; is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers&lt;/html&gt;</description>
+  <highlighted_element>checkClientTrusted</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>18</length>
+</problem>
+</problems>

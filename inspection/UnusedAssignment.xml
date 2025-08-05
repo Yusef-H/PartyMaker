@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/partymaker/viewmodel/groups/DateManagementViewModel.java</file>
+  <line>685</line>
+  <module>PartyMaker.app.main</module>
+  <package>com.example.partymaker.viewmodel.groups</package>
+  <entry_point TYPE="method" FQNAME="com.example.partymaker.viewmodel.groups.DateManagementViewModel void generateSchedulingSuggestion()" />
+  <problem_class id="UnusedAssignment" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused assignment</problem_class>
+  <description>Variable &lt;code&gt;suggestion&lt;/code&gt; initializer &lt;code&gt;&quot;&quot;&lt;/code&gt; is redundant</description>
+  <highlighted_element>&quot;&quot;</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>2</length>
+</problem>
+</problems>

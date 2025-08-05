@@ -11,8 +11,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.partymaker.utils.security.network.SSLPinningManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.example.partymaker.utils.security.network.SSLPinningManager;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -260,12 +260,14 @@ public class NetworkManager {
   /** Checks server reachability using secure SSL-pinned connection */
   private boolean isServerReachableSecure(String url, int timeout) {
     try {
-      OkHttpClient client = sslPinningManager.createSecureClient()
-          .newBuilder()
-          .connectTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
-          .readTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
-          .writeTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
-          .build();
+      OkHttpClient client =
+          sslPinningManager
+              .createSecureClient()
+              .newBuilder()
+              .connectTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
+              .readTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
+              .writeTimeout(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)
+              .build();
       Request request = new Request.Builder().url(url).head().build();
 
       try (Response response = client.newCall(request).execute()) {

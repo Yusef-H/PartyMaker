@@ -37,11 +37,11 @@ public class User {
   /** Map of friend keys. */
   @ColumnInfo(name = "friend_keys")
   private Map<String, Boolean> friendKeys;
-  
+
   /** The user's full name. */
   @ColumnInfo(name = "full_name")
   private String fullName;
-  
+
   /** The creation timestamp. */
   @ColumnInfo(name = "created_at")
   private String createdAt;
@@ -200,7 +200,7 @@ public class User {
   public void setFriendKeys(Map<String, Boolean> friendKeys) {
     this.friendKeys = friendKeys;
   }
-  
+
   /**
    * Gets the user's full name.
    *
@@ -209,7 +209,7 @@ public class User {
   public String getFullName() {
     return fullName;
   }
-  
+
   /**
    * Sets the user's full name.
    *
@@ -218,7 +218,7 @@ public class User {
   public void setFullName(String fullName) {
     this.fullName = fullName;
   }
-  
+
   /**
    * Gets the creation timestamp.
    *
@@ -227,7 +227,7 @@ public class User {
   public String getCreatedAt() {
     return createdAt;
   }
-  
+
   /**
    * Sets the creation timestamp.
    *

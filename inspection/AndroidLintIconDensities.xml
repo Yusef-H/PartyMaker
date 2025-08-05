@@ -1,0 +1,20 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi</file>
+  <entry_point TYPE="dir" FQNAME="$PROJECT_DIR$/app/src/main/res/drawable-mdpi" />
+  <problem_class id="AndroidLintIconDensities" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Icon densities validation</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing the following drawables in &lt;code&gt;drawable-mdpi&lt;/code&gt;: bg_chat.jpg, bg_party_screen.png, bg_party_screen_reverse.jpg, ic_cake.png, ic_cake_black.png... (3 more)&lt;/html&gt;</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi</file>
+  <entry_point TYPE="dir" FQNAME="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi" />
+  <problem_class id="AndroidLintIconDensities" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Icon densities validation</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing the following drawables in &lt;code&gt;drawable-xxhdpi&lt;/code&gt;: ic_cake_about_us.png (found in drawable-mdpi)&lt;/html&gt;</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

@@ -1,0 +1,14 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/server/build.gradle</file>
+  <line>11</line>
+  <module>PartyMaker.app</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/server/build.gradle" />
+  <problem_class id="GroovyUnusedAssignment" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused assignment</problem_class>
+  <description>Assignment is not used</description>
+  <highlighted_element>sourceCompatibility</highlighted_element>
+  <language>Groovy</language>
+  <offset>0</offset>
+  <length>19</length>
+</problem>
+</problems>

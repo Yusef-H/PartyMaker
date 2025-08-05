@@ -41,18 +41,18 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.features.auth.LoginActivity;
 import com.example.partymaker.ui.features.auxiliary.chatbot.GptChatActivity;
-import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
+import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.business.group.GroupDataManager;
 import com.example.partymaker.utils.business.group.GroupDateTimeManager;
+import com.example.partymaker.utils.core.IntentExtrasManager;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
-import com.example.partymaker.utils.ui.navigation.NavigationManager;
-import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
+import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
+import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -512,7 +512,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
             // Initialize group chat
             initializeGroupChat(group);
-            
+
             // Initialize group encryption
             initializeGroupEncryption(groupKey);
 
@@ -701,10 +701,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
           }
         });
   }
-  
-  /**
-   * Initialize group encryption when creating a new group
-   */
+
+  /** Initialize group encryption when creating a new group */
   private void initializeGroupEncryption(String groupKey) {
     try {
       String currentUserId = AuthenticationManager.getCurrentUserKey(this);
@@ -712,19 +710,21 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         Log.w(TAG, "Cannot initialize group encryption: no current user");
         return;
       }
-      
+
       GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
-      
+
       // Create encryption for new group
-      groupKeyManager.createGroupWithEncryption(groupKey)
-        .thenAccept(success -> {
-          if (success) {
-            Log.i(TAG, "Group encryption initialized successfully for: " + groupKey);
-          } else {
-            Log.w(TAG, "Failed to initialize group encryption for: " + groupKey);
-          }
-        });
-        
+      groupKeyManager
+          .createGroupWithEncryption(groupKey)
+          .thenAccept(
+              success -> {
+                if (success) {
+                  Log.i(TAG, "Group encryption initialized successfully for: " + groupKey);
+                } else {
+                  Log.w(TAG, "Failed to initialize group encryption for: " + groupKey);
+                }
+              });
+
     } catch (Exception e) {
       Log.e(TAG, "Error initializing group encryption", e);
     }
