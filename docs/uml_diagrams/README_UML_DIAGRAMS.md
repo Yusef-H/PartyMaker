@@ -101,7 +101,7 @@ This directory contains comprehensive UML diagrams for the PartyMaker applicatio
 
 ### **For System Design:**
 1. **API Integration**: Reference UML_Server.md and UML_Firebase.md
-2. **Data Flow**: Follow UML_Repositories.md → UML_ViewModels.md → UML_Activities.md
+2. **Architecture Layers**: Study UML_Repositories.md → UML_ViewModels.md → UML_Activities.md
 3. **Component Dependencies**: Cross-reference all diagrams for relationships
 
 ### **For Code Reviews:**
@@ -125,7 +125,7 @@ This directory contains comprehensive UML diagrams for the PartyMaker applicatio
 
 1. **Overview**: Start with this README for navigation
 2. **UI Understanding**: Begin with UML_Activities.md
-3. **Data Flow**: Progress through UML_ViewModels.md → UML_Repositories.md → UML_Data_Models.md
+3. **Component Structure**: Progress through UML_ViewModels.md → UML_Repositories.md → UML_Data_Models.md
 4. **Infrastructure**: Explore UML_Managers_Utils.md, UML_Security.md, UML_Networking.md
 5. **Backend**: Review UML_Server.md and UML_Firebase.md
 

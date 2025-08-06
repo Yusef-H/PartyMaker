@@ -285,7 +285,7 @@ classDiagram
     DBRef --> FirebaseDatabase : manages
     DBRef --> FirebaseStorage : manages
     
-    %% Repository Pattern Flow
+    %% Repository Relationships
     GroupRepository ..> Result : returns
     UserRepository ..> Result : returns
     LocalGroupDataSource ..> List : returns
@@ -357,17 +357,6 @@ classDiagram
 - **Lazy Loading**: On-demand data loading to reduce memory usage
 - **Batch Operations**: Efficient bulk insert/update operations
 - **Query Caching**: Room's built-in query result caching
-
----
-
-## 🔄 Data Flow Patterns
-
-### **Repository Pattern Flow:**
-```
-ViewModel → Repository → DataSource → DAO/API → Database/Network
-    ↑                                                      ↓
-LiveData ←─────────────── Result ←──────────────────────────┘
-```
 
 ---
 

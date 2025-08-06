@@ -185,13 +185,7 @@ classDiagram
         +getTrustManager() X509TrustManager
         -loadPinnedCertificates() void
         -createCertificatePinner() CertificatePinner
-        
-        <<TrustManager>>
-        class CustomTrustManager {
-            +checkClientTrusted(chain, authType) void
-            +checkServerTrusted(chain, authType) void
-            +getAcceptedIssuers() X509Certificate[]
-        }
+        -createCustomTrustManager() CustomTrustManager
     }
     
     class SecureConfigManager {

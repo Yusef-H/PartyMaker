@@ -62,14 +62,6 @@ classDiagram
         +setLoadingText(text) void
         +isLoading() boolean
         +setProgressValue(progress) void
-        
-        <<Builder>>
-        class Builder {
-            +setProgressBar(progressBar) Builder
-            +setRefreshLayout(refreshLayout) Builder
-            +setLoadingOverlay(overlay) Builder
-            +build() LoadingStateManager
-        }
     }
     
     class UiStateManager {

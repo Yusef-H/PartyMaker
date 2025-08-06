@@ -432,17 +432,6 @@ classDiagram
 
 ---
 
-## 🔄 Data Flow Patterns
-
-### **Unidirectional Data Flow:**
-```
-Repository → ViewModel → LiveData → UI
-     ↑                                ↓
-User Actions ← Activity/Fragment ←─────┘
-```
-
----
-
 ## 📋 **ViewModel Summary**
 
 ### **🏗️ Architecture**
