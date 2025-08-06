@@ -92,7 +92,7 @@ classDiagram
         -addDefaultHeaders(builder) void
     }
     
-    class OpenAIApiClient {
+    class OpenAiApi {
         -String apiKey
         -String baseUrl
         -OkHttpClient httpClient
@@ -101,7 +101,7 @@ classDiagram
         -double temperature
         -String model
         
-        +OpenAIApiClient(apiKey)
+        +OpenAiApi(apiKey)
         +sendChatMessage(message, conversationHistory) ChatCompletionResponse
         +sendChatMessageAsync(message, conversationHistory, callback) void
         +createCompletion(prompt) CompletionResponse
@@ -117,26 +117,7 @@ classDiagram
         -handleApiError(error) void
     }
     
-    class GoogleMapsApiClient {
-        -String apiKey
-        -String baseUrl
-        -OkHttpClient httpClient
-        -Gson gson
-        
-        +GoogleMapsApiClient(apiKey)
-        +searchPlaces(query, location, radius) PlacesResponse
-        +getPlaceDetails(placeId) PlaceDetailsResponse
-        +geocodeAddress(address) GeocodingResponse
-        +reverseGeocode(lat, lng) GeocodingResponse
-        +getDirections(origin, destination) DirectionsResponse
-        +getNearbyPlaces(location, radius, type) PlacesResponse
-        +autocompletePlace(input, location) AutocompleteResponse
-        -buildPlacesRequest(query, location, radius) Request
-        -buildGeocodingRequest(address) Request
-        -buildDirectionsRequest(origin, destination) Request
-        -handleMapsApiResponse(response) Object
-        -handleMapsApiError(error) void
-    }
+
     
     %% Network Utilities
     class NetworkUtils {
@@ -384,13 +365,11 @@ classDiagram
     FirebaseServerClient --> RequestInterceptor : uses
     FirebaseServerClient --> ResponseInterceptor : uses
     
-    OpenAIApiClient --> OkHttpClient : uses
-    OpenAIApiClient --> ChatCompletionResponse : returns
-    OpenAIApiClient --> ApiCallback : uses
+    OpenAiApi --> OkHttpClient : uses
+    OpenAiApi --> ChatCompletionResponse : returns
+    OpenAiApi --> ApiCallback : uses
     
-    GoogleMapsApiClient --> OkHttpClient : uses
-    GoogleMapsApiClient --> PlacesResponse : returns
-    GoogleMapsApiClient --> ApiCallback : uses
+
     
     NetworkUtils --> NetworkType : returns
     NetworkUtils --> DownloadCallback : uses
@@ -409,16 +388,16 @@ classDiagram
     
     %% Client Dependencies
     FirebaseServerClient ..> ApiResponse : returns
-    OpenAIApiClient ..> ApiResponse : returns
-    GoogleMapsApiClient ..> ApiResponse : returns
+    OpenAiApi ..> ApiResponse : returns
+
     
     %% Error Handling Flow
     NetworkManager --> AppNetworkError : creates
     NetworkManager --> NetworkErrorHandler : uses
     
     FirebaseServerClient --> AppNetworkError : throws
-    OpenAIApiClient --> AppNetworkError : throws
-    GoogleMapsApiClient --> AppNetworkError : throws
+    OpenAiApi --> AppNetworkError : throws
+
 ```
 
 ---
@@ -433,8 +412,8 @@ classDiagram
 
 ### **🔌 API Client Architecture:**
 - **FirebaseServerClient**: Custom server API integration with retry logic
-- **OpenAIApiClient**: OpenAI GPT API integration for AI chat functionality
-- **GoogleMapsApiClient**: Google Maps API integration for location services
+- **OpenAiApi**: OpenAI GPT API integration for AI chat functionality
+
 - **Unified API Pattern**: Consistent API client architecture across all services
 
 ### **🛠️ Network Utilities:**

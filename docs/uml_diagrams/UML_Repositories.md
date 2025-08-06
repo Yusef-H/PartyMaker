@@ -57,6 +57,49 @@ classDiagram
     }
     
     %% Data Sources
+    class DataSource~T,K~ {
+        <<interface>>
+        +getItem(key, callback) void
+        +getAllItems(callback) void
+        +saveItem(key, item, callback) void
+        +deleteItem(key, callback) void
+        +searchItems(criteria, callback) void
+        +getItemsLiveData() LiveData~List~T~~
+        +syncWithRemote(callback) void
+        +clearCache(callback) void
+    }
+    
+    class LocalGroupDataSource {
+        -AppDatabase database
+        -String TAG
+        
+        +LocalGroupDataSource(context)
+        +getItem(groupKey, callback) void
+        +getAllItems(callback) void
+        +saveItem(groupKey, group, callback) void
+        +deleteItem(groupKey, callback) void
+        +searchItems(criteria, callback) void
+        +getItemsLiveData() LiveData~List~Group~~
+        +syncWithRemote(callback) void
+        +clearCache(callback) void
+        -handleDatabaseError(error, callback) void
+    }
+    
+    class RemoteGroupDataSource {
+        -FirebaseServerClient serverClient
+        -String TAG
+        
+        +RemoteGroupDataSource()
+        +getItem(groupKey, callback) void
+        +getAllItems(callback) void
+        +saveItem(groupKey, group, callback) void
+        +deleteItem(groupKey, callback) void
+        +searchItems(criteria, callback) void
+        +getItemsLiveData() LiveData~List~Group~~
+        +syncWithRemote(callback) void
+        +clearCache(callback) void
+        -handleNetworkError(error, callback) void
+    }
     
     %% Database Components
     class AppDatabase {
@@ -258,6 +301,10 @@ classDiagram
     GroupRepository --> RemoteGroupDataSource : uses
     UserRepository --> FirebaseServerClient : uses
     UserRepository --> AppDatabase : uses
+    
+    %% Interface Implementation
+    LocalGroupDataSource ..|> DataSource : implements
+    RemoteGroupDataSource ..|> DataSource : implements
     
     LocalGroupDataSource --> AppDatabase : uses
     LocalGroupDataSource --> GroupDao : uses
