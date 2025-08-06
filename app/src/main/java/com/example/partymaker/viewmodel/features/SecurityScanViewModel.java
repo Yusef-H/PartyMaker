@@ -395,12 +395,11 @@ public class SecurityScanViewModel extends BaseViewModel {
   // Private helper methods
 
   private void performSecurityScan() {
-    List<SecurityIssue> foundIssues = new ArrayList<>();
 
-    // Scan step 1: Network security
+      // Scan step 1: Network security
     updateScanStep("Scanning network security...", 10);
     ThreadUtils.sleep(1000);
-    foundIssues.addAll(scanNetworkSecurity());
+      List<SecurityIssue> foundIssues = new ArrayList<>(scanNetworkSecurity());
 
     // Scan step 2: Data encryption
     updateScanStep("Checking data encryption...", 25);
@@ -450,12 +449,11 @@ public class SecurityScanViewModel extends BaseViewModel {
   }
 
   private void performQuickScan() {
-    List<SecurityIssue> foundIssues = new ArrayList<>();
 
-    // Quick scan - essential checks only
+      // Quick scan - essential checks only
     updateScanStep("Quick security check...", 20);
     ThreadUtils.sleep(500);
-    foundIssues.addAll(scanCriticalSecurity());
+      List<SecurityIssue> foundIssues = new ArrayList<>(scanCriticalSecurity());
 
     updateScanStep("Checking encryption status...", 60);
     ThreadUtils.sleep(500);
