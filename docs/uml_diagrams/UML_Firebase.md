@@ -10,379 +10,84 @@ This UML diagram shows all Firebase integration components, including Authentica
 
 ```mermaid
 classDiagram
-    %% Core Firebase Classes
-    class DBRef {
-        +Auth FirebaseAuth
-        +DataBase FirebaseDatabase
-        +refGroups DatabaseReference
-        +refUsers DatabaseReference
-        +refMessages DatabaseReference
-        +Storage FirebaseStorage
-        +refStorage StorageReference
-        +CurrentUser String
-        
-        +init() void
-        +checkImageExists(path, listener) void
-        +uploadImage(imageUri, path, listener) void
-        +deleteImage(path, listener) void
-        +downloadImage(path, listener) void
-        +getImageDownloadUrl(path, listener) void
-        -initializeReferences() void
-        -validateStoragePath(path) boolean
-    }
-    
+    %% Core Firebase Integration Classes
     class FirebaseAccessManager {
         -Context context
-        -boolean serverModeEnabled
         
         +FirebaseAccessManager(context)
         +isServerModeEnabled() boolean
-        +getGroupsRef() Object
-        +getUsersRef() Object
-        +getMessagesRef() Object
-        +switchToServerMode(serverUrl) void
-        +switchToDirectMode() void
-        -configureAccessMode() void
+        +getGroupsRef() FirebaseServerClient
+        +getUsersRef() FirebaseServerClient
+        +getMessagesRef() FirebaseServerClient
+    }
+    
+    class DBRef {
+        +FirebaseAuth Auth
+        +FirebaseDatabase DataBase
+        +DatabaseReference refGroups
+        +DatabaseReference refUsers
+        +DatabaseReference refMessages
+        +FirebaseStorage Storage
+        +StorageReference refStorage
+        +String CurrentUser
+        
+        +init() void
+        +checkImageExists(path, listener) void
     }
     
     class ServerDBRef {
+        +FirebaseAuth Auth
+        +FirebaseStorage Storage
+        +StorageReference refStorage
+        +String CurrentUser
         -FirebaseServerClient serverClient
-        -Context context
-        -String serverUrl
         
-        +ServerDBRef(context)
-        +getGroupsReference() FirebaseServerClient
-        +getUsersReference() FirebaseServerClient
-        +getMessagesReference() FirebaseServerClient
-        +isServerMode() boolean
-        +setServerUrl(url) void
-        +testConnection() boolean
-        -initializeServerClient() void
-    }
-    
-    %% Firebase Authentication
-    class FirebaseAuthManager {
-        -FirebaseAuth firebaseAuth
-        -Context context
-        -AuthStateListener authStateListener
-        -MutableLiveData~FirebaseUser~ currentUser
-        
-        +FirebaseAuthManager(context)
-        +signInWithEmailAndPassword(email, password) Task~AuthResult~
-        +createUserWithEmailAndPassword(email, password) Task~AuthResult~
-        +signInWithCredential(credential) Task~AuthResult~
-        +signOut() void
-        +getCurrentUser() FirebaseUser
-        +sendPasswordResetEmail(email) Task~Void~
-        +updateUserProfile(displayName, photoUrl) Task~Void~
-        +deleteUser() Task~Void~
-        +addAuthStateListener(listener) void
-        +removeAuthStateListener(listener) void
-        +getIdToken(forceRefresh) Task~GetTokenResult~
-        -setupAuthStateListener() void
-        -handleAuthStateChange(user) void
-    }
-    
-    class GoogleSignInManager {
-        -GoogleSignInClient googleSignInClient
-        -GoogleSignInOptions googleSignInOptions
-        -Context context
-        
-        +GoogleSignInManager(context)
-        +configureGoogleSignIn(webClientId) void
-        +getSignInIntent() Intent
-        +signInSilently() Task~GoogleSignInAccount~
-        +handleSignInResult(result) GoogleSignInAccount
-        +signOut() Task~Void~
-        +revokeAccess() Task~Void~
-        +getLastSignedInAccount() GoogleSignInAccount
-        -buildGoogleSignInOptions(webClientId) GoogleSignInOptions
-        -getAuthCredential(account) AuthCredential
-    }
-    
-    %% Firebase Realtime Database
-    class FirebaseRealtimeManager {
-        -FirebaseDatabase database
-        -Map~String,DatabaseReference~ references
-        -Map~String,ValueEventListener~ listeners
-        
-        +FirebaseRealtimeManager()
-        +getReference(path) DatabaseReference
-        +setValue(path, value, listener) void
-        +updateChildren(path, updates, listener) void
-        +removeValue(path, listener) void
-        +addValueEventListener(path, listener) void
-        +addChildEventListener(path, listener) void
-        +removeEventListener(path, listener) void
-        +addListenerForSingleValueEvent(path, listener) void
-        +runTransaction(path, handler) void
-        +goOffline() void
-        +goOnline() void
-        +setPersistenceEnabled(enabled) void
-        -createDatabaseReference(path) DatabaseReference
-        -validatePath(path) boolean
-    }
-    
-    class GroupDataManager {
-        -FirebaseRealtimeManager realtimeManager
-        -String groupsPath
-        
-        +GroupDataManager()
-        +createGroup(group, callback) void
-        +getGroup(groupKey, callback) void
-        +updateGroup(groupKey, updates, callback) void
-        +deleteGroup(groupKey, callback) void
-        +getUserGroups(userKey, callback) void
-        +addMemberToGroup(groupKey, userKey, callback) void
-        +removeMemberFromGroup(groupKey, userKey, callback) void
-        +updateMemberStatus(groupKey, userKey, isComing, callback) void
-        +addGroupListener(groupKey, listener) void
-        +removeGroupListener(groupKey) void
-        -buildGroupPath(groupKey) String
-        -validateGroupData(group) boolean
-        -handleGroupAutoDelete(groupKey, friendKeys) void
-        -reassignGroupAdmin(groupKey, friendKeys) void
-    }
-    
-    class UserDataManager {
-        -FirebaseRealtimeManager realtimeManager
-        -String usersPath
-        
-        +UserDataManager()
-        +createUser(user, callback) void
-        +getUser(userKey, callback) void
-        +updateUser(userKey, updates, callback) void
-        +deleteUser(userKey, callback) void
-        +getAllUsers(callback) void
-        +searchUsers(query, callback) void
-        +addUserListener(userKey, listener) void
-        +removeUserListener(userKey) void
-        +updateUserProfile(userKey, profileData, callback) void
-        +addFriend(userKey, friendKey, callback) void
-        +removeFriend(userKey, friendKey, callback) void
-        -buildUserPath(userKey) String
-        -validateUserData(user) boolean
-    }
-    
-    class MessageDataManager {
-        -FirebaseRealtimeManager realtimeManager
-        -String messagesPath
-        
-        +MessageDataManager()
-        +sendMessage(message, callback) void
-        +getMessages(groupKey, callback) void
-        +getMessage(messageKey, callback) void
-        +updateMessage(messageKey, updates, callback) void
-        +deleteMessage(messageKey, callback) void
-        +addMessageListener(groupKey, listener) void
-        +removeMessageListener(groupKey) void
-        +markMessageAsRead(messageKey, userKey, callback) void
-        +getUnreadMessageCount(groupKey, userKey, callback) void
-        -buildMessagePath(messageKey) String
-        -validateMessageData(message) boolean
-        -encryptMessage(message, groupKey) String
-        -decryptMessage(encryptedMessage, groupKey) String
-    }
-    
-    %% Firebase Storage
-    class FirebaseStorageManager {
-        -FirebaseStorage storage
-        -StorageReference storageRef
-        -Map~String,StorageReference~ references
-        
-        +FirebaseStorageManager()
-        +uploadImage(imageUri, path, callback) void
-        +uploadFile(fileUri, path, callback) void
-        +downloadImage(path, callback) void
-        +downloadFile(path, callback) void
-        +deleteFile(path, callback) void
-        +getDownloadUrl(path, callback) void
-        +listFiles(path, callback) void
-        +getMetadata(path, callback) void
-        +updateMetadata(path, metadata, callback) void
-        +pauseUpload(uploadTask) void
-        +resumeUpload(uploadTask) void
-        +cancelUpload(uploadTask) void
-        -createStorageReference(path) StorageReference
-        -compressImage(imageUri) Uri
-        -generateUniqueFileName(originalName) String
-    }
-    
-    class ProfileImageManager {
-        -FirebaseStorageManager storageManager
-        -String profileImagesPath
-        -ImageCompressor imageCompressor
-        
-        +ProfileImageManager()
-        +uploadProfileImage(userKey, imageUri, callback) void
-        +downloadProfileImage(userKey, callback) void
-        +deleteProfileImage(userKey, callback) void
-        +updateProfileImage(userKey, newImageUri, callback) void
-        +getProfileImageUrl(userKey, callback) void
-        +compressAndUpload(userKey, imageUri, callback) void
-        -buildProfileImagePath(userKey) String
-        -validateImageFormat(uri) boolean
-        -handleUploadProgress(progress) void
-    }
-    
-    class GroupImageManager {
-        -FirebaseStorageManager storageManager
-        -String groupImagesPath
-        -ImageCompressor imageCompressor
-        
-        +GroupImageManager()
-        +uploadGroupImage(groupKey, imageUri, callback) void
-        +downloadGroupImage(groupKey, callback) void
-        +deleteGroupImage(groupKey, callback) void
-        +updateGroupImage(groupKey, newImageUri, callback) void
-        +getGroupImageUrl(groupKey, callback) void
-        +compressAndUpload(groupKey, imageUri, callback) void
-        -buildGroupImagePath(groupKey) String
-        -validateImageFormat(uri) boolean
-        -handleUploadProgress(progress) void
-    }
-    
-    %% Firebase Cloud Messaging
-    class FirebaseMessagingManager {
-        -FirebaseMessaging messaging
-        -Context context
-        -SharedPreferences preferences
-        
-        +FirebaseMessagingManager(context)
-        +getToken(callback) void
-        +subscribeToTopic(topic, callback) void
-        +unsubscribeFromTopic(topic, callback) void
-        +sendTokenToServer(token) void
-        +handleRemoteMessage(remoteMessage) void
-        +createNotificationChannel(channelId, name, importance) void
-        +showNotification(title, body, data) void
-        +scheduleNotification(title, body, delay) void
-        +cancelNotification(notificationId) void
-        +clearAllNotifications() void
-        -saveTokenToPreferences(token) void
-        -getStoredToken() String
-        -buildNotification(title, body, data) NotificationCompat.Builder
-    }
-    
-    class PushNotificationService {
-        -FirebaseMessagingManager messagingManager
-        -NotificationManager notificationManager
-        
-        +PushNotificationService()
-        +onMessageReceived(remoteMessage) void
-        +onNewToken(token) void
-        +handleGroupNotification(data) void
-        +handleChatNotification(data) void
-        +handleSystemNotification(data) void
-        +sendGroupInviteNotification(groupName, inviterName, recipientToken) void
-        +sendChatMessageNotification(senderName, message, groupName, recipientToken) void
-        +sendSystemNotification(title, body, recipientToken) void
-        -createNotificationIntent(data) Intent
-        -generateNotificationId() int
-    }
-    
-    %% Firebase Configuration
-    class FirebaseInitializer {
-        -Context context
-        -FirebaseApp firebaseApp
-        
-        +FirebaseInitializer(context)
-        +initializeFirebase() void
-        +configureFirebaseServices() void
-        +enablePersistence() void
-        +setLogLevel(level) void
-        +getFirebaseApp() FirebaseApp
-        +isFirebaseInitialized() boolean
-        -loadFirebaseConfig() void
-        -validateFirebaseConfig() boolean
-        -setupDefaultSettings() void
+        +checkImageExists(path, listener) void
+        +getServerClient() FirebaseServerClient
     }
     
     %% Callback Interfaces
+    class OnImageExistsListener {
+        <<interface>>
+        +onImageExists(exists) void
+    }
+    
     class FirebaseCallback~T~ {
         <<interface>>
-        +onSuccess(result) void
-        +onFailure(exception) void
+        +onSuccess(data) void
+        +onFailure(error) void
     }
     
     class DataCallback~T~ {
         <<interface>>
-        +onDataReceived(data) void
+        +onDataLoaded(data) void
         +onError(error) void
-        +onDataChanged(data) void
-        +onDataRemoved(key) void
     }
     
     class UploadCallback {
         <<interface>>
         +onProgress(progress) void
         +onSuccess(downloadUrl) void
-        +onFailure(exception) void
-        +onPaused() void
-        +onResumed() void
+        +onFailure(error) void
     }
     
-    class AuthCallback {
-        <<interface>>
-        +onAuthSuccess(user) void
-        +onAuthFailure(exception) void
-        +onAuthStateChanged(user) void
-    }
-
     %% Relationships
+    FirebaseAccessManager --> FirebaseServerClient : uses
+    
     DBRef --> FirebaseAuth : manages
     DBRef --> FirebaseDatabase : manages
     DBRef --> FirebaseStorage : manages
+    DBRef --> OnImageExistsListener : uses
     
-    FirebaseAccessManager --> ServerDBRef : creates
-    FirebaseAccessManager --> DBRef : uses
-    
+    ServerDBRef --> FirebaseAuth : manages
+    ServerDBRef --> FirebaseStorage : manages
     ServerDBRef --> FirebaseServerClient : uses
+    ServerDBRef --> OnImageExistsListener : uses
     
-    FirebaseAuthManager --> FirebaseAuth : uses
-    FirebaseAuthManager --> AuthCallback : uses
-    
-    GoogleSignInManager --> GoogleSignInClient : uses
-    GoogleSignInManager --> GoogleSignInOptions : uses
-    
-    FirebaseRealtimeManager --> FirebaseDatabase : uses
-    FirebaseRealtimeManager --> DatabaseReference : manages
-    FirebaseRealtimeManager --> ValueEventListener : manages
-    
-    GroupDataManager --> FirebaseRealtimeManager : uses
-    GroupDataManager --> DataCallback : uses
-    
-    UserDataManager --> FirebaseRealtimeManager : uses
-    UserDataManager --> DataCallback : uses
-    
-    MessageDataManager --> FirebaseRealtimeManager : uses
-    MessageDataManager --> DataCallback : uses
-    
-    FirebaseStorageManager --> FirebaseStorage : uses
-    FirebaseStorageManager --> StorageReference : manages
-    FirebaseStorageManager --> UploadCallback : uses
-    
-    ProfileImageManager --> FirebaseStorageManager : uses
-    ProfileImageManager --> ImageCompressor : uses
-    
-    GroupImageManager --> FirebaseStorageManager : uses
-    GroupImageManager --> ImageCompressor : uses
-    
-    FirebaseMessagingManager --> FirebaseMessaging : uses
-    FirebaseMessagingManager --> NotificationManager : uses
-    
-    PushNotificationService --> FirebaseMessagingManager : uses
-    PushNotificationService --> FirebaseMessagingService : extends
-    
-    FirebaseInitializer --> FirebaseApp : creates
-    FirebaseInitializer --> Context : uses
-    
-    %% Generic Callback Usage
-    GroupDataManager ..> FirebaseCallback : implements
-    UserDataManager ..> FirebaseCallback : implements
-    MessageDataManager ..> FirebaseCallback : implements
-    FirebaseStorageManager ..> UploadCallback : implements
-    FirebaseAuthManager ..> AuthCallback : implements
+    FirebaseCallback --> FirebaseAccessManager : used by
+    DataCallback --> FirebaseAccessManager : used by
+    UploadCallback --> DBRef : used by
+    UploadCallback --> ServerDBRef : used by
 ```
 
 ---
@@ -461,28 +166,23 @@ classDiagram
 
 ## 📋 **Firebase Summary**
 
-### **🔥 Core Firebase Components**
-- **DBRef**: Firebase Realtime Database reference management
-- **ServerDBRef**: Server-side database references and operations
-- **FirebaseAccessManager**: Firebase authentication and access control
+### **🔥 Core Firebase Components (3)**
+- **FirebaseAccessManager**: Access manager that routes to server client
+- **DBRef**: Firebase references helper for Auth, Database, and Storage
+- **ServerDBRef**: Server-mode replacement for direct Firebase access
 
-### **🔧 Integration Classes**
-- **FirebaseCallback<T>**: Generic callback interface for async operations
+### **🔧 Callback Interfaces (4)**
+- **OnImageExistsListener**: Image existence check callbacks
+- **FirebaseCallback<T>**: Generic success/failure callback pattern
 - **DataCallback<T>**: Real-time data change event handling
 - **UploadCallback**: File upload progress and completion tracking
 
 ### **🏗️ Architecture**
-- **Real-time Database**: Live data synchronization with Firebase
-- **Authentication**: Firebase Auth integration for user management
-- **Cloud Storage**: File and image upload capabilities
-- **Server Integration**: Direct server communication with Firebase
-
-### **📊 Features**
-- **Offline Support**: Local data persistence when offline
-- **Real-time Sync**: Live data updates across all clients
-- **Security Rules**: Server-side data validation and access control
-- **Callback Management**: Proper listener lifecycle and memory management
+- **Server-First Approach**: Uses Spring Boot server instead of direct Firebase access
+- **Firebase Services**: Auth and Storage still used directly for specific features
+- **Simple Integration**: Lightweight wrapper classes around Firebase SDK
+- **Callback Management**: Clean callback interfaces for async operations
 
 ---
 
-*Firebase integration providing real-time database, authentication, storage, and server communication with offline support and live synchronization.* 
+*Simplified Firebase integration with 3 core classes and 4 callback interfaces, using server-first architecture for data operations.* 
