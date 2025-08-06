@@ -8,7 +8,9 @@ import android.security.NetworkSecurityPolicy;
 import android.util.Log;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.File;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,9 +112,8 @@ public class SecurityAgent {
       } else {
         // Calculate signature hash for comparison
         signatureHash =
-            java.security.MessageDigest.getInstance("SHA-256")
-                .digest(packageInfo.signatures[0].toByteArray())
-                .toString();
+                Arrays.toString(MessageDigest.getInstance("SHA-256")
+                        .digest(packageInfo.signatures[0].toByteArray()));
       }
 
       // Compare with known good signature hash
