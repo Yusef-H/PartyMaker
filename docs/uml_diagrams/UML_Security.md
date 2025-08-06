@@ -58,28 +58,7 @@ classDiagram
         -calculatePasswordEntropy(password) double
     }
     
-    class ValidationResult {
-        -boolean valid
-        -String errorMessage
-        -List~String~ errors
-        -Map~String,String~ fieldErrors
-        -ValidationLevel level
-        
-        +ValidationResult()
-        +ValidationResult(valid, errorMessage)
-        +isValid() boolean
-        +setValid(valid) void
-        +getErrorMessage() String
-        +setErrorMessage(errorMessage) void
-        +getErrors() List~String~
-        +addError(error) void
-        +getFieldErrors() Map~String,String~
-        +addFieldError(field, error) void
-        +hasErrors() boolean
-        +clearErrors() void
-        +getValidationLevel() ValidationLevel
-        +setValidationLevel(level) void
-    }
+
     
     %% Authentication Components
     class AuthenticationManager {

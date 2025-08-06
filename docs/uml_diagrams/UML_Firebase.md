@@ -52,25 +52,6 @@ classDiagram
         +onImageExists(exists) void
     }
     
-    class FirebaseCallback~T~ {
-        <<interface>>
-        +onSuccess(data) void
-        +onFailure(error) void
-    }
-    
-    class DataCallback~T~ {
-        <<interface>>
-        +onDataLoaded(data) void
-        +onError(error) void
-    }
-    
-    class UploadCallback {
-        <<interface>>
-        +onProgress(progress) void
-        +onSuccess(downloadUrl) void
-        +onFailure(error) void
-    }
-    
     %% Relationships
     FirebaseAccessManager --> FirebaseServerClient : uses
     
@@ -83,11 +64,6 @@ classDiagram
     ServerDBRef --> FirebaseStorage : manages
     ServerDBRef --> FirebaseServerClient : uses
     ServerDBRef --> OnImageExistsListener : uses
-    
-    FirebaseCallback --> FirebaseAccessManager : used by
-    DataCallback --> FirebaseAccessManager : used by
-    UploadCallback --> DBRef : used by
-    UploadCallback --> ServerDBRef : used by
 ```
 
 ---
@@ -99,11 +75,8 @@ classDiagram
 - **FirebaseAccessManager**: Routes operations to server client
 - **ServerDBRef**: Server-mode replacement for direct Firebase access
 
-### **🔧 Callback Interfaces (4):**
-- **OnImageExistsListener**: Image existence check callbacks
-- **FirebaseCallback<T>**: Generic success/failure callback pattern
-- **DataCallback<T>**: Real-time data change event handling
-- **UploadCallback**: File upload progress and completion tracking
+### **🔧 Callback Interfaces (1):**
+- **OnImageExistsListener**: Image existence check callbacks for Firebase Storage
 
 ---
 
@@ -132,11 +105,8 @@ classDiagram
 - **DBRef**: Firebase references helper for Auth, Database, and Storage
 - **ServerDBRef**: Server-mode replacement for direct Firebase access
 
-### **🔧 Callback Interfaces (4)**
-- **OnImageExistsListener**: Image existence check callbacks
-- **FirebaseCallback<T>**: Generic success/failure callback pattern
-- **DataCallback<T>**: Real-time data change event handling
-- **UploadCallback**: File upload progress and completion tracking
+### **🔧 Callback Interfaces (1)**
+- **OnImageExistsListener**: Image existence check callbacks for Firebase Storage
 
 ### **🏗️ Architecture**
 - **Server-First Approach**: Uses Spring Boot server instead of direct Firebase access
@@ -146,4 +116,4 @@ classDiagram
 
 ---
 
-*Simplified Firebase integration with 3 core classes and 4 callback interfaces, using server-first architecture for data operations.* 
+*Simplified Firebase integration with 3 core classes and 1 callback interface, using server-first architecture for data operations.* 

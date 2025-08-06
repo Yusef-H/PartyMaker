@@ -16,18 +16,22 @@ classDiagram
         #MutableLiveData~Boolean~ isLoading
         #MutableLiveData~String~ errorMessage
         #MutableLiveData~String~ successMessage
-        #CompositeDisposable compositeDisposable
+        #MutableLiveData~NetworkUtils.ErrorType~ errorType
+        #MutableLiveData~String~ infoMessage
         
         +BaseViewModel(application)
         +getIsLoading() LiveData~Boolean~
         +getErrorMessage() LiveData~String~
         +getSuccessMessage() LiveData~String~
+        +getErrorType() LiveData~NetworkUtils.ErrorType~
+        +getInfoMessage() LiveData~String~
         #setLoading(loading) void
         #setError(error) void
         #setSuccess(message) void
+        #setInfo(message) void
+        #setErrorType(type) void
         #clearMessages() void
         #onCleared() void
-        +addDisposable(disposable) void
     }
     
     %% Core ViewModels

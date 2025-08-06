@@ -12,24 +12,27 @@ This UML diagram shows all Activity classes in the PartyMaker application, organ
 classDiagram
     %% Core Activities
     class SplashActivity {
+        -ImageView imgLogo
+        -View dot1, dot2, dot3
         -Handler handler
-        -Runnable runnable
-        -AuthenticationManager authManager
-        -boolean isDestroyed
+        -SplashViewModel viewModel
         
         +SplashActivity()
         #onCreate(Bundle) void
         #onDestroy() void
-        -checkAuthenticationState() void
-        -navigateToNextScreen() void
-        -initializeApplication() void
-        -playBackgroundMusic() void
-        -stopBackgroundMusic() void
+        -initializeSecureConfig() void
+        -initializeViews() void
+        -startSplashFlow() void
+        -animateLogo() void
+        -animateLoadingDots() void
+        -animateDot(dot) void
+        -scheduleNextScreen() void
+        -setupViewModelObservers() void
+        -shouldNavigateToMain(rememberMeChecked) boolean
     }
     
     class MainActivity {
-        -GroupViewModel groupViewModel
-        -UserViewModel userViewModel
+        -MainActivityViewModel viewModel
         -RecyclerView recyclerView
         -GroupAdapter groupAdapter
         -SwipeRefreshLayout swipeRefreshLayout

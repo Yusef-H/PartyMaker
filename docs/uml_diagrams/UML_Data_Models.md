@@ -52,9 +52,22 @@ classDiagram
         +setGroupType(groupType) void
         +getGroupPrice() String
         +setGroupPrice(groupPrice) void
-        +formatDateTime() String
-        +isPublic() boolean
-        +isPrivate() boolean
+        +getGroupDescription() String
+        +setGroupDescription(groupDescription) void
+        +getCreatedAt() String
+        +setCreatedAt(createdAt) void
+        +getGroupDays() String
+        +setGroupDays(groupDays) void
+        +getGroupMonths() String
+        +setGroupMonths(groupMonths) void
+        +getGroupYears() String
+        +setGroupYears(groupYears) void
+        +getGroupHours() String
+        +setGroupHours(groupHours) void
+        +getGroupMinutes() String
+        +setGroupMinutes(groupMinutes) void
+        +getGroupImageUrl() String
+        +setGroupImageUrl(groupImageUrl) void
     }
     
     class User {
@@ -82,9 +95,8 @@ classDiagram
         +setFullName(fullName) void
         +getCreatedAt() String
         +setCreatedAt(createdAt) void
-        +addFriend(friendKey) void
-        +removeFriend(friendKey) void
-        +isFriend(friendKey) boolean
+        +getUserName() String
+        +setUserName(userName) void
     }
     
     class ChatMessage {
@@ -123,17 +135,25 @@ classDiagram
         +setEncrypted(encrypted) void
         +getMetadata() Map~String,Object~
         +setMetadata(metadata) void
-        +formatTimestamp() String
-        +hasImage() boolean
+        +getMessageUser() String
+        +setMessageUser(messageUser) void
+        +getMessageText() String
+        +setMessageText(messageText) void
+        +getMessageTime() String
+        +setMessageTime(messageTime) void
+        +getGroupId() String
+        +setGroupId(groupId) void
+        +getMessageContent() HashMap~String,Object~
+        +setMessageContent(messageContent) void
+        +getEncryptionMetadata() Map~String,Object~
+        +getLogSafeSummary() String
     }
     
     class ChatMessageGpt {
-        -String role
-        -String content
+        +String role
+        +String content
         
         +ChatMessageGpt(role, content)
-        +getRole() String
-        +getContent() String
     }
 
     %% Relationships
@@ -200,10 +220,10 @@ classDiagram
 - **AI Conversations**: ChatMessageGpt linked to User conversations
 - **Message Threading**: Support for message chains and replies
 
-### **Data Validation:**
-- **ValidationResult**: Comprehensive validation for all entities
-- **Field-Level Validation**: Specific field error tracking
-- **Business Rules**: Custom validation logic for domain rules
+### **Data Features:**
+- **Comprehensive Getters/Setters**: Full property access for all entities
+- **Room Database Support**: Local persistence with type converters
+- **Firebase Serialization**: Compatible field mapping for cloud storage
 ---
 
 ## 📋 **Data Model Summary**
