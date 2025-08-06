@@ -135,28 +135,6 @@ classDiagram
         +getRole() String
         +getContent() String
     }
-    
-    class ValidationResult {
-        -boolean valid
-        -String errorMessage
-        -List~String~ errors
-        -Map~String,String~ fieldErrors
-        
-        +ValidationResult()
-        +ValidationResult(valid, errorMessage)
-        +isValid() boolean
-        +setValid(valid) void
-        +getErrorMessage() String
-        +setErrorMessage(errorMessage) void
-        +getErrors() List~String~
-        +addError(error) void
-        +getFieldErrors() Map~String,String~
-        +addFieldError(field, error) void
-        +hasErrors() boolean
-        +clearErrors() void
-    }
-    
-
 
     %% Relationships
     Group --> User : "has members (friendKeys)"
@@ -171,10 +149,6 @@ classDiagram
     ChatMessage --> User : "sent by user"
     
     ChatMessageGpt --> User : "conversation with user"
-    
-    ValidationResult --> User : "validates user data"
-    ValidationResult --> Group : "validates group data"
-    ValidationResult --> ChatMessage : "validates message data"
     
 
 ```
@@ -240,15 +214,12 @@ classDiagram
 - **ChatMessage**: Group chat messages with sender info and timestamps
 - **ChatMessageGpt**: Simple AI chat messages (role + content only)
 
-### **🛠️ Utility Models (1)**
-- **ValidationResult**: Data validation with error messages
-
 ### **🏗️ Architecture**
 - **Room Database**: All models configured for local persistence
 - **Firebase Integration**: Seamless sync with Firebase Realtime Database
 - **Type Converters**: HashMap and complex type serialization
-- **Validation**: Built-in validation with user-friendly error messages
+- **Entity Relationships**: Clean data relationships between parties, users, and messages
 
 ---
 
-*5 Data models providing the foundation for party management, user profiles, messaging, and validation throughout the app.* 
+*4 Data models providing the foundation for party management, user profiles, and messaging throughout the app.* 
