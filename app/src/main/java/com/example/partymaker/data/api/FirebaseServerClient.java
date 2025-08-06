@@ -657,7 +657,7 @@ public class FirebaseServerClient {
           // Background operation
           try {
             // URL encode the userId to handle special characters like @ and .
-            String encodedUserId = java.net.URLEncoder.encode(user.getUserKey(), "UTF-8");
+            String encodedUserId = java.net.URLEncoder.encode(user.getUserKey(), StandardCharsets.UTF_8);
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
             String response = makeHttpRequest(url, "POST", json);

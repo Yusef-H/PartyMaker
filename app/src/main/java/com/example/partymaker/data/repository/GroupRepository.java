@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import com.example.partymaker.data.api.Result;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1045,14 +1047,14 @@ public class GroupRepository {
     try {
       // Decode group name if it contains URL-encoded characters
       if (group.getGroupName() != null) {
-        String decodedName = java.net.URLDecoder.decode(group.getGroupName(), "UTF-8");
+        String decodedName = java.net.URLDecoder.decode(group.getGroupName(), StandardCharsets.UTF_8);
         group.setGroupName(decodedName);
       }
 
       // Decode group description if it contains URL-encoded characters
       if (group.getGroupDescription() != null) {
         String decodedDescription =
-            java.net.URLDecoder.decode(group.getGroupDescription(), "UTF-8");
+            java.net.URLDecoder.decode(group.getGroupDescription(), StandardCharsets.UTF_8);
         group.setGroupDescription(decodedDescription);
       }
 
