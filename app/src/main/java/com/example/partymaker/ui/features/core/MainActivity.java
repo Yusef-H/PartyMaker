@@ -32,6 +32,7 @@ import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
@@ -258,10 +259,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupLoadingStateManager() {
-    android.widget.ProgressBar progressBar = findOrCreateProgressBar();
-    android.widget.TextView loadingText = null;
+    android.widget.ProgressBar progressBar = findViewById(R.id.progress_bar_fallback);
+    android.widget.TextView loadingText = findViewById(R.id.loading_text);
+    LottieAnimationView lottieAnimation = findViewById(R.id.lottie_loading);
+    View loadingOverlay = findViewById(R.id.loading_overlay);
 
-    loadingStateManager = createLoadingStateManager(progressBar, null);
+    loadingStateManager = createLoadingStateManagerWithLottie(
+        progressBar, loadingText, lottieAnimation, loadingOverlay);
   }
 
   private android.widget.ProgressBar findOrCreateProgressBar() {
@@ -294,6 +298,28 @@ public class MainActivity extends AppCompatActivity {
         .contentView(groupsRecyclerView)
         .progressBar(progressBar)
         .loadingText(loadingText)
+        .build();
+  }
+
+  private LoadingStateManager createLoadingStateManagerWithLottie(
+      android.widget.ProgressBar progressBar, 
+      android.widget.TextView loadingText, 
+      LottieAnimationView lottieAnimation,
+      View errorView) {
+    
+    // Set up the Lottie animation
+    if (lottieAnimation != null) {
+      lottieAnimation.setAnimation("party_loading.json");
+      lottieAnimation.setRepeatCount(-1); // Loop indefinitely
+      lottieAnimation.setRepeatMode(android.animation.ValueAnimator.RESTART);
+    }
+    
+    return new LoadingStateManager.Builder()
+        .contentView(groupsRecyclerView)
+        .progressBar(progressBar)
+        .loadingText(loadingText)
+        .errorView(null) // We'll handle error separately
+        .lottieAnimation(lottieAnimation)
         .build();
   }
 

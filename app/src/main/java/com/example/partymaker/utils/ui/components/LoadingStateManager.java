@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.airbnb.lottie.LottieAnimationView;
 
 /**
  * Manager class for handling loading states in a consistent and user-friendly way. Provides smooth
@@ -22,6 +23,7 @@ public class LoadingStateManager {
   private final ProgressBar progressBar;
   private final TextView loadingText;
   private final View errorView;
+  private final LottieAnimationView lottieAnimation;
 
   private LoadingState currentState = LoadingState.CONTENT;
   private String currentLoadingMessage = "Loading...";
@@ -31,10 +33,20 @@ public class LoadingStateManager {
       @NonNull ProgressBar progressBar,
       @Nullable TextView loadingText,
       @Nullable View errorView) {
+    this(contentView, progressBar, loadingText, errorView, null);
+  }
+
+  public LoadingStateManager(
+      @NonNull View contentView,
+      @NonNull ProgressBar progressBar,
+      @Nullable TextView loadingText,
+      @Nullable View errorView,
+      @Nullable LottieAnimationView lottieAnimation) {
     this.contentView = contentView;
     this.progressBar = progressBar;
     this.loadingText = loadingText;
     this.errorView = errorView;
+    this.lottieAnimation = lottieAnimation;
   }
 
   /** Shows loading state with default message */
@@ -61,7 +73,16 @@ public class LoadingStateManager {
     if (errorView != null) {
       animateViewTransition(errorView, false);
     }
-    animateViewTransition(progressBar, true);
+    
+    // Use Lottie animation if available, otherwise fall back to ProgressBar
+    if (lottieAnimation != null) {
+      animateViewTransition(progressBar, false);
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    } else {
+      animateViewTransition(progressBar, true);
+    }
+    
     if (loadingText != null) {
       animateViewTransition(loadingText, true);
     }
@@ -75,8 +96,13 @@ public class LoadingStateManager {
 
     currentState = LoadingState.CONTENT;
 
-    // Animate transitions
+    // Animate transitions - stop and hide loading animations
+    if (lottieAnimation != null) {
+      lottieAnimation.pauseAnimation();
+      animateViewTransition(lottieAnimation, false);
+    }
     animateViewTransition(progressBar, false);
+    
     if (loadingText != null) {
       animateViewTransition(loadingText, false);
     }
@@ -201,12 +227,33 @@ public class LoadingStateManager {
     EMPTY
   }
 
+  /** Sets custom Lottie animation for loading state */
+  public void setLottieAnimation(@Nullable String animationName) {
+    if (lottieAnimation != null && animationName != null) {
+      lottieAnimation.setAnimation(animationName);
+    }
+  }
+
+  /** Sets custom Lottie animation from raw resource */
+  public void setLottieAnimation(int rawResId) {
+    if (lottieAnimation != null) {
+      lottieAnimation.setAnimation(rawResId);
+    }
+  }
+
+  /** Shows loading state with custom Lottie animation */
+  public void showLoadingWithAnimation(@NonNull String message, @Nullable String animationName) {
+    setLottieAnimation(animationName);
+    showLoading(message);
+  }
+
   /** Builder class for creating LoadingStateManager instances */
   public static class Builder {
     private View contentView;
     private ProgressBar progressBar;
     private TextView loadingText;
     private View errorView;
+    private LottieAnimationView lottieAnimation;
 
     public Builder contentView(@NonNull View contentView) {
       this.contentView = contentView;
@@ -228,6 +275,11 @@ public class LoadingStateManager {
       return this;
     }
 
+    public Builder lottieAnimation(@Nullable LottieAnimationView lottieAnimation) {
+      this.lottieAnimation = lottieAnimation;
+      return this;
+    }
+
     public LoadingStateManager build() {
       if (contentView == null) {
         throw new IllegalStateException("Content view must be set");
@@ -236,7 +288,7 @@ public class LoadingStateManager {
         throw new IllegalStateException("Progress bar must be set");
       }
 
-      return new LoadingStateManager(contentView, progressBar, loadingText, errorView);
+      return new LoadingStateManager(contentView, progressBar, loadingText, errorView, lottieAnimation);
     }
   }
 

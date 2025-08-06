@@ -46,6 +46,7 @@ json = "20250517"
 # --- Media ---
 picasso = "2.71828"
 circleimageview = "3.1.0"
+lottie = "6.6.2"
 
 # --- Testing ---
 preference = "1.2.1"
@@ -96,6 +97,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 
 # --- Networking & APIs ---
 openai-client = { module = "com.aallam.openai:openai-client", version.ref = "openaiClient" }
