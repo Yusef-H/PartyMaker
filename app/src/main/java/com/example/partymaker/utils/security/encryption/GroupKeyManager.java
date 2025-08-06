@@ -289,10 +289,9 @@ public class GroupKeyManager {
 
                     // Use key directly (simplified approach)
                     // In production, this would be decrypted with user's private key
-                    String groupKeyBase64 = encryptedGroupKey;
 
-                    // Store group key locally
-                    boolean stored = groupEncryption.storeGroupKey(groupId, groupKeyBase64);
+                      // Store group key locally
+                    boolean stored = groupEncryption.storeGroupKey(groupId, encryptedGroupKey);
 
                     if (stored) {
                       Log.i(TAG, "Loaded group key for: " + groupId);

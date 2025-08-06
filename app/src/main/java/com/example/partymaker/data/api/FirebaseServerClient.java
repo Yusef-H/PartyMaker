@@ -1278,8 +1278,7 @@ public class FirebaseServerClient {
     AsyncTaskReplacement.execute(
         () -> {
           // Keep original userId for filtering (no URL encoding for data comparison)
-          String originalUserId = userId;
-          Log.d(TAG, "Getting groups for user: " + originalUserId);
+            Log.d(TAG, "Getting groups for user: " + userId);
 
           // TEMPORARILY skip UserGroups endpoint to test fallback logic
           Log.d(
@@ -1314,10 +1313,10 @@ public class FirebaseServerClient {
 
                 // Debug the group and user relationship
                 boolean isAdmin =
-                    group.getAdminKey() != null && group.getAdminKey().equals(originalUserId);
+                    group.getAdminKey() != null && group.getAdminKey().equals(userId);
                 boolean isMember =
                     group.getFriendKeys() != null
-                        && group.getFriendKeys().containsKey(originalUserId);
+                        && group.getFriendKeys().containsKey(userId);
 
                 Log.d(TAG, "Checking group " + key + " (" + group.getGroupName() + "):");
                 Log.d(
@@ -1330,7 +1329,7 @@ public class FirebaseServerClient {
                         + " (user is member: "
                         + isMember
                         + ")");
-                Log.d(TAG, "  Looking for user: " + originalUserId);
+                Log.d(TAG, "  Looking for user: " + userId);
 
                 // Check if user is in friendKeys or is the admin (using original userId)
                 if (isAdmin || isMember) {
@@ -1341,7 +1340,7 @@ public class FirebaseServerClient {
                   Log.d(
                       TAG,
                       "User "
-                          + originalUserId
+                          + userId
                           + " is not part of group "
                           + key
                           + " ("
@@ -1357,9 +1356,9 @@ public class FirebaseServerClient {
                       + " total groups, found "
                       + userGroupsCount
                       + " groups for user "
-                      + originalUserId);
+                      + userId);
 
-              Log.d(TAG, "Found " + userGroupsMap.size() + " groups for user: " + originalUserId);
+              Log.d(TAG, "Found " + userGroupsMap.size() + " groups for user: " + userId);
               return userGroupsMap;
             } catch (JSONException e) {
               Log.e(TAG, "Error parsing groups", e);
@@ -1669,8 +1668,7 @@ public class FirebaseServerClient {
       Log.d(TAG, method + " response code: " + responseCode + " for URL: " + url);
 
       if (response.isSuccessful()) {
-        String responseBody = response.body() != null ? response.body().string() : "";
-        return responseBody;
+          return response.body() != null ? response.body().string() : "";
       } else {
         String errorBody = response.body() != null ? response.body().string() : "";
         Log.e(
