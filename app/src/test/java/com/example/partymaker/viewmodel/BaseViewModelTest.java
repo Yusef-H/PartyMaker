@@ -50,22 +50,6 @@ public class BaseViewModelTest {
     }
 
     // Expose protected methods for testing
-    public void testSetLoading(boolean loading) {
-      setLoading(loading);
-    }
-
-    public void testSetError(String error) {
-      setError(error);
-    }
-
-    public void testSetError(NetworkUtils.ErrorType errorType) {
-      setError(errorType);
-    }
-
-    public void testSetSuccess(String message) {
-      setSuccess(message);
-    }
-
     public boolean testIsCurrentlyLoading() {
       return isCurrentlyLoading();
     }
@@ -92,7 +76,7 @@ public class BaseViewModelTest {
   @Test
   public void testSetLoading_True_UpdatesLiveData() {
     // Act
-    viewModel.testSetLoading(true);
+    viewModel.setLoading(true);
 
     // Assert
     verify(loadingObserver).onChanged(true);
@@ -102,11 +86,11 @@ public class BaseViewModelTest {
   @Test
   public void testSetLoading_False_UpdatesLiveData() {
     // Arrange - set loading to true first
-    viewModel.testSetLoading(true);
+    viewModel.setLoading(true);
     reset(loadingObserver);
 
     // Act
-    viewModel.testSetLoading(false);
+    viewModel.setLoading(false);
 
     // Assert
     verify(loadingObserver).onChanged(false);
@@ -119,7 +103,7 @@ public class BaseViewModelTest {
     String errorMessage = "Test error message";
 
     // Act
-    viewModel.testSetError(errorMessage);
+    viewModel.setError(errorMessage);
 
     // Assert
     verify(errorObserver).onChanged(errorMessage);
@@ -132,7 +116,7 @@ public class BaseViewModelTest {
     NetworkUtils.ErrorType errorType = NetworkUtils.ErrorType.NETWORK_ERROR;
 
     // Act
-    viewModel.testSetError(errorType);
+    viewModel.setError(errorType);
 
     // Assert
     verify(errorTypeObserver).onChanged(errorType);
@@ -145,7 +129,7 @@ public class BaseViewModelTest {
     String successMessage = "Operation completed successfully";
 
     // Act
-    viewModel.testSetSuccess(successMessage);
+    viewModel.setSuccess(successMessage);
 
     // Assert
     verify(successObserver).onChanged(successMessage);
@@ -154,8 +138,8 @@ public class BaseViewModelTest {
   @Test
   public void testClearError_ClearsErrorRelatedData() {
     // Arrange - set error first
-    viewModel.testSetError("Some error");
-    viewModel.testSetError(NetworkUtils.ErrorType.TIMEOUT);
+    viewModel.setError("Some error");
+    viewModel.setError(NetworkUtils.ErrorType.TIMEOUT);
     reset(errorObserver, errorTypeObserver);
 
     // Act
@@ -169,8 +153,8 @@ public class BaseViewModelTest {
   @Test
   public void testClearMessages_ClearsAllMessages() {
     // Arrange - set various messages
-    viewModel.testSetError("Error message");
-    viewModel.testSetSuccess("Success message");
+    viewModel.setError("Error message");
+    viewModel.setSuccess("Success message");
     viewModel.setInfo("Info message");
     reset(errorObserver, successObserver, errorTypeObserver);
 
@@ -187,7 +171,7 @@ public class BaseViewModelTest {
   public void testExecuteIfNotLoading_WhenNotLoading_ExecutesOperation() {
     // Arrange
     Runnable mockOperation = mock(Runnable.class);
-    viewModel.testSetLoading(false);
+    viewModel.setLoading(false);
 
     // Act
     viewModel.testExecuteIfNotLoading(mockOperation);
@@ -200,7 +184,7 @@ public class BaseViewModelTest {
   public void testExecuteIfNotLoading_WhenLoading_DoesNotExecuteOperation() {
     // Arrange
     Runnable mockOperation = mock(Runnable.class);
-    viewModel.testSetLoading(true);
+    viewModel.setLoading(true);
 
     // Act
     viewModel.testExecuteIfNotLoading(mockOperation);
@@ -212,9 +196,9 @@ public class BaseViewModelTest {
   @Test
   public void testOnCleared_ClearsAllStatesAndMessages() {
     // Arrange - set various states
-    viewModel.testSetLoading(true);
-    viewModel.testSetError("Error");
-    viewModel.testSetSuccess("Success");
+    viewModel.setLoading(true);
+    viewModel.setError("Error");
+    viewModel.setSuccess("Success");
     reset(loadingObserver, errorObserver, successObserver, errorTypeObserver);
 
     // Act
