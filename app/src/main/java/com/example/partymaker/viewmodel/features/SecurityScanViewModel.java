@@ -307,7 +307,7 @@ public class SecurityScanViewModel extends BaseViewModel {
                       () -> updateScanStep(
                           "Fixing " + issue.getType() + "...",
                           (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0])),
-                      fixedIssues[0] * 500);
+                      fixedIssues[0] * 500L);
 
                   fixedIssues[0]++;
                 }
@@ -327,7 +327,7 @@ public class SecurityScanViewModel extends BaseViewModel {
                       setInfo("No auto-fixable issues found");
                     }
                   },
-                  fixableIssues[0] * 500 + 1000);
+                  fixableIssues[0] * 500L + 1000);
             }
 
           } catch (Exception e) {
