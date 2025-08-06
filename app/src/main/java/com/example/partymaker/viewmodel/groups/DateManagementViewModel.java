@@ -524,11 +524,7 @@ public class DateManagementViewModel extends BaseViewModel {
     }
 
     isDateValid.setValue(valid);
-    if (error != null) {
       validationError.setValue(error);
-    } else {
-      validationError.setValue(null);
-    }
   }
 
   private void validateTime(String time) {

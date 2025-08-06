@@ -1041,7 +1041,6 @@ public class FirebaseServerClient {
                   Log.e(TAG, "Failed to fetch group for updating message keys");
                   errorMessage = "Failed to fetch group";
                   // Still return true since the message was saved
-                  success = true;
                 } else {
                   Log.d(TAG, "Group fetched successfully: " + groupId);
                   Log.d(TAG, "Group JSON: " + groupJson);
@@ -1077,8 +1076,8 @@ public class FirebaseServerClient {
                     Log.d(TAG, "Group message keys updated successfully for: " + groupId);
                   }
 
-                  success = true;
                 }
+                  success = true;
               } catch (JSONException e) {
                 Log.e(TAG, "Error updating group message keys", e);
                 errorMessage = "Error updating group message keys: " + e.getMessage();
