@@ -94,74 +94,35 @@ classDiagram
 
 ## 🔍 Firebase Integration Components
 
-### **🔥 Core Firebase Services:**
-- **DBRef**: Central Firebase service references and initialization
-- **FirebaseAccessManager**: Mode switching between direct Firebase and server-mediated access
-- **ServerDBRef**: Server-side Firebase access management
-- **FirebaseInitializer**: Firebase SDK initialization and configuration
+### **🔥 Core Firebase Classes (3):**
+- **DBRef**: Central Firebase service references (Auth, Database, Storage)
+- **FirebaseAccessManager**: Routes operations to server client
+- **ServerDBRef**: Server-mode replacement for direct Firebase access
 
-### **🔐 Authentication Integration:**
-- **FirebaseAuthManager**: Firebase Authentication service wrapper
-- **GoogleSignInManager**: Google Sign-In integration with Firebase Auth
-- **Auth State Management**: Real-time authentication state monitoring
-- **Token Management**: ID token generation and validation
-
-### **📊 Realtime Database Management:**
-- **FirebaseRealtimeManager**: Core Realtime Database operations
-- **GroupDataManager**: Group-specific database operations
-- **UserDataManager**: User-specific database operations
-- **MessageDataManager**: Message-specific database operations
-
-### **📁 Storage Management:**
-- **FirebaseStorageManager**: Core Cloud Storage operations
-- **ProfileImageManager**: User profile image management
-- **GroupImageManager**: Group image management
-- **File Upload/Download**: Comprehensive file management with progress tracking
-
-### **📱 Cloud Messaging:**
-- **FirebaseMessagingManager**: FCM token and topic management
-- **PushNotificationService**: Notification handling and display
-- **Notification Categories**: Group, chat, and system notifications
+### **🔧 Callback Interfaces (4):**
+- **OnImageExistsListener**: Image existence check callbacks
+- **FirebaseCallback<T>**: Generic success/failure callback pattern
+- **DataCallback<T>**: Real-time data change event handling
+- **UploadCallback**: File upload progress and completion tracking
 
 ---
 
 ## 🔄 Firebase Service Integration
 
-### **📊 Data Flow Patterns:**
-- **Real-time Listeners**: Live data updates via ValueEventListener and ChildEventListener
-- **Single Value Events**: One-time data retrieval for specific operations
-- **Batch Operations**: Efficient bulk data updates using updateChildren()
-- **Transactions**: Atomic operations for critical data modifications
+### **📊 Simple Architecture:**
+- **Server-First**: Most operations route through Spring Boot server
+- **Direct Firebase**: Only Auth and Storage used directly
+- **Callback Pattern**: Clean async operation handling
+- **Reference Management**: Centralized Firebase service references
 
-### **🔐 Authentication Flow:**
-- **Multi-provider Auth**: Email/password and Google Sign-In support
-- **Auth State Persistence**: Automatic session restoration across app restarts
-- **Token Refresh**: Automatic ID token refresh for server authentication
-- **Profile Management**: User profile updates and photo management
+### **🔐 Authentication:**
+- **Firebase Auth**: Direct Firebase Authentication integration
+- **Server Integration**: Auth tokens passed to server for validation
 
-### **📁 Storage Operations:**
-- **Progressive Upload**: Chunked upload with progress tracking
-- **Image Optimization**: Automatic compression before upload
-- **Metadata Management**: File metadata storage and retrieval
-- **URL Generation**: Secure download URL generation with expiration
-
----
-
-## 🎯 Advanced Firebase Features
-
-### **⚡ Performance Optimization:**
-- **Offline Persistence**: Local caching with automatic synchronization
-- **Connection Management**: Smart online/offline state handling
-- **Batch Operations**: Reduced network calls through batching
-- **Lazy Loading**: On-demand data loading for better performance
-
-### **🔍 Real-time Features:**
-- **Live Updates**: Instant UI updates via Firebase listeners
-- **Presence System**: User online/offline status tracking
-- **Collaborative Editing**: Real-time group data synchronization
-- **Conflict Resolution**: Automatic conflict resolution for concurrent updates
-
-### **📱 Push Notifications:**
+### **📁 Storage:**
+- **Firebase Storage**: Direct file upload/download capabilities
+- **Image Management**: Profile and group image storage
+- **Existence Checks**: Verify file existence before operations
 ---
 
 ## 📋 **Firebase Summary**

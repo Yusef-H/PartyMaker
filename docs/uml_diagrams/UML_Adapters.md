@@ -46,19 +46,7 @@ classDiagram
         -setGroupTypeIndicator(holder, group) void
     }
     
-    class GroupViewHolder {
-        +TextView tvGroupName
-        +TextView tvGroupLocation
-        +TextView tvGroupDateTime
-        +TextView tvGroupPrice
-        +ImageView ivGroupImage
-        +View vGroupTypeIndicator
-        +CardView cardView
-        
-        +GroupViewHolder(itemView)
-        +bind(group) void
-        -setupClickListener() void
-    }
+
     
     class ChatAdapter {
         -String currentUserKey
@@ -91,16 +79,7 @@ classDiagram
         +clearMessages() void
     }
     
-    class MessageViewHolder {
-        +TextView tvMessage
-        +TextView tvTimestamp
-        +View messageBubble
-        +ImageView ivAvatar
-        
-        +MessageViewHolder(itemView)
-        +bind(message, isFromUser) void
-        -animateMessage() void
-    }
+
     
     class UserAdapter {
         -OnUserActionListener listener
@@ -195,28 +174,7 @@ classDiagram
         -getDefaultOptions() RequestOptions
     }
     
-    class DateTimeFormatter {
-        +formatGroupDateTime(group) String
-        +formatMessageTime(timestamp) String
-        +formatRelativeTime(timestamp) String
-        +formatFullDateTime(timestamp) String
-        +isToday(timestamp) boolean
-        +isYesterday(timestamp) boolean
-        -getDateFormat() SimpleDateFormat
-        -getTimeFormat() SimpleDateFormat
-    }
-    
-    class DiffCallback~T~ {
-        -List~T~ oldList
-        -List~T~ newList
-        
-        +DiffCallback(oldList, newList)
-        +getOldListSize() int
-        +getNewListSize() int
-        +areItemsTheSame(oldItemPosition, newItemPosition) boolean
-        +areContentsTheSame(oldItemPosition, newItemPosition) boolean
-        +getChangePayload(oldItemPosition, newItemPosition) Object
-    }
+
     
     class ImageCompressor {
         +compressImage(imageUri, quality) Bitmap
@@ -236,14 +194,11 @@ classDiagram
     ViewPagerAdapter --|> PagerAdapter
     
     %% Composition relationships
-    GroupAdapter *-- GroupViewHolder
-    ChatbotAdapter *-- MessageViewHolder
     OptimizedRecyclerAdapter o-- OnItemClickListener
     
     %% Dependencies
     GroupAdapter --> OnGroupClickListener : uses
     GroupAdapter --> GlideImageLoader : uses
-    GroupAdapter --> DateTimeFormatter : uses
     
     UserAdapter --> OnUserActionListener : uses
     UserAdapter --> GlideImageLoader : uses
@@ -251,18 +206,7 @@ classDiagram
     InvitedAdapter --> OnInvitedActionListener : uses
     InvitedAdapter --> GlideImageLoader : uses
     
-
-    
-    ChatAdapter --> DateTimeFormatter : uses
     ChatAdapter --> ImageCompressor : uses
-    
-    ChatbotAdapter --> DateTimeFormatter : uses
-    
-    OptimizedRecyclerAdapter --> DiffCallback : uses
-    
-    %% ViewHolder relationships
-    GroupViewHolder --> Group : displays
-    MessageViewHolder --> ChatMessageGpt : displays
 ```
 
 ---
