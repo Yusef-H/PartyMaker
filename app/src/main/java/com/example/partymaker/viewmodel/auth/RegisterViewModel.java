@@ -49,9 +49,8 @@ public class RegisterViewModel extends BaseViewModel {
   // Dependencies
   private final FirebaseAuth firebaseAuth;
   private final UserRepository userRepository;
-  private final FirebaseServerClient serverClient;
 
-  // LiveData for registration state
+    // LiveData for registration state
   private final MutableLiveData<Boolean> registrationSuccess = new MutableLiveData<>();
   private final MutableLiveData<String> validationError = new MutableLiveData<>();
   private final MutableLiveData<User> registeredUser = new MutableLiveData<>();
@@ -72,7 +71,7 @@ public class RegisterViewModel extends BaseViewModel {
     super(application);
     this.firebaseAuth = FirebaseAuth.getInstance();
     this.userRepository = UserRepository.getInstance();
-    this.serverClient = FirebaseServerClient.getInstance();
+      FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
     // Initialize form validation state
     isEmailValid.setValue(false);

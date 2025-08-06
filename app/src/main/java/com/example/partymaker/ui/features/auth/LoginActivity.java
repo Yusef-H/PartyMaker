@@ -86,8 +86,7 @@ public class LoginActivity extends AppCompatActivity {
   // Dependencies
   private FirebaseAuth firebaseAuth;
   private AuthViewModel authViewModel;
-  private LoadingStateManager loadingStateManager;
-  private NetworkManager networkManager;
+    private NetworkManager networkManager;
 
   // State Management
   private final AtomicBoolean isDestroyed = new AtomicBoolean(false);
@@ -177,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
       progressBar = new ProgressBar(this);
       progressBar.setVisibility(View.GONE);
     }
-    loadingStateManager = null; // Direct progress bar management to avoid interference
+      LoadingStateManager loadingStateManager = null; // Direct progress bar management to avoid interference
   }
 
   private void setupViewModelObservers() {

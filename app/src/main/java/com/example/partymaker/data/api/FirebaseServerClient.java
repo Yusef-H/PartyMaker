@@ -65,10 +65,7 @@ public class FirebaseServerClient {
   /** NetworkManager instance for network operations. */
   private final NetworkManager networkManager = NetworkManager.getInstance();
 
-  /** SSL Pinning Manager for secure connections. */
-  private SSLPinningManager sslPinningManager;
-
-  /** Secure OkHttpClient for network requests. */
+    /** Secure OkHttpClient for network requests. */
   private OkHttpClient secureClient;
 
   /** The current server URL. */
@@ -105,7 +102,8 @@ public class FirebaseServerClient {
 
     // Initialize SSL pinning for production URLs
     boolean isProduction = serverUrl.contains("onrender.com") || serverUrl.contains("https://");
-    sslPinningManager = SSLPinningManager.getInstance(isProduction);
+      /** SSL Pinning Manager for secure connections. */
+      SSLPinningManager sslPinningManager = SSLPinningManager.getInstance(isProduction);
     secureClient = sslPinningManager.createSecureClient();
 
     Log.i(

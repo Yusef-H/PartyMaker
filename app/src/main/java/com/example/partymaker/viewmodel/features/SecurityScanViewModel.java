@@ -39,10 +39,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
   private static final String TAG = "SecurityScanViewModel";
 
-  // Dependencies
-  private final SecurityAgent securityAgent;
-
-  // LiveData for security scan state
+    // LiveData for security scan state
   private final MutableLiveData<Boolean> scanInProgress = new MutableLiveData<>();
   private final MutableLiveData<SecurityReport> latestReport = new MutableLiveData<>();
   private final MutableLiveData<List<SecurityIssue>> securityIssues = new MutableLiveData<>();
@@ -74,7 +71,8 @@ public class SecurityScanViewModel extends BaseViewModel {
    */
   public SecurityScanViewModel(@NonNull Application application) {
     super(application);
-    this.securityAgent = SecurityAgent.getInstance(application);
+      // Dependencies
+      SecurityAgent securityAgent = SecurityAgent.getInstance(application);
 
     // Initialize state
     scanInProgress.setValue(false);

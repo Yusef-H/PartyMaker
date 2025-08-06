@@ -43,14 +43,12 @@ public class HybridMessageEncryption {
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
 
-  private final Context context;
-  private final String currentUserId;
+    private final String currentUserId;
   private final SecureRandom secureRandom;
   private final KeyStore keyStore;
 
   public HybridMessageEncryption(Context context, String userId) {
-    this.context = context;
-    this.currentUserId = userId;
+      this.currentUserId = userId;
     this.secureRandom = new SecureRandom();
 
     try {

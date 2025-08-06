@@ -40,12 +40,11 @@ public class GroupRepositoryTest {
   @Mock private RemoteGroupDataSource mockRemoteDataSource;
 
   private GroupRepository groupRepository;
-  private Context context;
 
-  @Before
+    @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    context = RuntimeEnvironment.getApplication();
+        Context context = RuntimeEnvironment.getApplication();
 
     // Initialize repository and inject mock dependencies
     groupRepository = GroupRepository.getInstance();

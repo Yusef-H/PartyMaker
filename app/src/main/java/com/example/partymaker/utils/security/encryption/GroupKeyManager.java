@@ -23,17 +23,14 @@ public class GroupKeyManager {
   private static final String TAG = "GroupKeyManager";
   private static final String FIREBASE_GROUP_KEYS_PATH = "group_keys";
 
-  private final Context context;
-  private final String currentUserId;
+    private final String currentUserId;
   private final GroupMessageEncryption groupEncryption;
-  private final EnhancedSecureStorage userStorage;
-  private final DatabaseReference firebaseRef;
+    private final DatabaseReference firebaseRef;
 
   public GroupKeyManager(Context context, String userId) {
-    this.context = context;
-    this.currentUserId = userId;
+      this.currentUserId = userId;
     this.groupEncryption = new GroupMessageEncryption(context, userId);
-    this.userStorage = new EnhancedSecureStorage(context, userId);
+      EnhancedSecureStorage userStorage = new EnhancedSecureStorage(context, userId);
     this.firebaseRef = FirebaseDatabase.getInstance().getReference(FIREBASE_GROUP_KEYS_PATH);
   }
 
