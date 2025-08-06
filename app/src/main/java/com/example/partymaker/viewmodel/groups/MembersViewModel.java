@@ -609,7 +609,7 @@ public class MembersViewModel extends BaseViewModel {
                                       && user.getUsername().toLowerCase().contains(lowerQuery))
                                   || (user.getFullName() != null
                                       && user.getFullName().toLowerCase().contains(lowerQuery)))
-                      .collect(ArrayList::new, (list, item) -> list.add(item), ArrayList::addAll);
+                      .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
             }
 
             // Apply online filter (simplified - would need real online status)
@@ -619,7 +619,7 @@ public class MembersViewModel extends BaseViewModel {
               filtered =
                   filtered.stream()
                       .filter(user -> Math.random() > 0.3) // 70% "online"
-                      .collect(ArrayList::new, (list, item) -> list.add(item), ArrayList::addAll);
+                      .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
             }
 
             final List<User> finalFiltered = filtered;

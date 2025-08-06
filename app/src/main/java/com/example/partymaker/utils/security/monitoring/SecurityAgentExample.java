@@ -63,7 +63,7 @@ public class SecurityAgentExample {
 
     agent
         .performSecurityScan()
-        .thenCompose(report -> agent.uploadReportToFirebase(report))
+        .thenCompose(agent::uploadReportToFirebase)
         .thenRun(
             () -> {
               Log.d(TAG, "Report uploaded to Firebase successfully");
