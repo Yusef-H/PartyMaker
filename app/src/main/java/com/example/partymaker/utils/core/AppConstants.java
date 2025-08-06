@@ -14,15 +14,10 @@ public final class AppConstants {
   // Network Configuration
   public static final class Network {
     public static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
-    public static final String LOCAL_SERVER_URL = "http://10.0.2.2:8080";
     public static final String API_BASE_PATH = "/api/firebase/";
 
     public static final int DEFAULT_TIMEOUT_MS = 10000;
-    public static final int LONG_TIMEOUT_MS = 15000;
-    public static final int SHORT_TIMEOUT_MS = 5000;
 
-    public static final int MAX_RETRY_ATTEMPTS = 3;
-    public static final long RETRY_DELAY_MS = 1000L;
 
     private Network() {}
   }
@@ -58,14 +53,6 @@ public final class AppConstants {
     private Extras() {}
   }
 
-  // Database Configuration
-  public static final class Database {
-    public static final String DATABASE_NAME = "partymaker_database";
-    public static final int DATABASE_VERSION = 1;
-    public static final long CACHE_EXPIRY_TIME_MS = 300000L; // 5 minutes
-
-    private Database() {}
-  }
 
   // Security Configuration
   public static final class Security {
@@ -76,12 +63,4 @@ public final class AppConstants {
     private Security() {}
   }
 
-  // UI Configuration
-  public static final class UI {
-    public static final int DEFAULT_ANIMATION_DURATION_MS = 300;
-    public static final int SPLASH_SCREEN_DURATION_MS = 2000;
-    public static final int DEBOUNCE_DELAY_MS = 500;
-
-    private UI() {}
-  }
 }

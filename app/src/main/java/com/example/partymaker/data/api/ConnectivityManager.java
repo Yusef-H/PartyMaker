@@ -78,7 +78,7 @@ public class ConnectivityManager {
     Log.d(TAG, "ConnectivityManager initialized, initial network state: " + hasNetwork);
 
     // Perform an active network check to ensure we have the correct state
-    performActiveNetworkCheck(context);
+    performActiveNetworkCheck();
 
     // Schedule periodic network checks
     schedulePeriodicNetworkChecks();
@@ -92,7 +92,7 @@ public class ConnectivityManager {
           @Override
           public void run() {
             if (appContext != null) {
-              performActiveNetworkCheck(appContext);
+              performActiveNetworkCheck();
             }
             // Schedule the next check
             mainHandler.postDelayed(this, 30000);
@@ -104,7 +104,7 @@ public class ConnectivityManager {
   /** Forces a refresh of the network connectivity status */
   public void refreshNetworkStatus() {
     if (appContext != null) {
-      performActiveNetworkCheck(appContext);
+      performActiveNetworkCheck();
     } else {
       Log.e(TAG, "Cannot refresh network status: appContext is null");
     }
@@ -112,10 +112,8 @@ public class ConnectivityManager {
 
   /**
    * Performs an active check of the network connectivity
-   *
-   * @param context The application context
    */
-  private void performActiveNetworkCheck(Context context) {
+  private void performActiveNetworkCheck() {
     new Thread(
             () -> {
               try {
@@ -179,7 +177,7 @@ public class ConnectivityManager {
                   isNetworkAvailable.setValue(true);
                   // Verify with an active check
                   if (appContext != null) {
-                    performActiveNetworkCheck(appContext);
+                    performActiveNetworkCheck();
                   }
                 });
           }

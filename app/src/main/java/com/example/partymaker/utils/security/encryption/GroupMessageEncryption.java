@@ -33,15 +33,13 @@ public class GroupMessageEncryption {
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
 
-  private final Context context;
-  private final String currentUserId;
+    private final String currentUserId;
   private final SecureRandom secureRandom;
   private final EnhancedSecureStorage userStorage; // For storing group keys
   private final Map<String, SecretKey> groupKeyCache; // Cache for performance
 
   public GroupMessageEncryption(Context context, String userId) {
-    this.context = context;
-    this.currentUserId = userId;
+      this.currentUserId = userId;
     this.secureRandom = new SecureRandom();
     this.userStorage = new EnhancedSecureStorage(context, userId);
     this.groupKeyCache = new HashMap<>();

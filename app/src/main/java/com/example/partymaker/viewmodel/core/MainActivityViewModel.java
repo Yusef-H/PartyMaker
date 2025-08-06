@@ -103,7 +103,7 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if userKey is null or empty
    */
   public void loadUserGroups(@NonNull String userKey, boolean forceRefresh) {
-    if (userKey == null || userKey.trim().isEmpty()) {
+    if (userKey.trim().isEmpty()) {
       throw new IllegalArgumentException("User key cannot be null or empty");
     }
 
@@ -164,7 +164,7 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if groupId is null or empty
    */
   public void loadGroup(@NonNull String groupId, boolean forceRefresh) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
 
@@ -199,14 +199,11 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if parameters are invalid
    */
   public void createGroup(@NonNull String groupId, @NonNull Group group) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
-    if (group == null) {
-      throw new IllegalArgumentException("Group object cannot be null");
-    }
 
-    Log.d(TAG, "Creating new group: " + group.getGroupName());
+      Log.d(TAG, "Creating new group: " + group.getGroupName());
 
     executeIfNotLoading(
         () -> {
@@ -234,10 +231,10 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if parameters are invalid
    */
   public void updateGroup(@NonNull String groupId, @NonNull Map<String, Object> updates) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
-    if (updates == null || updates.isEmpty()) {
+    if (updates.isEmpty()) {
       throw new IllegalArgumentException("Updates map cannot be null or empty");
     }
 
@@ -267,7 +264,7 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if groupId is invalid
    */
   public void deleteGroup(@NonNull String groupId) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
 
@@ -298,10 +295,10 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if parameters are invalid
    */
   public void joinGroup(@NonNull String groupId, @NonNull String userKey) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
-    if (userKey == null || userKey.trim().isEmpty()) {
+    if (userKey.trim().isEmpty()) {
       throw new IllegalArgumentException("User key cannot be null or empty");
     }
 
@@ -343,10 +340,10 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if parameters are invalid
    */
   public void leaveGroup(@NonNull String groupId, @NonNull String userKey) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
-    if (userKey == null || userKey.trim().isEmpty()) {
+    if (userKey.trim().isEmpty()) {
       throw new IllegalArgumentException("User key cannot be null or empty");
     }
 
@@ -388,7 +385,7 @@ public class MainActivityViewModel extends BaseViewModel {
    * @throws IllegalArgumentException if groupId is invalid
    */
   public void selectGroup(@NonNull String groupId, boolean forceRefresh) {
-    if (groupId == null || groupId.trim().isEmpty()) {
+    if (groupId.trim().isEmpty()) {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
 

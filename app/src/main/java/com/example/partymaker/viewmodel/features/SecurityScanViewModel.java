@@ -39,10 +39,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
   private static final String TAG = "SecurityScanViewModel";
 
-  // Dependencies
-  private final SecurityAgent securityAgent;
-
-  // LiveData for security scan state
+    // LiveData for security scan state
   private final MutableLiveData<Boolean> scanInProgress = new MutableLiveData<>();
   private final MutableLiveData<SecurityReport> latestReport = new MutableLiveData<>();
   private final MutableLiveData<List<SecurityIssue>> securityIssues = new MutableLiveData<>();
@@ -74,7 +71,8 @@ public class SecurityScanViewModel extends BaseViewModel {
    */
   public SecurityScanViewModel(@NonNull Application application) {
     super(application);
-    this.securityAgent = SecurityAgent.getInstance(application);
+      // Dependencies
+      SecurityAgent securityAgent = SecurityAgent.getInstance(application);
 
     // Initialize state
     scanInProgress.setValue(false);
@@ -270,9 +268,7 @@ public class SecurityScanViewModel extends BaseViewModel {
           } catch (Exception e) {
             Log.e(TAG, "Error resolving security issue", e);
             ThreadUtils.runOnMainThread(
-                () -> {
-                  setError("Failed to resolve security issue: " + e.getMessage());
-                });
+                () -> setError("Failed to resolve security issue: " + e.getMessage()));
           }
         });
   }
@@ -308,12 +304,10 @@ public class SecurityScanViewModel extends BaseViewModel {
 
                   // Simulate fix application
                   ThreadUtils.runOnMainThreadDelayed(
-                      () -> {
-                        updateScanStep(
-                            "Fixing " + issue.getType() + "...",
-                            (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0]));
-                      },
-                      fixedIssues[0] * 500);
+                      () -> updateScanStep(
+                          "Fixing " + issue.getType() + "...",
+                          (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0])),
+                      fixedIssues[0] * 500L);
 
                   fixedIssues[0]++;
                 }
@@ -333,7 +327,7 @@ public class SecurityScanViewModel extends BaseViewModel {
                       setInfo("No auto-fixable issues found");
                     }
                   },
-                  fixableIssues[0] * 500 + 1000);
+                  fixableIssues[0] * 500L + 1000);
             }
 
           } catch (Exception e) {
@@ -401,12 +395,11 @@ public class SecurityScanViewModel extends BaseViewModel {
   // Private helper methods
 
   private void performSecurityScan() {
-    List<SecurityIssue> foundIssues = new ArrayList<>();
 
-    // Scan step 1: Network security
+      // Scan step 1: Network security
     updateScanStep("Scanning network security...", 10);
     ThreadUtils.sleep(1000);
-    foundIssues.addAll(scanNetworkSecurity());
+      List<SecurityIssue> foundIssues = new ArrayList<>(scanNetworkSecurity());
 
     // Scan step 2: Data encryption
     updateScanStep("Checking data encryption...", 25);
@@ -456,12 +449,11 @@ public class SecurityScanViewModel extends BaseViewModel {
   }
 
   private void performQuickScan() {
-    List<SecurityIssue> foundIssues = new ArrayList<>();
 
-    // Quick scan - essential checks only
+      // Quick scan - essential checks only
     updateScanStep("Quick security check...", 20);
     ThreadUtils.sleep(500);
-    foundIssues.addAll(scanCriticalSecurity());
+      List<SecurityIssue> foundIssues = new ArrayList<>(scanCriticalSecurity());
 
     updateScanStep("Checking encryption status...", 60);
     ThreadUtils.sleep(500);

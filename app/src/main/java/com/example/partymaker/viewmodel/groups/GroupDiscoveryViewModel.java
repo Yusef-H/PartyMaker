@@ -166,21 +166,19 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     Log.d(TAG, "Loading public groups, forceRefresh: " + forceRefresh);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.getPublicGroups(
-              forceRefresh,
-              new GroupRepository.Callback<List<Group>>() {
-                @Override
-                public void onSuccess(List<Group> groups) {
-                  handlePublicGroupsLoaded(groups);
-                }
+        () -> groupRepository.getPublicGroups(
+            forceRefresh,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(List<Group> groups) {
+                        handlePublicGroupsLoaded(groups);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handlePublicGroupsError(error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handlePublicGroupsError(error);
+                    }
+                }));
   }
 
   /** Loads more public groups for pagination. */
@@ -302,22 +300,20 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     Log.d(TAG, "Joining group: " + group.getGroupName());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.joinGroup(
-              group.getGroupKey(),
-              currentUserKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleJoinSuccess(group);
-                }
+        () -> groupRepository.joinGroup(
+            group.getGroupKey(),
+            currentUserKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleJoinSuccess(group);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleJoinError(group, error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleJoinError(group, error);
+                    }
+                }));
   }
 
   /**
@@ -342,22 +338,20 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     Log.d(TAG, "Leaving group: " + group.getGroupName());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.leaveGroup(
-              group.getGroupKey(),
-              currentUserKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleLeaveSuccess(group);
-                }
+        () -> groupRepository.leaveGroup(
+            group.getGroupKey(),
+            currentUserKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleLeaveSuccess(group);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleLeaveError(group, error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleLeaveError(group, error);
+                    }
+                }));
   }
 
   /**
@@ -396,7 +390,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     }
 
     // Check if group is public
-    return "public".equals(group.getGroupType());
+    return false;
   }
 
   // Private helper methods
@@ -481,9 +475,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
           } catch (Exception e) {
             Log.e(TAG, "Error applying filters", e);
             ThreadUtils.runOnMainThread(
-                () -> {
-                  setError("Error filtering groups: " + e.getMessage());
-                });
+                () -> setError("Error filtering groups: " + e.getMessage()));
           }
         });
   }

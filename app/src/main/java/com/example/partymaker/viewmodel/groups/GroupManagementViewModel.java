@@ -173,21 +173,19 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group management data for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.getGroup(
-              currentGroupKey,
-              new GroupRepository.Callback<Group>() {
-                @Override
-                public void onSuccess(Group group) {
-                  handleGroupLoaded(group);
-                }
+        () -> groupRepository.getGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group group) {
+                        handleGroupLoaded(group);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleGroupLoadError(error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupLoadError(error);
+                    }
+                }));
   }
 
   /** Loads the members of the managed group. */
@@ -219,39 +217,39 @@ public class GroupManagementViewModel extends BaseViewModel {
           for (String memberKey : memberKeys.keySet()) {
             userRepository.getUser(
                 memberKey,
-                new UserRepository.Callback<User>() {
-                  @Override
-                  public void onSuccess(User user) {
-                    synchronized (members) {
-                      members.add(user);
-                      loadedCount[0]++;
+                    new UserRepository.Callback<>() {
+                        @Override
+                        public void onSuccess(User user) {
+                            synchronized (members) {
+                                members.add(user);
+                                loadedCount[0]++;
 
-                      if (loadedCount[0] == totalMembersCount) {
-                        ThreadUtils.runOnMainThread(
-                            () -> {
-                              groupMembers.setValue(members);
-                              updateStatistics();
-                            });
-                      }
-                    }
-                  }
+                                if (loadedCount[0] == totalMembersCount) {
+                                    ThreadUtils.runOnMainThread(
+                                            () -> {
+                                                groupMembers.setValue(members);
+                                                updateStatistics();
+                                            });
+                                }
+                            }
+                        }
 
-                  @Override
-                  public void onError(Exception error) {
-                    Log.w(TAG, "Failed to load member: " + memberKey, error);
-                    synchronized (members) {
-                      loadedCount[0]++;
+                        @Override
+                        public void onError(Exception error) {
+                            Log.w(TAG, "Failed to load member: " + memberKey, error);
+                            synchronized (members) {
+                                loadedCount[0]++;
 
-                      if (loadedCount[0] == totalMembersCount) {
-                        ThreadUtils.runOnMainThread(
-                            () -> {
-                              groupMembers.setValue(members);
-                              updateStatistics();
-                            });
-                      }
-                    }
-                  }
-                });
+                                if (loadedCount[0] == totalMembersCount) {
+                                    ThreadUtils.runOnMainThread(
+                                            () -> {
+                                                groupMembers.setValue(members);
+                                                updateStatistics();
+                                            });
+                                }
+                            }
+                        }
+                    });
           }
         });
   }
@@ -259,24 +257,20 @@ public class GroupManagementViewModel extends BaseViewModel {
   /** Loads available users that can be invited to the group. */
   public void loadAvailableUsers() {
     ThreadUtils.runOnBackground(
-        () -> {
-          userRepository.getAllUsers(
-              new UserRepository.Callback<List<User>>() {
-                @Override
-                public void onSuccess(List<User> users) {
-                  handleAvailableUsersLoaded(users);
-                }
+        () -> userRepository.getAllUsers(
+                new UserRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(List<User> users) {
+                        handleAvailableUsersLoaded(users);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  Log.e(TAG, "Failed to load available users", error);
-                  ThreadUtils.runOnMainThread(
-                      () -> {
-                        setError("Failed to load available users");
-                      });
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        Log.e(TAG, "Failed to load available users", error);
+                        ThreadUtils.runOnMainThread(
+                                () -> setError("Failed to load available users"));
+                    }
+                }));
   }
 
   /**
@@ -285,7 +279,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to add
    */
   public void addMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can add members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -301,22 +295,20 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Adding member: " + user.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.addMemberToGroup(
-              currentGroupKey,
-              user.getUserKey(),
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleMemberAddSuccess(user);
-                }
+        () -> groupRepository.addMemberToGroup(
+            currentGroupKey,
+            user.getUserKey(),
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleMemberAddSuccess(user);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleMemberOperationError("add", user, error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("add", user, error);
+                    }
+                }));
   }
 
   /**
@@ -325,7 +317,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to remove
    */
   public void removeMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can remove members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -346,22 +338,20 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Removing member: " + user.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.removeMemberFromGroup(
-              currentGroupKey,
-              user.getUserKey(),
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleMemberRemoveSuccess(user);
-                }
+        () -> groupRepository.removeMemberFromGroup(
+            currentGroupKey,
+            user.getUserKey(),
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleMemberRemoveSuccess(user);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleMemberOperationError("remove", user, error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("remove", user, error);
+                    }
+                }));
   }
 
   /**
@@ -370,7 +360,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to promote
    */
   public void promoteMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can promote members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -387,7 +377,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to demote
    */
   public void demoteMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can demote members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -408,7 +398,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param updatedGroup The group with updated settings
    */
   public void updateGroupSettings(@NonNull Group updatedGroup) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can update group settings", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -424,26 +414,24 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Updating group settings: " + updatedGroup.getGroupName());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.updateGroup(
-              updatedGroup,
-              new GroupRepository.Callback<Group>() {
-                @Override
-                public void onSuccess(Group result) {
-                  handleGroupUpdateSuccess(result);
-                }
+        () -> groupRepository.updateGroup(
+            updatedGroup,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group result) {
+                        handleGroupUpdateSuccess(result);
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleGroupUpdateError(error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupUpdateError(error);
+                    }
+                }));
   }
 
   /** Deletes the group (admin only). */
   public void deleteGroup() {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can delete groups", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -459,28 +447,26 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Deleting group: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.deleteGroup(
-              currentGroupKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleGroupDeleteSuccess();
-                }
+        () -> groupRepository.deleteGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleGroupDeleteSuccess();
+                    }
 
-                @Override
-                public void onError(Exception error) {
-                  handleGroupDeleteError(error);
-                }
-              });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupDeleteError(error);
+                    }
+                }));
   }
 
   // Private helper methods
 
   private boolean isCurrentUserAdmin() {
     Boolean adminStatus = isUserAdmin.getValue();
-    return adminStatus != null && adminStatus;
+    return adminStatus == null || !adminStatus;
   }
 
   private void handleGroupLoaded(Group group) {
@@ -539,14 +525,10 @@ public class GroupManagementViewModel extends BaseViewModel {
       }
 
       ThreadUtils.runOnMainThread(
-          () -> {
-            availableUsers.setValue(available);
-          });
+          () -> availableUsers.setValue(available));
     } else {
       ThreadUtils.runOnMainThread(
-          () -> {
-            availableUsers.setValue(users);
-          });
+          () -> availableUsers.setValue(users));
     }
   }
 

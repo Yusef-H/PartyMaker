@@ -144,10 +144,10 @@ public class UserFeedbackManager {
     } else if (result.isError()) {
       if (result.getErrorType() != null) {
         UiStateManager.showError(
-            containerView, result.getErrorType(), () -> handler.onRetryRequested());
+            containerView, result.getErrorType(), handler::onRetryRequested);
       } else {
         UiStateManager.showError(
-            containerView, result.getError(), () -> handler.onRetryRequested());
+            containerView, result.getError(), handler::onRetryRequested);
       }
       handler.onError(result.getError(), result.getErrorType());
     }
@@ -206,9 +206,7 @@ public class UserFeedbackManager {
         .setSingleChoiceItems(
             choices,
             selectedIndex,
-            (dialog, which) -> {
-              selectedItem[0] = which;
-            })
+            (dialog, which) -> selectedItem[0] = which)
         .setPositiveButton(
             "OK",
             (dialog, which) -> {

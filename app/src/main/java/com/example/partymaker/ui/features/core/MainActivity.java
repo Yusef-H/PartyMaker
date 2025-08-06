@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
     android.widget.ProgressBar progressBar = findOrCreateProgressBar();
     android.widget.TextView loadingText = null;
 
-    loadingStateManager = createLoadingStateManager(progressBar, loadingText);
+    loadingStateManager = createLoadingStateManager(progressBar, null);
   }
 
   private android.widget.ProgressBar findOrCreateProgressBar() {

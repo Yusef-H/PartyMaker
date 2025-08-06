@@ -24,9 +24,7 @@ public class SecurityAgentExample {
               report
                   .getSecurityIssues()
                   .forEach(
-                      issue -> {
-                        Log.w(TAG, issue.toString());
-                      });
+                      issue -> Log.w(TAG, issue.toString()));
             })
         .exceptionally(
             throwable -> {
@@ -63,11 +61,9 @@ public class SecurityAgentExample {
 
     agent
         .performSecurityScan()
-        .thenCompose(report -> agent.uploadReportToFirebase(report))
+        .thenCompose(agent::uploadReportToFirebase)
         .thenRun(
-            () -> {
-              Log.d(TAG, "Report uploaded to Firebase successfully");
-            })
+            () -> Log.d(TAG, "Report uploaded to Firebase successfully"))
         .exceptionally(
             throwable -> {
               Log.e(TAG, "Failed to upload report", throwable);

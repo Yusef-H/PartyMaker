@@ -56,9 +56,7 @@ public class SecureConfigManager {
     try {
       // First check BuildConfig (from local.properties or CI secrets)
       String apiKey = BuildConfig.OPENAI_API_KEY;
-      if (apiKey != null && !apiKey.isEmpty()) {
         return apiKey;
-      }
     } catch (Exception e) {
       // BuildConfig field might not exist yet
       Log.d(TAG, "BuildConfig.OPENAI_API_KEY not available");
@@ -83,9 +81,6 @@ public class SecureConfigManager {
     try {
       // First check BuildConfig
       String apiKey = BuildConfig.MAPS_API_KEY;
-      if (apiKey != null && !apiKey.isEmpty()) {
-        return apiKey;
-      }
     } catch (Exception e) {
       // BuildConfig field might not exist yet
       Log.d(TAG, "BuildConfig.MAPS_API_KEY not available");

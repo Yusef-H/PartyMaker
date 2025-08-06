@@ -166,12 +166,12 @@ public class AuthViewModel extends BaseViewModel {
    */
   public void loginWithEmail(@NonNull String email, @NonNull String password) {
     // Input validation
-    if (email == null || email.trim().isEmpty()) {
+    if (email.trim().isEmpty()) {
       setError("Email is required");
       return;
     }
 
-    if (password == null || password.trim().isEmpty()) {
+    if (password.trim().isEmpty()) {
       setError("Password is required");
       return;
     }
@@ -190,17 +190,15 @@ public class AuthViewModel extends BaseViewModel {
 
           auth.signInWithEmailAndPassword(email.trim(), password)
               .addOnCompleteListener(
-                  task -> {
-                    ThreadUtils.runOnMainThread(
-                        () -> {
-                          setLoading(false);
-                          if (task.isSuccessful()) {
-                            handleSuccessfulLogin("Email login successful");
-                          } else {
-                            handleAuthError("Email login failed", task.getException());
-                          }
-                        });
-                  });
+                  task -> ThreadUtils.runOnMainThread(
+                      () -> {
+                        setLoading(false);
+                        if (task.isSuccessful()) {
+                          handleSuccessfulLogin("Email login successful");
+                        } else {
+                          handleAuthError("Email login failed", task.getException());
+                        }
+                      }));
         });
   }
 
@@ -434,9 +432,7 @@ public class AuthViewModel extends BaseViewModel {
             googleSignInClient
                 .signOut()
                 .addOnCompleteListener(
-                    task -> {
-                      Log.d(TAG, "Google sign out completed");
-                    });
+                    task -> Log.d(TAG, "Google sign out completed"));
           }
 
           // Clear secure storage

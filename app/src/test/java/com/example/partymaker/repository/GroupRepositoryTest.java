@@ -40,12 +40,11 @@ public class GroupRepositoryTest {
   @Mock private RemoteGroupDataSource mockRemoteDataSource;
 
   private GroupRepository groupRepository;
-  private Context context;
 
-  @Before
+    @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    context = RuntimeEnvironment.getApplication();
+        Context context = RuntimeEnvironment.getApplication();
 
     // Initialize repository and inject mock dependencies
     groupRepository = GroupRepository.getInstance();
@@ -73,20 +72,20 @@ public class GroupRepositoryTest {
     // When
     groupRepository.getGroup(
         groupKey,
-        new GroupRepository.DataCallback<Group>() {
-          @Override
-          public void onDataLoaded(Group group) {
-            // Then
-            assertNotNull("Group should not be null", group);
-            assertEquals("Group key should match", groupKey, group.getGroupKey());
-            assertEquals("Group name should match", "Test Group", group.getGroupName());
-          }
+            new GroupRepository.DataCallback<>() {
+                @Override
+                public void onDataLoaded(Group group) {
+                    // Then
+                    assertNotNull("Group should not be null", group);
+                    assertEquals("Group key should match", groupKey, group.getGroupKey());
+                    assertEquals("Group name should match", "Test Group", group.getGroupName());
+                }
 
-          @Override
-          public void onError(String error) {
-            fail("Should not call onError for successful cache hit");
-          }
-        },
+                @Override
+                public void onError(String error) {
+                    fail("Should not call onError for successful cache hit");
+                }
+            },
         false);
 
     // Verify that local data source was called
@@ -135,19 +134,19 @@ public class GroupRepositoryTest {
     // When
     groupRepository.getGroup(
         groupKey,
-        new GroupRepository.DataCallback<Group>() {
-          @Override
-          public void onDataLoaded(Group group) {
-            // Then
-            assertNotNull("Group should not be null", group);
-            assertEquals("Group key should match", groupKey, group.getGroupKey());
-          }
+            new GroupRepository.DataCallback<>() {
+                @Override
+                public void onDataLoaded(Group group) {
+                    // Then
+                    assertNotNull("Group should not be null", group);
+                    assertEquals("Group key should match", groupKey, group.getGroupKey());
+                }
 
-          @Override
-          public void onError(String error) {
-            fail("Should not call onError for successful remote fetch: " + error);
-          }
-        },
+                @Override
+                public void onError(String error) {
+                    fail("Should not call onError for successful remote fetch: " + error);
+                }
+            },
         false);
 
     // Verify interaction flow
@@ -175,19 +174,19 @@ public class GroupRepositoryTest {
     // When
     groupRepository.getGroup(
         groupKey,
-        new GroupRepository.DataCallback<Group>() {
-          @Override
-          public void onDataLoaded(Group group) {
-            // Then
-            assertNotNull("Group should not be null", group);
-            assertEquals("Group key should match", groupKey, group.getGroupKey());
-          }
+            new GroupRepository.DataCallback<>() {
+                @Override
+                public void onDataLoaded(Group group) {
+                    // Then
+                    assertNotNull("Group should not be null", group);
+                    assertEquals("Group key should match", groupKey, group.getGroupKey());
+                }
 
-          @Override
-          public void onError(String error) {
-            fail("Should not call onError: " + error);
-          }
-        },
+                @Override
+                public void onError(String error) {
+                    fail("Should not call onError: " + error);
+                }
+            },
         true); // Force refresh
 
     // Verify that cache was skipped and went directly to remote

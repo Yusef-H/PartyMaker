@@ -102,9 +102,6 @@ public class LoadingStateManager {
     // Update error message if error view has a TextView
     if (errorView instanceof ViewGroup) {
       TextView errorText = null; // Optional error text view
-      if (errorText != null) {
-        errorText.setText(errorMessage);
-      }
     }
 
     // Animate transitions

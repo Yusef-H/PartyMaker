@@ -5,6 +5,8 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.util.Log;
+
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -43,14 +45,12 @@ public class HybridMessageEncryption {
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
 
-  private final Context context;
-  private final String currentUserId;
+    private final String currentUserId;
   private final SecureRandom secureRandom;
   private final KeyStore keyStore;
 
   public HybridMessageEncryption(Context context, String userId) {
-    this.context = context;
-    this.currentUserId = userId;
+      this.currentUserId = userId;
     this.secureRandom = new SecureRandom();
 
     try {
@@ -230,7 +230,7 @@ public class HybridMessageEncryption {
     Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
     GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
     cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
-    byte[] ciphertext = cipher.doFinal(plaintext.getBytes("UTF-8"));
+    byte[] ciphertext = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
 
     // Combine IV + ciphertext
     byte[] encryptedData = new byte[iv.length + ciphertext.length];
@@ -258,7 +258,7 @@ public class HybridMessageEncryption {
     cipher.init(Cipher.DECRYPT_MODE, key, gcmSpec);
     byte[] plaintext = cipher.doFinal(ciphertext);
 
-    return new String(plaintext, "UTF-8");
+    return new String(plaintext, StandardCharsets.UTF_8);
   }
 
   /** Encrypt data with RSA public key */

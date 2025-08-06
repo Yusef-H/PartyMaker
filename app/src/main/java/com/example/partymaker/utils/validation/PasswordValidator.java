@@ -44,11 +44,9 @@ public class PasswordValidator {
     }
 
     // Basic validation passed
-    if (password.length() >= MIN_LENGTH) {
+      password.length();
       return new ValidationResult(true, "Password is valid");
-    }
 
-    return new ValidationResult(false, "Password does not meet requirements");
   }
 
   /**

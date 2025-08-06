@@ -31,16 +31,12 @@ public class NetworkManager {
   private static NetworkManager instance;
 
   private final MutableLiveData<Boolean> isNetworkAvailable = new MutableLiveData<>();
-  private final Executor networkExecutor;
-  private final Handler mainHandler;
-  private ConnectivityManager connectivityManager;
+    private ConnectivityManager connectivityManager;
   private ConnectivityManager.NetworkCallback networkCallback;
   private SSLPinningManager sslPinningManager;
 
   /** Private constructor for singleton pattern. */
   private NetworkManager() {
-    networkExecutor = Executors.newSingleThreadExecutor();
-    mainHandler = new Handler(Looper.getMainLooper());
     isNetworkAvailable.setValue(false);
   }
 

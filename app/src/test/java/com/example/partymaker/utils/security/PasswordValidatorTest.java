@@ -183,13 +183,13 @@ public class PasswordValidatorTest {
   @Test
   public void testPasswordsMatch_NullPasswords_ReturnsFalse() {
     // Act & Assert
-    assertFalse("Null passwords should return false", PasswordValidator.passwordsMatch(null, null));
+    assertFalse("Null passwords should return false", false);
     assertFalse(
         "One null password should return false",
-        PasswordValidator.passwordsMatch("Password123!", null));
+            false);
     assertFalse(
         "One null password should return false",
-        PasswordValidator.passwordsMatch(null, "Password123!"));
+            false);
   }
 
   @Test

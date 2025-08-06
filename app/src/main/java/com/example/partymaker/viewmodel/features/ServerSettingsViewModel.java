@@ -58,7 +58,7 @@ public class ServerSettingsViewModel extends BaseViewModel {
       return;
     }
 
-    if (!isValidUrl(serverUrl)) {
+    if (isValidUrl(serverUrl)) {
       setError("Invalid URL format");
       return;
     }
@@ -102,7 +102,7 @@ public class ServerSettingsViewModel extends BaseViewModel {
       return;
     }
 
-    if (!isValidUrl(serverUrl)) {
+    if (isValidUrl(serverUrl)) {
       setError("Invalid URL format");
       return;
     }
@@ -122,9 +122,9 @@ public class ServerSettingsViewModel extends BaseViewModel {
   }
 
   private boolean isValidUrl(String url) {
-    return url != null
-        && (url.startsWith("http://") || url.startsWith("https://"))
-        && android.util.Patterns.WEB_URL.matcher(url).matches();
+    return url == null
+            || (!url.startsWith("http://") && !url.startsWith("https://"))
+            || !android.util.Patterns.WEB_URL.matcher(url).matches();
   }
 
   public void resetSavedStatus() {

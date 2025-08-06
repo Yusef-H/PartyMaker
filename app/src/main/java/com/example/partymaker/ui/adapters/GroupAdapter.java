@@ -150,7 +150,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       // First, set placeholder immediately to prevent flickering
       groupImageView.setImageResource(R.drawable.default_group_image);
 
-      if (groupKey != null && !groupKey.isEmpty()) {
+      if (!groupKey.isEmpty()) {
         // Store the group key as tag to prevent loading wrong images during recycling
         groupImageView.setTag(groupKey);
 

@@ -81,7 +81,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
         () -> {
           try {
             // Ensure the group has the correct key
-            if (group.getGroupKey() == null || group.getGroupKey().isEmpty()) {
+            if (group.getGroupKey().isEmpty()) {
               group.setGroupKey(groupKey);
             }
 

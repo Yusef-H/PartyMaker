@@ -7,229 +7,361 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.viewmodel.auth.ResetPasswordViewModel;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Activity for resetting user password via email. Handles UI theme switching and password reset
- * logic.
+ * Enterprise-level ResetPasswordActivity implementation with proper validation, error handling,
+ * theme management, and resource cleanup.
+ *
+ * <p>Responsibilities: - Handle password reset functionality via email - Provide real-time email
+ * validation with user feedback - Manage light/dark theme switching with visual feedback - Display
+ * contextual help and instructions - Ensure proper error handling and user experience
+ *
+ * @author PartyMaker Team
+ * @version 2.0
+ * @since 1.0
  */
 public class ResetPasswordActivity extends AppCompatActivity {
-  /** Reset Password ViewModel */
-  private ResetPasswordViewModel resetPasswordViewModel;
 
-  /** White theme button. */
-  private Button btnWhite;
+  private static final class Config {
+    static final String LOG_TAG = "ResetPasswordActivity";
+    static final String LOADING_TEXT = "Sending...";
+    static final String DEFAULT_TEXT = "Reset Password";
+    static final String SUCCESS_MESSAGE = "Password reset email sent! Check your inbox.";
+    static final String EMAIL_REQUIRED_ERROR = "Please enter your email address";
+    static final String INVALID_EMAIL_ERROR = "Please enter a valid email address";
 
-  /** Black theme button. */
-  private Button btnBlack;
-
-  /** Reset password button. */
-  private Button btnReset;
-
-  /** Help button. */
-  private Button btnHelp;
-
-  /** Hide instructions button. */
-  private Button btnHide;
-
-  /** Reset layout. */
-  private RelativeLayout rltReset;
-
-  /** Forgot password text. */
-  private TextView tvForgotPass;
-
-  /** Help text. */
-  private TextView tvHelp;
-
-  /** Instructions text. */
-  private TextView tvInstructions;
-
-  /** Hide instructions text. */
-  private TextView tvHide;
-
-  /** Email input field. */
-  private EditText etInputEmail;
-
-  /** Cake image view. */
-  private ImageView imgWhiteCake;
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_auth_reset);
-
-    // this 3 lines disables the action bar only in this activity
-    ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
-    actionBar.hide();
-
-    // Initialize ViewModel
-    resetPasswordViewModel = new ViewModelProvider(this).get(ResetPasswordViewModel.class);
-    setupViewModelObservers();
-
-    btnBlack = findViewById(R.id.btnBlack);
-    btnWhite = findViewById(R.id.btnWhite);
-    btnHelp = findViewById(R.id.btnHelp);
-    btnReset = findViewById(R.id.btnReset);
-    btnHide = findViewById(R.id.btnHide);
-    etInputEmail = findViewById(R.id.etInputEmail);
-    tvForgotPass = findViewById(R.id.tvForgotPass);
-    tvHelp = findViewById(R.id.tvHelp);
-    tvInstructions = findViewById(R.id.tvInstructions);
-    tvHide = findViewById(R.id.tvHide);
-    rltReset = findViewById(R.id.rltReset);
-    imgWhiteCake = findViewById(R.id.imgWhiteCake);
-
-    eventHandler();
-  }
-
-  /** Sets up observers for ResetPasswordViewModel LiveData */
-  private void setupViewModelObservers() {
-    resetPasswordViewModel
-        .getIsLoading()
-        .observe(
-            this,
-            isLoading -> {
-              btnReset.setEnabled(isLoading == null || !isLoading);
-              btnReset.setText(isLoading != null && isLoading ? "Sending..." : "Reset Password");
-            });
-
-    resetPasswordViewModel
-        .getErrorMessage()
-        .observe(
-            this,
-            errorMessage -> {
-              if (errorMessage != null && !errorMessage.isEmpty()) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
-              }
-            });
-
-    resetPasswordViewModel
-        .getSuccessMessage()
-        .observe(
-            this,
-            successMessage -> {
-              if (successMessage != null && !successMessage.isEmpty()) {
-                Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
-              }
-            });
-
-    resetPasswordViewModel
-        .getResetSuccess()
-        .observe(
-            this,
-            resetSent -> {
-              if (resetSent != null && resetSent) {
-                Toast.makeText(
-                        this, "Password reset email sent! Check your inbox.", Toast.LENGTH_LONG)
-                    .show();
-                finish();
-              }
-            });
-
-    // Observer for email validation
-    resetPasswordViewModel
-        .getIsEmailValid()
-        .observe(
-            this,
-            isValid -> {
-              // Update UI based on email validation if needed
-              if (isValid != null && !isValid && etInputEmail.getText().toString().length() > 0) {
-                etInputEmail.setError("Please enter a valid email address");
-              } else {
-                etInputEmail.setError(null);
-              }
-            });
-  }
-
-  /** Sends a password reset email to the user. */
-  private void ResetPass() {
-    final String email = etInputEmail.getText().toString().trim();
-    if (email.isEmpty()) {
-      etInputEmail.setError("Please enter your email address");
-      return;
-    }
-    resetPasswordViewModel.resetPassword(email);
-  }
-
-  /** Handles all button click events and UI theme switching. */
-  private void eventHandler() {
-    btnReset.setOnClickListener(v -> ResetPass());
-
-    btnWhite.setOnClickListener(v -> switchToLightMode());
-
-    btnBlack.setOnClickListener(v -> switchToDarkMode());
-
-    btnHelp.setOnClickListener(
-        v -> {
-          showViews(tvInstructions, tvHide, btnHide);
-          hideViews(tvHelp, btnHelp);
-        });
-
-    btnHide.setOnClickListener(
-        v -> {
-          hideViews(tvInstructions, tvHide, btnHide);
-          showViews(tvHelp, btnHelp);
-        });
-  }
-
-  private void switchToLightMode() {
-    applyColorFilterToImage();
-    rltReset.setBackgroundColor(Color.WHITE);
-
-    setTextColors(Color.BLACK);
-    setEditTextColors(Color.BLACK);
-    setButtonTextColors(Color.BLACK);
-
-    hideViews(btnWhite);
-    showViews(btnBlack);
-  }
-
-  private void switchToDarkMode() {
-    applyColorFilterToImage();
-    rltReset.setBackgroundColor(Color.BLACK);
-
-    setTextColors(Color.WHITE);
-    setEditTextColors(Color.WHITE);
-    setButtonTextColors(Color.WHITE);
-
-    hideViews(btnBlack);
-    showViews(btnWhite);
-  }
-
-  private void applyColorFilterToImage() {
-    final float[] NEGATIVE = {
+    // Color filter matrix for image inversion
+    static final float[] NEGATIVE_FILTER = {
       -1.0f, 0, 0, 0, 255, 0, -1.0f, 0, 0, 255, 0, 0, -1.0f, 0, 255, 0, 0, 0, 1.0f, 0
     };
-    imgWhiteCake.setColorFilter(new ColorMatrixColorFilter(NEGATIVE));
   }
 
-  private void setTextColors(int color) {
-    tvForgotPass.setTextColor(color);
-    tvHelp.setTextColor(color);
-    tvInstructions.setTextColor(color);
-    tvHide.setTextColor(color);
+  // UI Components - Interactive Elements
+  private Button lightThemeButton;
+  private Button darkThemeButton;
+  private Button resetPasswordButton;
+  private Button helpButton;
+  private Button hideInstructionsButton;
+  private EditText emailInputField;
+
+  // UI Components - Display Elements
+  private RelativeLayout resetLayout;
+  private TextView forgotPasswordTextView;
+  private TextView helpTextView;
+  private TextView instructionsTextView;
+  private TextView hideInstructionsTextView;
+  private ImageView cakeImageView;
+
+  // Dependencies and State Management
+  private ResetPasswordViewModel resetPasswordViewModel;
+  private final AtomicBoolean isDestroyed = new AtomicBoolean(false);
+
+  // Managers
+  private ThemeManager themeManager;
+  private EmailValidator emailValidator;
+
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    try {
+      setContentView(R.layout.activity_auth_reset);
+
+      initializeDependencies();
+      configureActionBar();
+      bindViewReferences();
+      setupViewModelObservers();
+      setupEventHandlers();
+      setupInputValidation();
+
+      Log.d(Config.LOG_TAG, "ResetPasswordActivity initialized successfully");
+
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Critical error during reset password initialization", e);
+      handleInitializationError(e);
+    }
   }
 
-  private void setEditTextColors(int color) {
-    etInputEmail.setHintTextColor(color);
-    etInputEmail.setBackgroundTintList(ColorStateList.valueOf(color));
-    etInputEmail.setTextColor(color);
+  private void initializeDependencies() {
+    try {
+      resetPasswordViewModel = new ViewModelProvider(this).get(ResetPasswordViewModel.class);
+      themeManager = new ThemeManager();
+      emailValidator = new EmailValidator();
+
+      Log.d(Config.LOG_TAG, "Dependencies initialized successfully");
+
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Failed to initialize dependencies", e);
+      throw new RuntimeException("Critical dependency initialization failure", e);
+    }
   }
 
-  private void setButtonTextColors(int color) {
-    btnReset.setTextColor(color);
-    btnHelp.setTextColor(color);
-    btnHide.setTextColor(color);
+  private void configureActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
+  }
+
+  private void bindViewReferences() {
+    // Interactive elements
+    darkThemeButton = findViewById(R.id.btnBlack);
+    lightThemeButton = findViewById(R.id.btnWhite);
+    helpButton = findViewById(R.id.btnHelp);
+    resetPasswordButton = findViewById(R.id.btnReset);
+    hideInstructionsButton = findViewById(R.id.btnHide);
+    emailInputField = findViewById(R.id.etInputEmail);
+
+    // Display elements
+    forgotPasswordTextView = findViewById(R.id.tvForgotPass);
+    helpTextView = findViewById(R.id.tvHelp);
+    instructionsTextView = findViewById(R.id.tvInstructions);
+    hideInstructionsTextView = findViewById(R.id.tvHide);
+    resetLayout = findViewById(R.id.rltReset);
+    cakeImageView = findViewById(R.id.imgWhiteCake);
+
+    validateCriticalViews();
+  }
+
+  private void validateCriticalViews() {
+    if (emailInputField == null || resetPasswordButton == null || resetLayout == null) {
+      throw new IllegalStateException("Critical UI components not found in layout");
+    }
+  }
+
+  private void setupViewModelObservers() {
+    resetPasswordViewModel.getIsLoading().observe(this, this::handleLoadingState);
+    resetPasswordViewModel.getErrorMessage().observe(this, this::handleErrorMessage);
+    resetPasswordViewModel.getSuccessMessage().observe(this, this::handleSuccessMessage);
+    resetPasswordViewModel.getResetSuccess().observe(this, this::handleResetSuccess);
+    resetPasswordViewModel.getIsEmailValid().observe(this, this::handleEmailValidation);
+  }
+
+  private void handleLoadingState(@Nullable Boolean isLoading) {
+    boolean loading = Boolean.TRUE.equals(isLoading);
+
+    resetPasswordButton.setEnabled(!loading);
+    resetPasswordButton.setText(loading ? Config.LOADING_TEXT : Config.DEFAULT_TEXT);
+  }
+
+  private void handleErrorMessage(@Nullable String errorMessage) {
+    if (errorMessage != null && !errorMessage.isEmpty()) {
+      Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+  }
+
+  private void handleSuccessMessage(@Nullable String successMessage) {
+    if (successMessage != null && !successMessage.isEmpty()) {
+      Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private void handleResetSuccess(@Nullable Boolean resetSent) {
+    if (Boolean.TRUE.equals(resetSent)) {
+      Toast.makeText(this, Config.SUCCESS_MESSAGE, Toast.LENGTH_LONG).show();
+      finish();
+    }
+  }
+
+  private void handleEmailValidation(@Nullable Boolean isValid) {
+    String currentEmail = emailInputField.getText().toString();
+
+    if (Boolean.FALSE.equals(isValid) && !currentEmail.isEmpty()) {
+      emailInputField.setError(Config.INVALID_EMAIL_ERROR);
+    } else {
+      emailInputField.setError(null);
+    }
+  }
+
+  private void setupEventHandlers() {
+    resetPasswordButton.setOnClickListener(this::handleResetPasswordClick);
+    lightThemeButton.setOnClickListener(this::handleLightThemeClick);
+    darkThemeButton.setOnClickListener(this::handleDarkThemeClick);
+    helpButton.setOnClickListener(this::handleHelpClick);
+    hideInstructionsButton.setOnClickListener(this::handleHideInstructionsClick);
+  }
+
+  private void setupInputValidation() {
+    emailInputField.addTextChangedListener(new EmailValidationTextWatcher());
+  }
+
+  private void handleResetPasswordClick(@NonNull View view) {
+    try {
+      String email = emailInputField.getText().toString().trim();
+
+      if (emailValidator.validateEmail(email, emailInputField)) {
+        resetPasswordViewModel.resetPassword(email);
+      }
+
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Error during password reset attempt", e);
+      Toast.makeText(this, "Password reset failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private void handleLightThemeClick(@NonNull View view) {
+    themeManager.switchToLightTheme();
+  }
+
+  private void handleDarkThemeClick(@NonNull View view) {
+    themeManager.switchToDarkTheme();
+  }
+
+  private void handleHelpClick(@NonNull View view) {
+    showViews(instructionsTextView, hideInstructionsTextView, hideInstructionsButton);
+    hideViews(helpTextView, helpButton);
+  }
+
+  private void handleHideInstructionsClick(@NonNull View view) {
+    hideViews(instructionsTextView, hideInstructionsTextView, hideInstructionsButton);
+    showViews(helpTextView, helpButton);
+  }
+
+  private void handleInitializationError(@NonNull Exception error) {
+    Log.e(Config.LOG_TAG, "Critical initialization error - showing fallback UI", error);
+    Toast.makeText(this, "App initialization failed. Please restart the app.", Toast.LENGTH_LONG)
+        .show();
+  }
+
+  @Override
+  protected void onDestroy() {
+    isDestroyed.set(true);
+
+    try {
+      cleanupResources();
+    } catch (Exception e) {
+      Log.w(Config.LOG_TAG, "Error during resource cleanup", e);
+    }
+
+    super.onDestroy();
+  }
+
+  private void cleanupResources() {
+    themeManager = null;
+    emailValidator = null;
+    resetPasswordViewModel = null;
+  }
+
+  // Inner Classes and Text Watcher
+  private class EmailValidationTextWatcher implements TextWatcher {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+      emailInputField.setError(null);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+      if (resetPasswordViewModel != null) {
+        resetPasswordViewModel.clearMessages();
+      }
+    }
+  }
+
+  // Helper Classes
+  private static class EmailValidator {
+    boolean validateEmail(@NonNull String email, @NonNull EditText emailField) {
+      if (email.isEmpty()) {
+        emailField.setError(Config.EMAIL_REQUIRED_ERROR);
+        emailField.requestFocus();
+        return false;
+      }
+
+      if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        emailField.setError(Config.INVALID_EMAIL_ERROR);
+        emailField.requestFocus();
+        return false;
+      }
+
+      return true;
+    }
+  }
+
+  private class ThemeManager {
+    void switchToLightTheme() {
+      try {
+        applyImageColorFilter();
+        resetLayout.setBackgroundColor(Color.WHITE);
+
+        applyTextColors(Color.BLACK);
+        applyEditTextColors(Color.BLACK);
+        applyButtonTextColors(Color.BLACK);
+
+        hideViews(lightThemeButton);
+        showViews(darkThemeButton);
+
+        Log.d(Config.LOG_TAG, "Switched to light theme");
+
+      } catch (Exception e) {
+        Log.w(Config.LOG_TAG, "Error switching to light theme", e);
+      }
+    }
+
+    void switchToDarkTheme() {
+      try {
+        applyImageColorFilter();
+        resetLayout.setBackgroundColor(Color.BLACK);
+
+        applyTextColors(Color.WHITE);
+        applyEditTextColors(Color.WHITE);
+        applyButtonTextColors(Color.WHITE);
+
+        hideViews(darkThemeButton);
+        showViews(lightThemeButton);
+
+        Log.d(Config.LOG_TAG, "Switched to dark theme");
+
+      } catch (Exception e) {
+        Log.w(Config.LOG_TAG, "Error switching to dark theme", e);
+      }
+    }
+
+    private void applyImageColorFilter() {
+      if (cakeImageView != null) {
+        cakeImageView.setColorFilter(new ColorMatrixColorFilter(Config.NEGATIVE_FILTER));
+      }
+    }
+
+    private void applyTextColors(int color) {
+      if (forgotPasswordTextView != null) forgotPasswordTextView.setTextColor(color);
+      if (helpTextView != null) helpTextView.setTextColor(color);
+      if (instructionsTextView != null) instructionsTextView.setTextColor(color);
+      if (hideInstructionsTextView != null) hideInstructionsTextView.setTextColor(color);
+    }
+
+    private void applyEditTextColors(int color) {
+      if (emailInputField != null) {
+        emailInputField.setHintTextColor(color);
+        emailInputField.setBackgroundTintList(ColorStateList.valueOf(color));
+        emailInputField.setTextColor(color);
+      }
+    }
+
+    private void applyButtonTextColors(int color) {
+      if (resetPasswordButton != null) resetPasswordButton.setTextColor(color);
+      if (helpButton != null) helpButton.setTextColor(color);
+      if (hideInstructionsButton != null) hideInstructionsButton.setTextColor(color);
+    }
   }
 }
