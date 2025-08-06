@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 /**
  * Database migration strategies for Room database. Handles schema changes while preserving user
  * data.
+ * @noinspection ALL
  */
 public class DatabaseMigrations {
   private static final String TAG = "DatabaseMigrations";
