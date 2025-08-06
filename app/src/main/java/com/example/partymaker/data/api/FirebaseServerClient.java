@@ -585,22 +585,22 @@ public class FirebaseServerClient {
             throw new RuntimeException("Failed to get user", e);
           }
         },
-        new AsyncTaskReplacement.SimpleUICallback<User>() {
-          @Override
-          public void onPostExecute(User result) {
-            if (callback != null) {
-              callback.onSuccess(result);
-            }
-          }
+            new AsyncTaskReplacement.SimpleUICallback<>() {
+                @Override
+                public void onPostExecute(User result) {
+                    if (callback != null) {
+                        callback.onSuccess(result);
+                    }
+                }
 
-          @Override
-          public void onError(Exception error) {
-            Log.e(TAG, "Error getting user: " + userId, error);
-            if (callback != null) {
-              callback.onError(error.getMessage());
-            }
-          }
-        });
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, "Error getting user: " + userId, error);
+                    if (callback != null) {
+                        callback.onError(error.getMessage());
+                    }
+                }
+            });
   }
 
   public void saveUser(String userId, User user, final OperationCallback callback) {
@@ -626,26 +626,26 @@ public class FirebaseServerClient {
             throw new RuntimeException("Failed to save user", e);
           }
         },
-        new AsyncTaskReplacement.SimpleUICallback<Boolean>() {
-          @Override
-          public void onPostExecute(Boolean result) {
-            if (callback != null) {
-              if (result) {
-                callback.onSuccess();
-              } else {
-                callback.onError("Failed to save user");
-              }
-            }
-          }
+            new AsyncTaskReplacement.SimpleUICallback<>() {
+                @Override
+                public void onPostExecute(Boolean result) {
+                    if (callback != null) {
+                        if (result) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError("Failed to save user");
+                        }
+                    }
+                }
 
-          @Override
-          public void onError(Exception error) {
-            Log.e(TAG, "Error saving user: " + userId, error);
-            if (callback != null) {
-              callback.onError(error.getMessage());
-            }
-          }
-        });
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, "Error saving user: " + userId, error);
+                    if (callback != null) {
+                        callback.onError(error.getMessage());
+                    }
+                }
+            });
   }
 
   public void createUser(User user, final DataCallback<User> callback) {
@@ -667,22 +667,22 @@ public class FirebaseServerClient {
             throw new RuntimeException("Failed to create user", e);
           }
         },
-        new AsyncTaskReplacement.SimpleUICallback<User>() {
-          @Override
-          public void onPostExecute(User result) {
-            if (callback != null) {
-              callback.onSuccess(result);
-            }
-          }
+            new AsyncTaskReplacement.SimpleUICallback<>() {
+                @Override
+                public void onPostExecute(User result) {
+                    if (callback != null) {
+                        callback.onSuccess(result);
+                    }
+                }
 
-          @Override
-          public void onError(Exception error) {
-            Log.e(TAG, "Error creating user", error);
-            if (callback != null) {
-              callback.onError(error.getMessage());
-            }
-          }
-        });
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, "Error creating user", error);
+                    if (callback != null) {
+                        callback.onError(error.getMessage());
+                    }
+                }
+            });
   }
 
   public void updateUser(
@@ -709,26 +709,26 @@ public class FirebaseServerClient {
             throw new RuntimeException("Failed to update user", e);
           }
         },
-        new AsyncTaskReplacement.SimpleUICallback<Boolean>() {
-          @Override
-          public void onPostExecute(Boolean result) {
-            if (callback != null) {
-              if (result) {
-                callback.onSuccess();
-              } else {
-                callback.onError("Failed to update user");
-              }
-            }
-          }
+            new AsyncTaskReplacement.SimpleUICallback<>() {
+                @Override
+                public void onPostExecute(Boolean result) {
+                    if (callback != null) {
+                        if (result) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError("Failed to update user");
+                        }
+                    }
+                }
 
-          @Override
-          public void onError(Exception error) {
-            Log.e(TAG, "Error updating user: " + userId, error);
-            if (callback != null) {
-              callback.onError(error.getMessage());
-            }
-          }
-        });
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, "Error updating user: " + userId, error);
+                    if (callback != null) {
+                        callback.onError(error.getMessage());
+                    }
+                }
+            });
   }
 
   // Messages methods
@@ -1166,22 +1166,22 @@ public class FirebaseServerClient {
 
     AsyncTaskReplacement.execute(
         () -> makeDeleteRequest(path),
-        new AsyncTaskReplacement.SimpleUICallback<Boolean>() {
-          @Override
-          public void onPostExecute(Boolean success) {
-            if (success) {
-              callback.onSuccess();
-            } else {
-              callback.onError("Failed to delete data at path: " + path);
-            }
-          }
+            new AsyncTaskReplacement.SimpleUICallback<>() {
+                @Override
+                public void onPostExecute(Boolean success) {
+                    if (success) {
+                        callback.onSuccess();
+                    } else {
+                        callback.onError("Failed to delete data at path: " + path);
+                    }
+                }
 
-          @Override
-          public void onError(Exception error) {
-            Log.e(TAG, "Error deleting data at path: " + path, error);
-            callback.onError("Failed to delete data: " + error.getMessage());
-          }
-        });
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, "Error deleting data at path: " + path, error);
+                    callback.onError("Failed to delete data: " + error.getMessage());
+                }
+            });
   }
 
   /**
@@ -1370,22 +1370,22 @@ public class FirebaseServerClient {
                 "Failed to connect to server. Please check your internet connection.");
           }
         },
-        new AsyncTaskReplacement.SimpleUICallback<Map<String, Group>>() {
-          @Override
-          public void onPostExecute(Map<String, Group> groups) {
-            if (groups != null) {
-              callback.onSuccess(groups);
-            } else {
-              callback.onError("Unknown error occurred");
-            }
-          }
+            new AsyncTaskReplacement.SimpleUICallback<>() {
+                @Override
+                public void onPostExecute(Map<String, Group> groups) {
+                    if (groups != null) {
+                        callback.onSuccess(groups);
+                    } else {
+                        callback.onError("Unknown error occurred");
+                    }
+                }
 
-          @Override
-          public void onError(Exception error) {
-            Log.e(TAG, "Error getting user groups: " + userId, error);
-            callback.onError(error.getMessage());
-          }
-        });
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, "Error getting user groups: " + userId, error);
+                    callback.onError(error.getMessage());
+                }
+            });
   }
 
   // Helper methods for HTTP requests

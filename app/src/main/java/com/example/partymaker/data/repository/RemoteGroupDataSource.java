@@ -31,38 +31,38 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
 
     serverClient.getGroup(
         groupKey,
-        new FirebaseServerClient.DataCallback<Group>() {
-          @Override
-          public void onSuccess(Group group) {
-            Log.d(TAG, "Group retrieved from server: " + groupKey);
-            callback.onDataLoaded(group);
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Group group) {
+                    Log.d(TAG, "Group retrieved from server: " + groupKey);
+                    callback.onDataLoaded(group);
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Error retrieving group from server: " + errorMessage);
-            callback.onError(errorMessage);
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "Error retrieving group from server: " + errorMessage);
+                    callback.onError(errorMessage);
+                }
+            });
   }
 
   @Override
   public void getAllItems(DataCallback<List<Group>> callback) {
     serverClient.getGroups(
-        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
-          @Override
-          public void onSuccess(Map<String, Group> groupMap) {
-            List<Group> groups = new ArrayList<>(groupMap.values());
-            Log.d(TAG, "All groups retrieved from server: " + groups.size());
-            callback.onDataLoaded(groups);
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Map<String, Group> groupMap) {
+                    List<Group> groups = new ArrayList<>(groupMap.values());
+                    Log.d(TAG, "All groups retrieved from server: " + groups.size());
+                    callback.onDataLoaded(groups);
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Error retrieving all groups from server: " + errorMessage);
-            callback.onError(errorMessage);
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "Error retrieving all groups from server: " + errorMessage);
+                    callback.onError(errorMessage);
+                }
+            });
   }
 
   @Override
@@ -174,19 +174,19 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
 
     serverClient.getUserGroups(
         userKey,
-        new FirebaseServerClient.DataCallback<Map<String, Group>>() {
-          @Override
-          public void onSuccess(Map<String, Group> groupMap) {
-            List<Group> groups = new ArrayList<>(groupMap.values());
-            Log.d(TAG, "User groups retrieved from server: " + groups.size());
-            callback.onDataLoaded(groups);
-          }
+            new FirebaseServerClient.DataCallback<>() {
+                @Override
+                public void onSuccess(Map<String, Group> groupMap) {
+                    List<Group> groups = new ArrayList<>(groupMap.values());
+                    Log.d(TAG, "User groups retrieved from server: " + groups.size());
+                    callback.onDataLoaded(groups);
+                }
 
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Error retrieving user groups from server: " + errorMessage);
-            callback.onError(errorMessage);
-          }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "Error retrieving user groups from server: " + errorMessage);
+                    callback.onError(errorMessage);
+                }
+            });
   }
 }

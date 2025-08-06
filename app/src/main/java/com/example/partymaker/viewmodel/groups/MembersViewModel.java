@@ -230,17 +230,17 @@ public class MembersViewModel extends BaseViewModel {
         () -> {
           groupRepository.getGroup(
               currentGroupKey,
-              new GroupRepository.Callback<Group>() {
-                @Override
-                public void onSuccess(Group group) {
-                  handleGroupLoaded(group);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Group group) {
+                          handleGroupLoaded(group);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleGroupLoadError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleGroupLoadError(error);
+                      }
+                  });
         });
   }
 
@@ -316,17 +316,17 @@ public class MembersViewModel extends BaseViewModel {
           groupRepository.inviteMemberToGroup(
               currentGroupKey,
               user.getUserKey(),
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleInviteSuccess(user);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleInviteSuccess(user);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleMemberOperationError("invite", user, error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleMemberOperationError("invite", user, error);
+                      }
+                  });
         });
   }
 
@@ -362,17 +362,17 @@ public class MembersViewModel extends BaseViewModel {
           groupRepository.removeMemberFromGroup(
               currentGroupKey,
               member.getUserKey(),
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleRemoveSuccess(member);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleRemoveSuccess(member);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleMemberOperationError("remove", member, error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleMemberOperationError("remove", member, error);
+                      }
+                  });
         });
   }
 
@@ -401,17 +401,17 @@ public class MembersViewModel extends BaseViewModel {
               currentGroupKey,
               member.getUserKey(),
               isComing,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleAttendanceUpdateSuccess(member, isComing);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleAttendanceUpdateSuccess(member, isComing);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleMemberOperationError("update attendance for", member, error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleMemberOperationError("update attendance for", member, error);
+                      }
+                  });
         });
   }
 
@@ -547,31 +547,31 @@ public class MembersViewModel extends BaseViewModel {
     for (String userKey : userKeys.keySet()) {
       userRepository.getUser(
           userKey,
-          new UserRepository.Callback<User>() {
-            @Override
-            public void onSuccess(User user) {
-              synchronized (users) {
-                users.add(user);
-                loadedCount[0]++;
+              new UserRepository.Callback<>() {
+                  @Override
+                  public void onSuccess(User user) {
+                      synchronized (users) {
+                          users.add(user);
+                          loadedCount[0]++;
 
-                if (loadedCount[0] == totalUsers) {
-                  callback.onUsersLoaded(users);
-                }
-              }
-            }
+                          if (loadedCount[0] == totalUsers) {
+                              callback.onUsersLoaded(users);
+                          }
+                      }
+                  }
 
-            @Override
-            public void onError(Exception error) {
-              Log.w(TAG, "Failed to load user: " + userKey, error);
-              synchronized (users) {
-                loadedCount[0]++;
+                  @Override
+                  public void onError(Exception error) {
+                      Log.w(TAG, "Failed to load user: " + userKey, error);
+                      synchronized (users) {
+                          loadedCount[0]++;
 
-                if (loadedCount[0] == totalUsers) {
-                  callback.onUsersLoaded(users);
-                }
-              }
-            }
-          });
+                          if (loadedCount[0] == totalUsers) {
+                              callback.onUsersLoaded(users);
+                          }
+                      }
+                  }
+              });
     }
   }
 

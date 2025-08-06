@@ -221,17 +221,17 @@ public class DateManagementViewModel extends BaseViewModel {
         () -> {
           groupRepository.getGroup(
               currentGroupKey,
-              new GroupRepository.Callback<Group>() {
-                @Override
-                public void onSuccess(Group group) {
-                  handleGroupLoaded(group);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Group group) {
+                          handleGroupLoaded(group);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleGroupLoadError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleGroupLoadError(error);
+                      }
+                  });
         });
   }
 
@@ -334,17 +334,17 @@ public class DateManagementViewModel extends BaseViewModel {
 
             groupRepository.updateGroup(
                 updatedGroup,
-                new GroupRepository.Callback<Group>() {
-                  @Override
-                  public void onSuccess(Group result) {
-                    handleUpdateSuccess(result);
-                  }
+                    new GroupRepository.Callback<>() {
+                        @Override
+                        public void onSuccess(Group result) {
+                            handleUpdateSuccess(result);
+                        }
 
-                  @Override
-                  public void onError(Exception error) {
-                    handleUpdateError(error);
-                  }
-                });
+                        @Override
+                        public void onError(Exception error) {
+                            handleUpdateError(error);
+                        }
+                    });
 
           } catch (Exception e) {
             Log.e(TAG, "Error creating updated group", e);

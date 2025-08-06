@@ -328,17 +328,17 @@ public class GroupCreationViewModel extends BaseViewModel {
                   // Create group via repository
                   groupRepository.createGroup(
                       newGroup,
-                      new GroupRepository.Callback<Group>() {
-                        @Override
-                        public void onSuccess(Group result) {
-                          handleGroupCreationSuccess(result);
-                        }
+                          new GroupRepository.Callback<>() {
+                              @Override
+                              public void onSuccess(Group result) {
+                                  handleGroupCreationSuccess(result);
+                              }
 
-                        @Override
-                        public void onError(Exception error) {
-                          handleGroupCreationError(error);
-                        }
-                      });
+                              @Override
+                              public void onError(Exception error) {
+                                  handleGroupCreationError(error);
+                              }
+                          });
 
                 } catch (Exception e) {
                   Log.e(TAG, "Error creating group", e);

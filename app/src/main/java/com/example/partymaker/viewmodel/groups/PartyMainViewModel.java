@@ -198,17 +198,17 @@ public class PartyMainViewModel extends BaseViewModel {
         () -> {
           groupRepository.getGroup(
               currentGroupKey,
-              new GroupRepository.Callback<Group>() {
-                @Override
-                public void onSuccess(Group group) {
-                  handleGroupLoaded(group);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Group group) {
+                          handleGroupLoaded(group);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleGroupLoadError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleGroupLoadError(error);
+                      }
+                  });
         });
   }
 
@@ -223,21 +223,21 @@ public class PartyMainViewModel extends BaseViewModel {
         () -> {
           userRepository.getUser(
               currentUserKey,
-              new UserRepository.Callback<User>() {
-                @Override
-                public void onSuccess(User user) {
-                  ThreadUtils.runOnMainThread(
-                      () -> {
-                        currentUser.setValue(user);
-                        Log.d(TAG, "Current user loaded: " + user.getUsername());
-                      });
-                }
+                  new UserRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(User user) {
+                          ThreadUtils.runOnMainThread(
+                                  () -> {
+                                      currentUser.setValue(user);
+                                      Log.d(TAG, "Current user loaded: " + user.getUsername());
+                                  });
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  Log.w(TAG, "Failed to load current user", error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          Log.w(TAG, "Failed to load current user", error);
+                      }
+                  });
         });
   }
 
@@ -263,17 +263,17 @@ public class PartyMainViewModel extends BaseViewModel {
           groupRepository.joinGroup(
               currentGroupKey,
               currentUserKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleJoinSuccess();
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleJoinSuccess();
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleJoinError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleJoinError(error);
+                      }
+                  });
         });
   }
 
@@ -299,17 +299,17 @@ public class PartyMainViewModel extends BaseViewModel {
           groupRepository.leaveGroup(
               currentGroupKey,
               currentUserKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleLeaveSuccess();
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleLeaveSuccess();
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleLeaveError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleLeaveError(error);
+                      }
+                  });
         });
   }
 
@@ -346,17 +346,17 @@ public class PartyMainViewModel extends BaseViewModel {
               currentGroupKey,
               currentUserKey,
               isComing,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleAttendanceUpdateSuccess(isComing);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleAttendanceUpdateSuccess(isComing);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleAttendanceUpdateError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleAttendanceUpdateError(error);
+                      }
+                  });
         });
   }
 
@@ -549,31 +549,31 @@ public class PartyMainViewModel extends BaseViewModel {
     for (String userKey : userKeys.keySet()) {
       userRepository.getUser(
           userKey,
-          new UserRepository.Callback<User>() {
-            @Override
-            public void onSuccess(User user) {
-              synchronized (users) {
-                users.add(user);
-                loadedCount[0]++;
+              new UserRepository.Callback<>() {
+                  @Override
+                  public void onSuccess(User user) {
+                      synchronized (users) {
+                          users.add(user);
+                          loadedCount[0]++;
 
-                if (loadedCount[0] == totalUsers) {
-                  callback.onUsersLoaded(users);
-                }
-              }
-            }
+                          if (loadedCount[0] == totalUsers) {
+                              callback.onUsersLoaded(users);
+                          }
+                      }
+                  }
 
-            @Override
-            public void onError(Exception error) {
-              Log.w(TAG, "Failed to load user: " + userKey, error);
-              synchronized (users) {
-                loadedCount[0]++;
+                  @Override
+                  public void onError(Exception error) {
+                      Log.w(TAG, "Failed to load user: " + userKey, error);
+                      synchronized (users) {
+                          loadedCount[0]++;
 
-                if (loadedCount[0] == totalUsers) {
-                  callback.onUsersLoaded(users);
-                }
-              }
-            }
-          });
+                          if (loadedCount[0] == totalUsers) {
+                              callback.onUsersLoaded(users);
+                          }
+                      }
+                  }
+              });
     }
   }
 

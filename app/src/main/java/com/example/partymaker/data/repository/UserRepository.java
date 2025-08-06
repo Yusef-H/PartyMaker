@@ -87,33 +87,33 @@ public class UserRepository {
 
           // Otherwise, get from server
           getAllUsersFromServer(
-              new DataCallback<List<User>>() {
-                @Override
-                public void onDataLoaded(List<User> users) {
-                  // Cache the users
-                  if (users != null && !users.isEmpty()) {
-                    ThreadUtils.runInBackground(
-                        () -> {
-                          database.userDao().insertUsers(users);
-                          Log.d(TAG, "Users cached: " + users.size());
-                        });
-                  }
+                  new DataCallback<>() {
+                      @Override
+                      public void onDataLoaded(List<User> users) {
+                          // Cache the users
+                          if (users != null && !users.isEmpty()) {
+                              ThreadUtils.runInBackground(
+                                      () -> {
+                                          database.userDao().insertUsers(users);
+                                          Log.d(TAG, "Users cached: " + users.size());
+                                      });
+                          }
 
-                  // Return the users
-                  ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(users));
-                }
+                          // Return the users
+                          ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(users));
+                      }
 
-                @Override
-                public void onError(String error) {
-                  // If we have cached users, return them even if there was an error
-                  if (cachedUsers != null && !cachedUsers.isEmpty()) {
-                    Log.d(TAG, "Returning cached users after server error: " + cachedUsers.size());
-                    ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
-                  } else {
-                    ThreadUtils.runOnMainThread(() -> callback.onError(error));
-                  }
-                }
-              });
+                      @Override
+                      public void onError(String error) {
+                          // If we have cached users, return them even if there was an error
+                          if (cachedUsers != null && !cachedUsers.isEmpty()) {
+                              Log.d(TAG, "Returning cached users after server error: " + cachedUsers.size());
+                              ThreadUtils.runOnMainThread(() -> callback.onDataLoaded(cachedUsers));
+                          } else {
+                              ThreadUtils.runOnMainThread(() -> callback.onError(error));
+                          }
+                      }
+                  });
         });
   }
 
@@ -461,21 +461,21 @@ public class UserRepository {
             // Get from server
             serverClient.getUser(
                 userKey,
-                new FirebaseServerClient.DataCallback<User>() {
-                  @Override
-                  public void onSuccess(User user) {
-                    if (user != null) {
-                      userCache.put(userKey, user);
-                    }
-                    ThreadUtils.runOnMainThread(() -> callback.onSuccess(user));
-                  }
+                    new FirebaseServerClient.DataCallback<>() {
+                        @Override
+                        public void onSuccess(User user) {
+                            if (user != null) {
+                                userCache.put(userKey, user);
+                            }
+                            ThreadUtils.runOnMainThread(() -> callback.onSuccess(user));
+                        }
 
-                  @Override
-                  public void onError(String errorMessage) {
-                    ThreadUtils.runOnMainThread(
-                        () -> callback.onError(new Exception(errorMessage)));
-                  }
-                });
+                        @Override
+                        public void onError(String errorMessage) {
+                            ThreadUtils.runOnMainThread(
+                                    () -> callback.onError(new Exception(errorMessage)));
+                        }
+                    });
 
           } catch (Exception e) {
             ThreadUtils.runOnMainThread(() -> callback.onError(e));
@@ -500,21 +500,21 @@ public class UserRepository {
           try {
             serverClient.createUser(
                 user,
-                new FirebaseServerClient.DataCallback<User>() {
-                  @Override
-                  public void onSuccess(User createdUser) {
-                    if (createdUser != null) {
-                      userCache.put(createdUser.getUserKey(), createdUser);
-                    }
-                    ThreadUtils.runOnMainThread(() -> callback.onSuccess(createdUser));
-                  }
+                    new FirebaseServerClient.DataCallback<>() {
+                        @Override
+                        public void onSuccess(User createdUser) {
+                            if (createdUser != null) {
+                                userCache.put(createdUser.getUserKey(), createdUser);
+                            }
+                            ThreadUtils.runOnMainThread(() -> callback.onSuccess(createdUser));
+                        }
 
-                  @Override
-                  public void onError(String errorMessage) {
-                    ThreadUtils.runOnMainThread(
-                        () -> callback.onError(new Exception(errorMessage)));
-                  }
-                });
+                        @Override
+                        public void onError(String errorMessage) {
+                            ThreadUtils.runOnMainThread(
+                                    () -> callback.onError(new Exception(errorMessage)));
+                        }
+                    });
 
           } catch (Exception e) {
             ThreadUtils.runOnMainThread(() -> callback.onError(e));
@@ -575,17 +575,17 @@ public class UserRepository {
    */
   public void getAllUsers(final Callback<List<User>> callback) {
     getAllUsers(
-        new DataCallback<List<User>>() {
-          @Override
-          public void onDataLoaded(List<User> users) {
-            callback.onSuccess(users);
-          }
+            new DataCallback<>() {
+                @Override
+                public void onDataLoaded(List<User> users) {
+                    callback.onSuccess(users);
+                }
 
-          @Override
-          public void onError(String error) {
-            callback.onError(new Exception(error));
-          }
-        },
+                @Override
+                public void onError(String error) {
+                    callback.onError(new Exception(error));
+                }
+            },
         false);
   }
 }

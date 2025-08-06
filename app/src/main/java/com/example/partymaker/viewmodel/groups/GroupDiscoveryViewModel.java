@@ -169,17 +169,17 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
         () -> {
           groupRepository.getPublicGroups(
               forceRefresh,
-              new GroupRepository.Callback<List<Group>>() {
-                @Override
-                public void onSuccess(List<Group> groups) {
-                  handlePublicGroupsLoaded(groups);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(List<Group> groups) {
+                          handlePublicGroupsLoaded(groups);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handlePublicGroupsError(error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handlePublicGroupsError(error);
+                      }
+                  });
         });
   }
 
@@ -306,17 +306,17 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
           groupRepository.joinGroup(
               group.getGroupKey(),
               currentUserKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleJoinSuccess(group);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleJoinSuccess(group);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleJoinError(group, error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleJoinError(group, error);
+                      }
+                  });
         });
   }
 
@@ -346,17 +346,17 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
           groupRepository.leaveGroup(
               group.getGroupKey(),
               currentUserKey,
-              new GroupRepository.Callback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                  handleLeaveSuccess(group);
-                }
+                  new GroupRepository.Callback<>() {
+                      @Override
+                      public void onSuccess(Boolean result) {
+                          handleLeaveSuccess(group);
+                      }
 
-                @Override
-                public void onError(Exception error) {
-                  handleLeaveError(group, error);
-                }
-              });
+                      @Override
+                      public void onError(Exception error) {
+                          handleLeaveError(group, error);
+                      }
+                  });
         });
   }
 
