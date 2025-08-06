@@ -7,11 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,444 +42,579 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Activity for user login, including email/password and Google sign-in. Handles authentication,
- * navigation, and UI state.
+ * Enterprise-level LoginActivity implementation with proper separation of concerns, comprehensive
+ * error handling, input validation, and resource management.
+ *
+ * <p>Responsibilities: - Handle user authentication (email/password and Google Sign-In) - Validate
+ * user input with real-time feedback - Manage UI state transitions and loading states - Navigate to
+ * appropriate screens based on authentication result - Maintain user session preferences
+ *
+ * @author PartyMaker Team
+ * @version 2.0
+ * @since 1.0
  */
 public class LoginActivity extends AppCompatActivity {
-  /** Tag for logging. */
-  private static final String TAG = "LoginActivity";
 
-  /** Request code for Google sign-in. */
-  private static final int RC_SIGN_IN = 9001;
+  private static final class Config {
+    static final String LOG_TAG = "LoginActivity";
+    static final int GOOGLE_SIGN_IN_REQUEST_CODE = 9001;
+    static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
+    static final String SERVER_HEALTH_ENDPOINT = "/api/firebase/health";
+    static final int SERVER_TIMEOUT_MS = 3000;
+    static final int SUCCESS_NAVIGATION_DELAY_MS = 800;
+    static final String DEBUG_TEST_EMAIL = "1@1.com";
+    static final String DEBUG_TEST_PASSWORD = "123456";
+    static final String PREFS_EXPLICIT_LOGIN = "user_explicitly_logged_in";
+    static final String PREFS_PARTY_MAKER = "PartyMakerPrefs";
+  }
 
-  /** Email input field. */
-  private TextInputEditText etEmail;
-
-  /** Password input field. */
-  private TextInputEditText etPassword;
-
-  /** About button. */
-  private ImageButton btnAbout;
-
-  /** Login button. */
-  private MaterialButton btnLogin;
-
-  /** Register button. */
-  private MaterialButton btnPress;
-
-  /** Reset password button. */
-  private MaterialButton btnResetPass;
-
-  /** Remember me checkbox. */
-  private MaterialCheckBox cbRememberMe;
-
-  /** Google sign-in button. */
-  private SignInButton btnGoogleSignIn;
-
-  // Google Sign-In client now handled by AuthViewModel
-
-  /** Firebase authentication instance. */
-  private FirebaseAuth mAuth;
-
-  /** Login ViewModel */
-  private AuthViewModel authViewModel;
-
-  /** Loading state manager */
-  private LoadingStateManager loadingStateManager;
-
-  /** Root view for UI feedback */
+  // UI Components
+  private TextInputEditText emailEditText;
+  private TextInputEditText passwordEditText;
+  private ImageButton aboutButton;
+  private MaterialButton loginButton;
+  private MaterialButton registerButton;
+  private MaterialButton resetPasswordButton;
+  private MaterialCheckBox rememberMeCheckbox;
+  private SignInButton googleSignInButton;
+  private ProgressBar progressBar;
   private View rootView;
 
+  // Dependencies
+  private FirebaseAuth firebaseAuth;
+  private AuthViewModel authViewModel;
+  private LoadingStateManager loadingStateManager;
+  private NetworkManager networkManager;
+
+  // State Management
+  private final AtomicBoolean isDestroyed = new AtomicBoolean(false);
+  private final AtomicBoolean isInitialized = new AtomicBoolean(false);
+
+  // Validation and Input Management
+  private InputValidator inputValidator;
+  private AnimationManager animationManager;
+
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_auth_login);
 
-    // Force set server URL to Render
-    forceSetServerUrl();
+    try {
+      setContentView(R.layout.activity_auth_login);
 
-    // Initialize Firebase Auth
-    mAuth = FirebaseAuth.getInstance();
+      initializeDependencies();
+      initializeComponents();
+      configureActionBar();
+      bindViewReferences();
+      setupEventHandlers();
+      setupViewModelObservers();
+      setupInputValidation();
+      startInitialAnimations();
 
-    // Initialize ViewModel
-    authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+      performInitialSetup();
 
-    // Initialize UI components
-    initializeUiComponents();
-    setupViewModelObservers();
+      isInitialized.set(true);
+      Log.d(Config.LOG_TAG, "LoginActivity initialized successfully");
 
-    // Clear any previous authentication state to prevent auto-login
-    clearPreviousAuthState();
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Critical error during login initialization", e);
+      handleInitializationError(e);
+    }
+  }
 
-    // Add debug option to reset test user password
-    resetTestUserPassword();
+  private void initializeDependencies() {
+    try {
+      firebaseAuth = FirebaseAuth.getInstance();
+      authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+      networkManager = NetworkManager.getInstance();
+      inputValidator = new InputValidator();
+      animationManager = new AnimationManager(this);
 
-    // Check server connectivity
-    checkServerConnectivity();
+      Log.d(Config.LOG_TAG, "Dependencies initialized successfully");
 
-    // Google Sign-In now configured in AuthViewModel
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Failed to initialize dependencies", e);
+      throw new RuntimeException("Critical dependency initialization failure", e);
+    }
+  }
 
-    // this 2 lines disables the action bar only in this activity
+  private void initializeComponents() {
+    rootView = findViewById(android.R.id.content);
+    setupLoadingStateManager();
+  }
+
+  private void configureActionBar() {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.hide();
     }
-
-    // connection between XML and Java
-    btnAbout = findViewById(R.id.btnAbout);
-    etEmail = findViewById(R.id.etEmailL);
-    etPassword = findViewById(R.id.etPasswordL);
-    btnLogin = findViewById(R.id.btnLogin);
-    btnPress = findViewById(R.id.btnPressL);
-    cbRememberMe = findViewById(R.id.cbRememberMe);
-    btnResetPass = findViewById(R.id.btnResetPass);
-    btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
-
-    // start animation on ImageButton btnAbout
-    Animation myFadeInAnimation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.fade_in);
-    btnAbout.startAnimation(myFadeInAnimation);
-
-    eventHandler();
-    setupTextWatchers();
   }
 
-  /** Initialize UI components for better UX */
-  private void initializeUiComponents() {
-    rootView = findViewById(android.R.id.content);
+  private void bindViewReferences() {
+    aboutButton = findViewById(R.id.btnAbout);
+    emailEditText = findViewById(R.id.etEmailL);
+    passwordEditText = findViewById(R.id.etPasswordL);
+    loginButton = findViewById(R.id.btnLogin);
+    registerButton = findViewById(R.id.btnPressL);
+    rememberMeCheckbox = findViewById(R.id.cbRememberMe);
+    resetPasswordButton = findViewById(R.id.btnResetPass);
+    googleSignInButton = findViewById(R.id.btnGoogleSignIn);
+    progressBar = findViewById(R.id.progressBar);
 
-    // Setup loading state manager for smooth transitions
-    setupLoadingStateManager();
+    validateViewReferences();
   }
 
-  /** Setup loading state manager */
+  private void validateViewReferences() {
+    if (emailEditText == null || passwordEditText == null || loginButton == null) {
+      throw new IllegalStateException("Critical UI components not found in layout");
+    }
+  }
+
   private void setupLoadingStateManager() {
-    android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
     if (progressBar == null) {
-      progressBar = new android.widget.ProgressBar(this);
+      progressBar = new ProgressBar(this);
       progressBar.setVisibility(View.GONE);
     }
-
-    // Don't use LoadingStateManager for login form - it interferes with user input
-    // Just use the progress bar directly
-    loadingStateManager = null;
+    loadingStateManager = null; // Direct progress bar management to avoid interference
   }
 
-  /** Sets up observers for AuthViewModel LiveData */
   private void setupViewModelObservers() {
-    authViewModel
-        .getIsLoading()
-        .observe(
-            this,
-            isLoading -> {
-              btnLogin.setEnabled(!isLoading);
-              btnGoogleSignIn.setEnabled(!isLoading);
-
-              // Show/hide progress bar without interfering with input fields
-              android.widget.ProgressBar progressBar = findViewById(R.id.progressBar);
-              if (progressBar != null) {
-                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-              }
-            });
-
-    authViewModel
-        .getErrorMessage()
-        .observe(
-            this,
-            errorMessage -> {
-              if (errorMessage != null && !errorMessage.isEmpty()) {
-                UiStateManager.showError(
-                    rootView,
-                    errorMessage,
-                    () -> {
-                      // Retry logic - clear error and enable retry
-                      authViewModel.clearMessages();
-                    });
-                loadingStateManager.showError(errorMessage);
-                btnResetPass.setVisibility(View.VISIBLE);
-              }
-            });
-
-    authViewModel
-        .getSuccessMessage()
-        .observe(
-            this,
-            successMessage -> {
-              if (successMessage != null && !successMessage.isEmpty()) {
-                UiStateManager.showSuccess(rootView, successMessage);
-              }
-            });
-
-    authViewModel
-        .getIsAuthenticated()
-        .observe(
-            this,
-            isAuthenticated -> {
-              if (isAuthenticated != null && isAuthenticated) {
-                UiStateManager.showSuccess(rootView, "Login successful!");
-
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean(IS_CHECKED, cbRememberMe.isChecked());
-                editor.apply();
-
-                // Mark that user explicitly logged in
-                SharedPreferences prefs =
-                    getSharedPreferences("PartyMakerPrefs", Context.MODE_PRIVATE);
-                prefs.edit().putBoolean("user_explicitly_logged_in", true).apply();
-
-                // Navigate after short delay to show success message
-                ThreadUtils.runOnMainThreadDelayed(
-                    () -> {
-                      Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                      btnAbout.clearAnimation();
-                      startActivity(intent);
-                      finish();
-                    },
-                    800);
-              }
-            });
-
-    // Email validation and remember me features - simplified for AuthViewModel
-    // TODO: Add these features to AuthViewModel if needed
+    authViewModel.getIsLoading().observe(this, this::handleLoadingState);
+    authViewModel.getErrorMessage().observe(this, this::handleErrorMessage);
+    authViewModel.getSuccessMessage().observe(this, this::handleSuccessMessage);
+    authViewModel.getIsAuthenticated().observe(this, this::handleAuthenticationSuccess);
   }
 
-  /** Forces the server URL to be set to Render */
-  private void forceSetServerUrl() {
-    String renderUrl = "https://partymaker.onrender.com";
-    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-        .edit()
-        .putString("server_url", renderUrl)
-        .apply();
-    Log.d("LoginActivity", "Forced server URL to: " + renderUrl);
-  }
+  private void handleLoadingState(@Nullable Boolean isLoading) {
+    boolean loading = Boolean.TRUE.equals(isLoading);
 
-  /** Resets password for test user - FOR DEBUGGING ONLY, REMOVE IN PRODUCTION */
-  private void resetTestUserPassword() {
-    // WARNING: This method contains hardcoded credentials and should be removed in production
-    String testEmail = BuildConfig.DEBUG ? "1@1.com" : "";
-    String testPassword = BuildConfig.DEBUG ? "123456" : "";
+    loginButton.setEnabled(!loading);
+    googleSignInButton.setEnabled(!loading);
 
-    // Only execute in debug mode
-    if (BuildConfig.DEBUG && !testEmail.isEmpty()) {
-      // Try to sign in with email and password directly
-      mAuth
-          .signInWithEmailAndPassword(testEmail, testPassword)
-          .addOnCompleteListener(
-              task -> {
-                if (task.isSuccessful()) {
-                  Log.d("LoginActivity", "Test user login successful");
-                } else {
-                  Log.d("LoginActivity", "Test user login failed, attempting to create user");
-
-                  // If login fails, try to create the user
-                  mAuth
-                      .createUserWithEmailAndPassword(testEmail, testPassword)
-                      .addOnCompleteListener(
-                          createTask -> {
-                            if (createTask.isSuccessful()) {
-                              Log.d("LoginActivity", "Test user created successfully");
-                              // Create user in database using Map instead of User object
-                              Map<String, Object> testUserData = new HashMap<>();
-                              testUserData.put("username", "Test User");
-                              testUserData.put("email", testEmail);
-                              testUserData.put("userKey", java.util.UUID.randomUUID().toString());
-
-                              DBRef.refUsers
-                                  .child(testEmail.replace('.', ' '))
-                                  .setValue(testUserData);
-                            } else {
-                              Log.d(
-                                  "LoginActivity",
-                                  "Test user creation failed: "
-                                      + (createTask.getException() != null
-                                          ? createTask.getException().getMessage()
-                                          : "unknown error"));
-                            }
-                          });
-                }
-              });
-    } else {
-      Log.w("LoginActivity", "Test user reset skipped - not in debug mode or empty credentials");
+    if (progressBar != null) {
+      progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
     }
   }
 
-  /** Checks connectivity to the server using NetworkManager */
+  private void handleErrorMessage(@Nullable String errorMessage) {
+    if (errorMessage != null && !errorMessage.isEmpty()) {
+      UiStateManager.showError(rootView, errorMessage, this::clearErrorAndRetry);
+      resetPasswordButton.setVisibility(View.VISIBLE);
+    }
+  }
+
+  private void handleSuccessMessage(@Nullable String successMessage) {
+    if (successMessage != null && !successMessage.isEmpty()) {
+      UiStateManager.showSuccess(rootView, successMessage);
+    }
+  }
+
+  private void handleAuthenticationSuccess(@Nullable Boolean isAuthenticated) {
+    if (Boolean.TRUE.equals(isAuthenticated)) {
+      UiStateManager.showSuccess(rootView, "Login successful!");
+      saveUserPreferences();
+      navigateToMainActivity();
+    }
+  }
+
+  private void clearErrorAndRetry() {
+    authViewModel.clearMessages();
+  }
+
+  private void saveUserPreferences() {
+    try {
+      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+      settings.edit().putBoolean(IS_CHECKED, rememberMeCheckbox.isChecked()).apply();
+
+      SharedPreferences prefs =
+          getSharedPreferences(Config.PREFS_PARTY_MAKER, Context.MODE_PRIVATE);
+      prefs.edit().putBoolean(Config.PREFS_EXPLICIT_LOGIN, true).apply();
+
+    } catch (Exception e) {
+      Log.w(Config.LOG_TAG, "Error saving user preferences", e);
+    }
+  }
+
+  private void navigateToMainActivity() {
+    ThreadUtils.runOnMainThreadDelayed(
+        () -> {
+          if (!isDestroyed.get() && !isFinishing()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            animationManager.clearAnimations();
+            startActivity(intent);
+            finish();
+          }
+        },
+        Config.SUCCESS_NAVIGATION_DELAY_MS);
+  }
+
+  private void forceSetServerUrl() {
+    try {
+      androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+          .edit()
+          .putString("server_url", Config.DEFAULT_SERVER_URL)
+          .apply();
+      Log.d(Config.LOG_TAG, "Server URL configured: " + Config.DEFAULT_SERVER_URL);
+
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Failed to set server URL", e);
+    }
+  }
+
+  private void setupDebugTestUser() {
+    if (!BuildConfig.DEBUG) {
+      return;
+    }
+
+    try {
+      ThreadUtils.runInBackground(
+          () -> {
+            try {
+              createOrLoginTestUser(Config.DEBUG_TEST_EMAIL, Config.DEBUG_TEST_PASSWORD);
+            } catch (Exception e) {
+              Log.w(Config.LOG_TAG, "Debug test user setup failed", e);
+            }
+          });
+
+    } catch (Exception e) {
+      Log.w(Config.LOG_TAG, "Error setting up debug test user", e);
+    }
+  }
+
+  private void createOrLoginTestUser(@NonNull String email, @NonNull String password) {
+    firebaseAuth
+        .signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(Config.LOG_TAG, "Debug test user login successful");
+              } else {
+                createTestUser(email, password);
+              }
+            });
+  }
+
+  private void createTestUser(@NonNull String email, @NonNull String password) {
+    firebaseAuth
+        .createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener(
+            createTask -> {
+              if (createTask.isSuccessful()) {
+                Log.d(Config.LOG_TAG, "Debug test user created successfully");
+                createTestUserInDatabase(email);
+              } else {
+                Log.w(
+                    Config.LOG_TAG,
+                    "Debug test user creation failed: "
+                        + (createTask.getException() != null
+                            ? createTask.getException().getMessage()
+                            : "unknown error"));
+              }
+            });
+  }
+
+  private void createTestUserInDatabase(@NonNull String email) {
+    try {
+      Map<String, Object> testUserData = new HashMap<>();
+      testUserData.put("username", "Test User");
+      testUserData.put("email", email);
+      testUserData.put("userKey", java.util.UUID.randomUUID().toString());
+
+      DBRef.refUsers.child(email.replace('.', ' ')).setValue(testUserData);
+
+    } catch (Exception e) {
+      Log.w(Config.LOG_TAG, "Error creating test user in database", e);
+    }
+  }
+
   private void checkServerConnectivity() {
     ThreadUtils.runInBackground(
         () -> {
           try {
-            String serverUrl =
-                androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString("server_url", "https://partymaker.onrender.com");
+            String serverUrl = getConfiguredServerUrl();
+            String healthEndpoint = serverUrl + Config.SERVER_HEALTH_ENDPOINT;
 
-            Log.d("LoginActivity", "Checking server connectivity to: " + serverUrl);
+            Log.d(Config.LOG_TAG, "Checking server connectivity to: " + serverUrl);
 
-            NetworkManager networkManager = NetworkManager.getInstance();
             boolean isReachable =
-                networkManager.isServerReachable(serverUrl + "/api/firebase/health", 3000);
+                networkManager.isServerReachable(healthEndpoint, Config.SERVER_TIMEOUT_MS);
 
-            ThreadUtils.runOnMainThread(
-                () -> {
-                  if (isReachable) {
-                    Log.d("LoginActivity", "Server is reachable");
-                    // Don't show info message to avoid cluttering UI
-                  } else {
-                    Log.w("LoginActivity", "Server is not reachable");
-                    // Don't show offline mode message in login screen - it's not relevant to users
-                  }
-                });
+            ThreadUtils.runOnMainThread(() -> handleConnectivityResult(isReachable));
+
           } catch (Exception e) {
-            Log.e("LoginActivity", "Error checking server connectivity", e);
-            ThreadUtils.runOnMainThread(
-                () -> {
-                  // Don't show offline mode message - just log it
-                  Log.d("LoginActivity", "Connection check failed - continuing silently");
-                });
+            Log.e(Config.LOG_TAG, "Error checking server connectivity", e);
+            ThreadUtils.runOnMainThread(() -> handleConnectivityError(e));
           }
         });
   }
 
-  /** Handles all button click events and login logic. */
-  private void eventHandler() {
-    btnLogin.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            SignIn();
-          }
-
-          // connection between firebase and login button using ViewModel
-          private void SignIn() {
-            // Safely get email and password values
-            String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
-            String password =
-                etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
-
-            // Validate input before proceeding
-            if (email.isEmpty()) {
-              etEmail.setError("Please enter your email");
-              etEmail.requestFocus();
-              return;
-            }
-
-            if (password.isEmpty()) {
-              etPassword.setError("Please enter your password");
-              etPassword.requestFocus();
-              return;
-            }
-
-            // Perform login with AuthViewModel
-            authViewModel.loginWithEmail(email, password);
-
-            // Set user session using AuthHelper when login succeeds
-            AuthenticationManager.setCurrentUserSession(LoginActivity.this, email);
-          }
-        });
-
-    // Google Sign In button click listener
-    btnGoogleSignIn.setOnClickListener(
-        v -> {
-          GoogleSignInClient googleClient = authViewModel.getGoogleSignInClient();
-          if (googleClient != null) {
-            Intent signInIntent = googleClient.getSignInIntent();
-            startActivityForResult(signInIntent, RC_SIGN_IN);
-          }
-        });
-
-    // Press Here Onclick
-    btnPress.setOnClickListener(
-        view -> {
-          // when click on "press here" it takes you to RegisterActivity
-          Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-          btnAbout.clearAnimation();
-          startActivity(i);
-          overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-        });
-    btnResetPass.setOnClickListener(
-        v -> {
-          Intent i = new Intent(LoginActivity.this, ResetPasswordActivity.class);
-          btnAbout.clearAnimation();
-          startActivity(i);
-        });
-    btnAbout.setOnClickListener(
-        v -> {
-          Intent i = new Intent(LoginActivity.this, IntroActivity.class);
-          startActivity(i);
-        });
+  @NonNull
+  private String getConfiguredServerUrl() {
+    return androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        .getString("server_url", Config.DEFAULT_SERVER_URL);
   }
 
-  /** Handles the result of Google sign-in intent using ViewModel. */
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (requestCode == RC_SIGN_IN) {
-      Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-      // Use AuthViewModel's Google Sign-In method
-      authViewModel.signInWithGoogle(task);
+  private void handleConnectivityResult(boolean isReachable) {
+    if (isReachable) {
+      Log.d(Config.LOG_TAG, "Server connectivity confirmed");
+    } else {
+      Log.w(Config.LOG_TAG, "Server unreachable - offline mode may be used");
     }
   }
 
-  /** Setup text watchers for real-time validation */
-  private void setupTextWatchers() {
-    etEmail.addTextChangedListener(
-        new android.text.TextWatcher() {
-          @Override
-          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // Clear error when user starts typing
-            etEmail.setError(null);
-
-            // Validate email format in real-time
-            String email = s.toString().trim();
-            if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-              etEmail.setError("Please enter a valid email address (e.g., name@example.com)");
-            }
-          }
-
-          @Override
-          public void afterTextChanged(android.text.Editable s) {
-            // Clear any previous errors when user types
-            authViewModel.clearMessages();
-          }
-        });
-
-    etPassword.addTextChangedListener(
-        new android.text.TextWatcher() {
-          @Override
-          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // Clear error when user starts typing
-            etPassword.setError(null);
-          }
-
-          @Override
-          public void afterTextChanged(android.text.Editable s) {
-            // Clear any previous errors when user types
-            authViewModel.clearMessages();
-          }
-        });
+  private void handleConnectivityError(@NonNull Exception error) {
+    Log.w(Config.LOG_TAG, "Connectivity check failed - continuing with offline capability", error);
   }
 
-  /** Clears previous authentication state to prevent auto-login */
+  private void setupEventHandlers() {
+    loginButton.setOnClickListener(this::handleLoginClick);
+    googleSignInButton.setOnClickListener(this::handleGoogleSignInClick);
+    registerButton.setOnClickListener(this::handleRegisterClick);
+    resetPasswordButton.setOnClickListener(this::handleResetPasswordClick);
+    aboutButton.setOnClickListener(this::handleAboutClick);
+  }
+
+  private void handleLoginClick(@NonNull View view) {
+    try {
+      LoginCredentials credentials = extractCredentials();
+
+      if (inputValidator.validateLoginInput(credentials, emailEditText, passwordEditText)) {
+        performEmailLogin(credentials);
+      }
+
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Error during login attempt", e);
+      UiStateManager.showError(rootView, "Login failed. Please try again.", null);
+    }
+  }
+
+  @NonNull
+  private LoginCredentials extractCredentials() {
+    String email = emailEditText.getText() != null ? emailEditText.getText().toString().trim() : "";
+    String password =
+        passwordEditText.getText() != null ? passwordEditText.getText().toString().trim() : "";
+    return new LoginCredentials(email, password);
+  }
+
+  private void performEmailLogin(@NonNull LoginCredentials credentials) {
+    authViewModel.loginWithEmail(credentials.email, credentials.password);
+    AuthenticationManager.setCurrentUserSession(this, credentials.email);
+  }
+
+  private void handleGoogleSignInClick(@NonNull View view) {
+    try {
+      GoogleSignInClient googleClient = authViewModel.getGoogleSignInClient();
+      if (googleClient != null) {
+        Intent signInIntent = googleClient.getSignInIntent();
+        startActivityForResult(signInIntent, Config.GOOGLE_SIGN_IN_REQUEST_CODE);
+      } else {
+        Log.w(Config.LOG_TAG, "Google Sign-In client not available");
+        UiStateManager.showError(rootView, "Google Sign-In temporarily unavailable", null);
+      }
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Error initiating Google Sign-In", e);
+      UiStateManager.showError(rootView, "Google Sign-In failed. Please try again.", null);
+    }
+  }
+
+  private void handleRegisterClick(@NonNull View view) {
+    navigateToActivity(RegisterActivity.class, true);
+  }
+
+  private void handleResetPasswordClick(@NonNull View view) {
+    navigateToActivity(ResetPasswordActivity.class, true);
+  }
+
+  private void handleAboutClick(@NonNull View view) {
+    navigateToActivity(IntroActivity.class, false);
+  }
+
+  private void navigateToActivity(@NonNull Class<?> activityClass, boolean withTransition) {
+    try {
+      Intent intent = new Intent(this, activityClass);
+      animationManager.clearAnimations();
+      startActivity(intent);
+
+      if (withTransition) {
+        overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+      }
+
+    } catch (Exception e) {
+      Log.e(Config.LOG_TAG, "Error navigating to " + activityClass.getSimpleName(), e);
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == Config.GOOGLE_SIGN_IN_REQUEST_CODE) {
+      try {
+        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+        authViewModel.signInWithGoogle(task);
+
+      } catch (Exception e) {
+        Log.e(Config.LOG_TAG, "Error processing Google Sign-In result", e);
+        UiStateManager.showError(rootView, "Google Sign-In processing failed", null);
+      }
+    }
+  }
+
+  private void setupInputValidation() {
+    emailEditText.addTextChangedListener(new EmailTextWatcher());
+    passwordEditText.addTextChangedListener(new PasswordTextWatcher());
+  }
+
+  private class EmailTextWatcher implements TextWatcher {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+      emailEditText.setError(null);
+
+      String email = s.toString().trim();
+      if (!email.isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        emailEditText.setError("Please enter a valid email address (e.g., name@example.com)");
+      }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+      authViewModel.clearMessages();
+    }
+  }
+
+  private class PasswordTextWatcher implements TextWatcher {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+      passwordEditText.setError(null);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+      authViewModel.clearMessages();
+    }
+  }
+
   private void clearPreviousAuthState() {
     try {
-      Log.d(TAG, "Clearing previous authentication state to prevent auto-login");
+      Log.d(Config.LOG_TAG, "Clearing previous authentication state");
 
-      // Reset the ViewModel's authentication state
       if (authViewModel != null) {
         authViewModel.clearMessages();
       }
 
-      Log.d(TAG, "Authentication state cleared successfully");
+      Log.d(Config.LOG_TAG, "Authentication state cleared successfully");
+
     } catch (Exception e) {
-      Log.e(TAG, "Error clearing authentication state", e);
+      Log.e(Config.LOG_TAG, "Error clearing authentication state", e);
+    }
+  }
+
+  private void performInitialSetup() {
+    forceSetServerUrl();
+    clearPreviousAuthState();
+    setupDebugTestUser();
+    checkServerConnectivity();
+  }
+
+  private void startInitialAnimations() {
+    animationManager.startFadeInAnimation(aboutButton);
+  }
+
+  private void handleInitializationError(@NonNull Exception error) {
+    Log.e(Config.LOG_TAG, "Critical initialization error - showing fallback UI", error);
+    UiStateManager.showError(rootView, "App initialization failed. Please restart the app.", null);
+  }
+
+  @Override
+  protected void onDestroy() {
+    isDestroyed.set(true);
+
+    try {
+      cleanupResources();
+    } catch (Exception e) {
+      Log.w(Config.LOG_TAG, "Error during resource cleanup", e);
+    }
+
+    super.onDestroy();
+  }
+
+  private void cleanupResources() {
+    if (animationManager != null) {
+      animationManager.clearAnimations();
+      animationManager = null;
+    }
+
+    emailEditText = null;
+    passwordEditText = null;
+    authViewModel = null;
+    networkManager = null;
+    inputValidator = null;
+  }
+
+  // Helper Classes
+  private static class LoginCredentials {
+    final String email;
+    final String password;
+
+    LoginCredentials(@NonNull String email, @NonNull String password) {
+      this.email = email;
+      this.password = password;
+    }
+  }
+
+  private static class InputValidator {
+    boolean validateLoginInput(
+        @NonNull LoginCredentials credentials,
+        @NonNull TextInputEditText emailField,
+        @NonNull TextInputEditText passwordField) {
+      if (credentials.email.isEmpty()) {
+        emailField.setError("Please enter your email");
+        emailField.requestFocus();
+        return false;
+      }
+
+      if (credentials.password.isEmpty()) {
+        passwordField.setError("Please enter your password");
+        passwordField.requestFocus();
+        return false;
+      }
+
+      return true;
+    }
+  }
+
+  private static class AnimationManager {
+    private final Context context;
+    private ImageButton currentAnimatedButton;
+
+    AnimationManager(@NonNull Context context) {
+      this.context = context;
+    }
+
+    void startFadeInAnimation(@NonNull ImageButton button) {
+      try {
+        Animation fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        button.startAnimation(fadeIn);
+        currentAnimatedButton = button;
+
+      } catch (Exception e) {
+        Log.w("AnimationManager", "Animation failed", e);
+      }
+    }
+
+    void clearAnimations() {
+      if (currentAnimatedButton != null) {
+        currentAnimatedButton.clearAnimation();
+        currentAnimatedButton = null;
+      }
     }
   }
 }
