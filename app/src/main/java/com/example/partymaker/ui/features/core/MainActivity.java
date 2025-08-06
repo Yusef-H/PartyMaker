@@ -154,16 +154,16 @@ public class MainActivity extends AppCompatActivity {
 
   private void displayLoadingToast() {
     Toast.makeText(this, "Loading your groups... (may take a few seconds)", Toast.LENGTH_LONG)
-            .show();
+        .show();
   }
 
   private void enforceServerConfiguration() {
     try {
       final String productionServerUrl = "https://partymaker.onrender.com";
       androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
-              .edit()
-              .putString("server_url", productionServerUrl)
-              .apply();
+          .edit()
+          .putString("server_url", productionServerUrl)
+          .apply();
       Log.d(TAG, "Server URL configured to: " + productionServerUrl);
     } catch (Exception e) {
       Log.e(TAG, "Failed to configure server URL", e);
@@ -212,8 +212,10 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void logSuccessfulAuthentication(String email) {
-    Log.d(TAG, String.format("User authenticated successfully. Email: %s, UserKey: %s",
-            email, currentUserKey));
+    Log.d(
+        TAG,
+        String.format(
+            "User authenticated successfully. Email: %s, UserKey: %s", email, currentUserKey));
   }
 
   private void handleAuthenticationFailure(String message) {
@@ -287,13 +289,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private LoadingStateManager createLoadingStateManager(
-          android.widget.ProgressBar progressBar,
-          android.widget.TextView loadingText) {
+      android.widget.ProgressBar progressBar, android.widget.TextView loadingText) {
     return new LoadingStateManager.Builder()
-            .contentView(groupsRecyclerView)
-            .progressBar(progressBar)
-            .loadingText(loadingText)
-            .build();
+        .contentView(groupsRecyclerView)
+        .progressBar(progressBar)
+        .loadingText(loadingText)
+        .build();
   }
 
   private void setupSwipeRefresh() {
@@ -307,10 +308,10 @@ public class MainActivity extends AppCompatActivity {
 
   private void configureRefreshIndicatorColors() {
     swipeRefreshLayout.setColorSchemeColors(
-            getResources().getColor(android.R.color.holo_blue_bright),
-            getResources().getColor(android.R.color.holo_green_light),
-            getResources().getColor(android.R.color.holo_orange_light),
-            getResources().getColor(android.R.color.holo_red_light));
+        getResources().getColor(android.R.color.holo_blue_bright),
+        getResources().getColor(android.R.color.holo_green_light),
+        getResources().getColor(android.R.color.holo_orange_light),
+        getResources().getColor(android.R.color.holo_red_light));
   }
 
   private void setRefreshListener() {
@@ -381,16 +382,15 @@ public class MainActivity extends AppCompatActivity {
     GradientDrawable gradient = new GradientDrawable();
     gradient.setShape(GradientDrawable.RECTANGLE);
     gradient.setColors(
-            new int[] {
-                    Color.parseColor(ACTION_BAR_START_COLOR), Color.parseColor(ACTION_BAR_END_COLOR)
-            });
+        new int[] {
+          Color.parseColor(ACTION_BAR_START_COLOR), Color.parseColor(ACTION_BAR_END_COLOR)
+        });
     gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
     return gradient;
   }
 
   private String createStyledTitle() {
-    return String.format(
-            "<font color='%s'><b>%s</b></font>", ACTION_BAR_TITLE_COLOR, APP_TITLE);
+    return String.format("<font color='%s'><b>%s</b></font>", ACTION_BAR_TITLE_COLOR, APP_TITLE);
   }
 
   // Configures action bar properties.
@@ -451,8 +451,9 @@ public class MainActivity extends AppCompatActivity {
     int sampleSize = Math.min(3, groups.size());
     for (int i = 0; i < sampleSize; i++) {
       Group group = groups.get(i);
-      Log.d(TAG, String.format("Group %d: %s (key: %s)",
-              i, group.getGroupName(), group.getGroupKey()));
+      Log.d(
+          TAG,
+          String.format("Group %d: %s (key: %s)", i, group.getGroupName(), group.getGroupKey()));
     }
   }
 
@@ -487,9 +488,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void handleGroupsProcessingError() {
     UiStateManager.showError(
-            rootView,
-            "Error displaying groups",
-            () -> viewModel.loadUserGroups(currentUserKey, true));
+        rootView, "Error displaying groups", () -> viewModel.loadUserGroups(currentUserKey, true));
     loadingStateManager.showError("Error loading groups");
   }
 
@@ -541,9 +540,7 @@ public class MainActivity extends AppCompatActivity {
     Log.e(TAG, "Displaying error to user: " + errorMessage);
 
     UiStateManager.showError(
-            rootView,
-            errorMessage,
-            () -> viewModel.loadUserGroups(currentUserKey, true));
+        rootView, errorMessage, () -> viewModel.loadUserGroups(currentUserKey, true));
     loadingStateManager.showError(errorMessage);
 
     viewModel.clearError();
@@ -614,8 +611,10 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void logNavigationAttempt(Group group) {
-    Log.d(TAG, String.format("Navigating to group: %s (key: %s)",
-            group.getGroupName(), group.getGroupKey()));
+    Log.d(
+        TAG,
+        String.format(
+            "Navigating to group: %s (key: %s)", group.getGroupName(), group.getGroupKey()));
   }
 
   private Intent createGroupNavigationIntent(Group group) {
@@ -655,21 +654,21 @@ public class MainActivity extends AppCompatActivity {
 
   private ExtrasMetadata createExtrasFromGroup(Group group) {
     return new ExtrasMetadata(
-            group.getGroupName(),
-            group.getGroupKey(),
-            group.getGroupDays(),
-            group.getGroupMonths(),
-            group.getGroupYears(),
-            group.getGroupHours(),
-            group.getGroupLocation(),
-            group.getAdminKey(),
-            group.getCreatedAt(),
-            group.getGroupPrice(),
-            group.getGroupType(),
-            group.isCanAdd(),
-            group.getFriendKeys(),
-            group.getComingKeys(),
-            group.getMessageKeys());
+        group.getGroupName(),
+        group.getGroupKey(),
+        group.getGroupDays(),
+        group.getGroupMonths(),
+        group.getGroupYears(),
+        group.getGroupHours(),
+        group.getGroupLocation(),
+        group.getAdminKey(),
+        group.getCreatedAt(),
+        group.getGroupPrice(),
+        group.getGroupType(),
+        group.isCanAdd(),
+        group.getFriendKeys(),
+        group.getComingKeys(),
+        group.getMessageKeys());
   }
 
   private void showEmptyState() {
@@ -693,9 +692,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private boolean isGroupListEmpty() {
-    return groupsRecyclerView != null
-            && groupAdapter != null
-            && groupAdapter.getItemCount() == 0;
+    return groupsRecyclerView != null && groupAdapter != null && groupAdapter.getItemCount() == 0;
   }
 
   private boolean isCurrentlyLoading() {
@@ -753,9 +750,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private boolean isValidAdapterPosition(int position) {
-    return groupAdapter != null
-            && position >= 0
-            && position < groupAdapter.getItemCount();
+    return groupAdapter != null && position >= 0 && position < groupAdapter.getItemCount();
   }
 
   @Override
@@ -791,10 +786,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void handleLogout() {
     UserFeedbackManager.showConfirmationDialog(
-            this,
-            "Logout",
-            "Are you sure you want to logout?",
-            this::performLogoutSequence);
+        this, "Logout", "Are you sure you want to logout?", this::performLogoutSequence);
   }
 
   private void performLogoutSequence() {
@@ -914,7 +906,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void performActivityResumeRefresh(long timeSinceLastRefresh) {
-    Log.d(TAG, String.format(
+    Log.d(
+        TAG,
+        String.format(
             "onResume: Refreshing groups to catch new invitations (last refresh: %dms ago)",
             timeSinceLastRefresh));
     viewModel.loadUserGroups(currentUserKey, true);
@@ -922,7 +916,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void logRefreshSkipped(long timeSinceLastRefresh) {
-    Log.d(TAG, String.format(
+    Log.d(
+        TAG,
+        String.format(
             "onResume: Skipping refresh - within cooldown period (%dms ago, cooldown: %dms)",
             timeSinceLastRefresh, REFRESH_COOLDOWN_MS));
   }
