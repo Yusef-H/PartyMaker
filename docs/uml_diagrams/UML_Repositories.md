@@ -369,40 +369,26 @@ ViewModel → Repository → DataSource → DAO/API → Database/Network
 LiveData ←─────────────── Result ←──────────────────────────┘
 ```
 
-### **Caching Strategy:**
-- **Cache-First**: Check local data before network requests
-- **Stale-While-Revalidate**: Serve cached data while updating in background
-- **Cache Invalidation**: Smart cache expiration based on data freshness
+---
+
+## 📋 **Repository Summary**
+
+### **🎯 Core Repositories (2)**
+- **GroupRepository**: Party data management with local/remote sync
+- **UserRepository**: User profile and authentication data management
+
+### **🏗️ Data Sources**
+- **LocalGroupDataSource**: Room database operations for offline storage
+- **RemoteGroupDataSource**: Firebase server client for cloud sync
+- **AppDatabase**: Room database with DAOs for local persistence
+- **FirebaseServerClient**: HTTP client for server communication
+
+### **🔄 Architecture**
+- **Repository Pattern**: Single source of truth for data access
+- **Cache-First Strategy**: Local data priority with background sync
+- **LiveData Integration**: Reactive UI updates through observers
 - **Offline Support**: Full functionality with cached data
 
-### **Synchronization:**
-- **Bidirectional Sync**: Local changes pushed to server, server changes pulled
-- **Conflict Resolution**: Last-write-wins with timestamp comparison
-- **Delta Sync**: Only sync changed data to minimize network usage
-- **Background Sync**: Periodic synchronization in background threads
-
 ---
 
-## 🛠️ Advanced Repository Features
-
-### **🎯 Data Transformation:**
-- **Entity Mapping**: Conversion between database entities and domain models
-- **Response Parsing**: JSON to object transformation with error handling
-- **Data Validation**: Input validation before database operations
-- **Business Logic**: Domain-specific rules applied in repository layer
-
-### **📈 Performance Optimization:**
-- **Connection Pooling**: Reuse database and network connections
-- **Batch Processing**: Group multiple operations for efficiency
-- **Memory Management**: Proper resource disposal and garbage collection
-- **Background Operations**: Non-blocking operations using ExecutorService
-
-### **🔍 Monitoring & Debugging:**
-- **Operation Logging**: Comprehensive logging of data operations
-- **Performance Metrics**: Timing and success rate tracking
-- **Error Analytics**: Structured error reporting and analysis
-- **Debug Tools**: Development-time debugging and inspection tools
-
----
-
-*This repository architecture provides robust, scalable, and maintainable data access with comprehensive offline support, intelligent caching, and seamless synchronization between local and remote data sources.* 
+*Repository layer providing unified data access with local caching, remote synchronization, and offline support for groups and users.* 

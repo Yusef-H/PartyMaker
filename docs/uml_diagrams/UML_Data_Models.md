@@ -247,40 +247,26 @@ classDiagram
 - **ValidationResult**: Comprehensive validation for all entities
 - **Field-Level Validation**: Specific field error tracking
 - **Business Rules**: Custom validation logic for domain rules
-- **Real-time Validation**: Immediate feedback during data entry
+---
+
+## 📋 **Data Model Summary**
+
+### **🎯 Core Models (4)**
+- **Group**: Party data with members, location, datetime, and settings
+- **User**: User profiles with authentication and friend relationships
+- **ChatMessage**: Group chat messages with sender info and timestamps
+- **ChatMessageGpt**: Simple AI chat messages (role + content only)
+
+### **🛠️ Utility Models (2)**
+- **Result<T>**: Generic wrapper for success/error states
+- **ValidationResult**: Data validation with error messages
+
+### **🏗️ Architecture**
+- **Room Database**: All models configured for local persistence
+- **Firebase Integration**: Seamless sync with Firebase Realtime Database
+- **Type Converters**: HashMap and complex type serialization
+- **Validation**: Built-in validation with user-friendly error messages
 
 ---
 
-## 🛠️ Utility Models
-
-### **Result Wrapper:**
-- **Generic Type**: Supports any data type wrapping
-- **Success/Error States**: Clear operation outcome tracking
-- **Exception Handling**: Structured error information
-- **Functional Programming**: Supports functional-style error handling
-
-### **Validation System:**
-- **Multi-Level Validation**: Field, entity, and business rule validation
-- **Error Aggregation**: Collects and organizes validation errors
-- **User-Friendly Messages**: Translatable error messages
-- **Extensible Framework**: Easy to add new validation rules
-
----
-
-## 📱 Room Database Integration
-
-### **Entity Annotations:**
-- **@Entity**: All models configured for Room persistence
-- **@PrimaryKey**: Unique identifiers for each entity
-- **@ColumnInfo**: Custom column names and configurations
-- **@Ignore**: Excludes constructors and computed properties
-
-### **Type Converters:**
-- **HashMap Conversion**: Serializes complex maps for storage
-- **Date Handling**: Converts timestamps and date strings
-- **Enum Support**: Handles enumerated types safely
-- **JSON Serialization**: Complex object serialization support
-
----
-
-*These data models form the foundation of the PartyMaker application, providing robust data structures with comprehensive validation, relationships, and persistence capabilities.* 
+*6 Data models providing the foundation for party management, user profiles, messaging, and validation throughout the app.* 

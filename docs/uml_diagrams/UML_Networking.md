@@ -517,43 +517,32 @@ classDiagram
 ### **🔋 Battery Optimization:**
 - **Background Sync**: Intelligent background synchronization
 - **Network Type Awareness**: Different strategies for WiFi vs. mobile data
-- **Batching**: Request batching to reduce radio wake-ups
-- **Doze Mode Compatibility**: Android Doze mode and App Standby support
+---
 
-### **📊 Data Usage Management:**
-- **Compression**: Request/response compression to reduce data usage
-- **Image Optimization**: Automatic image compression and resizing
-- **Selective Sync**: User-controlled data synchronization options
-- **Data Usage Tracking**: Monitor and report network data usage
+## 📋 **Networking Summary**
 
-### **🌐 Offline Capabilities:**
-- **Offline Queue**: Queue requests for later execution when offline
-- **Cache-First Strategy**: Serve cached content when available
-- **Conflict Resolution**: Handle conflicts when coming back online
-- **Sync Status**: Clear indication of sync status to users
+### **🌐 HTTP Clients**
+- **FirebaseServerClient**: Main HTTP client for server communication
+- **NetworkManager**: Network operations and connection management
+- **ConnectivityManager**: Network connectivity monitoring and status
+
+### **🔧 Network Utilities**
+- **NetworkUtils**: Network error handling and type classification
+- **AppNetworkError**: Custom network error definitions
+- **Result<T>**: Network response wrapping with success/error states
+
+### **🏗️ Architecture**
+- **OkHttpClient**: Modern HTTP client with connection pooling
+- **SSL/TLS Security**: Secure connections with certificate validation
+- **Error Handling**: Comprehensive error classification and recovery
+- **Offline Support**: Graceful handling of network unavailability
+
+### **📊 Features**
+- **Request/Response**: JSON serialization with Gson
+- **Connection Pooling**: Efficient connection reuse
+- **Timeout Management**: Configurable timeouts for different operations
+- **Retry Logic**: Automatic retry for transient network errors
 
 ---
 
-## 🔧 Error Handling & Recovery
-
-### **📋 Error Classification:**
-- **Network Errors**: Connection timeouts, DNS failures, SSL errors
-- **HTTP Errors**: 4xx client errors, 5xx server errors
-- **Parse Errors**: JSON parsing and data validation errors
-- **Application Errors**: Business logic and validation errors
-
-### **🔄 Recovery Strategies:**
-- **Automatic Retry**: Intelligent retry for transient errors
-- **Fallback Mechanisms**: Alternative data sources when primary fails
-- **Graceful Degradation**: Reduced functionality when services unavailable
-- **User Notification**: Clear error messages and recovery instructions
-
-### **📊 Error Analytics:**
-- **Error Tracking**: Comprehensive error logging and tracking
-- **Performance Impact**: Monitor error impact on app performance
-- **User Experience**: Track how errors affect user experience
-- **Trend Analysis**: Identify error patterns and trends over time
-
----
-
-*This network architecture provides robust, secure, and efficient communication with external services, comprehensive error handling, and optimal performance across different network conditions in the PartyMaker application.* 
+*Network layer providing secure, efficient HTTP communication with comprehensive error handling and offline support.* 

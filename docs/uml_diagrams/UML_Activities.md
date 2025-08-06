@@ -549,69 +549,24 @@ classDiagram
 
 ---
 
-## 🎯 Activity Lifecycle Management
+## 🔄 **Activity Flow**
 
-### **State Preservation:**
-- **Configuration Changes**: All activities handle orientation changes
-- **Data Persistence**: ViewModels maintain state across lifecycle events
-- **Intent Data**: Robust intent data extraction and validation
-- **Memory Management**: Proper cleanup in onDestroy() methods
-
-### **Navigation Patterns:**
-- **Intent-based Navigation**: Explicit intents with data passing
-- **Result Handling**: onActivityResult() for image selection and authentication
-- **Back Stack Management**: Proper task and back stack handling
-- **Deep Linking**: Support for direct navigation to specific activities
-
----
-
-## 🛠️ Common Activity Features
-
-### **UI Initialization:**
-- **View Binding**: Modern view binding approach in newer activities
-- **findViewById**: Legacy findViewById pattern in older activities
-- **Click Listeners**: Comprehensive click handling setup
-- **RecyclerView Setup**: Consistent adapter and layout manager configuration
-
-### **ViewModel Integration:**
-- **MVVM Pattern**: All major activities use ViewModels
-- **LiveData Observation**: Reactive UI updates through observers
-- **Data Binding**: Two-way data binding where applicable
-- **Lifecycle Awareness**: Automatic observer cleanup
-
-### **Error Handling:**
-- **User Feedback**: Toast, Snackbar, and dialog-based feedback
-- **Loading States**: Progress indicators during operations
-- **Validation**: Input validation with user-friendly messages
-- **Exception Handling**: Graceful error recovery
-
----
-
-## 🔄 Activity Flow Patterns
-
-### **Authentication Flow:**
+### **Authentication:**
 ```
 SplashActivity → IntroActivity → LoginActivity → MainActivity
                                       ↓
-                                RegisterActivity
-                                      ↓
-                              ResetPasswordActivity
+                                RegisterActivity → ResetPasswordActivity
 ```
 
-### **Group Management Flow:**
+### **Group Management:**
 ```
-MainActivity → CreateGroupActivity → PartyMainActivity → AdminOptionsActivity
-                                          ↓                      ↓
-                                    ChatActivity          AdminSettingsActivity
-                                          ↓                      ↓
-                                 FriendsAddActivity      ChangeDateActivity
-```
-
-### **Discovery Flow:**
-```
-MainActivity → PublicGroupsActivity → JoinGroupActivity → MainActivity
+MainActivity → CreateGroupActivity → PartyMainActivity → ChatActivity
+                ↓                         ↓
+         PublicGroupsActivity      AdminOptionsActivity → AdminSettingsActivity
+                ↓                         ↓
+         JoinGroupActivity          FriendsAddActivity → MembersComingActivity
 ```
 
 ---
 
-*This activity architecture provides comprehensive functionality for party management, social interaction, and user engagement through a well-organized, feature-based structure.* 
+*24 Activities providing complete party management, authentication, and social features with proper Android lifecycle management and MVVM architecture.* 
