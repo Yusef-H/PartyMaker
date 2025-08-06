@@ -251,7 +251,7 @@ public class ResetPasswordViewModel extends BaseViewModel {
   private boolean isValidEmail(String email) {
     return email != null
         && android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
-        && email.trim().length() > 0;
+        && !email.trim().isEmpty();
   }
 
   private void handleResetSuccess(String email) {

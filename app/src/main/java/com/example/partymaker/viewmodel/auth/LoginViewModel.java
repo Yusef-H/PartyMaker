@@ -147,7 +147,7 @@ public class LoginViewModel extends BaseViewModel {
    * @param password The password to validate
    */
   public void validatePassword(@NonNull String password) {
-    boolean valid = password != null && password.trim().length() > 0;
+    boolean valid = password != null && !password.trim().isEmpty();
     isPasswordValid.setValue(valid);
     updateFormValidation();
   }
@@ -357,7 +357,7 @@ public class LoginViewModel extends BaseViewModel {
   private boolean isValidEmail(String email) {
     return email != null
         && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        && email.trim().length() > 0;
+        && !email.trim().isEmpty();
   }
 
   private void updateFormValidation() {

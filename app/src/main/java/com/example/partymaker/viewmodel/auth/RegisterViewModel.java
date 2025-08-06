@@ -329,7 +329,7 @@ public class RegisterViewModel extends BaseViewModel {
   private boolean isValidEmail(String email) {
     return email != null
         && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        && email.trim().length() > 0;
+        && !email.trim().isEmpty();
   }
 
   private boolean isValidUsername(String username) {
