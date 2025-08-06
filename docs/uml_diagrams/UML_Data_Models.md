@@ -174,26 +174,26 @@ classDiagram
     }
 
     %% Relationships
-    Group ||--o{ User : "has members (friendKeys)"
-    Group ||--o{ User : "has attendees (comingKeys)"
-    Group ||--|| User : "has admin (adminKey)"
-    Group ||--o{ ChatMessage : "contains messages (messageKeys)"
+    Group --> User : "has members (friendKeys)"
+    Group --> User : "has attendees (comingKeys)" 
+    Group --> User : "has admin (adminKey)"
+    Group --> ChatMessage : "contains messages"
     
-    User ||--o{ ChatMessage : "sends messages"
-    User ||--o{ ChatMessageGpt : "chats with AI"
+    User --> ChatMessage : "sends messages"
+    User --> ChatMessageGpt : "chats with AI"
     
-    ChatMessage }|--|| Group : "belongs to group"
-    ChatMessage }|--|| User : "sent by user"
+    ChatMessage --> Group : "belongs to group"
+    ChatMessage --> User : "sent by user"
     
-    ChatMessageGpt }|--|| User : "conversation with user"
+    ChatMessageGpt --> User : "conversation with user"
     
-    ValidationResult --o User : "validates user data"
-    ValidationResult --o Group : "validates group data"
-    ValidationResult --o ChatMessage : "validates message data"
+    ValidationResult --> User : "validates user data"
+    ValidationResult --> Group : "validates group data"
+    ValidationResult --> ChatMessage : "validates message data"
     
-    Result --o User : "wraps user operations"
-    Result --o Group : "wraps group operations"
-    Result --o ChatMessage : "wraps message operations"
+    Result --> User : "wraps user operations"
+    Result --> Group : "wraps group operations"
+    Result --> ChatMessage : "wraps message operations"
 ```
 
 ---
