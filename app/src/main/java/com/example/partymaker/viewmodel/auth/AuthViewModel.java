@@ -190,17 +190,15 @@ public class AuthViewModel extends BaseViewModel {
 
           auth.signInWithEmailAndPassword(email.trim(), password)
               .addOnCompleteListener(
-                  task -> {
-                    ThreadUtils.runOnMainThread(
-                        () -> {
-                          setLoading(false);
-                          if (task.isSuccessful()) {
-                            handleSuccessfulLogin("Email login successful");
-                          } else {
-                            handleAuthError("Email login failed", task.getException());
-                          }
-                        });
-                  });
+                  task -> ThreadUtils.runOnMainThread(
+                      () -> {
+                        setLoading(false);
+                        if (task.isSuccessful()) {
+                          handleSuccessfulLogin("Email login successful");
+                        } else {
+                          handleAuthError("Email login failed", task.getException());
+                        }
+                      }));
         });
   }
 
@@ -434,9 +432,7 @@ public class AuthViewModel extends BaseViewModel {
             googleSignInClient
                 .signOut()
                 .addOnCompleteListener(
-                    task -> {
-                      Log.d(TAG, "Google sign out completed");
-                    });
+                    task -> Log.d(TAG, "Google sign out completed"));
           }
 
           // Clear secure storage

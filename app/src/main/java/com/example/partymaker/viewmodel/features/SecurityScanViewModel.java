@@ -268,9 +268,7 @@ public class SecurityScanViewModel extends BaseViewModel {
           } catch (Exception e) {
             Log.e(TAG, "Error resolving security issue", e);
             ThreadUtils.runOnMainThread(
-                () -> {
-                  setError("Failed to resolve security issue: " + e.getMessage());
-                });
+                () -> setError("Failed to resolve security issue: " + e.getMessage()));
           }
         });
   }
@@ -306,11 +304,9 @@ public class SecurityScanViewModel extends BaseViewModel {
 
                   // Simulate fix application
                   ThreadUtils.runOnMainThreadDelayed(
-                      () -> {
-                        updateScanStep(
-                            "Fixing " + issue.getType() + "...",
-                            (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0]));
-                      },
+                      () -> updateScanStep(
+                          "Fixing " + issue.getType() + "...",
+                          (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0])),
                       fixedIssues[0] * 500);
 
                   fixedIssues[0]++;

@@ -226,9 +226,7 @@ public class ChatActivity extends AppCompatActivity {
         .getIsLoading()
         .observe(
             this,
-            isLoading -> {
-              btnSend.setEnabled(!isLoading);
-            });
+            isLoading -> btnSend.setEnabled(!isLoading));
   }
 
   private void eventHandler() {

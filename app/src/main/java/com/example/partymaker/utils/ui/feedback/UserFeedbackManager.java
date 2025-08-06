@@ -206,9 +206,7 @@ public class UserFeedbackManager {
         .setSingleChoiceItems(
             choices,
             selectedIndex,
-            (dialog, which) -> {
-              selectedItem[0] = which;
-            })
+            (dialog, which) -> selectedItem[0] = which)
         .setPositiveButton(
             "OK",
             (dialog, which) -> {
