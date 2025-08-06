@@ -173,21 +173,19 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group management data for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.getGroup(
-              currentGroupKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Group group) {
-                          handleGroupLoaded(group);
-                      }
+        () -> groupRepository.getGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group group) {
+                        handleGroupLoaded(group);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleGroupLoadError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupLoadError(error);
+                    }
+                }));
   }
 
   /** Loads the members of the managed group. */
@@ -259,24 +257,20 @@ public class GroupManagementViewModel extends BaseViewModel {
   /** Loads available users that can be invited to the group. */
   public void loadAvailableUsers() {
     ThreadUtils.runOnBackground(
-        () -> {
-          userRepository.getAllUsers(
-                  new UserRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(List<User> users) {
-                          handleAvailableUsersLoaded(users);
-                      }
+        () -> userRepository.getAllUsers(
+                new UserRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(List<User> users) {
+                        handleAvailableUsersLoaded(users);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          Log.e(TAG, "Failed to load available users", error);
-                          ThreadUtils.runOnMainThread(
-                                  () -> {
-                                      setError("Failed to load available users");
-                                  });
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        Log.e(TAG, "Failed to load available users", error);
+                        ThreadUtils.runOnMainThread(
+                                () -> setError("Failed to load available users"));
+                    }
+                }));
   }
 
   /**
@@ -301,22 +295,20 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Adding member: " + user.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.addMemberToGroup(
-              currentGroupKey,
-              user.getUserKey(),
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleMemberAddSuccess(user);
-                      }
+        () -> groupRepository.addMemberToGroup(
+            currentGroupKey,
+            user.getUserKey(),
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleMemberAddSuccess(user);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleMemberOperationError("add", user, error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("add", user, error);
+                    }
+                }));
   }
 
   /**
@@ -346,22 +338,20 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Removing member: " + user.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.removeMemberFromGroup(
-              currentGroupKey,
-              user.getUserKey(),
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleMemberRemoveSuccess(user);
-                      }
+        () -> groupRepository.removeMemberFromGroup(
+            currentGroupKey,
+            user.getUserKey(),
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleMemberRemoveSuccess(user);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleMemberOperationError("remove", user, error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("remove", user, error);
+                    }
+                }));
   }
 
   /**
@@ -424,21 +414,19 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Updating group settings: " + updatedGroup.getGroupName());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.updateGroup(
-              updatedGroup,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Group result) {
-                          handleGroupUpdateSuccess(result);
-                      }
+        () -> groupRepository.updateGroup(
+            updatedGroup,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group result) {
+                        handleGroupUpdateSuccess(result);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleGroupUpdateError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupUpdateError(error);
+                    }
+                }));
   }
 
   /** Deletes the group (admin only). */
@@ -459,21 +447,19 @@ public class GroupManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Deleting group: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.deleteGroup(
-              currentGroupKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleGroupDeleteSuccess();
-                      }
+        () -> groupRepository.deleteGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleGroupDeleteSuccess();
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleGroupDeleteError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupDeleteError(error);
+                    }
+                }));
   }
 
   // Private helper methods
@@ -539,14 +525,10 @@ public class GroupManagementViewModel extends BaseViewModel {
       }
 
       ThreadUtils.runOnMainThread(
-          () -> {
-            availableUsers.setValue(available);
-          });
+          () -> availableUsers.setValue(available));
     } else {
       ThreadUtils.runOnMainThread(
-          () -> {
-            availableUsers.setValue(users);
-          });
+          () -> availableUsers.setValue(users));
     }
   }
 

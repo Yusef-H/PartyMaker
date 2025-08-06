@@ -227,21 +227,19 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group data and members for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.getGroup(
-              currentGroupKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Group group) {
-                          handleGroupLoaded(group);
-                      }
+        () -> groupRepository.getGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group group) {
+                        handleGroupLoaded(group);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleGroupLoadError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupLoadError(error);
+                    }
+                }));
   }
 
   /**
@@ -312,22 +310,20 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Inviting member: " + user.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.inviteMemberToGroup(
-              currentGroupKey,
-              user.getUserKey(),
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleInviteSuccess(user);
-                      }
+        () -> groupRepository.inviteMemberToGroup(
+            currentGroupKey,
+            user.getUserKey(),
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleInviteSuccess(user);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleMemberOperationError("invite", user, error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("invite", user, error);
+                    }
+                }));
   }
 
   /**
@@ -358,22 +354,20 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Removing member: " + member.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.removeMemberFromGroup(
-              currentGroupKey,
-              member.getUserKey(),
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleRemoveSuccess(member);
-                      }
+        () -> groupRepository.removeMemberFromGroup(
+            currentGroupKey,
+            member.getUserKey(),
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleRemoveSuccess(member);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleMemberOperationError("remove", member, error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("remove", member, error);
+                    }
+                }));
   }
 
   /**
@@ -396,23 +390,21 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Updating attendance for: " + member.getUsername() + " to: " + isComing);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.updateAttendanceStatus(
-              currentGroupKey,
-              member.getUserKey(),
-              isComing,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleAttendanceUpdateSuccess(member, isComing);
-                      }
+        () -> groupRepository.updateAttendanceStatus(
+            currentGroupKey,
+            member.getUserKey(),
+            isComing,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleAttendanceUpdateSuccess(member, isComing);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleMemberOperationError("update attendance for", member, error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleMemberOperationError("update attendance for", member, error);
+                    }
+                }));
   }
 
   /** Refreshes all member data. */
@@ -500,26 +492,22 @@ public class MembersViewModel extends BaseViewModel {
           // Load all members
           loadUsersFromKeys(
               group.getFriendKeys(),
-              users -> {
-                ThreadUtils.runOnMainThread(
-                    () -> {
-                      allMembers.setValue(users);
-                      updateStatistics();
-                      applyFilters();
-                    });
-              });
+              users -> ThreadUtils.runOnMainThread(
+                  () -> {
+                    allMembers.setValue(users);
+                    updateStatistics();
+                    applyFilters();
+                  }));
 
           // Load coming members
           loadUsersFromKeys(
               group.getComingKeys(),
-              users -> {
-                ThreadUtils.runOnMainThread(
-                    () -> {
-                      comingMembers.setValue(users);
-                      updateStatistics();
-                      applyFilters();
-                    });
-              });
+              users -> ThreadUtils.runOnMainThread(
+                  () -> {
+                    comingMembers.setValue(users);
+                    updateStatistics();
+                    applyFilters();
+                  }));
 
           // Invited members would be loaded separately if we had invitation tracking
           ThreadUtils.runOnMainThread(
@@ -624,16 +612,12 @@ public class MembersViewModel extends BaseViewModel {
 
             final List<User> finalFiltered = filtered;
             ThreadUtils.runOnMainThread(
-                () -> {
-                  filteredMembers.setValue(finalFiltered);
-                });
+                () -> filteredMembers.setValue(finalFiltered));
 
           } catch (Exception e) {
             Log.e(TAG, "Error applying filters", e);
             ThreadUtils.runOnMainThread(
-                () -> {
-                  setError("Error filtering members: " + e.getMessage());
-                });
+                () -> setError("Error filtering members: " + e.getMessage()));
           }
         });
   }

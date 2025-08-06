@@ -504,9 +504,7 @@ public class GroupRepository {
 
     mediatorLiveData.addSource(
         roomLiveData,
-        groups -> {
-            mediatorLiveData.setValue(Result.success(Objects.requireNonNullElseGet(groups, ArrayList::new)));
-        });
+        groups -> mediatorLiveData.setValue(Result.success(Objects.requireNonNullElseGet(groups, ArrayList::new))));
 
     return mediatorLiveData;
   }

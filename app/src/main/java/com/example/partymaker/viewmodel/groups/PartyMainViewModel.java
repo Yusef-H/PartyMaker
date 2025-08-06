@@ -195,21 +195,19 @@ public class PartyMainViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group data for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.getGroup(
-              currentGroupKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Group group) {
-                          handleGroupLoaded(group);
-                      }
+        () -> groupRepository.getGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group group) {
+                        handleGroupLoaded(group);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleGroupLoadError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupLoadError(error);
+                    }
+                }));
   }
 
   /** Loads the current user information. */
@@ -220,25 +218,23 @@ public class PartyMainViewModel extends BaseViewModel {
     }
 
     ThreadUtils.runOnBackground(
-        () -> {
-          userRepository.getUser(
-              currentUserKey,
-                  new UserRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(User user) {
-                          ThreadUtils.runOnMainThread(
-                                  () -> {
-                                      currentUser.setValue(user);
-                                      Log.d(TAG, "Current user loaded: " + user.getUsername());
-                                  });
-                      }
+        () -> userRepository.getUser(
+            currentUserKey,
+                new UserRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(User user) {
+                        ThreadUtils.runOnMainThread(
+                                () -> {
+                                    currentUser.setValue(user);
+                                    Log.d(TAG, "Current user loaded: " + user.getUsername());
+                                });
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          Log.w(TAG, "Failed to load current user", error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        Log.w(TAG, "Failed to load current user", error);
+                    }
+                }));
   }
 
   /** Joins the current group. */
@@ -259,22 +255,20 @@ public class PartyMainViewModel extends BaseViewModel {
     Log.d(TAG, "Joining group: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.joinGroup(
-              currentGroupKey,
-              currentUserKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleJoinSuccess();
-                      }
+        () -> groupRepository.joinGroup(
+            currentGroupKey,
+            currentUserKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleJoinSuccess();
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleJoinError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleJoinError(error);
+                    }
+                }));
   }
 
   /** Leaves the current group. */
@@ -295,22 +289,20 @@ public class PartyMainViewModel extends BaseViewModel {
     Log.d(TAG, "Leaving group: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.leaveGroup(
-              currentGroupKey,
-              currentUserKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleLeaveSuccess();
-                      }
+        () -> groupRepository.leaveGroup(
+            currentGroupKey,
+            currentUserKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleLeaveSuccess();
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleLeaveError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleLeaveError(error);
+                    }
+                }));
   }
 
   /**
@@ -341,23 +333,21 @@ public class PartyMainViewModel extends BaseViewModel {
     Log.d(TAG, "Updating attendance status to: " + isComing);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.updateAttendanceStatus(
-              currentGroupKey,
-              currentUserKey,
-              isComing,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Boolean result) {
-                          handleAttendanceUpdateSuccess(isComing);
-                      }
+        () -> groupRepository.updateAttendanceStatus(
+            currentGroupKey,
+            currentUserKey,
+            isComing,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        handleAttendanceUpdateSuccess(isComing);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleAttendanceUpdateError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleAttendanceUpdateError(error);
+                    }
+                }));
   }
 
   /** Refreshes all group data. */
@@ -510,28 +500,18 @@ public class PartyMainViewModel extends BaseViewModel {
           // Load regular members
           loadUsersFromKeys(
               group.getFriendKeys(),
-              users -> {
-                ThreadUtils.runOnMainThread(
-                    () -> {
-                      groupMembers.setValue(users);
-                    });
-              });
+              users -> ThreadUtils.runOnMainThread(
+                  () -> groupMembers.setValue(users)));
 
           // Load coming members
           loadUsersFromKeys(
               group.getComingKeys(),
-              users -> {
-                ThreadUtils.runOnMainThread(
-                    () -> {
-                      comingMembers.setValue(users);
-                    });
-              });
+              users -> ThreadUtils.runOnMainThread(
+                  () -> comingMembers.setValue(users)));
 
           // Invited members would be loaded separately if we had invitation tracking
           ThreadUtils.runOnMainThread(
-              () -> {
-                invitedMembers.setValue(new ArrayList<>());
-              });
+              () -> invitedMembers.setValue(new ArrayList<>()));
         });
   }
 

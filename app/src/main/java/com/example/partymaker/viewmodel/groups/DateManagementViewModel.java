@@ -218,21 +218,19 @@ public class DateManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group data for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> {
-          groupRepository.getGroup(
-              currentGroupKey,
-                  new GroupRepository.Callback<>() {
-                      @Override
-                      public void onSuccess(Group group) {
-                          handleGroupLoaded(group);
-                      }
+        () -> groupRepository.getGroup(
+            currentGroupKey,
+                new GroupRepository.Callback<>() {
+                    @Override
+                    public void onSuccess(Group group) {
+                        handleGroupLoaded(group);
+                    }
 
-                      @Override
-                      public void onError(Exception error) {
-                          handleGroupLoadError(error);
-                      }
-                  });
-        });
+                    @Override
+                    public void onError(Exception error) {
+                        handleGroupLoadError(error);
+                    }
+                }));
   }
 
   /**
