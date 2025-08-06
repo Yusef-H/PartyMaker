@@ -285,7 +285,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to add
    */
   public void addMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can add members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -325,7 +325,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to remove
    */
   public void removeMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can remove members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -370,7 +370,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to promote
    */
   public void promoteMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can promote members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -387,7 +387,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param user The user to demote
    */
   public void demoteMember(@NonNull User user) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can demote members", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -408,7 +408,7 @@ public class GroupManagementViewModel extends BaseViewModel {
    * @param updatedGroup The group with updated settings
    */
   public void updateGroupSettings(@NonNull Group updatedGroup) {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can update group settings", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -443,7 +443,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
   /** Deletes the group (admin only). */
   public void deleteGroup() {
-    if (!isCurrentUserAdmin()) {
+    if (isCurrentUserAdmin()) {
       setError("Only admins can delete groups", NetworkUtils.ErrorType.PERMISSION_ERROR);
       return;
     }
@@ -480,7 +480,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
   private boolean isCurrentUserAdmin() {
     Boolean adminStatus = isUserAdmin.getValue();
-    return adminStatus != null && adminStatus;
+    return adminStatus == null || !adminStatus;
   }
 
   private void handleGroupLoaded(Group group) {

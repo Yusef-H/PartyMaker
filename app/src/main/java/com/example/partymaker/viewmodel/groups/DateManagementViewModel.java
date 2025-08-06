@@ -564,14 +564,14 @@ public class DateManagementViewModel extends BaseViewModel {
     String origDate = originalDate.getValue();
     String origTime = originalTime.getValue();
 
-    boolean dateChanged = !objectsEqual(currentDate, origDate);
-    boolean timeChanged = !objectsEqual(currentTime, origTime);
+    boolean dateChanged = objectsEqual(currentDate, origDate);
+    boolean timeChanged = objectsEqual(currentTime, origTime);
 
     isDateTimeChanged.setValue(dateChanged || timeChanged);
   }
 
   private boolean objectsEqual(Object a, Object b) {
-    return (a == null && b == null) || (a != null && a.equals(b));
+    return (a != null || b != null) && (a == null || !a.equals(b));
   }
 
   private boolean canUpdateDateTime() {
