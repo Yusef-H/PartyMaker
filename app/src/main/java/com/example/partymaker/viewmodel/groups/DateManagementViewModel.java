@@ -553,7 +553,7 @@ public class DateManagementViewModel extends BaseViewModel {
     isTimeValid.setValue(valid);
     if (error != null && validationError.getValue() == null) {
       validationError.setValue(error);
-    } else if (error == null && valid) {
+    } else if (error == null) {
       validationError.setValue(null);
     }
   }

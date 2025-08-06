@@ -241,22 +241,20 @@ public class GroupRepository {
                     if (groups != null && !groups.isEmpty() && isInitialized) {
                         // Cache the groups locally (save each group individually)
                         for (Group group : groups) {
-                            if (group.getGroupKey() != null) {
-                                localDataSource.saveItem(
-                                        group.getGroupKey(),
-                                        group,
-                                        new DataSource.OperationCallback() {
-                                            @Override
-                                            public void onComplete() {
-                                                // Group cached successfully
-                                            }
+                            localDataSource.saveItem(
+                                    group.getGroupKey(),
+                                    group,
+                                    new DataSource.OperationCallback() {
+                                        @Override
+                                        public void onComplete() {
+                                            // Group cached successfully
+                                        }
 
-                                            @Override
-                                            public void onError(String error) {
-                                                Log.w(TAG, "Failed to cache group: " + error);
-                                            }
-                                        });
-                            }
+                                        @Override
+                                        public void onError(String error) {
+                                            Log.w(TAG, "Failed to cache group: " + error);
+                                        }
+                                    });
                         }
                         Log.d(TAG, "Groups cached successfully: " + groups.size());
                     }
@@ -607,21 +605,19 @@ public class GroupRepository {
     callback.onDataLoaded(Result.loading());
 
     // Use RemoteGroupDataSource to get user groups
-    if (remoteDataSource instanceof RemoteGroupDataSource) {
       ((RemoteGroupDataSource) remoteDataSource)
-          .getUserGroups(
-              userKey,
-                  new DataSource.DataCallback<>() {
-                      @Override
-                      public void onDataLoaded(List<Group> groups) {
-                          Log.d(
-                                  TAG,
-                                  "User groups loaded from server: " + (groups != null ? groups.size() : 0));
+              .getUserGroups(
+                      userKey,
+                      new DataSource.DataCallback<>() {
+                          @Override
+                          public void onDataLoaded(List<Group> groups) {
+                              Log.d(
+                                      TAG,
+                                      "User groups loaded from server: " + (groups != null ? groups.size() : 0));
 
-                          // Cache the groups
-                          if (groups != null && !groups.isEmpty() && isInitialized) {
-                              for (Group group : groups) {
-                                  if (group.getGroupKey() != null) {
+                              // Cache the groups
+                              if (groups != null && !groups.isEmpty() && isInitialized) {
+                                  for (Group group : groups) {
                                       localDataSource.saveItem(
                                               group.getGroupKey(),
                                               group,
@@ -637,62 +633,57 @@ public class GroupRepository {
                                                   }
                                               });
                                   }
+                                  Log.d(TAG, "User groups cached: " + groups.size());
                               }
-                              Log.d(TAG, "User groups cached: " + groups.size());
+
+                              // Return result
+                              callback.onDataLoaded(
+                                      Result.success(groups != null ? groups : new ArrayList<>()));
                           }
 
-                          // Return result
-                          callback.onDataLoaded(
-                                  Result.success(groups != null ? groups : new ArrayList<>()));
-                      }
+                          @Override
+                          public void onError(String errorMessage) {
+                              Log.e(TAG, "Error loading user groups: " + errorMessage);
 
-                      @Override
-                      public void onError(String errorMessage) {
-                          Log.e(TAG, "Error loading user groups: " + errorMessage);
+                              // Try to get from cache as fallback
+                              localDataSource.getAllItems(
+                                      new DataSource.DataCallback<>() {
+                                          @Override
+                                          public void onDataLoaded(List<Group> cachedGroups) {
+                                              List<Group> userGroups = new ArrayList<>();
 
-                          // Try to get from cache as fallback
-                          localDataSource.getAllItems(
-                                  new DataSource.DataCallback<>() {
-                                      @Override
-                                      public void onDataLoaded(List<Group> cachedGroups) {
-                                          List<Group> userGroups = new ArrayList<>();
-
-                                          // Filter groups for this user
-                                          if (cachedGroups != null && !cachedGroups.isEmpty()) {
-                                              for (Group group : cachedGroups) {
-                                                  if ((group.getFriendKeys() != null
-                                                          && group.getFriendKeys().containsKey(userKey))
-                                                          || (group.getAdminKey() != null
-                                                          && group.getAdminKey().equals(userKey))) {
-                                                      userGroups.add(group);
+                                              // Filter groups for this user
+                                              if (cachedGroups != null && !cachedGroups.isEmpty()) {
+                                                  for (Group group : cachedGroups) {
+                                                      if ((group.getFriendKeys() != null
+                                                              && group.getFriendKeys().containsKey(userKey))
+                                                              || (group.getAdminKey() != null
+                                                              && group.getAdminKey().equals(userKey))) {
+                                                          userGroups.add(group);
+                                                      }
                                                   }
+                                              }
+
+                                              if (!userGroups.isEmpty()) {
+                                                  Log.d(
+                                                          TAG,
+                                                          "Using cached user groups due to network error: "
+                                                                  + userGroups.size());
+                                                  callback.onDataLoaded(Result.success(userGroups));
+                                              } else {
+                                                  Log.e(TAG, "No cached user groups available");
+                                                  callback.onDataLoaded(Result.error(errorMessage));
                                               }
                                           }
 
-                                          if (!userGroups.isEmpty()) {
-                                              Log.d(
-                                                      TAG,
-                                                      "Using cached user groups due to network error: "
-                                                              + userGroups.size());
-                                              callback.onDataLoaded(Result.success(userGroups));
-                                          } else {
-                                              Log.e(TAG, "No cached user groups available");
+                                          @Override
+                                          public void onError(String cacheError) {
+                                              Log.e(TAG, "Cache also failed: " + cacheError);
                                               callback.onDataLoaded(Result.error(errorMessage));
                                           }
-                                      }
-
-                                      @Override
-                                      public void onError(String cacheError) {
-                                          Log.e(TAG, "Cache also failed: " + cacheError);
-                                          callback.onDataLoaded(Result.error(errorMessage));
-                                      }
-                                  });
-                      }
-                  });
-    } else {
-      Log.e(TAG, "RemoteGroupDataSource not available");
-      callback.onDataLoaded(Result.error("Remote data source not available"));
-    }
+                                      });
+                          }
+                      });
   }
 
   /**
@@ -904,7 +895,7 @@ public class GroupRepository {
    * @param callback Callback to receive the updated group
    */
   public void updateGroup(Group group, final Callback<Group> callback) {
-    if (group == null || group.getGroupKey() == null) {
+    if (group == null) {
       callback.onError(new Exception("Invalid group"));
       return;
     }

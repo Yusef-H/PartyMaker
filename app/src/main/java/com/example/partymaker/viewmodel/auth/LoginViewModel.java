@@ -147,7 +147,7 @@ public class LoginViewModel extends BaseViewModel {
    * @param password The password to validate
    */
   public void validatePassword(@NonNull String password) {
-    boolean valid = password != null && !password.trim().isEmpty();
+    boolean valid = !password.trim().isEmpty();
     isPasswordValid.setValue(valid);
     updateFormValidation();
   }

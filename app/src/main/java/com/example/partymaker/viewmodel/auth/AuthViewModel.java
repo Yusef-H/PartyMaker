@@ -166,12 +166,12 @@ public class AuthViewModel extends BaseViewModel {
    */
   public void loginWithEmail(@NonNull String email, @NonNull String password) {
     // Input validation
-    if (email == null || email.trim().isEmpty()) {
+    if (email.trim().isEmpty()) {
       setError("Email is required");
       return;
     }
 
-    if (password == null || password.trim().isEmpty()) {
+    if (password.trim().isEmpty()) {
       setError("Password is required");
       return;
     }

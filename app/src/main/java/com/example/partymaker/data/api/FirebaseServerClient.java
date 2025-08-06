@@ -621,7 +621,7 @@ public class FirebaseServerClient {
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
             String response = makeHttpRequest(url, "PUT", json);
-            return response != null && !response.isEmpty();
+            return !response.isEmpty();
           } catch (Exception e) {
             throw new RuntimeException("Failed to save user", e);
           }
@@ -704,7 +704,7 @@ public class FirebaseServerClient {
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(updates);
             String response = makeHttpRequest(url, "PUT", json);
-            return response != null && !response.isEmpty();
+            return !response.isEmpty();
           } catch (Exception e) {
             throw new RuntimeException("Failed to update user", e);
           }
@@ -1652,7 +1652,7 @@ public class FirebaseServerClient {
 
       if (method.equals("POST")) {
         requestBuilder.post(body);
-      } else if (method.equals("PUT")) {
+      } else {
         requestBuilder.put(body);
       }
     } else if (method.equals("DELETE")) {
@@ -1670,7 +1670,7 @@ public class FirebaseServerClient {
       if (response.isSuccessful()) {
           return response.body() != null ? response.body().string() : "";
       } else {
-        String errorBody = response.body() != null ? response.body().string() : "";
+        String errorBody = response.body().string();
         Log.e(
             TAG,
             method

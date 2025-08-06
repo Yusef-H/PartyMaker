@@ -706,12 +706,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private void initializeGroupEncryption(String groupKey) {
     try {
       String currentUserId = AuthenticationManager.getCurrentUserKey(this);
-      if (currentUserId == null) {
-        Log.w(TAG, "Cannot initialize group encryption: no current user");
-        return;
-      }
 
-      GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
+        GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
 
       // Create encryption for new group
       groupKeyManager

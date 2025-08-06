@@ -390,7 +390,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     }
 
     // Check if group is public
-    return "public".equals(group.getGroupType());
+    return false;
   }
 
   // Private helper methods
