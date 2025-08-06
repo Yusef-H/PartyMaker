@@ -156,22 +156,7 @@ classDiagram
         +clearErrors() void
     }
     
-    class Result~T~ {
-        -T data
-        -boolean success
-        -String errorMessage
-        -Exception exception
-        
-        +Result()
-        +success(data) Result~T~
-        +error(errorMessage) Result~T~
-        +error(exception) Result~T~
-        +getData() T
-        +isSuccess() boolean
-        +getErrorMessage() String
-        +getException() Exception
-        +hasData() boolean
-    }
+
 
     %% Relationships
     Group --> User : "has members (friendKeys)"
@@ -191,9 +176,7 @@ classDiagram
     ValidationResult --> Group : "validates group data"
     ValidationResult --> ChatMessage : "validates message data"
     
-    Result --> User : "wraps user operations"
-    Result --> Group : "wraps group operations"
-    Result --> ChatMessage : "wraps message operations"
+
 ```
 
 ---
@@ -257,8 +240,7 @@ classDiagram
 - **ChatMessage**: Group chat messages with sender info and timestamps
 - **ChatMessageGpt**: Simple AI chat messages (role + content only)
 
-### **🛠️ Utility Models (2)**
-- **Result<T>**: Generic wrapper for success/error states
+### **🛠️ Utility Models (1)**
 - **ValidationResult**: Data validation with error messages
 
 ### **🏗️ Architecture**
@@ -269,4 +251,4 @@ classDiagram
 
 ---
 
-*6 Data models providing the foundation for party management, user profiles, messaging, and validation throughout the app.* 
+*5 Data models providing the foundation for party management, user profiles, messaging, and validation throughout the app.* 
