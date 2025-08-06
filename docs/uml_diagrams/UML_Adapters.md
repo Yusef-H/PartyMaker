@@ -44,21 +44,20 @@ classDiagram
         -formatTime(group) String
         -loadGroupImage(imageUrl, imageView) void
         -setGroupTypeIndicator(holder, group) void
+    }
+    
+    class GroupViewHolder {
+        +TextView tvGroupName
+        +TextView tvGroupLocation
+        +TextView tvGroupDateTime
+        +TextView tvGroupPrice
+        +ImageView ivGroupImage
+        +View vGroupTypeIndicator
+        +CardView cardView
         
-        <<ViewHolder>>
-        class GroupViewHolder {
-            +TextView tvGroupName
-            +TextView tvGroupLocation
-            +TextView tvGroupDateTime
-            +TextView tvGroupPrice
-            +ImageView ivGroupImage
-            +View vGroupTypeIndicator
-            +CardView cardView
-            
-            +GroupViewHolder(itemView)
-            +bind(group) void
-            -setupClickListener() void
-        }
+        +GroupViewHolder(itemView)
+        +bind(group) void
+        -setupClickListener() void
     }
     
     class ChatAdapter {
@@ -90,18 +89,17 @@ classDiagram
         +addMessage(message) void
         +updateLastMessage(message) void
         +clearMessages() void
+    }
+    
+    class MessageViewHolder {
+        +TextView tvMessage
+        +TextView tvTimestamp
+        +View messageBubble
+        +ImageView ivAvatar
         
-        <<ViewHolder>>
-        class MessageViewHolder {
-            +TextView tvMessage
-            +TextView tvTimestamp
-            +View messageBubble
-            +ImageView ivAvatar
-            
-            +MessageViewHolder(itemView)
-            +bind(message, isFromUser) void
-            -animateMessage() void
-        }
+        +MessageViewHolder(itemView)
+        +bind(message, isFromUser) void
+        -animateMessage() void
     }
     
     class UserAdapter {
@@ -175,12 +173,7 @@ classDiagram
         +onCancelInvitation(user) void
     }
     
-    class OnComingActionListener {
-        <<interface>>
-        +onComingClick(user) void
-        +onMarkAsNotComing(user) void
-        +onRemoveFromGroup(user) void
-    }
+
     
     class OnItemClickListener~T~ {
         <<interface>>
@@ -239,7 +232,7 @@ classDiagram
     ChatbotAdapter --|> RecyclerView.Adapter
     UserAdapter --|> ArrayAdapter
     InvitedAdapter --|> ArrayAdapter
-    ComingAdapter --|> ArrayAdapter
+
     ViewPagerAdapter --|> PagerAdapter
     
     %% Composition relationships
@@ -258,8 +251,7 @@ classDiagram
     InvitedAdapter --> OnInvitedActionListener : uses
     InvitedAdapter --> GlideImageLoader : uses
     
-    ComingAdapter --> OnComingActionListener : uses
-    ComingAdapter --> GlideImageLoader : uses
+
     
     ChatAdapter --> DateTimeFormatter : uses
     ChatAdapter --> ImageCompressor : uses
@@ -325,7 +317,7 @@ classDiagram
 - **OnGroupClickListener**: Group card interactions (view, admin, long-press)
 - **OnUserActionListener**: User management actions (remove, promote, profile)
 - **OnInvitedActionListener**: Invitation management (resend, cancel)
-- **OnComingActionListener**: Attendance management (mark, remove)
+
 
 ### **🔄 Action Patterns:**
 - **Single Click**: Primary action (view details, open chat)

@@ -549,24 +549,4 @@ classDiagram
 
 ---
 
-## 🔄 **Activity Flow**
-
-### **Authentication:**
-```
-SplashActivity → IntroActivity → LoginActivity → MainActivity
-                                      ↓
-                                RegisterActivity → ResetPasswordActivity
-```
-
-### **Group Management:**
-```
-MainActivity → CreateGroupActivity → PartyMainActivity → ChatActivity
-                ↓                         ↓
-         PublicGroupsActivity      AdminOptionsActivity → AdminSettingsActivity
-                ↓                         ↓
-         JoinGroupActivity          FriendsAddActivity → MembersComingActivity
-```
-
----
-
 *24 Activities providing complete party management, authentication, and social features with proper Android lifecycle management and MVVM architecture.* 
