@@ -16,13 +16,11 @@ public class AppNetworkError {
    *
    * @param context The context
    * @param errorType The error type
-   * @param errorMessage The error message
    * @param isServerError Whether the error is related to the server connection
    */
   public static void showErrorMessage(
       Context context,
       NetworkUtils.ErrorType errorType,
-      String errorMessage,
       boolean isServerError) {
     if (context == null) return;
 
@@ -72,7 +70,7 @@ public class AppNetworkError {
       Context context, String error, NetworkUtils.ErrorType errorType, boolean isServerError) {
     if (context == null) return;
 
-    showErrorMessage(context, errorType, error, isServerError);
+    showErrorMessage(context, errorType, isServerError);
 
     // Log the error
     android.util.Log.e("AppNetworkError", "Network error: " + error + ", Type: " + errorType);

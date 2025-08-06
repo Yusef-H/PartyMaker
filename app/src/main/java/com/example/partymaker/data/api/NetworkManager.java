@@ -37,8 +37,6 @@ public class NetworkManager {
 
   /** Private constructor for singleton pattern. */
   private NetworkManager() {
-      Executor networkExecutor = Executors.newSingleThreadExecutor();
-      Handler mainHandler = new Handler(Looper.getMainLooper());
     isNetworkAvailable.setValue(false);
   }
 

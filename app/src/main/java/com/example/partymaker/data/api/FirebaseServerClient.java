@@ -660,7 +660,7 @@ public class FirebaseServerClient {
             String encodedUserId = java.net.URLEncoder.encode(user.getUserKey(), StandardCharsets.UTF_8);
             String url = serverUrl + "/api/firebase/Users/" + encodedUserId;
             String json = gson.toJson(user);
-            String response = makeHttpRequest(url, "POST", json);
+            makeHttpRequest(url, "POST", json);
             // Server returns empty response for POST, so return the original user object
             return user;
           } catch (Exception e) {

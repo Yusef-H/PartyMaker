@@ -229,7 +229,7 @@ public class EditProfileActivity extends AppCompatActivity {
           if (Boolean.FALSE.equals(
               ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
             AppNetworkError.showErrorMessage(
-                this, NetworkUtils.ErrorType.NO_NETWORK, "Network not available", false);
+                this, NetworkUtils.ErrorType.NO_NETWORK, false);
             return;
           }
 
@@ -562,7 +562,6 @@ public class EditProfileActivity extends AppCompatActivity {
       AppNetworkError.showErrorMessage(
           this,
           NetworkUtils.ErrorType.NO_NETWORK,
-          "Network not available. Cannot upload image.",
           false);
       return;
     }
