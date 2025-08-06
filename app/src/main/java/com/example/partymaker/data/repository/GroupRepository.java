@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Repository for Group data following the Repository pattern with proper separation of concerns.
@@ -506,11 +507,7 @@ public class GroupRepository {
     mediatorLiveData.addSource(
         roomLiveData,
         groups -> {
-          if (groups != null) {
-            mediatorLiveData.setValue(Result.success(groups));
-          } else {
-            mediatorLiveData.setValue(Result.success(new ArrayList<>()));
-          }
+            mediatorLiveData.setValue(Result.success(Objects.requireNonNullElseGet(groups, ArrayList::new)));
         });
 
     return mediatorLiveData;
