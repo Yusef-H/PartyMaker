@@ -25,6 +25,9 @@
 
     <!-- Notifications (required for Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- Vibration permission for haptic feedback -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- app doesn't require camera to run -->
     <uses-feature

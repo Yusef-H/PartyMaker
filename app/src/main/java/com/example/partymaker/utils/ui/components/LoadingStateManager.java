@@ -187,6 +187,21 @@ public class LoadingStateManager {
     return currentState == LoadingState.ERROR;
   }
 
+  /** Checks if currently showing success */
+  public boolean isShowingSuccess() {
+    return currentState == LoadingState.SUCCESS;
+  }
+
+  /** Checks if currently showing celebration */
+  public boolean isShowingCelebration() {
+    return currentState == LoadingState.CELEBRATION;
+  }
+
+  /** Checks if currently syncing */
+  public boolean isNetworkSyncing() {
+    return currentState == LoadingState.NETWORK_SYNC;
+  }
+
   /** Animates view visibility changes */
   private void animateViewTransition(@NonNull View view, boolean show) {
     if (show && view.getVisibility() == View.VISIBLE) {
@@ -224,7 +239,10 @@ public class LoadingStateManager {
     LOADING,
     CONTENT,
     ERROR,
-    EMPTY
+    EMPTY,
+    SUCCESS,
+    CELEBRATION,
+    NETWORK_SYNC
   }
 
   /** Sets custom Lottie animation for loading state */
@@ -245,6 +263,212 @@ public class LoadingStateManager {
   public void showLoadingWithAnimation(@NonNull String message, @Nullable String animationName) {
     setLottieAnimation(animationName);
     showLoading(message);
+  }
+
+  /** Shows success state with checkmark animation */
+  public void showSuccess() {
+    showSuccess("Success!");
+  }
+
+  /** Shows success state with custom message */
+  public void showSuccess(@NonNull String message) {
+    currentState = LoadingState.SUCCESS;
+    currentLoadingMessage = message;
+
+    // Hide content and progress bar
+    animateViewTransition(contentView, false);
+    animateViewTransition(progressBar, false);
+    if (errorView != null) {
+      animateViewTransition(errorView, false);
+    }
+
+    // Show success animation
+    if (lottieAnimation != null) {
+      lottieAnimation.setAnimation("success_checkmark.json");
+      lottieAnimation.setRepeatCount(0); // Play once
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    }
+
+    // Update and show text
+    updateLoadingMessage(message);
+    if (loadingText != null) {
+      animateViewTransition(loadingText, true);
+    }
+  }
+
+  /** Shows error state with warning animation */
+  public void showErrorWithAnimation() {
+    showErrorWithAnimation("Error occurred");
+  }
+
+  /** Shows error state with warning animation and custom message */
+  public void showErrorWithAnimation(@NonNull String errorMessage) {
+    currentState = LoadingState.ERROR;
+    currentLoadingMessage = errorMessage;
+
+    // Hide other views
+    animateViewTransition(contentView, false);
+    animateViewTransition(progressBar, false);
+
+    // Show error animation
+    if (lottieAnimation != null) {
+      lottieAnimation.setAnimation("error_warning.json");
+      lottieAnimation.setRepeatCount(0); // Play once
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    }
+
+    // Update and show text
+    updateLoadingMessage(errorMessage);
+    if (loadingText != null) {
+      animateViewTransition(loadingText, true);
+    }
+
+    // Show error view if available
+    if (errorView != null) {
+      animateViewTransition(errorView, true);
+    }
+  }
+
+  /** Shows celebration animation for achievements */
+  public void showCelebration() {
+    showCelebration("Congratulations!");
+  }
+
+  /** Shows celebration animation with custom message */
+  public void showCelebration(@NonNull String message) {
+    currentState = LoadingState.CELEBRATION;
+    currentLoadingMessage = message;
+
+    // Hide other views
+    animateViewTransition(progressBar, false);
+    if (errorView != null) {
+      animateViewTransition(errorView, false);
+    }
+
+    // Show celebration animation
+    if (lottieAnimation != null) {
+      lottieAnimation.setAnimation("party_celebration.json");
+      lottieAnimation.setRepeatCount(1); // Play twice for effect
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    }
+
+    // Update and show text
+    updateLoadingMessage(message);
+    if (loadingText != null) {
+      animateViewTransition(loadingText, true);
+    }
+
+    // Show content after celebration (delayed)
+    if (lottieAnimation != null) {
+      lottieAnimation.addAnimatorListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          // Auto-transition to content after celebration
+          android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+          handler.postDelayed(() -> showContent(), 1000);
+        }
+      });
+    }
+  }
+
+  /** Shows empty state with sad face animation */
+  public void showEmptyWithAnimation() {
+    showEmptyWithAnimation("No parties found");
+  }
+
+  /** Shows empty state with animation and custom message */
+  public void showEmptyWithAnimation(@NonNull String message) {
+    currentState = LoadingState.EMPTY;
+    currentLoadingMessage = message;
+
+    // Hide loading and error views
+    animateViewTransition(progressBar, false);
+    if (errorView != null) {
+      animateViewTransition(errorView, false);
+    }
+
+    // Show empty animation
+    if (lottieAnimation != null) {
+      lottieAnimation.setAnimation("empty_no_parties.json");
+      lottieAnimation.setRepeatCount(-1); // Loop indefinitely
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    }
+
+    // Update and show text
+    updateLoadingMessage(message);
+    if (loadingText != null) {
+      animateViewTransition(loadingText, true);
+    }
+
+    // Show content view (which should handle empty state display)
+    animateViewTransition(contentView, true);
+  }
+
+  /** Shows network sync animation for Firebase operations */
+  public void showNetworkSync() {
+    showNetworkSync("Syncing...");
+  }
+
+  /** Shows network sync animation with custom message */
+  public void showNetworkSync(@NonNull String message) {
+    currentState = LoadingState.NETWORK_SYNC;
+    currentLoadingMessage = message;
+
+    // Hide other views
+    animateViewTransition(contentView, false);
+    if (errorView != null) {
+      animateViewTransition(errorView, false);
+    }
+
+    // Show network sync animation
+    if (lottieAnimation != null) {
+      animateViewTransition(progressBar, false);
+      lottieAnimation.setAnimation("network_sync.json");
+      lottieAnimation.setRepeatCount(-1); // Loop while syncing
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    } else {
+      animateViewTransition(progressBar, true);
+    }
+
+    // Update and show text
+    updateLoadingMessage(message);
+    if (loadingText != null) {
+      animateViewTransition(loadingText, true);
+    }
+  }
+
+  /** Shows user switch animation */
+  public void showUserSwitch(@NonNull String message) {
+    currentState = LoadingState.LOADING; // Treat as loading variant
+    currentLoadingMessage = message;
+
+    // Hide other views
+    animateViewTransition(contentView, false);
+    if (errorView != null) {
+      animateViewTransition(errorView, false);
+    }
+
+    // Show user switch animation
+    if (lottieAnimation != null) {
+      animateViewTransition(progressBar, false);
+      lottieAnimation.setAnimation("user_switch.json");
+      lottieAnimation.setRepeatCount(0); // Play once
+      animateViewTransition(lottieAnimation, true);
+      lottieAnimation.playAnimation();
+    } else {
+      animateViewTransition(progressBar, true);
+    }
+
+    // Update and show text
+    updateLoadingMessage(message);
+    if (loadingText != null) {
+      animateViewTransition(loadingText, true);
+    }
   }
 
   /** Builder class for creating LoadingStateManager instances */

@@ -212,9 +212,14 @@ public class LoginActivity extends AppCompatActivity {
 
   private void handleAuthenticationSuccess(@Nullable Boolean isAuthenticated) {
     if (Boolean.TRUE.equals(isAuthenticated)) {
-      UiStateManager.showSuccess(rootView, "Login successful!");
-      saveUserPreferences();
-      navigateToMainActivity();
+      // Show simple success message instead of problematic animation
+      UiStateManager.showSuccess(rootView, "🎉 Login successful! Welcome back!");
+      
+      // Delay navigation briefly to show success message
+      ThreadUtils.runOnMainThreadDelayed(() -> {
+        saveUserPreferences();
+        navigateToMainActivity();
+      }, 800);
     }
   }
 

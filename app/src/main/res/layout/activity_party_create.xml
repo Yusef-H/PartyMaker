@@ -257,6 +257,40 @@
             app:fabSize="normal"
             tools:ignore="RelativeOverlap" />
 
+        <!-- Animation overlay for success/error feedback -->
+        <LinearLayout
+            android:id="@+id/animation_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#CC000000"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- Lottie Animation View -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_feedback"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="false" />
+
+            <!-- Feedback text -->
+            <TextView
+                android:id="@+id/feedback_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Success!"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
     <!-- Bottom Navigation -->
