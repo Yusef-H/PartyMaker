@@ -153,7 +153,7 @@
                 android:clipToPadding="false"
                 android:paddingHorizontal="16dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingBottom="96dp"
                 tools:listitem="@layout/item_group" />
 
             <!-- Empty State -->
