@@ -71,14 +71,6 @@ public class SecurityAgentExample {
   public static void schedulePeriodicScans(Context context) {
     // This would typically be done with WorkManager
     // Example:
-    /*
-    PeriodicWorkRequest scanWork = new PeriodicWorkRequest.Builder(
-        SecurityScanWorker.class,
-        24, TimeUnit.HOURS)
-        .build();
-
-    WorkManager.getInstance(context).enqueue(scanWork);
-    */
   }
 
   /** Example: Integration with existing app features */
