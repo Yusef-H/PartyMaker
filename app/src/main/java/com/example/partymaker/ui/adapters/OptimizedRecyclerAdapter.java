@@ -24,23 +24,34 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   }
 
   /**
-   * Gets an item at the specified position.
+   * Gets an item at the specified position with bounds checking.
    *
    * @param position The position
-   * @return The item
+   * @return The item, or null if position is out of bounds
    */
   public T getItem(int position) {
-    if (position >= 0 && position < items.size()) {
+    if (isValidPosition(position)) {
       return items.get(position);
     }
     return null;
   }
+  
+  /**
+   * Checks if the position is valid for the current items list.
+   *
+   * @param position The position to check
+   * @return true if position is valid
+   */
+  protected boolean isValidPosition(int position) {
+    return position >= 0 && position < items.size();
+  }
 
   /**
-   * Gets all items.
+   * Gets a defensive copy of all items.
    *
-   * @return The list of items
+   * @return A new list containing all items
    */
+  @NonNull
   public List<T> getItems() {
     return new ArrayList<>(items);
   }
@@ -112,9 +123,9 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   }
   
   /**
-   * Adds an item to the adapter at the specified position.
+   * Adds an item to the adapter at the specified position with validation.
    *
-   * @param item The item to add
+   * @param item The item to add (must not be null)
    * @param position The position to insert the item at
    */
   public void addItem(T item, int position) {
@@ -125,12 +136,12 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   }
 
   /**
-   * Removes an item from the adapter.
+   * Removes an item from the adapter with bounds checking.
    *
    * @param position The position of the item to remove
    */
   public void removeItem(int position) {
-    if (position >= 0 && position < items.size()) {
+    if (isValidPosition(position)) {
       items.remove(position);
       notifyItemRemoved(position);
     }

@@ -23,11 +23,13 @@ import java.util.List;
  * Adapter for displaying users in a ListView. Loads user profile images and displays user details.
  */
 public class UserAdapter extends ArrayAdapter<User> {
-  /** The context in which the adapter is used. */
-  final Context context;
+  private static final String NO_EMAIL_TEXT = "No email";
+  private static final String UNKNOWN_EMAIL = "unknown";
+  private static final char DOT_CHAR = '.';
+  private static final char SPACE_CHAR = ' ';
 
-  /** The list of users to display. */
-  final List<User> userList;
+  private final Context context;
+  private final List<User> userList;
 
   /**
    * Constructor for UserAdapter.
@@ -59,45 +61,70 @@ public class UserAdapter extends ArrayAdapter<User> {
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+    View view = inflateUserItemView(parent);
+    User user = userList.get(position);
 
-    LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    @SuppressLint("ViewHolder")
-    View view = layoutInflater.inflate(R.layout.item_user, parent, false);
-    User temp = userList.get(position);
-
-    TextView tvpUserName = view.findViewById(R.id.tvUserListUsername);
-    tvpUserName.setText(temp.getUsername());
-
-    TextView tvpEmail = view.findViewById(R.id.tvUserListEmail);
-    tvpEmail.setText(temp.getEmail() != null ? temp.getEmail() : "No email");
-
-    final ImageView imageView = view.findViewById(R.id.imgUserListProfile);
-
-    String UserImageProfile = temp.getEmail();
-    String email = UserImageProfile != null ? UserImageProfile.replace('.', ' ') : "unknown";
-
-    // Only try to load image if Firebase Auth is available
-    if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
-      DBRef.refStorage
-          .child("Users/" + email)
-          .getDownloadUrl()
-          .addOnSuccessListener(
-              uri ->
-                  Picasso.get()
-                      .load(uri) // image url goes here
-                      .fit()
-                      .centerCrop()
-                      .into(imageView))
-          .addOnFailureListener(
-              exception -> {
-                // Set default image on failure
-                imageView.setImageResource(R.drawable.ic_person);
-              });
-    } else {
-      // Set default image when Firebase Auth is not available
-      imageView.setImageResource(R.drawable.ic_person);
-    }
-
+    setupUserViews(view, user);
     return view;
+  }
+
+  private View inflateUserItemView(ViewGroup parent) {
+    LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
+    return layoutInflater.inflate(R.layout.item_user, parent, false);
+  }
+
+  private void setupUserViews(View view, User user) {
+    setupUserNameView(view, user);
+    setupUserEmailView(view, user);
+    setupUserImageView(view, user);
+  }
+
+  private void setupUserNameView(View view, User user) {
+    TextView tvUserName = view.findViewById(R.id.tvUserListUsername);
+    tvUserName.setText(user.getUsername());
+  }
+
+  private void setupUserEmailView(View view, User user) {
+    TextView tvEmail = view.findViewById(R.id.tvUserListEmail);
+    String email = user.getEmail() != null ? user.getEmail() : NO_EMAIL_TEXT;
+    tvEmail.setText(email);
+  }
+
+  private void setupUserImageView(View view, User user) {
+    ImageView imageView = view.findViewById(R.id.imgUserListProfile);
+    
+    if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
+      loadUserProfileImage(imageView, user);
+    } else {
+      setDefaultImage(imageView);
+    }
+  }
+
+  private void loadUserProfileImage(ImageView imageView, User user) {
+    String email = getProcessedEmail(user);
+    String imagePath = "Users/" + email;
+    
+    DBRef.refStorage
+        .child(imagePath)
+        .getDownloadUrl()
+        .addOnSuccessListener(uri -> loadImageWithPicasso(imageView, uri))
+        .addOnFailureListener(exception -> setDefaultImage(imageView));
+  }
+
+  private String getProcessedEmail(User user) {
+    String userEmail = user.getEmail();
+    return userEmail != null ? userEmail.replace(DOT_CHAR, SPACE_CHAR) : UNKNOWN_EMAIL;
+  }
+
+  private void loadImageWithPicasso(ImageView imageView, android.net.Uri uri) {
+    Picasso.get()
+        .load(uri)
+        .fit()
+        .centerCrop()
+        .into(imageView);
+  }
+
+  private void setDefaultImage(ImageView imageView) {
+    imageView.setImageResource(R.drawable.ic_person);
   }
 }

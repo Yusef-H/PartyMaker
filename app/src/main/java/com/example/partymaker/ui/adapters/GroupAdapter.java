@@ -24,7 +24,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.GroupViewHolder> {
 
+  private static final String TAG = "GroupAdapter";
   private static final long FIREBASE_TIMEOUT_MS = 3000L;
+  private static final float NORMAL_ALPHA = 1.0f;
+  private static final float NORMAL_SCALE = 1.0f;
+  private static final float ZERO_TRANSLATION = 0f;
+  private static final float ZERO_ROTATION = 0f;
+  private static final String DATE_FORMAT = "%s %s %s    %s";
+  private static final String OBJECT_NOT_EXIST_ERROR = "Object does not exist";
+  private static final String PRIMARY_STORAGE_PATH = "UsersImageProfile/Groups/";
+  private static final String FALLBACK_STORAGE_PATH = "Groups/";
   private final Context context;
   private final OnGroupClickListener listener;
 
@@ -59,14 +68,17 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
     }
   }
 
-  /** Ensures view is in completely normal state to prevent spacing issues */
+  /**
+   * Ensures view is in completely normal state to prevent spacing issues
+   * @param view the view to reset to normal state
+   */
   private void resetViewState(View view) {
-    view.setAlpha(1.0f);
-    view.setScaleX(1.0f);
-    view.setScaleY(1.0f);
-    view.setTranslationX(0f);
-    view.setTranslationY(0f);
-    view.setRotation(0f);
+    view.setAlpha(NORMAL_ALPHA);
+    view.setScaleX(NORMAL_SCALE);
+    view.setScaleY(NORMAL_SCALE);
+    view.setTranslationX(ZERO_TRANSLATION);
+    view.setTranslationY(ZERO_TRANSLATION);
+    view.setRotation(ZERO_ROTATION);
   }
 
   @Override
@@ -101,12 +113,20 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
         && oldItem.getGroupType() == newItem.getGroupType();
   }
 
-  /** Interface for handling group click events. */
+  /**
+   * Interface for handling group click events
+   */
   public interface OnGroupClickListener {
+    /**
+     * Called when a group item is clicked
+     * @param group the clicked group
+     */
     void onGroupClick(Group group);
   }
 
-  /** ViewHolder for group items. */
+  /**
+   * ViewHolder for group items
+   */
   class GroupViewHolder extends RecyclerView.ViewHolder {
     private final TextView groupNameTextView;
     private final TextView groupDateTextView;
@@ -117,34 +137,46 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       groupNameTextView = itemView.findViewById(R.id.tvGroupName);
       groupDateTextView = itemView.findViewById(R.id.tvGroupDate);
       groupImageView = itemView.findViewById(R.id.imgGroupPicture);
-
-      // Removed press animations to prevent spacing issues
-      // Keep cards at consistent elevation and spacing
-
-      itemView.setOnClickListener(
-          v -> {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION && listener != null) {
-              // Immediate navigation without animation to prevent spacing issues
-              listener.onGroupClick(getItem(position));
-            }
-          });
-
-      // Add long click for share functionality with subtle haptic feedback only
-      itemView.setOnLongClickListener(
-          v -> {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-              Group group = getItem(position);
-              // Only haptic feedback, no visual animation to prevent layout issues
-              v.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
-              ContentSharingManager.sharePartyText(context, group);
-            }
-            return true;
-          });
+      setupClickListeners();
     }
 
-    /** Clears the ViewHolder content to prevent showing old data during recycling */
+    /**
+     * Sets up click and long click listeners
+     */
+    private void setupClickListeners() {
+      itemView.setOnClickListener(this::handleItemClick);
+      itemView.setOnLongClickListener(this::handleItemLongClick);
+    }
+
+    /**
+     * Handles regular click events on group items
+     * @param view the clicked view
+     */
+    private void handleItemClick(View view) {
+      int position = getAdapterPosition();
+      if (position != RecyclerView.NO_POSITION && listener != null) {
+        listener.onGroupClick(getItem(position));
+      }
+    }
+
+    /**
+     * Handles long click events for sharing functionality
+     * @param view the long-clicked view
+     * @return true if the event was handled
+     */
+    private boolean handleItemLongClick(View view) {
+      int position = getAdapterPosition();
+      if (position != RecyclerView.NO_POSITION) {
+        Group group = getItem(position);
+        view.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+        ContentSharingManager.sharePartyText(context, group);
+      }
+      return true;
+    }
+
+    /**
+     * Clears the ViewHolder content to prevent showing old data during recycling
+     */
     void clear() {
       groupNameTextView.setText("");
       groupDateTextView.setText("");
@@ -152,127 +184,227 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       groupImageView.setTag(null);
     }
 
+    /**
+     * Binds group data to the view holder
+     * @param group the group data to display
+     */
     void bind(Group group) {
-      // Set content immediately for text to prevent layout shifts
-      groupNameTextView.setText(group.getGroupName());
-
-      // Format date
-      String date =
-          String.format(
-              "%s %s %s    %s",
-              group.getGroupDays(),
-              group.getGroupMonths(),
-              group.getGroupYears(),
-              group.getGroupHours());
-      groupDateTextView.setText(date);
-
-      // Handle image loading separately to avoid blocking text display
+      setGroupName(group);
+      setGroupDate(group);
       loadGroupImage(group.getGroupKey());
     }
 
-    /** Improved image loading that doesn't interfere with text display */
+    /**
+     * Sets the group name in the text view
+     * @param group the group containing the name
+     */
+    private void setGroupName(Group group) {
+      groupNameTextView.setText(group.getGroupName());
+    }
+
+    /**
+     * Formats and sets the group date in the text view
+     * @param group the group containing date information
+     */
+    private void setGroupDate(Group group) {
+      String formattedDate = String.format(
+          DATE_FORMAT,
+          group.getGroupDays(),
+          group.getGroupMonths(),
+          group.getGroupYears(),
+          group.getGroupHours());
+      groupDateTextView.setText(formattedDate);
+    }
+
+    /**
+     * Improved image loading that doesn't interfere with text display
+     * @param groupKey the key of the group to load image for
+     */
     private void loadGroupImage(String groupKey) {
-      // Set default image first
-      groupImageView.setImageResource(R.drawable.default_group_image);
-
-      if (groupKey == null || groupKey.isEmpty()) {
-        return;
+      setDefaultImage();
+      
+      if (isGroupKeyValid(groupKey)) {
+        prepareImageViewForLoading(groupKey);
+        loadGroupImageWithTimeout(groupKey, groupImageView);
       }
+    }
 
-      // Store group key as tag for recycling check
+    /**
+     * Sets the default image in the image view
+     */
+    private void setDefaultImage() {
+      groupImageView.setImageResource(R.drawable.default_group_image);
+    }
+
+    /**
+     * Checks if the group key is valid for image loading
+     * @param groupKey the group key to validate
+     * @return true if key is valid, false otherwise
+     */
+    private boolean isGroupKeyValid(String groupKey) {
+      return groupKey != null && !groupKey.isEmpty();
+    }
+
+    /**
+     * Prepares the image view for loading by setting the group key as tag
+     * @param groupKey the group key to store as tag
+     */
+    private void prepareImageViewForLoading(String groupKey) {
       groupImageView.setTag(groupKey);
-
-      // Load image with shorter timeout to prevent delays
-      loadGroupImageWithTimeout(groupKey, groupImageView);
     }
 
     /**
      * Loads group image with timeout and enhanced error handling. Tries multiple Firebase Storage
      * paths with fallback mechanism.
+     * @param groupKey the key of the group to load image for
+     * @param imageView the image view to load the image into
      */
     private void loadGroupImageWithTimeout(String groupKey, ImageView imageView) {
-      // Shorter timeout for Firebase Storage requests to prevent delays
-      final long timeoutMs = FIREBASE_TIMEOUT_MS;
-
-      // Try primary path with timeout
-      Task<android.net.Uri> primaryTask =
-          com.example.partymaker.data.firebase.DBRef.refStorage
-              .child("UsersImageProfile/Groups/" + groupKey)
-              .getDownloadUrl();
-
-      // Apply timeout to the task
-      Task<android.net.Uri> timedPrimaryTask =
-          Tasks.withTimeout(primaryTask, timeoutMs, TimeUnit.MILLISECONDS);
+      Task<android.net.Uri> primaryTask = createPrimaryImageTask(groupKey);
+      Task<android.net.Uri> timedPrimaryTask = Tasks.withTimeout(primaryTask, FIREBASE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
       timedPrimaryTask
-          .addOnSuccessListener(
-              uri -> {
-                // Check if this ViewHolder is still showing the same group
-                if (groupKey.equals(imageView.getTag())) {
-                  Log.d(
-                      "GroupAdapter",
-                      "Successfully loaded image from primary path for group: " + groupKey);
-                  GlideImageLoader.loadImage(
-                      context, uri.toString(), imageView, R.drawable.default_group_image);
-                }
-              })
-          .addOnFailureListener(
-              e -> {
-                // Log the error but don't spam logcat for missing images
-                if (!(e.getMessage() != null && e.getMessage().contains("Object does not exist"))) {
-                  Log.w(
-                      "GroupAdapter",
-                      "Primary path failed for group " + groupKey + ": " + e.getMessage());
-                }
-
-                // Try fallback path with timeout, but only if ViewHolder still shows same group
-                if (groupKey.equals(imageView.getTag())) {
-                  tryFallbackImagePath(groupKey, imageView);
-                }
-              });
+          .addOnSuccessListener(uri -> handlePrimaryImageSuccess(groupKey, imageView, uri))
+          .addOnFailureListener(error -> handlePrimaryImageFailure(groupKey, imageView, error));
     }
 
-    /** Tries the fallback Firebase Storage path for group images. */
+    /**
+     * Creates the primary image loading task
+     * @param groupKey the group key for the image
+     * @return the Firebase task for loading the image
+     */
+    private Task<android.net.Uri> createPrimaryImageTask(String groupKey) {
+      return com.example.partymaker.data.firebase.DBRef.refStorage
+          .child(PRIMARY_STORAGE_PATH + groupKey)
+          .getDownloadUrl();
+    }
+
+    /**
+     * Handles successful loading of image from primary path
+     * @param groupKey the group key
+     * @param imageView the image view to load into
+     * @param uri the image URI
+     */
+    private void handlePrimaryImageSuccess(String groupKey, ImageView imageView, android.net.Uri uri) {
+      if (isImageViewStillValid(groupKey, imageView)) {
+        Log.d(TAG, "Successfully loaded image from primary path for group: " + groupKey);
+        GlideImageLoader.loadImage(context, uri.toString(), imageView, R.drawable.default_group_image);
+      }
+    }
+
+    /**
+     * Handles failure to load image from primary path
+     * @param groupKey the group key
+     * @param imageView the image view
+     * @param error the error that occurred
+     */
+    private void handlePrimaryImageFailure(String groupKey, ImageView imageView, Exception error) {
+      logPrimaryImageError(groupKey, error);
+      
+      if (isImageViewStillValid(groupKey, imageView)) {
+        tryFallbackImagePath(groupKey, imageView);
+      }
+    }
+
+    /**
+     * Logs errors from primary image loading, filtering out common "not found" errors
+     * @param groupKey the group key
+     * @param error the error to log
+     */
+    private void logPrimaryImageError(String groupKey, Exception error) {
+      if (!isObjectNotExistError(error)) {
+        Log.w(TAG, "Primary path failed for group " + groupKey + ": " + error.getMessage());
+      }
+    }
+
+    /**
+     * Checks if the error is a common "object does not exist" error
+     * @param error the error to check
+     * @return true if it's an object not exist error
+     */
+    private boolean isObjectNotExistError(Exception error) {
+      return error.getMessage() != null && error.getMessage().contains(OBJECT_NOT_EXIST_ERROR);
+    }
+
+    /**
+     * Checks if the image view is still valid for the given group key
+     * @param groupKey the group key to check
+     * @param imageView the image view to validate
+     * @return true if the image view still corresponds to the group key
+     */
+    private boolean isImageViewStillValid(String groupKey, ImageView imageView) {
+      return groupKey.equals(imageView.getTag());
+    }
+
+    /**
+     * Tries the fallback Firebase Storage path for group images
+     * @param groupKey the group key
+     * @param imageView the image view to load into
+     */
     private void tryFallbackImagePath(String groupKey, ImageView imageView) {
-      final long timeoutMs = FIREBASE_TIMEOUT_MS;
-
-      Task<android.net.Uri> fallbackTask =
-          com.example.partymaker.data.firebase.DBRef.refStorage
-              .child("Groups/" + groupKey)
-              .getDownloadUrl();
-
-      // Apply timeout to fallback task
-      Task<android.net.Uri> timedFallbackTask =
-          Tasks.withTimeout(fallbackTask, timeoutMs, TimeUnit.MILLISECONDS);
+      Task<android.net.Uri> fallbackTask = createFallbackImageTask(groupKey);
+      Task<android.net.Uri> timedFallbackTask = Tasks.withTimeout(fallbackTask, FIREBASE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
       timedFallbackTask
-          .addOnSuccessListener(
-              uri -> {
-                // Double-check the tag again
-                if (groupKey.equals(imageView.getTag())) {
-                  Log.d(
-                      "GroupAdapter",
-                      "Successfully loaded image from fallback path for group: " + groupKey);
-                  GlideImageLoader.loadImage(
-                      context, uri.toString(), imageView, R.drawable.default_group_image);
-                }
-              })
-          .addOnFailureListener(
-              e -> {
-                // Only log non-404 errors to reduce log spam
-                if (!(e.getMessage() != null && e.getMessage().contains("Object does not exist"))) {
-                  Log.w(
-                      "GroupAdapter",
-                      "Fallback path also failed for group " + groupKey + ": " + e.getMessage());
-                }
+          .addOnSuccessListener(uri -> handleFallbackImageSuccess(groupKey, imageView, uri))
+          .addOnFailureListener(error -> handleFallbackImageFailure(groupKey, imageView, error));
+    }
 
-                // Keep default image - it's already set, no need to change
-                if (groupKey.equals(imageView.getTag())) {
-                  Log.d(
-                      "GroupAdapter",
-                      "Using default image for group: " + groupKey + " (both paths failed)");
-                }
-              });
+    /**
+     * Creates the fallback image loading task
+     * @param groupKey the group key for the image
+     * @return the Firebase task for loading the fallback image
+     */
+    private Task<android.net.Uri> createFallbackImageTask(String groupKey) {
+      return com.example.partymaker.data.firebase.DBRef.refStorage
+          .child(FALLBACK_STORAGE_PATH + groupKey)
+          .getDownloadUrl();
+    }
+
+    /**
+     * Handles successful loading of image from fallback path
+     * @param groupKey the group key
+     * @param imageView the image view to load into
+     * @param uri the image URI
+     */
+    private void handleFallbackImageSuccess(String groupKey, ImageView imageView, android.net.Uri uri) {
+      if (isImageViewStillValid(groupKey, imageView)) {
+        Log.d(TAG, "Successfully loaded image from fallback path for group: " + groupKey);
+        GlideImageLoader.loadImage(context, uri.toString(), imageView, R.drawable.default_group_image);
+      }
+    }
+
+    /**
+     * Handles failure to load image from fallback path
+     * @param groupKey the group key
+     * @param imageView the image view
+     * @param error the error that occurred
+     */
+    private void handleFallbackImageFailure(String groupKey, ImageView imageView, Exception error) {
+      logFallbackImageError(groupKey, error);
+      logDefaultImageUsage(groupKey, imageView);
+    }
+
+    /**
+     * Logs errors from fallback image loading
+     * @param groupKey the group key
+     * @param error the error to log
+     */
+    private void logFallbackImageError(String groupKey, Exception error) {
+      if (!isObjectNotExistError(error)) {
+        Log.w(TAG, "Fallback path also failed for group " + groupKey + ": " + error.getMessage());
+      }
+    }
+
+    /**
+     * Logs that default image is being used
+     * @param groupKey the group key
+     * @param imageView the image view
+     */
+    private void logDefaultImageUsage(String groupKey, ImageView imageView) {
+      if (isImageViewStillValid(groupKey, imageView)) {
+        Log.d(TAG, "Using default image for group: " + groupKey + " (both paths failed)");
+      }
     }
   }
 }

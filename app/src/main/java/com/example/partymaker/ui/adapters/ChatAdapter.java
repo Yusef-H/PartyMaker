@@ -100,12 +100,12 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
     @SuppressLint("ViewHolder")
     View view = layoutInflater.inflate(R.layout.item_chat_message, parent, false);
-    ChatMessage temp = messageList.get(position);
+    ChatMessage message = messageList.get(position);
 
     String currentUser = AuthenticationManager.getCurrentUserEmail(context);
     // Convert to the same format as messageUser (dots replaced with spaces)
     String currentUserKey = currentUser != null ? currentUser.replace('.', ' ') : null;
-    boolean isMine = temp.getMessageUser() != null && temp.getMessageUser().equals(currentUserKey);
+    boolean isMine = message.getMessageUser() != null && message.getMessageUser().equals(currentUserKey);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);
@@ -115,17 +115,17 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     Space spaceRight = view.findViewById(R.id.spaceRight);
 
     // Handle message text, checking for null or complex content
-    String messageText = getString(temp);
+    String messageText = getString(message);
     tvMessage.setText(messageText);
 
     // Handle time display with null check
-    displayMessageTime(temp, tvTime);
+    displayMessageTime(message, tvTime);
 
     // Style message bubble based on sender
-    styleMessageBubble(isMine, bubbleLayout, tvSender, spaceLeft, spaceRight, tvMessage, tvTime, temp);
+    styleMessageBubble(isMine, bubbleLayout, tvSender, spaceLeft, spaceRight, tvMessage, tvTime, message);
 
     // Add spaces between messages
-    setMessagePadding(position, view, temp);
+    setMessagePadding(position, view, message);
 
     return view;
   }

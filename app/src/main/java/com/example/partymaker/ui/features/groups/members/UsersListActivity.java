@@ -26,15 +26,27 @@ import java.util.Map;
 
 public class UsersListActivity extends AppCompatActivity {
   private static final String TAG = "UsersListActivity";
+  
+  // UI constants
+  private static final String ACTIVITY_TITLE = "All users";
+  private static final String ACTION_BAR_COLOR = "#0081d1";
+  private static final String LOADING_MESSAGE = "Loading users...";
+  private static final String NO_USERS_MESSAGE = "No users found";
+  private static final String ADD_FRIEND_TITLE = "Add Friend";
+  private static final String ADD_TO_COMING_TITLE = "Add to Coming List";
+  
+  // Static context accessor
   public static Context contextOfApplication;
-  private ListView lv;
+  
+  // UI Components
+  private ListView userListView;
   private FirebaseServerClient serverClient;
   private ArrayList<User> usersList;
 
   // Group data
-  private String GroupKey;
-  private HashMap<String, Object> FriendKeys;
-  private HashMap<String, Object> ComingKeys;
+  private String groupKey;
+  private HashMap<String, Object> friendKeys;
+  private HashMap<String, Object> comingKeys;
 
   public static Context getContextOfApplication() {
     return contextOfApplication;
@@ -50,65 +62,85 @@ public class UsersListActivity extends AppCompatActivity {
     serverClient = FirebaseServerClient.getInstance();
 
     // Get group data from intent
-    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
-    if (extras != null) {
-      GroupKey = extras.getGroupKey();
-      String adminKey = extras.getAdminKey();
-      FriendKeys = extras.getFriendKeys();
-      ComingKeys = extras.getComingKeys();
+    initializeGroupData();
 
-      Log.d(TAG, "Received GroupKey: " + GroupKey);
-      Log.d(TAG, "Received AdminKey: " + adminKey);
-      if (FriendKeys != null) {
-        Log.d(TAG, "Received FriendKeys: " + FriendKeys.size());
-      } else {
-        Log.d(TAG, "FriendKeys is null");
-      }
-    } else {
-      Log.e(TAG, "No extras received from intent");
-    }
-
-    // Actionbar settings
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle("All users");
-      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
-      actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    lv = findViewById(R.id.lv);
+    setupActionBar();
+    userListView = findViewById(R.id.lv);
 
     // Get users reference using FirebaseAccessManager
     FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
 
-    ShowData();
+    loadUsersData();
     setupEventHandlers();
   }
 
+  private void initializeGroupData() {
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
+    if (extras != null) {
+      groupKey = extras.getGroupKey();
+      String adminKey = extras.getAdminKey();
+      friendKeys = extras.getFriendKeys();
+      comingKeys = extras.getComingKeys();
+
+      Log.d(TAG, "Received GroupKey: " + groupKey);
+      Log.d(TAG, "Received AdminKey: " + adminKey);
+      logGroupDataInfo();
+    } else {
+      Log.e(TAG, "No extras received from intent");
+    }
+  }
+  
+  private void logGroupDataInfo() {
+    if (friendKeys != null) {
+      Log.d(TAG, "Received FriendKeys: " + friendKeys.size());
+    } else {
+      Log.d(TAG, "FriendKeys is null");
+    }
+  }
+  
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setTitle(ACTIVITY_TITLE);
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(ACTION_BAR_COLOR)));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+  }
+
   private void setupEventHandlers() {
-    lv.setOnItemClickListener(
+    userListView.setOnItemClickListener(
         (parent, view, position, id) -> {
           User selectedUser = usersList.get(position);
 
-          if (selectedUser == null || selectedUser.getEmail() == null) {
-            Toast.makeText(this, "Invalid user selected", Toast.LENGTH_SHORT).show();
+          if (!isValidUserSelection(selectedUser)) {
             return;
           }
 
-          // Check if group data is available
-          if (GroupKey == null || GroupKey.isEmpty()) {
-            Toast.makeText(this, "No group data available", Toast.LENGTH_SHORT).show();
-            return;
-          }
-
-          // Confirm adding the user
-          new androidx.appcompat.app.AlertDialog.Builder(this)
-              .setTitle("Add Friend")
-              .setMessage("Add " + selectedUser.getEmail() + " to the group?")
-              .setPositiveButton("Add", (dialog, which) -> addUserToGroup(selectedUser))
-              .setNegativeButton("Cancel", null)
-              .show();
+          showAddUserConfirmation(selectedUser);
         });
+  }
+  
+  private boolean isValidUserSelection(User selectedUser) {
+    if (selectedUser == null || selectedUser.getEmail() == null) {
+      Toast.makeText(this, "Invalid user selected", Toast.LENGTH_SHORT).show();
+      return false;
+    }
+
+    if (groupKey == null || groupKey.isEmpty()) {
+      Toast.makeText(this, "No group data available", Toast.LENGTH_SHORT).show();
+      return false;
+    }
+    
+    return true;
+  }
+  
+  private void showAddUserConfirmation(User selectedUser) {
+    new androidx.appcompat.app.AlertDialog.Builder(this)
+        .setTitle(ADD_FRIEND_TITLE)
+        .setMessage("Add " + selectedUser.getEmail() + " to the group?")
+        .setPositiveButton("Add", (dialog, which) -> addUserToGroup(selectedUser))
+        .setNegativeButton("Cancel", null)
+        .show();
   }
 
   private void addUserToGroup(User user) {
@@ -156,7 +188,7 @@ public class UsersListActivity extends AppCompatActivity {
 
     // Check if user is already in the group
     serverClient.getGroup(
-        GroupKey,
+        groupKey,
         new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
@@ -188,21 +220,21 @@ public class UsersListActivity extends AppCompatActivity {
               return;
             }
 
-            Log.d(TAG, "Updating FriendKeys at path: Groups/" + GroupKey + "/FriendKeys");
+            Log.d(TAG, "Updating FriendKeys at path: Groups/" + groupKey + "/FriendKeys");
             Log.d(TAG, "Adding: " + userEmail + " -> " + finalUserKey);
 
             // Try direct Firebase update first
             try {
               // Update directly in Firebase
               HashMap<String, Object> directUpdates = new HashMap<>();
-              if (FriendKeys == null) {
-                FriendKeys = new HashMap<>();
+              if (friendKeys == null) {
+                friendKeys = new HashMap<>();
               }
-              FriendKeys.put(userEmail, finalUserKey);
-              directUpdates.put("FriendKeys", FriendKeys);
+              friendKeys.put(userEmail, finalUserKey);
+              directUpdates.put("FriendKeys", friendKeys);
 
               serverClient.updateGroup(
-                  GroupKey,
+                  groupKey,
                   directUpdates,
                   new FirebaseServerClient.OperationCallback() {
                     @Override
@@ -215,7 +247,7 @@ public class UsersListActivity extends AppCompatActivity {
 
                       // Ask if user wants to add to coming list
                       new androidx.appcompat.app.AlertDialog.Builder(UsersListActivity.this)
-                          .setTitle("Add to Coming List")
+                          .setTitle(ADD_TO_COMING_TITLE)
                           .setMessage("Add " + user.getEmail() + " to the coming list?")
                           .setPositiveButton(
                               "Yes", (dialog, which) -> addUserToComingList(userEmail))
@@ -262,14 +294,14 @@ public class UsersListActivity extends AppCompatActivity {
 
     // Update directly in Firebase
     HashMap<String, Object> directUpdates = new HashMap<>();
-    if (ComingKeys == null) {
-      ComingKeys = new HashMap<>();
+    if (comingKeys == null) {
+      comingKeys = new HashMap<>();
     }
-    ComingKeys.put(userEmail, "true");
-    directUpdates.put("ComingKeys", ComingKeys);
+    comingKeys.put(userEmail, "true");
+    directUpdates.put("ComingKeys", comingKeys);
 
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         directUpdates,
         new FirebaseServerClient.OperationCallback() {
           @Override
@@ -290,9 +322,9 @@ public class UsersListActivity extends AppCompatActivity {
         });
   }
 
-  private void ShowData() {
+  private void loadUsersData() {
     // Show loading indicator
-    Toast.makeText(this, "Loading users...", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, LOADING_MESSAGE, Toast.LENGTH_SHORT).show();
 
     // Always use server client for consistency
     serverClient.getUsers(
@@ -301,10 +333,10 @@ public class UsersListActivity extends AppCompatActivity {
           public void onSuccess(Map<String, User> data) {
             usersList = new ArrayList<>(data.values());
             UserAdapter adapter = new UserAdapter(UsersListActivity.this, 0, 0, usersList);
-            lv.setAdapter(adapter);
+            userListView.setAdapter(adapter);
 
             if (usersList.isEmpty()) {
-              Toast.makeText(UsersListActivity.this, "No users found", Toast.LENGTH_SHORT).show();
+              Toast.makeText(UsersListActivity.this, NO_USERS_MESSAGE, Toast.LENGTH_SHORT).show();
             }
           }
 

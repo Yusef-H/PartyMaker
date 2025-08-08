@@ -25,101 +25,121 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class ChangeDateActivity extends AppCompatActivity {
-  private Button btnHide, btnHelp, btnChangeDate, btnSelectDate, btnSelectTime;
-  private TextView tvHide, tvHelp, tvInstructions1, tvSelectedDate, tvSelectedTime;
-  private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
-  private String GroupKey,
-      GroupName,
-      GroupDay,
-      GroupMonth,
-      GroupYear,
-      GroupHour,
-      GroupLocation,
-      AdminKey,
-      CreatedAt,
-      GroupPrice,
-      UserKey; // Add UserKey for admin verification
-  private int GroupType;
-  private boolean CanAdd;
+  
+  private static final String TAG = "ChangeDateActivity";
+  
+  // UI constants
+  private static final String ADMIN_VERIFICATION_MESSAGE = "Verifying admin permissions...";
+  private static final String ACCESS_DENIED_MESSAGE = "Access denied. Only group admin can change party dates.";
+  private static final String AUTH_ERROR_MESSAGE = "Authentication error. Please login again.";
+  private static final String VERIFICATION_FAILED_MESSAGE = "Failed to verify admin status: ";
+  private static final String ACCESS_DENIED_VERIFICATION_MESSAGE = "Access denied. Admin verification failed.";
+  private static final String DATE_SELECTED_MESSAGE = "Date selected: ";
+  private static final String TIME_SELECTED_MESSAGE = "Time selected: ";
+  private static final String SUCCESSFULLY_CHANGED_MESSAGE = "Successfully Changed";
+  
+  // UI Components
+  private Button hideButton, helpButton, changeDateButton, selectDateButton, selectTimeButton;
+  private TextView hideText, helpText, instructionsText, selectedDateText, selectedTimeText;
+  
+  // Group data
+  private HashMap<String, Object> friendKeys, comingKeys, messageKeys;
+  private String groupKey, groupName, groupDay, groupMonth, groupYear, groupHour;
+  private String groupLocation, adminKey, createdAt, groupPrice, userKey;
+  private int groupType;
+  private boolean canAdd;
+  
+  // Date and verification state
   private Calendar selectedDate;
-  private boolean isAdminVerified = false; // Track admin verification status
+  private boolean isAdminVerified = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_change_date);
 
-    // this 2 lines disables the action bar only in this activity
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
-    }
-
-    // Initialize calendar with current date
-    selectedDate = Calendar.getInstance();
-
-    // Get current user key for admin verification
-    try {
-      UserKey = AuthenticationManager.getCurrentUserKey(this);
-    } catch (Exception e) {
-      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
-      finish();
+    hideActionBar();
+    initializeDate();
+    
+    if (!authenticateUser() || !extractGroupDataFromIntent()) {
       return;
     }
-
-    // Get Values from MainActivity By intent + connection between intent and
-    // current activity objects
-    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
-    if (extras == null) {
-      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
-      finish();
-      return;
-    }
-    GroupName = extras.getGroupName();
-    GroupKey = extras.getGroupKey();
-    GroupDay = extras.getGroupDays();
-    GroupMonth = extras.getGroupMonths();
-    GroupYear = extras.getGroupYears();
-    GroupHour = extras.getGroupHours();
-    GroupLocation = extras.getGroupLocation();
-    AdminKey = extras.getAdminKey();
-    CreatedAt = extras.getCreatedAt();
-    GroupPrice = extras.getGroupPrice();
-    GroupType = extras.getGroupType();
-    CanAdd = extras.isCanAdd();
-    FriendKeys = extras.getFriendKeys();
-    ComingKeys = extras.getComingKeys();
-    MessageKeys = extras.getMessageKeys();
 
     // Verify admin status before allowing access
     verifyAdminStatus();
   }
 
+  private void hideActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
+  }
+  
+  private void initializeDate() {
+    selectedDate = Calendar.getInstance();
+  }
+  
+  private boolean authenticateUser() {
+    try {
+      userKey = AuthenticationManager.getCurrentUserKey(this);
+      return true;
+    } catch (Exception e) {
+      Toast.makeText(this, AUTH_ERROR_MESSAGE, Toast.LENGTH_LONG).show();
+      finish();
+      return false;
+    }
+  }
+  
+  private boolean extractGroupDataFromIntent() {
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return false;
+    }
+    
+    groupName = extras.getGroupName();
+    groupKey = extras.getGroupKey();
+    groupDay = extras.getGroupDays();
+    groupMonth = extras.getGroupMonths();
+    groupYear = extras.getGroupYears();
+    groupHour = extras.getGroupHours();
+    groupLocation = extras.getGroupLocation();
+    adminKey = extras.getAdminKey();
+    createdAt = extras.getCreatedAt();
+    groupPrice = extras.getGroupPrice();
+    groupType = extras.getGroupType();
+    canAdd = extras.isCanAdd();
+    friendKeys = extras.getFriendKeys();
+    comingKeys = extras.getComingKeys();
+    messageKeys = extras.getMessageKeys();
+    
+    return true;
+  }
+  
   private void verifyAdminStatus() {
     // Show loading message
-    Toast.makeText(this, "Verifying admin permissions...", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, ADMIN_VERIFICATION_MESSAGE, Toast.LENGTH_SHORT).show();
 
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroup(
-        GroupKey,
+        groupKey,
         new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
             if (group != null
                 && group.getAdminKey() != null
-                && group.getAdminKey().equals(UserKey)) {
+                && group.getAdminKey().equals(userKey)) {
               // User is verified as admin
               isAdminVerified = true;
               // Update local admin key to match server data
-              AdminKey = group.getAdminKey();
+              adminKey = group.getAdminKey();
               // Initialize UI after verification
               initializeUI();
             } else {
               // User is not admin - deny access
-              Toast.makeText(
-                      ChangeDateActivity.this,
-                      "Access denied. Only group admin can change party dates.",
-                      Toast.LENGTH_LONG)
+              Toast.makeText(ChangeDateActivity.this, ACCESS_DENIED_MESSAGE, Toast.LENGTH_LONG)
                   .show();
               finish();
             }
@@ -129,7 +149,7 @@ public class ChangeDateActivity extends AppCompatActivity {
           public void onError(String errorMessage) {
             Toast.makeText(
                     ChangeDateActivity.this,
-                    "Failed to verify admin status: " + errorMessage,
+                    VERIFICATION_FAILED_MESSAGE + errorMessage,
                     Toast.LENGTH_LONG)
                 .show();
             finish();
@@ -141,36 +161,40 @@ public class ChangeDateActivity extends AppCompatActivity {
     // Initialize current date from group data
     initializeDateFromGroupData();
 
-    // connection
-    btnChangeDate = findViewById(R.id.btnChangeDate);
-    btnSelectDate = findViewById(R.id.btnSelectDate);
-    btnSelectTime = findViewById(R.id.btnSelectTime);
-    btnHide = findViewById(R.id.btnHide2);
-    btnHelp = findViewById(R.id.btnHelp2);
-    tvHide = findViewById(R.id.tvHide2);
-    tvHelp = findViewById(R.id.tvHelp2);
-    tvInstructions1 = findViewById(R.id.tvInstructions2);
-    tvSelectedDate = findViewById(R.id.tvSelectedDate);
-    tvSelectedTime = findViewById(R.id.tvSelectedTime);
+    // Initialize UI components
+    initializeViewComponents();
 
     // Update UI with current values
     updateDateTimeDisplay();
 
-    eventHandler();
+    setupEventHandlers();
+  }
+  
+  private void initializeViewComponents() {
+    changeDateButton = findViewById(R.id.btnChangeDate);
+    selectDateButton = findViewById(R.id.btnSelectDate);
+    selectTimeButton = findViewById(R.id.btnSelectTime);
+    hideButton = findViewById(R.id.btnHide2);
+    helpButton = findViewById(R.id.btnHelp2);
+    hideText = findViewById(R.id.tvHide2);
+    helpText = findViewById(R.id.tvHelp2);
+    instructionsText = findViewById(R.id.tvInstructions2);
+    selectedDateText = findViewById(R.id.tvSelectedDate);
+    selectedTimeText = findViewById(R.id.tvSelectedTime);
   }
 
   private void initializeDateFromGroupData() {
     try {
       // Parse existing date values
-      int day = Integer.parseInt(GroupDay);
-      int year = Integer.parseInt(GroupYear);
+      int day = Integer.parseInt(groupDay);
+      int year = Integer.parseInt(groupYear);
 
       // Handle month - could be name or number
       int month;
-      if (GroupMonth.matches("\\d+")) {
-        month = Integer.parseInt(GroupMonth) - 1; // Calendar months are 0-based
+      if (groupMonth.matches("\\d+")) {
+        month = Integer.parseInt(groupMonth) - 1; // Calendar months are 0-based
       } else {
-        month = getMonthNumber(GroupMonth) - 1;
+        month = getMonthNumber(groupMonth) - 1;
       }
 
       selectedDate.set(year, month, day);
@@ -226,90 +250,85 @@ public class ChangeDateActivity extends AppCompatActivity {
   private void updateDateTimeDisplay() {
     // Update date display
     SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
-    tvSelectedDate.setText(dateFormat.format(selectedDate.getTime()));
+    selectedDateText.setText(dateFormat.format(selectedDate.getTime()));
 
     // Update time display
-    tvSelectedTime.setText(GroupHour);
+    selectedTimeText.setText(groupHour);
   }
 
-  private void eventHandler() {
+  private void setupEventHandlers() {
     // Check admin verification before allowing any operations
     if (!isAdminVerified) {
       Toast.makeText(this, "Admin verification required", Toast.LENGTH_SHORT).show();
       return;
     }
 
-    btnHelp.setOnClickListener(
+    helpButton.setOnClickListener(
         v -> {
-          showViews(tvInstructions1, btnHide, tvHide);
-          hideViews(btnHelp, tvHelp);
+          showViews(instructionsText, hideButton, hideText);
+          hideViews(helpButton, helpText);
         });
 
-    btnHide.setOnClickListener(
+    hideButton.setOnClickListener(
         v -> {
-          showViews(btnHelp, tvHelp);
-          hideViews(tvInstructions1, btnHide, tvHide);
+          showViews(helpButton, helpText);
+          hideViews(instructionsText, hideButton, hideText);
         });
 
-    btnSelectDate.setOnClickListener(v -> showDatePicker());
+    selectDateButton.setOnClickListener(v -> showDatePicker());
 
-    btnSelectTime.setOnClickListener(v -> showTimePicker());
+    selectTimeButton.setOnClickListener(v -> showTimePicker());
 
-    btnChangeDate.setOnClickListener(
-        v -> {
-          // Double-check admin status before making changes
-          if (!isAdminVerified || !AdminKey.equals(UserKey)) {
-            Toast.makeText(
-                    ChangeDateActivity.this,
-                    "Access denied. Admin verification failed.",
-                    Toast.LENGTH_LONG)
-                .show();
-            return;
-          }
-
-          // Update group data with selected values
-          GroupDay = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
-          GroupMonth = new SimpleDateFormat("MMMM", Locale.ENGLISH).format(selectedDate.getTime());
-          GroupYear = String.valueOf(selectedDate.get(Calendar.YEAR));
-
-          // set new value in firebase
-          DBRef.refGroups.child(GroupKey).child("groupDays").setValue(GroupDay);
-          DBRef.refGroups.child(GroupKey).child("groupMonths").setValue(GroupMonth);
-          DBRef.refGroups.child(GroupKey).child("groupYears").setValue(GroupYear);
-          DBRef.refGroups.child(GroupKey).child("groupHours").setValue(GroupHour);
-
-          // Type Successfully Changes
-          Toast.makeText(ChangeDateActivity.this, "Successfully Changed", Toast.LENGTH_SHORT)
-              .show();
-
-          // intent from ChangeDate to AdminOptions
-          Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);
-          ExtrasMetadata extras =
-              new ExtrasMetadata(
-                  GroupName,
-                  GroupKey,
-                  GroupDay,
-                  GroupMonth,
-                  GroupYear,
-                  GroupHour,
-                  GroupLocation,
-                  AdminKey,
-                  CreatedAt,
-                  GroupPrice,
-                  GroupType,
-                  CanAdd,
-                  FriendKeys,
-                  ComingKeys,
-                  MessageKeys);
-          IntentExtrasManager.addExtrasToIntent(intent, extras);
-          startActivity(intent);
-        });
+    changeDateButton.setOnClickListener(v -> handleDateChange());
   }
 
+  private void handleDateChange() {
+    // Double-check admin status before making changes
+    if (!isAdminVerified || !adminKey.equals(userKey)) {
+      Toast.makeText(this, ACCESS_DENIED_VERIFICATION_MESSAGE, Toast.LENGTH_LONG).show();
+      return;
+    }
+
+    // Update group data with selected values
+    updateGroupDateData();
+    saveChangesToFirebase();
+    showSuccessAndNavigate();
+  }
+  
+  private void updateGroupDateData() {
+    groupDay = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
+    groupMonth = new SimpleDateFormat("MMMM", Locale.ENGLISH).format(selectedDate.getTime());
+    groupYear = String.valueOf(selectedDate.get(Calendar.YEAR));
+  }
+  
+  private void saveChangesToFirebase() {
+    DBRef.refGroups.child(groupKey).child("groupDays").setValue(groupDay);
+    DBRef.refGroups.child(groupKey).child("groupMonths").setValue(groupMonth);
+    DBRef.refGroups.child(groupKey).child("groupYears").setValue(groupYear);
+    DBRef.refGroups.child(groupKey).child("groupHours").setValue(groupHour);
+  }
+  
+  private void showSuccessAndNavigate() {
+    Toast.makeText(ChangeDateActivity.this, SUCCESSFULLY_CHANGED_MESSAGE, Toast.LENGTH_SHORT).show();
+
+    // Navigate back to AdminOptions
+    Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);
+    ExtrasMetadata extras = createExtrasMetadata();
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
+    startActivity(intent);
+  }
+  
+  private ExtrasMetadata createExtrasMetadata() {
+    return new ExtrasMetadata(
+        groupName, groupKey, groupDay, groupMonth, groupYear, groupHour,
+        groupLocation, adminKey, createdAt, groupPrice, groupType, canAdd,
+        friendKeys, comingKeys, messageKeys);
+  }
+  
   private void showDatePicker() {
     // Check admin verification before allowing date selection
-    if (!isAdminVerified || !AdminKey.equals(UserKey)) {
-      Toast.makeText(this, "Access denied. Admin verification failed.", Toast.LENGTH_LONG).show();
+    if (!isAdminVerified || !adminKey.equals(userKey)) {
+      Toast.makeText(this, ACCESS_DENIED_VERIFICATION_MESSAGE, Toast.LENGTH_LONG).show();
       return;
     }
 
@@ -322,7 +341,7 @@ public class ChangeDateActivity extends AppCompatActivity {
               updateDateTimeDisplay();
               Toast.makeText(
                       this,
-                      "Date selected: " + dayOfMonth + "/" + (month + 1) + "/" + year,
+                      DATE_SELECTED_MESSAGE + dayOfMonth + "/" + (month + 1) + "/" + year,
                       Toast.LENGTH_SHORT)
                   .show();
             },
@@ -337,34 +356,24 @@ public class ChangeDateActivity extends AppCompatActivity {
 
   private void showTimePicker() {
     // Check admin verification before allowing time selection
-    if (!isAdminVerified || !AdminKey.equals(UserKey)) {
-      Toast.makeText(this, "Access denied. Admin verification failed.", Toast.LENGTH_LONG).show();
+    if (!isAdminVerified || !adminKey.equals(userKey)) {
+      Toast.makeText(this, ACCESS_DENIED_VERIFICATION_MESSAGE, Toast.LENGTH_LONG).show();
       return;
     }
 
     // Parse current time
-    int hour = 12;
-    int minute = 0;
-
-    try {
-      if (GroupHour != null && GroupHour.contains(":")) {
-        String[] timeParts = GroupHour.split(":");
-        hour = Integer.parseInt(timeParts[0]);
-        minute = Integer.parseInt(timeParts[1]);
-      }
-    } catch (Exception e) {
-      // Use default values if parsing fails
-    }
+    int[] timeValues = parseCurrentTime();
+    int hour = timeValues[0];
+    int minute = timeValues[1];
 
     TimePickerDialog timePickerDialog =
         new TimePickerDialog(
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog,
             (view, selectedHour, selectedMinute) -> {
-              GroupHour =
-                  String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+              groupHour = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
               updateDateTimeDisplay();
-              Toast.makeText(this, "Time selected: " + GroupHour, Toast.LENGTH_SHORT).show();
+              Toast.makeText(this, TIME_SELECTED_MESSAGE + groupHour, Toast.LENGTH_SHORT).show();
             },
             hour,
             minute,
@@ -372,5 +381,22 @@ public class ChangeDateActivity extends AppCompatActivity {
             );
 
     timePickerDialog.show();
+  }
+  
+  private int[] parseCurrentTime() {
+    int hour = 12;
+    int minute = 0;
+
+    try {
+      if (groupHour != null && groupHour.contains(":")) {
+        String[] timeParts = groupHour.split(":");
+        hour = Integer.parseInt(timeParts[0]);
+        minute = Integer.parseInt(timeParts[1]);
+      }
+    } catch (Exception e) {
+      // Use default values if parsing fails
+    }
+    
+    return new int[]{hour, minute};
   }
 }

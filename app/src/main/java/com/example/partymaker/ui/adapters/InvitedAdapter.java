@@ -21,14 +21,19 @@ import java.util.List;
 
 /** Adapter for displaying invited users in a ListView. Shows user details and admin flag. */
 public class InvitedAdapter extends ArrayAdapter<User> {
+  
+  // Character constants for email formatting
+  private static final char DOT_CHAR = '.';
+  private static final char SPACE_CHAR = ' ';
+  
   /** The context in which the adapter is used. */
-  final Context context;
+  private final Context context;
 
   /** The list of invited users to display. */
-  final List<User> invitedList;
+  private final List<User> invitedList;
 
   /** The admin key for identifying admin users. */
-  final String adminKey;
+  private final String adminKey;
 
   /**
    * Constructor for InvitedAdapter.
@@ -62,58 +67,109 @@ public class InvitedAdapter extends ArrayAdapter<User> {
   @NonNull
   @Override
   public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-    LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
-    @SuppressLint("ViewHolder")
-    View view = layoutInflater.inflate(R.layout.item_invited, parent, false);
-    User temp = invitedList.get(position);
+    View view = inflateItemView(parent);
+    User user = invitedList.get(position);
 
-    TextView tvpUserName = view.findViewById(R.id.tvInvitedUsername);
-    tvpUserName.setText(temp.getUsername());
-
-    TextView tvpEmail = view.findViewById(R.id.tvInvitedEmail);
-    tvpEmail.setText(temp.getEmail());
-
-    final ImageView imageView = view.findViewById(R.id.imgInvitedProfile);
-    String UserImageProfile = temp.getEmail();
-    String email = UserImageProfile.replace('.', ' ');
-
-    // Only try to load image if Firebase Auth is available
-    if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
-      DBRef.refStorage
-          .child("Users/" + email)
-          .getDownloadUrl()
-          .addOnSuccessListener(
-              uri ->
-                  Picasso.get()
-                      .load(uri) // image url goes here
-                      .fit()
-                      .centerCrop()
-                      .into(imageView))
-          .addOnFailureListener(
-              exception -> {
-                // Set default image on failure
-                imageView.setImageResource(R.drawable.ic_person);
-              });
-    } else {
-      // Set default image when Firebase Auth is not available
-      imageView.setImageResource(R.drawable.ic_person);
-    }
-
-    // Show flag for admin
-    ImageView adminFlag = view.findViewById(R.id.imgAdminFlag);
-
-    if (adminFlag != null && adminKey != null) {
-      // Remove dot
-      String tempEmailFormatted = temp.getEmail().replace('.', ' ');
-      String adminKeyFormatted = adminKey.replace('.', ' ');
-
-      if (adminKeyFormatted.equals(tempEmailFormatted)) {
-        adminFlag.setVisibility(View.VISIBLE);
-      } else {
-        adminFlag.setVisibility(View.INVISIBLE);
-      }
-    }
-
+    setupUserViews(view, user);
     return view;
+  }
+  
+  /**
+   * Inflates the item view layout.
+   */
+  private View inflateItemView(ViewGroup parent) {
+    LayoutInflater layoutInflater = ((Activity) context).getLayoutInflater();
+    return layoutInflater.inflate(R.layout.item_invited, parent, false);
+  }
+  
+  /**
+   * Sets up all user views in the item layout.
+   */
+  private void setupUserViews(View view, User user) {
+    setupUserTextViews(view, user);
+    setupUserImage(view, user);
+    setupAdminFlag(view, user);
+  }
+  
+  /**
+   * Sets up the text views for username and email.
+   */
+  private void setupUserTextViews(View view, User user) {
+    TextView tvUserName = view.findViewById(R.id.tvInvitedUsername);
+    tvUserName.setText(user.getUsername());
+
+    TextView tvEmail = view.findViewById(R.id.tvInvitedEmail);
+    tvEmail.setText(user.getEmail());
+  }
+  
+  /**
+   * Sets up the user profile image.
+   */
+  private void setupUserImage(View view, User user) {
+    ImageView imageView = view.findViewById(R.id.imgInvitedProfile);
+    
+    if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
+      loadUserProfileImage(imageView, user);
+    } else {
+      setDefaultImage(imageView);
+    }
+  }
+  
+  /**
+   * Loads the user profile image from Firebase Storage.
+   */
+  private void loadUserProfileImage(ImageView imageView, User user) {
+    String userEmail = user.getEmail();
+    if (userEmail != null) {
+      String formattedEmail = userEmail.replace(DOT_CHAR, SPACE_CHAR);
+      String imagePath = "Users/" + formattedEmail;
+      
+      DBRef.refStorage
+          .child(imagePath)
+          .getDownloadUrl()
+          .addOnSuccessListener(uri -> loadImageWithPicasso(imageView, uri))
+          .addOnFailureListener(exception -> setDefaultImage(imageView));
+    } else {
+      setDefaultImage(imageView);
+    }
+  }
+  
+  /**
+   * Loads image using Picasso library.
+   */
+  private void loadImageWithPicasso(ImageView imageView, android.net.Uri uri) {
+    Picasso.get()
+        .load(uri)
+        .fit()
+        .centerCrop()
+        .into(imageView);
+  }
+  
+  /**
+   * Sets the default image for user profile.
+   */
+  private void setDefaultImage(ImageView imageView) {
+    imageView.setImageResource(R.drawable.ic_person);
+  }
+  
+  /**
+   * Sets up the admin flag visibility.
+   */
+  private void setupAdminFlag(View view, User user) {
+    ImageView adminFlag = view.findViewById(R.id.imgAdminFlag);
+    
+    if (adminFlag != null && adminKey != null && user.getEmail() != null) {
+      boolean isAdmin = isUserAdmin(user.getEmail());
+      adminFlag.setVisibility(isAdmin ? View.VISIBLE : View.INVISIBLE);
+    }
+  }
+  
+  /**
+   * Checks if the user is an admin by comparing formatted emails.
+   */
+  private boolean isUserAdmin(String userEmail) {
+    String formattedUserEmail = userEmail.replace(DOT_CHAR, SPACE_CHAR);
+    String formattedAdminKey = adminKey.replace(DOT_CHAR, SPACE_CHAR);
+    return formattedAdminKey.equals(formattedUserEmail);
   }
 }

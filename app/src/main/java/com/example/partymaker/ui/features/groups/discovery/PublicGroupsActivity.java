@@ -42,11 +42,19 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private static final String ACTION_BAR_END_COLOR = "#0E81D1";
   private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
   private static final float ACTION_BAR_ELEVATION = 15f;
-  ArrayList<Group> group;
-  String UserKey;
+  private static final String NO_PUBLIC_PARTIES_MESSAGE = "No public parties available";
+  private static final String AUTH_ERROR_MESSAGE = "Authentication error. Please login again.";
+  private static final int PUBLIC_GROUP_TYPE = 0;
+  private static final int TODAY_FILTER = 0;
+  private static final int WEEK_FILTER = 7;
+  private static final String FREE_PRICE = "0";
+  private static final String FREE_PRICE_TEXT = "free";
+  
+  private ArrayList<Group> groups;
+  private String userKey;
   private Object groupsRef;
   private GroupAdapter allGroupsAdapter;
-  private ArrayList<Group> allGroups; // Store original unfiltered list
+  private ArrayList<Group> allGroups;
   private ChipGroup chipGroupFilters;
 
   @Override
@@ -54,29 +62,11 @@ public class PublicGroupsActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main_public_parties);
 
-    // Set up toolbar
-    Toolbar toolbar = findViewById(R.id.toolbar);
-    if (toolbar != null) {
-      setSupportActionBar(toolbar);
-      setupActionBar();
-    } else {
-      // Fallback to regular action bar if toolbar not found
-      setupActionBar();
-    }
-
-    // Initialize user
-    initializeUser();
-
-    // Initialize views
+    setupToolbar();
+    if (!initializeUser()) return;
     initializeViews();
-
-    // Setup event handlers
     setupEventHandlers();
-
-    // Setup bottom navigation
     setupBottomNavigation();
-
-    // Load public groups
     loadPublicGroups();
   }
 
@@ -115,14 +105,24 @@ public class PublicGroupsActivity extends AppCompatActivity {
     }
   }
 
-  private void initializeUser() {
+  private void setupToolbar() {
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    if (toolbar != null) {
+      setSupportActionBar(toolbar);
+    }
+    setupActionBar();
+  }
+
+  private boolean initializeUser() {
     try {
-      UserKey = AuthenticationManager.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
+      userKey = AuthenticationManager.getCurrentUserKey(this);
+      Log.d(TAG, "UserKey from AuthHelper: " + userKey);
+      return true;
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
-      Toast.makeText(this, "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+      Toast.makeText(this, AUTH_ERROR_MESSAGE, Toast.LENGTH_LONG).show();
       finish();
+      return false;
     }
   }
 
@@ -133,44 +133,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
       allGroupsAdapter =
           new GroupAdapter(
               this,
-              group -> {
-                // intent Value
-                String groupName = group.getGroupName();
-                String groupKey = group.getGroupKey();
-                String groupDays = group.getGroupDays();
-                String groupMonths = group.getGroupMonths();
-                String groupYears = group.getGroupYears();
-                String groupHours = group.getGroupHours();
-                String groupLocation = group.getGroupLocation();
-                String adminKey = group.getAdminKey();
-                String createdAt = group.getCreatedAt();
-                String GroupPrice = group.getGroupPrice();
-                int GroupType = group.getGroupType();
-                boolean CanAdd = group.isCanAdd();
-                HashMap<String, Object> FriendKeys = group.getFriendKeys();
-                HashMap<String, Object> ComingKeys = group.getComingKeys();
-                HashMap<String, Object> MessageKeys = group.getMessageKeys();
-                Intent intent = new Intent(getBaseContext(), JoinGroupActivity.class);
-                ExtrasMetadata extras =
-                    new ExtrasMetadata(
-                        groupName,
-                        groupKey,
-                        groupDays,
-                        groupMonths,
-                        groupYears,
-                        groupHours,
-                        groupLocation,
-                        adminKey,
-                        createdAt,
-                        GroupPrice,
-                        GroupType,
-                        CanAdd,
-                        FriendKeys,
-                        ComingKeys,
-                        MessageKeys);
-                IntentExtrasManager.addExtrasToIntent(intent, extras);
-                startActivity(intent);
-              });
+              this::navigateToJoinGroup);
       lv1.setAdapter(allGroupsAdapter);
     }
 
@@ -195,60 +158,81 @@ public class PublicGroupsActivity extends AppCompatActivity {
     NavigationManager.setupBottomNavigation(this, "publicparties");
   }
 
+  private void navigateToJoinGroup(Group group) {
+    Intent intent = new Intent(getBaseContext(), JoinGroupActivity.class);
+    ExtrasMetadata extras = createExtrasFromGroup(group);
+    IntentExtrasManager.addExtrasToIntent(intent, extras);
+    startActivity(intent);
+  }
+
+  private ExtrasMetadata createExtrasFromGroup(Group group) {
+    return new ExtrasMetadata(
+        group.getGroupName(), group.getGroupKey(), group.getGroupDays(),
+        group.getGroupMonths(), group.getGroupYears(), group.getGroupHours(),
+        group.getGroupLocation(), group.getAdminKey(), group.getCreatedAt(),
+        group.getGroupPrice(), group.getGroupType(), group.isCanAdd(),
+        group.getFriendKeys(), group.getComingKeys(), group.getMessageKeys());
+  }
+
   public void loadPublicGroups() {
-    // Initialize groupsRef if not already done
+    initializeGroupsRef();
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    serverClient.getGroups(new FirebaseServerClient.DataCallback<>() {
+      @Override
+      public void onSuccess(Map<String, Group> data) {
+        processServerGroupData(data);
+      }
+
+      @Override
+      public void onError(String errorMessage) {
+        Toast.makeText(PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT).show();
+      }
+    });
+  }
+
+  private void initializeGroupsRef() {
     if (groupsRef == null) {
       FirebaseAccessManager accessManager = new FirebaseAccessManager(this);
       groupsRef = accessManager.getGroupsRef();
     }
-
-    // Always use server mode
-    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
-    serverClient.getGroups(
-        new FirebaseServerClient.DataCallback<>() {
-          @Override
-          public void onSuccess(Map<String, Group> data) {
-            processServerGroupData(data);
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Toast.makeText(
-                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
   }
 
   private void processServerGroupData(Map<String, Group> groupData) {
-    ArrayList<Group> groupList = new ArrayList<>();
-    for (Group p : groupData.values()) {
-      HashMap<String, Object> UserKeys = p.getFriendKeys();
-      if (p.getGroupType() == 0) { // if group is public
-        boolean flag = false;
-        if (UserKeys != null) {
-          for (String userKey : UserKeys.keySet()) { // scan all group friends
-            if (UserKey.equals(userKey)) {
-              flag = true;
-              break;
-            }
-          }
-        }
-        if (!flag) {
-          groupList.add(p);
-        }
-      }
-    }
-
-    // Store original list for filtering
+    ArrayList<Group> groupList = filterPublicGroups(groupData);
     allGroups = new ArrayList<>(groupList);
 
     if (allGroupsAdapter != null) {
       allGroupsAdapter.updateItems(groupList);
     }
     if (groupList.isEmpty()) {
-      Toast.makeText(this, "No public parties available", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, NO_PUBLIC_PARTIES_MESSAGE, Toast.LENGTH_SHORT).show();
     }
+  }
+
+  private ArrayList<Group> filterPublicGroups(Map<String, Group> groupData) {
+    ArrayList<Group> groupList = new ArrayList<>();
+    for (Group group : groupData.values()) {
+      if (isPublicGroupAndUserNotMember(group)) {
+        groupList.add(group);
+      }
+    }
+    return groupList;
+  }
+
+  private boolean isPublicGroupAndUserNotMember(Group group) {
+    if (group.getGroupType() != PUBLIC_GROUP_TYPE) {
+      return false;
+    }
+
+    HashMap<String, Object> groupUserKeys = group.getFriendKeys();
+    if (groupUserKeys != null) {
+      for (String key : groupUserKeys.keySet()) {
+        if (userKey.equals(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private void applyFilter(int chipId) {
@@ -259,9 +243,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
     if (chipId == R.id.chipAll) {
       filteredList = new ArrayList<>(allGroups);
     } else if (chipId == R.id.chipToday) {
-      filteredList = filterGroupsByDate(allGroups, 0); // Today
+      filteredList = filterGroupsByDate(allGroups, TODAY_FILTER);
     } else if (chipId == R.id.chipThisWeek) {
-      filteredList = filterGroupsByDate(allGroups, 7); // This week
+      filteredList = filterGroupsByDate(allGroups, WEEK_FILTER);
     } else if (chipId == R.id.chipFree) {
       filteredList = filterGroupsByPrice(allGroups);
     }
@@ -275,14 +259,24 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
   private ArrayList<Group> filterGroupsByDate(ArrayList<Group> groups, int daysFromNow) {
     ArrayList<Group> filtered = new ArrayList<>();
-    Calendar calendar = Calendar.getInstance();
+    Calendar[] dateRange = calculateDateRange(daysFromNow);
+    Calendar startDate = dateRange[0];
+    Calendar endDate = dateRange[1];
 
-    // Get target date range
+    for (Group group : groups) {
+      if (isGroupInDateRange(group, startDate, endDate)) {
+        filtered.add(group);
+      }
+    }
+
+    return filtered;
+  }
+
+  private Calendar[] calculateDateRange(int daysFromNow) {
     Calendar startDate = Calendar.getInstance();
     Calendar endDate = Calendar.getInstance();
 
-    if (daysFromNow == 0) {
-      // Today only
+    if (daysFromNow == TODAY_FILTER) {
       startDate.set(Calendar.HOUR_OF_DAY, 0);
       startDate.set(Calendar.MINUTE, 0);
       startDate.set(Calendar.SECOND, 0);
@@ -290,46 +284,47 @@ public class PublicGroupsActivity extends AppCompatActivity {
       endDate.set(Calendar.MINUTE, 59);
       endDate.set(Calendar.SECOND, 59);
     } else {
-      // This week (next 7 days)
       endDate.add(Calendar.DAY_OF_YEAR, daysFromNow);
     }
 
-    for (Group group : groups) {
-      try {
-        String groupDateStr =
-            group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        Date groupDate = dateFormat.parse(groupDateStr);
+    return new Calendar[]{startDate, endDate};
+  }
 
-        if (groupDate != null) {
-          Calendar groupCalendar = Calendar.getInstance();
-          groupCalendar.setTime(groupDate);
+  private boolean isGroupInDateRange(Group group, Calendar startDate, Calendar endDate) {
+    try {
+      String groupDateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
+      SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+      Date groupDate = dateFormat.parse(groupDateStr);
 
-          if (groupCalendar.compareTo(startDate) >= 0 && groupCalendar.compareTo(endDate) <= 0) {
-            filtered.add(group);
-          }
-        }
-      } catch (Exception e) {
-        Log.w(TAG, "Failed to parse date for group: " + group.getGroupName(), e);
+      if (groupDate != null) {
+        Calendar groupCalendar = Calendar.getInstance();
+        groupCalendar.setTime(groupDate);
+        return groupCalendar.compareTo(startDate) >= 0 && groupCalendar.compareTo(endDate) <= 0;
       }
+    } catch (Exception e) {
+      Log.w(TAG, "Failed to parse date for group: " + group.getGroupName(), e);
     }
-
-    return filtered;
+    return false;
   }
 
   private ArrayList<Group> filterGroupsByPrice(ArrayList<Group> groups) {
     ArrayList<Group> filtered = new ArrayList<>();
     for (Group group : groups) {
-      try {
-        String priceStr = group.getGroupPrice();
-        if (priceStr == null || priceStr.equals("0") || priceStr.equalsIgnoreCase("free")) {
-          filtered.add(group);
-        }
-      } catch (Exception e) {
-        Log.w(TAG, "Failed to parse price for group: " + group.getGroupName(), e);
+      if (isFreeGroup(group)) {
+        filtered.add(group);
       }
     }
     return filtered;
+  }
+
+  private boolean isFreeGroup(Group group) {
+    try {
+      String priceStr = group.getGroupPrice();
+      return priceStr == null || priceStr.equals(FREE_PRICE) || priceStr.equalsIgnoreCase(FREE_PRICE_TEXT);
+    } catch (Exception e) {
+      Log.w(TAG, "Failed to parse price for group: " + group.getGroupName(), e);
+      return false;
+    }
   }
 
   @Override

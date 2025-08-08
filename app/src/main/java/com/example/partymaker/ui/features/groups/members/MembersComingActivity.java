@@ -22,8 +22,16 @@ import java.util.Map;
 public class MembersComingActivity extends AppCompatActivity {
 
   private static final String TAG = "MembersComingActivity";
-  private ListView lv3;
-  private HashMap<String, Object> ComingKeys;
+  
+  // UI constants
+  private static final String ACTIVITY_TITLE = "Coming to party";
+  private static final String ACTION_BAR_COLOR = "#0081d1";
+  private static final String LOADING_MESSAGE = "Loading coming members...";
+  private static final String NO_MEMBERS_MESSAGE = "No members coming";
+  
+  // UI Components
+  private ListView membersList;
+  private HashMap<String, Object> comingKeys;
   private String adminKey;
 
   @Override
@@ -31,13 +39,7 @@ public class MembersComingActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_coming);
 
-    // this 3 lines changes title's name
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle("Coming to party");
-      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
-      actionBar.setDisplayHomeAsUpEnabled(true);
-    }
+    setupActionBar();
 
     ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
@@ -47,33 +49,30 @@ public class MembersComingActivity extends AppCompatActivity {
       return;
     }
 
-    // connection between intent from GroupScreen and InvitedList
-    ComingKeys = extras.getComingKeys();
+    // Extract data from intent extras
+    comingKeys = extras.getComingKeys();
     adminKey = extras.getAdminKey();
     String groupKey = extras.getGroupKey();
 
     Log.d(
-        TAG, "Received extras - ComingKeys: " + (ComingKeys != null ? ComingKeys.size() : "null"));
+        TAG, "Received extras - ComingKeys: " + (comingKeys != null ? comingKeys.size() : "null"));
     Log.d(TAG, "AdminKey: " + adminKey);
     Log.d(TAG, "GroupKey: " + groupKey);
 
     // Debug: Print detailed ComingKeys information
-    if (ComingKeys != null) {
-      Log.d(TAG, "ComingKeys is not null, size: " + ComingKeys.size());
-      Log.d(TAG, "ComingKeys contents:");
-      for (String key : ComingKeys.keySet()) {
-        Log.d(TAG, "  ComingKey: '" + key + "' -> " + ComingKeys.get(key));
+    if (comingKeys != null) {
+      Log.d(TAG, "ComingKeys is not null, size: " + comingKeys.size());
+      logComingKeysDetails();
+      for (String key : comingKeys.keySet()) {
+        Log.d(TAG, "  ComingKey: '" + key + "' -> " + comingKeys.get(key));
       }
     } else {
       Log.e(TAG, "ComingKeys is null! This is the problem.");
 
-      // Try to get ComingKeys directly from intent
-      @SuppressWarnings("unchecked")
-      HashMap<String, Object> directComingKeys =
-          (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
-      if (directComingKeys != null) {
-        Log.d(TAG, "Found ComingKeys directly in intent, size: " + directComingKeys.size());
-        ComingKeys = directComingKeys;
+      // Try to get ComingKeys directly from intent as fallback
+      comingKeys = extractComingKeysFromIntent();
+      if (comingKeys != null) {
+        Log.d(TAG, "Found ComingKeys directly in intent, size: " + comingKeys.size());
       } else {
         Log.e(TAG, "ComingKeys not found in intent either");
       }
@@ -89,19 +88,37 @@ public class MembersComingActivity extends AppCompatActivity {
       Log.d(TAG, "UserKey from Intent: " + userKey);
     }
 
-    lv3 = findViewById(R.id.lv3);
+    membersList = findViewById(R.id.lv3);
 
-    // Show data directly without admin verification
-    ShowData();
-    EventHandler();
+    // Show data and setup event handlers
+    showMembersData();
+    setupEventHandlers();
   }
 
-  private void EventHandler() {
-    lv3.setOnItemClickListener((parent, view, position, id) -> {});
-    lv3.setOnItemLongClickListener((parent, view, position, id) -> false);
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setTitle(ACTIVITY_TITLE);
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(ACTION_BAR_COLOR)));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+  }
+  
+  private void logComingKeysDetails() {
+    Log.d(TAG, "ComingKeys contents:");
+  }
+  
+  @SuppressWarnings("unchecked")
+  private HashMap<String, Object> extractComingKeysFromIntent() {
+    return (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
+  }
+  
+  private void setupEventHandlers() {
+    membersList.setOnItemClickListener((parent, view, position, id) -> {});
+    membersList.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
-  private void ShowData() {
+  private void showMembersData() {
     Log.d(TAG, "Starting to load users data");
 
     // Use server mode instead of direct Firebase access
@@ -113,11 +130,8 @@ public class MembersComingActivity extends AppCompatActivity {
             Log.d(TAG, "Received " + users.size() + " users from server");
 
             // Debug: Print ComingKeys
-            if (ComingKeys != null) {
-              Log.d(TAG, "ComingKeys contents:");
-              for (String key : ComingKeys.keySet()) {
-                Log.d(TAG, "  ComingKey: '" + key + "' -> " + ComingKeys.get(key));
-              }
+            if (comingKeys != null) {
+              logComingKeysContents();
             } else {
               Log.e(TAG, "ComingKeys is null!");
             }
@@ -144,41 +158,28 @@ public class MembersComingActivity extends AppCompatActivity {
               }
             }
 
-            ArrayList<User> ArrUsers = new ArrayList<>();
-            HashMap<String, Object> ComingFriends = ComingKeys;
+            ArrayList<User> comingUsers = new ArrayList<>();
+            HashMap<String, Object> comingFriends = comingKeys;
 
-            for (User p : users.values()) {
-              if (p != null && p.getEmail() != null) {
-                String UserMail = p.getEmail().replace('.', ' ');
-                Log.d(
-                    TAG,
-                    "Processing user: '" + p.getEmail() + "' -> normalized: '" + UserMail + "'");
+            for (User user : users.values()) {
+              if (isValidUser(user)) {
+                String normalizedEmail = user.getEmail().replace('.', ' ');
+                Log.d(TAG, "Processing user: '" + user.getEmail() + "' -> normalized: '" + normalizedEmail + "'");
 
-                if (ComingFriends != null) {
-                  boolean foundMatch = false;
-                  for (String GroupFriend : ComingFriends.keySet()) {
-                    Log.d(TAG, "  Comparing '" + UserMail + "' with '" + GroupFriend + "'");
-                    if (GroupFriend != null && GroupFriend.equals(UserMail)) {
-                      Log.d(TAG, "Found matching user: " + UserMail);
-                      ArrUsers.add(p);
-                      foundMatch = true;
-                      break;
-                    }
-                  }
-                  if (!foundMatch) {
-                    Log.d(TAG, "  No match found for user: " + UserMail);
-                  }
+                if (comingFriends != null && isUserComing(normalizedEmail, comingFriends)) {
+                  Log.d(TAG, "Found matching user: " + normalizedEmail);
+                  comingUsers.add(user);
                 }
               } else {
-                Log.w(TAG, "Skipping user with null email: " + p);
+                Log.w(TAG, "Skipping invalid user: " + user);
               }
             }
 
-            Log.d(TAG, "Found " + ArrUsers.size() + " coming users");
+            Log.d(TAG, "Found " + comingUsers.size() + " coming users");
 
-            InvitedAdapter adapt =
-                new InvitedAdapter(MembersComingActivity.this, 0, 0, ArrUsers, adminKey);
-            lv3.setAdapter(adapt);
+            InvitedAdapter adapter =
+                new InvitedAdapter(MembersComingActivity.this, 0, 0, comingUsers, adminKey);
+            membersList.setAdapter(adapter);
           }
 
           @Override
@@ -191,6 +192,28 @@ public class MembersComingActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+  
+  private void logComingKeysContents() {
+    Log.d(TAG, "ComingKeys contents:");
+    for (String key : comingKeys.keySet()) {
+      Log.d(TAG, "  ComingKey: '" + key + "' -> " + comingKeys.get(key));
+    }
+  }
+  
+  private boolean isValidUser(User user) {
+    return user != null && user.getEmail() != null;
+  }
+  
+  private boolean isUserComing(String normalizedEmail, HashMap<String, Object> comingFriends) {
+    for (String friendKey : comingFriends.keySet()) {
+      Log.d(TAG, "  Comparing '" + normalizedEmail + "' with '" + friendKey + "'");
+      if (friendKey != null && friendKey.equals(normalizedEmail)) {
+        return true;
+      }
+    }
+    Log.d(TAG, "  No match found for user: " + normalizedEmail);
+    return false;
   }
 
   @Override

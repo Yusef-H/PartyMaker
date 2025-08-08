@@ -14,12 +14,28 @@ import com.example.partymaker.R;
 import com.example.partymaker.utils.media.FileManager;
 import com.example.partymaker.utils.server.ServerModeManager;
 
+/**
+ * Activity for managing server settings. Allows users to configure the server URL
+ * and manage cache settings. Server mode is always enabled in this version.
+ */
 public class ServerSettingsActivity extends AppCompatActivity {
 
+  // SharedPreferences keys
   private static final String PREF_SERVER_URL = "server_url";
-  // local server is http://10.0.2.2:8080
-  private static final String DEFAULT_SERVER_URL =
-      "https://partymaker.onrender.com"; // Default to Render URL
+  
+  // Default server configuration
+  private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
+  private static final String LOCAL_SERVER_URL = "http://10.0.2.2:8080"; // For emulator development
+  
+  // UI messages
+  private static final String ACTIVITY_TITLE = "Server Settings";
+  private static final String MESSAGE_CLEARING_CACHE = "Clearing cache...";
+  private static final String MESSAGE_SETTINGS_SAVED = "Settings saved. Please restart the app for changes to take effect.";
+  private static final String MESSAGE_CACHE_CLEARED_FORMAT = "Cache cleared! Freed up %s of storage.";
+  
+  // Log tag
+  private static final String TAG = "ServerSettings";
+  
   private SwitchCompat switchServerMode;
   private EditText editServerUrl;
 
@@ -28,84 +44,48 @@ public class ServerSettingsActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main_server_settings);
 
-    // Set up the action bar
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setTitle("Server Settings");
-    }
+    setupActionBar();
 
-    // Initialize views
-    switchServerMode = findViewById(R.id.switch_server_mode);
-    editServerUrl = findViewById(R.id.edit_server_url);
-    Button btnSaveSettings = findViewById(R.id.btn_save_settings);
-    Button btnClearCache = findViewById(R.id.btn_clear_cache);
-
-    // Load current settings
+    initializeViews();
     loadSettings();
-
-    // Set up listeners
-    btnSaveSettings.setOnClickListener(v -> saveSettings());
-    btnClearCache.setOnClickListener(v -> clearCache());
+    setupEventListeners();
   }
 
+  /**
+   * Loads current settings from SharedPreferences and updates UI.
+   */
   private void loadSettings() {
-    // Server mode is always enabled
-    switchServerMode.setChecked(true);
-    switchServerMode.setEnabled(false); // Disable the switch
-
-    // Load server URL
-    String serverUrl =
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(PREF_SERVER_URL, DEFAULT_SERVER_URL);
-    editServerUrl.setText(serverUrl);
+    configureServerModeSwitch();
+    loadServerUrl();
   }
 
+  /**
+   * Saves the current settings and finishes the activity.
+   */
   private void saveSettings() {
-    // Server mode is always enabled
-    ServerModeManager.setServerModeEnabled(this, true);
-
-    // Save server URL
-    String serverUrl = editServerUrl.getText().toString().trim();
-    if (serverUrl.isEmpty()) {
-      serverUrl = DEFAULT_SERVER_URL;
-    }
-
-    PreferenceManager.getDefaultSharedPreferences(this)
-        .edit()
-        .putString(PREF_SERVER_URL, serverUrl)
-        .apply();
-
-    Log.d("ServerSettings", "Server URL saved: " + serverUrl);
-
-    Toast.makeText(
-            this,
-            "Settings saved. Please restart the app for changes to take effect.",
-            Toast.LENGTH_LONG)
-        .show();
-
+    enableServerMode();
+    String serverUrl = getValidatedServerUrl();
+    saveServerUrl(serverUrl);
+    
+    Log.d(TAG, "Server URL saved: " + serverUrl);
+    showSettingsSavedMessage();
     finish();
   }
 
-  /** Clears the application cache using FileManager */
+  /**
+   * Clears the application cache and shows feedback to the user.
+   */
   private void clearCache() {
-    // Show initial toast
-    Toast.makeText(this, "Clearing cache...", Toast.LENGTH_SHORT).show();
-
-    // Get cache size before clearing
-    long cacheSize = FileManager.getSize(getCacheDir());
+    showCacheCleanupStartMessage();
+    
+    long cacheSize = getCacheSizeBeforeClearing();
     String cacheSizeFormatted = FileManager.formatSize(cacheSize);
-
-    Log.d("ServerSettings", "Cache size before clearing: " + cacheSizeFormatted);
-
-    // Clear cache using FileManager
-    FileManager.clearCache(this);
-
-    // Show completion message with cache size that was cleared
-    String message = "Cache cleared! Freed up " + cacheSizeFormatted + " of storage.";
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
-    Log.d("ServerSettings", "Cache cleared successfully");
+    
+    logCacheSizeBeforeClearing(cacheSizeFormatted);
+    performCacheClearing();
+    showCacheCleanupCompletionMessage(cacheSizeFormatted);
+    
+    Log.d(TAG, "Cache cleared successfully");
   }
 
   @Override
@@ -115,5 +95,132 @@ public class ServerSettingsActivity extends AppCompatActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  // Private helper methods
+
+  /**
+   * Sets up the action bar with back button and title.
+   */
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(ACTIVITY_TITLE);
+    }
+  }
+
+  /**
+   * Initializes all view components.
+   */
+  private void initializeViews() {
+    switchServerMode = findViewById(R.id.switch_server_mode);
+    editServerUrl = findViewById(R.id.edit_server_url);
+  }
+
+  /**
+   * Sets up click listeners for buttons.
+   */
+  private void setupEventListeners() {
+    Button btnSaveSettings = findViewById(R.id.btn_save_settings);
+    Button btnClearCache = findViewById(R.id.btn_clear_cache);
+    
+    btnSaveSettings.setOnClickListener(v -> saveSettings());
+    btnClearCache.setOnClickListener(v -> clearCache());
+  }
+
+  /**
+   * Configures the server mode switch (always enabled and disabled for user interaction).
+   */
+  private void configureServerModeSwitch() {
+    switchServerMode.setChecked(true);
+    switchServerMode.setEnabled(false);
+  }
+
+  /**
+   * Loads the server URL from preferences and sets it in the EditText.
+   */
+  private void loadServerUrl() {
+    String serverUrl = PreferenceManager.getDefaultSharedPreferences(this)
+        .getString(PREF_SERVER_URL, DEFAULT_SERVER_URL);
+    editServerUrl.setText(serverUrl);
+  }
+
+  /**
+   * Enables server mode using ServerModeManager.
+   */
+  private void enableServerMode() {
+    ServerModeManager.setServerModeEnabled(this, true);
+  }
+
+  /**
+   * Gets and validates the server URL from the EditText.
+   *
+   * @return The validated server URL
+   */
+  private String getValidatedServerUrl() {
+    String serverUrl = editServerUrl.getText().toString().trim();
+    return serverUrl.isEmpty() ? DEFAULT_SERVER_URL : serverUrl;
+  }
+
+  /**
+   * Saves the server URL to SharedPreferences.
+   *
+   * @param serverUrl The server URL to save
+   */
+  private void saveServerUrl(String serverUrl) {
+    PreferenceManager.getDefaultSharedPreferences(this)
+        .edit()
+        .putString(PREF_SERVER_URL, serverUrl)
+        .apply();
+  }
+
+  /**
+   * Shows a toast message indicating settings have been saved.
+   */
+  private void showSettingsSavedMessage() {
+    Toast.makeText(this, MESSAGE_SETTINGS_SAVED, Toast.LENGTH_LONG).show();
+  }
+
+  /**
+   * Shows initial cache cleanup message.
+   */
+  private void showCacheCleanupStartMessage() {
+    Toast.makeText(this, MESSAGE_CLEARING_CACHE, Toast.LENGTH_SHORT).show();
+  }
+
+  /**
+   * Gets the cache size before clearing.
+   *
+   * @return Cache size in bytes
+   */
+  private long getCacheSizeBeforeClearing() {
+    return FileManager.getSize(getCacheDir());
+  }
+
+  /**
+   * Logs the cache size before clearing.
+   *
+   * @param cacheSizeFormatted The formatted cache size string
+   */
+  private void logCacheSizeBeforeClearing(String cacheSizeFormatted) {
+    Log.d(TAG, "Cache size before clearing: " + cacheSizeFormatted);
+  }
+
+  /**
+   * Performs the actual cache clearing operation.
+   */
+  private void performCacheClearing() {
+    FileManager.clearCache(this);
+  }
+
+  /**
+   * Shows cache cleanup completion message with freed space amount.
+   *
+   * @param cacheSizeFormatted The formatted cache size that was cleared
+   */
+  private void showCacheCleanupCompletionMessage(String cacheSizeFormatted) {
+    String message = String.format(MESSAGE_CACHE_CLEARED_FORMAT, cacheSizeFormatted);
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
   }
 }

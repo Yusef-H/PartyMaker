@@ -678,7 +678,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     }
 
     // Fallback to Firebase Auth if AuthHelper fails
-    FirebaseUser currentUser = DBRef.Auth.getCurrentUser();
+    FirebaseUser currentUser = DBRef.auth.getCurrentUser();
     if (currentUser != null) {
       return Objects.requireNonNull(currentUser.getEmail()).replace('.', ' ');
     }

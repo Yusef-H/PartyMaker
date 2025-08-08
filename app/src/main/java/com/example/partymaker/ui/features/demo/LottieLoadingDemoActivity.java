@@ -18,6 +18,12 @@ import com.example.partymaker.utils.ui.components.LoadingStateManager;
  */
 public class LottieLoadingDemoActivity extends AppCompatActivity {
 
+  // Animation timing constants
+  private static final long DEMO_LOADING_DELAY_MS = 3000L;
+  private static final long DEMO_CREATION_DELAY_MS = 2500L;
+  private static final long DEMO_ERROR_AUTO_HIDE_MS = 3000L;
+  private static final long DEMO_INITIALIZATION_DELAY_MS = 2000L;
+  
   private LoadingStateManager loadingStateManager;
   private Handler handler;
 
@@ -71,7 +77,7 @@ public class LottieLoadingDemoActivity extends AppCompatActivity {
             loadingStateManager.showLoading("Fetching party data...");
 
             // Simulate network delay
-            handler.postDelayed(() -> loadingStateManager.showContent(), 3000);
+            handler.postDelayed(() -> loadingStateManager.showContent(), DEMO_LOADING_DELAY_MS);
           });
 
       Button customAnimationButton = new Button(this);
@@ -82,7 +88,7 @@ public class LottieLoadingDemoActivity extends AppCompatActivity {
             loadingStateManager.showLoadingWithAnimation("Creating party...", null);
 
             // Simulate creation process
-            handler.postDelayed(() -> loadingStateManager.showContent(), 2500);
+            handler.postDelayed(() -> loadingStateManager.showContent(), DEMO_CREATION_DELAY_MS);
           });
 
       Button errorButton = new Button(this);
@@ -91,8 +97,8 @@ public class LottieLoadingDemoActivity extends AppCompatActivity {
           v -> {
             loadingStateManager.showError("Failed to load party data");
 
-            // Auto-hide error after 3 seconds
-            handler.postDelayed(() -> loadingStateManager.showContent(), 3000);
+            // Auto-hide error after demo period
+            handler.postDelayed(() -> loadingStateManager.showContent(), DEMO_ERROR_AUTO_HIDE_MS);
           });
 
       layout.addView(loadingButton);
@@ -110,7 +116,7 @@ public class LottieLoadingDemoActivity extends AppCompatActivity {
         () -> {
           loadingStateManager.showContent();
         },
-        2000);
+        DEMO_INITIALIZATION_DELAY_MS);
   }
 
   @Override
