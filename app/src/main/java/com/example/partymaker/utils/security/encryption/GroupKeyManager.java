@@ -45,7 +45,6 @@ public class GroupKeyManager {
   public GroupKeyManager(Context context, String userId) {
     this.currentUserId = userId;
     this.groupEncryption = new GroupMessageEncryption(context, userId);
-    EnhancedSecureStorage userStorage = new EnhancedSecureStorage(context, userId);
     this.firebaseRef = FirebaseDatabase.getInstance().getReference(FIREBASE_GROUP_KEYS_PATH);
   }
 
