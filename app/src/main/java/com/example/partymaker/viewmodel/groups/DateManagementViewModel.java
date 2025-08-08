@@ -682,7 +682,26 @@ public class DateManagementViewModel extends BaseViewModel {
 
         // Generate suggestion based on day of week and time
         int dayOfWeek = selectedCal.get(Calendar.DAY_OF_WEEK);
-        String suggestion = getString(dayOfWeek, hour);
+        String suggestion = "";
+
+        if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+          if (hour >= 10 && hour <= 14) {
+            suggestion = "Great choice! Weekend brunch time is perfect for social events.";
+          } else if (hour >= 18 && hour <= 22) {
+            suggestion = "Weekend evening - ideal for parties and celebrations!";
+          } else {
+            suggestion =
+                "Weekend timing - consider 10 AM-2 PM or 6 PM-10 PM for better attendance.";
+          }
+        } else {
+          if (hour >= 18 && hour <= 21) {
+            suggestion = "Good weekday evening timing for after-work gatherings.";
+          } else if (hour >= 12 && hour <= 14) {
+            suggestion = "Lunch time event - perfect for quick meetups.";
+          } else {
+            suggestion = "Consider evening hours (6-9 PM) for better weekday attendance.";
+          }
+        }
 
         schedulingSuggestion.setValue(suggestion);
       }
@@ -691,31 +710,6 @@ public class DateManagementViewModel extends BaseViewModel {
       Log.w(TAG, "Error generating scheduling suggestion", e);
       schedulingSuggestion.setValue(null);
     }
-  }
-
-  @NonNull
-  private String getString(int dayOfWeek, int hour) {
-    String suggestion = "";
-
-    if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-      if (hour >= 10 && hour <= 14) {
-        suggestion = "Great choice! Weekend brunch time is perfect for social events.";
-      } else if (hour >= 18 && hour <= 22) {
-        suggestion = "Weekend evening - ideal for parties and celebrations!";
-      } else {
-        suggestion =
-            "Weekend timing - consider 10 AM-2 PM or 6 PM-10 PM for better attendance.";
-      }
-    } else {
-      if (hour >= 18 && hour <= 21) {
-        suggestion = "Good weekday evening timing for after-work gatherings.";
-      } else if (hour >= 12 && hour <= 14) {
-        suggestion = "Lunch time event - perfect for quick meetups.";
-      } else {
-        suggestion = "Consider evening hours (6-9 PM) for better weekday attendance.";
-      }
-    }
-    return suggestion;
   }
 
   /** Clears all date management data and resets state. */
