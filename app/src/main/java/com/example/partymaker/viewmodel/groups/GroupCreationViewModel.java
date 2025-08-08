@@ -41,6 +41,27 @@ import java.util.HashMap;
 public class GroupCreationViewModel extends BaseViewModel {
 
   private static final String TAG = "GroupCreationViewModel";
+  private static final int MIN_NAME_LENGTH = 3;
+  private static final int MAX_NAME_LENGTH = 50;
+  private static final int MIN_LOCATION_LENGTH = 3;
+  private static final int DEFAULT_MAX_MEMBERS = 50;
+  private static final String DEFAULT_PRICE = "0";
+  private static final int MIN_MEMBERS = 1;
+  private static final int MAX_MEMBERS_LIMIT = 1000;
+  private static final int MIN_DAY = 1;
+  private static final int MAX_DAY = 31;
+  private static final int MIN_MONTH = 1;
+  private static final int MAX_MONTH = 12;
+  private static final int MIN_HOUR = 0;
+  private static final int MAX_HOUR = 23;
+  private static final int MIN_MINUTE = 0;
+  private static final int MAX_MINUTE = 59;
+  private static final String DATE_PATTERN = "\\d{2}/\\d{2}/\\d{4}";
+  private static final String TIME_PATTERN = "\\d{2}:\\d{2}";
+  private static final String VALIDATION_ERROR_MESSAGE = "Please fill in all required fields correctly";
+  private static final String FORM_CLEAR_LOG_MESSAGE = "Form data cleared";
+  private static final String VIEWMODEL_CLEARED_LOG_MESSAGE = "GroupCreationViewModel cleared";
+  private static final String VIEWMODEL_INITIALIZED_LOG_MESSAGE = "GroupCreationViewModel initialized";
 
   // Dependencies
   private final GroupRepository groupRepository;
@@ -87,20 +108,10 @@ public class GroupCreationViewModel extends BaseViewModel {
     this.groupRepository = GroupRepository.getInstance();
     this.imageCompressor = new ImageCompressor();
 
-    // Initialize default values
-    isPublicGroup.setValue(true);
-    maxMembers.setValue(50);
-    groupPrice.setValue("0");
-    imageUploadInProgress.setValue(false);
-
-    // Initialize validation state
-    isNameValid.setValue(false);
-    isLocationValid.setValue(false);
-    isDateValid.setValue(false);
-    isTimeValid.setValue(false);
-    isFormValid.setValue(false);
-
-    Log.d(TAG, "GroupCreationViewModel initialized");
+    initializeDefaultValues();
+    initializeValidationState();
+    
+    Log.d(TAG, VIEWMODEL_INITIALIZED_LOG_MESSAGE);
   }
 
   // Getters for LiveData
@@ -227,11 +238,15 @@ public class GroupCreationViewModel extends BaseViewModel {
    * @param max Maximum members (1-1000)
    */
   public void setMaxMembers(int max) {
-    if (max >= 1 && max <= 1000) {
+    if (isValidMaxMembers(max)) {
       maxMembers.setValue(max);
     } else {
       Log.w(TAG, "Invalid max members value: " + max);
     }
+  }
+
+  private boolean isValidMaxMembers(int max) {
+    return max >= MIN_MEMBERS && max <= MAX_MEMBERS_LIMIT;
   }
 
   /**
@@ -240,7 +255,7 @@ public class GroupCreationViewModel extends BaseViewModel {
    * @param price The group price as string
    */
   public void setGroupPrice(@Nullable String price) {
-    groupPrice.setValue(price != null ? price : "0");
+    groupPrice.setValue(price != null ? price : DEFAULT_PRICE);
   }
 
   /**
@@ -306,11 +321,8 @@ public class GroupCreationViewModel extends BaseViewModel {
 
     executeIfNotLoading(
         () -> {
-          // Validate form before creation
           if (!isValidForm()) {
-            setError(
-                "Please fill in all required fields correctly",
-                NetworkUtils.ErrorType.VALIDATION_ERROR);
+            setError(VALIDATION_ERROR_MESSAGE, NetworkUtils.ErrorType.VALIDATION_ERROR);
             return;
           }
 
@@ -351,86 +363,129 @@ public class GroupCreationViewModel extends BaseViewModel {
   // Private helper methods
 
   private void validateGroupName(@Nullable String name) {
-    boolean valid = name != null && name.trim().length() >= 3 && name.trim().length() <= 50;
+    boolean valid = isValidGroupName(name);
     isNameValid.setValue(valid);
     updateFormValidation();
   }
 
+  private boolean isValidGroupName(@Nullable String name) {
+    return name != null && 
+           name.trim().length() >= MIN_NAME_LENGTH && 
+           name.trim().length() <= MAX_NAME_LENGTH;
+  }
+
   private void validateGroupLocation(@Nullable String location) {
-    boolean valid = location != null && location.trim().length() >= 3;
+    boolean valid = isValidLocation(location);
     isLocationValid.setValue(valid);
     updateFormValidation();
   }
 
+  private boolean isValidLocation(@Nullable String location) {
+    return location != null && location.trim().length() >= MIN_LOCATION_LENGTH;
+  }
+
   private void validateDate(@Nullable String date) {
-    boolean valid = false;
-
-    if (date != null && date.matches("\\d{2}/\\d{2}/\\d{4}")) {
-      try {
-        String[] parts = date.split("/");
-        int day = Integer.parseInt(parts[0]);
-        int month = Integer.parseInt(parts[1]);
-        int year = Integer.parseInt(parts[2]);
-
-        // Basic validation
-        valid =
-            day >= 1
-                && day <= 31
-                && month >= 1
-                && month <= 12
-                && year >= Calendar.getInstance().get(Calendar.YEAR);
-
-      } catch (NumberFormatException e) {
-        // valid is already false by default
-      }
-    }
-
+    boolean valid = isValidDate(date);
     isDateValid.setValue(valid);
     updateFormValidation();
   }
 
-  private void validateTime(@Nullable String time) {
-    boolean valid = false;
-
-    if (time != null && time.matches("\\d{2}:\\d{2}")) {
-      try {
-        String[] parts = time.split(":");
-        int hour = Integer.parseInt(parts[0]);
-        int minute = Integer.parseInt(parts[1]);
-
-        valid = hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
-
-      } catch (NumberFormatException e) {
-        // valid is already false by default
-      }
+  private boolean isValidDate(@Nullable String date) {
+    if (date == null || !date.matches(DATE_PATTERN)) {
+      return false;
     }
 
+    try {
+      String[] parts = date.split("/");
+      int day = Integer.parseInt(parts[0]);
+      int month = Integer.parseInt(parts[1]);
+      int year = Integer.parseInt(parts[2]);
+
+      return isValidDateComponents(day, month, year);
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
+  private boolean isValidDateComponents(int day, int month, int year) {
+    int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+    return day >= MIN_DAY && day <= MAX_DAY && 
+           month >= MIN_MONTH && month <= MAX_MONTH && 
+           year >= currentYear;
+  }
+
+  private void validateTime(@Nullable String time) {
+    boolean valid = isValidTime(time);
     isTimeValid.setValue(valid);
     updateFormValidation();
   }
 
+  private boolean isValidTime(@Nullable String time) {
+    if (time == null || !time.matches(TIME_PATTERN)) {
+      return false;
+    }
+
+    try {
+      String[] parts = time.split(":");
+      int hour = Integer.parseInt(parts[0]);
+      int minute = Integer.parseInt(parts[1]);
+
+      return isValidTimeComponents(hour, minute);
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
+  private boolean isValidTimeComponents(int hour, int minute) {
+    return hour >= MIN_HOUR && hour <= MAX_HOUR && 
+           minute >= MIN_MINUTE && minute <= MAX_MINUTE;
+  }
+
+  private void initializeDefaultValues() {
+    isPublicGroup.setValue(true);
+    maxMembers.setValue(DEFAULT_MAX_MEMBERS);
+    groupPrice.setValue(DEFAULT_PRICE);
+    imageUploadInProgress.setValue(false);
+  }
+
+  private void initializeValidationState() {
+    isNameValid.setValue(false);
+    isLocationValid.setValue(false);
+    isDateValid.setValue(false);
+    isTimeValid.setValue(false);
+    isFormValid.setValue(false);
+  }
+
   private void parseDateComponents(@Nullable String date) {
-    if (date != null && date.matches("\\d{2}/\\d{2}/\\d{4}")) {
+    if (date != null && date.matches(DATE_PATTERN)) {
       String[] parts = date.split("/");
       selectedDay.setValue(parts[0]);
       selectedMonth.setValue(parts[1]);
       selectedYear.setValue(parts[2]);
     } else {
-      selectedDay.setValue(null);
-      selectedMonth.setValue(null);
-      selectedYear.setValue(null);
+      clearDateComponents();
     }
   }
 
+  private void clearDateComponents() {
+    selectedDay.setValue(null);
+    selectedMonth.setValue(null);
+    selectedYear.setValue(null);
+  }
+
   private void parseTimeComponents(@Nullable String time) {
-    if (time != null && time.matches("\\d{2}:\\d{2}")) {
+    if (time != null && time.matches(TIME_PATTERN)) {
       String[] parts = time.split(":");
       selectedHour.setValue(parts[0]);
       selectedMinute.setValue(parts[1]);
     } else {
-      selectedHour.setValue(null);
-      selectedMinute.setValue(null);
+      clearTimeComponents();
     }
+  }
+
+  private void clearTimeComponents() {
+    selectedHour.setValue(null);
+    selectedMinute.setValue(null);
   }
 
   private void updateFormValidation() {
@@ -550,24 +605,10 @@ public class GroupCreationViewModel extends BaseViewModel {
     selectedImagePath.setValue(null);
     selectedImageUri.setValue(null);
 
-    // Reset to defaults
-    isPublicGroup.setValue(true);
-    maxMembers.setValue(50);
-    groupPrice.setValue("0");
-
-    // Clear validation state
-    isNameValid.setValue(false);
-    isLocationValid.setValue(false);
-    isDateValid.setValue(false);
-    isTimeValid.setValue(false);
-    isFormValid.setValue(false);
-
-    // Clear date/time components
-    selectedDay.setValue(null);
-    selectedMonth.setValue(null);
-    selectedYear.setValue(null);
-    selectedHour.setValue(null);
-    selectedMinute.setValue(null);
+    initializeDefaultValues();
+    initializeValidationState();
+    clearDateComponents();
+    clearTimeComponents();
 
     // Clear creation state
     groupCreated.setValue(false);
@@ -576,13 +617,13 @@ public class GroupCreationViewModel extends BaseViewModel {
 
     clearMessages();
 
-    Log.d(TAG, "Form data cleared");
+    Log.d(TAG, FORM_CLEAR_LOG_MESSAGE);
   }
 
   @Override
   protected void onCleared() {
     super.onCleared();
     clearFormData();
-    Log.d(TAG, "GroupCreationViewModel cleared");
+    Log.d(TAG, VIEWMODEL_CLEARED_LOG_MESSAGE);
   }
 }
