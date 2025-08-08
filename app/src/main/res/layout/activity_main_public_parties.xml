@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="All"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
                 <com.google.android.material.chip.Chip
@@ -107,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Today"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
                 <com.google.android.material.chip.Chip
@@ -116,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="This Week"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
                 <com.google.android.material.chip.Chip
@@ -125,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Free"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
             </com.google.android.material.chip.ChipGroup>
@@ -154,7 +154,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                tools:listitem="@layout/item_public_party" />
+                tools:listitem="@layout/item_group" />
 
             <!-- Empty State -->
             <LinearLayout
