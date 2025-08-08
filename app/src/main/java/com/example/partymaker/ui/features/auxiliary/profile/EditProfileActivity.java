@@ -49,6 +49,7 @@ public class EditProfileActivity extends AppCompatActivity {
   private ImageView imgProfile;
   private EditText etUsername;
   private Button btnSaveProfile;
+  private Button btnSignOut;
   private ProgressBar progressBar;
   private ProfileViewModel profileViewModel;
   private View rootLayout;
@@ -110,6 +111,7 @@ public class EditProfileActivity extends AppCompatActivity {
     imgProfile = findViewById(R.id.imgProfile);
     etUsername = findViewById(R.id.etUsername);
     btnSaveProfile = findViewById(R.id.btnSaveProfile);
+    btnSignOut = findViewById(R.id.btnSignOut);
     progressBar = findViewById(R.id.progressBar);
     rootLayout = findViewById(R.id.rootLayout);
   }
@@ -205,6 +207,8 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
     btnSaveProfile.setOnClickListener(v -> saveUserProfile());
+    
+    btnSignOut.setOnClickListener(v -> handleSignOut());
   }
 
   private void loadUserData() {
@@ -793,6 +797,14 @@ public class EditProfileActivity extends AppCompatActivity {
     if (rootLayout != null && !isResuming) {
       Snackbar.make(rootLayout, "Network connection restored", Snackbar.LENGTH_SHORT).show();
     }
+  }
+
+  private void handleSignOut() {
+    // Use the same logic as toolbar logout
+    AuthenticationManager.logout(this);
+    Intent intent = new Intent(this, LoginActivity.class);
+    startActivity(intent);
+    finish();
   }
 
   @Override
