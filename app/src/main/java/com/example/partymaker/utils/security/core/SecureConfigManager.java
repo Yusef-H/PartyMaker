@@ -59,8 +59,7 @@ public class SecureConfigManager {
   public String getOpenAiApiKey() {
     try {
       // First check BuildConfig (from local.properties or CI secrets)
-      String apiKey = BuildConfig.OPENAI_API_KEY;
-      return apiKey;
+        return BuildConfig.OPENAI_API_KEY;
     } catch (Exception e) {
       // BuildConfig field might not exist yet
       Log.d(TAG, "BuildConfig.OPENAI_API_KEY not available");
