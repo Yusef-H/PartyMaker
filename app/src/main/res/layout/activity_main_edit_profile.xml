@@ -219,11 +219,20 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- Bottom Navigation -->
-    <include
-        android:id="@+id/bottomNavigationInclude"
-        layout="@layout/helper_bottom_navigation"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:theme="@style/Theme.PartyMaker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="labeled"
+        app:itemIconSize="24dp"
+        app:itemPaddingTop="8dp"
+        app:itemPaddingBottom="8dp"
+        app:elevation="8dp"
+        android:background="@color/white"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

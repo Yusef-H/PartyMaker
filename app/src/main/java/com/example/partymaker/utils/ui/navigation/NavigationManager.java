@@ -23,18 +23,6 @@ public class NavigationManager {
   public static void setupBottomNavigation(Activity activity, String currentPage) {
     Log.d(TAG, "Setting up bottom navigation for activity: " + activity.getClass().getSimpleName());
     BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottom_navigation);
-    
-    // If not found directly, try to find within the include
-    if (bottomNavigationView == null) {
-      Log.d(TAG, "BottomNavigationView not found directly, searching in include...");
-      android.view.View includeView = activity.findViewById(R.id.bottomNavigationInclude);
-      if (includeView != null) {
-        bottomNavigationView = includeView.findViewById(R.id.bottom_navigation);
-        Log.d(TAG, "Include found, bottomNavigationView: " + (bottomNavigationView != null));
-      } else {
-        Log.d(TAG, "Include not found");
-      }
-    }
 
     if (bottomNavigationView != null) {
       Log.d(TAG, "BottomNavigationView found, setting up listener");

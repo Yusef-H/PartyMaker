@@ -742,7 +742,13 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void setupBottomNavigation() {
-    NavigationManager.setupBottomNavigation(this, "profile");
+    Log.d("EditProfileActivity", "Setting up bottom navigation...");
+    
+    // Delay setup to ensure layout is fully loaded
+    rootLayout.post(() -> {
+      Log.d("EditProfileActivity", "Delayed bottom navigation setup");
+      NavigationManager.setupBottomNavigation(this, "profile");
+    });
   }
 
   private void showError(String message) {
