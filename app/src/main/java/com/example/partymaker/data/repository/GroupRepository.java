@@ -621,7 +621,7 @@ public class GroupRepository {
     callback.onDataLoaded(Result.loading());
 
     // Use RemoteGroupDataSource to get user groups
-    ((RemoteGroupDataSource) remoteDataSource)
+    remoteDataSource
         .getUserGroups(
             userKey,
             new DataSource.DataCallback<>() {
