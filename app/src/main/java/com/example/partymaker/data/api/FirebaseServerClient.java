@@ -47,7 +47,7 @@ public class FirebaseServerClient {
   /** Tag for logging. */
   private static final String TAG = "FirebaseServerClient";
 
-  /** Default timeout values moved to Constants */
+  /* Default timeout values moved to Constants */
   // Using constants from Constants.Network class
 
   /** Singleton instance. */
@@ -102,7 +102,7 @@ public class FirebaseServerClient {
 
     // Initialize SSL pinning for production URLs
     boolean isProduction = serverUrl.contains("onrender.com") || serverUrl.contains("https://");
-    /** SSL Pinning Manager for secure connections. */
+    /* SSL Pinning Manager for secure connections. */
     SSLPinningManager sslPinningManager = SSLPinningManager.getInstance(isProduction);
     secureClient = sslPinningManager.createSecureClient();
 
