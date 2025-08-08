@@ -56,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
   private static final long REFRESH_COOLDOWN_MS = 30000; // 30 seconds cooldown
   private static final String APP_TITLE = "My Parties";
 
+  // UI Animation and Timing Constants
+  private static final int HANDLER_DELAY_MS = 100;
+  private static final int NAVIGATION_DELAY_MS = 200;
+  private static final int FAB_ANIMATION_DELAY_MS = 500;
+  private static final int LOGOUT_DELAY_MS = 1000;
+  private static final int GROUPS_LOADING_ANIMATION_DELAY_MS = 4000;
+
   // SharedPreferences keys
   private static final String PREFS_PARTY_MAKER = "PartyMakerPrefs";
   private static final String KEY_USER_EXPLICITLY_LOGGED_IN = "user_explicitly_logged_in";
@@ -507,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
               groupsRecyclerView.requestLayout();
             }
           },
-          100);
+          HANDLER_DELAY_MS);
     }
   }
 
@@ -547,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
                 loadingOverlay.setVisibility(View.GONE);
               }
             },
-            4000);
+            GROUPS_LOADING_ANIMATION_DELAY_MS);
       }
 
       // Mark that we've shown the celebration
@@ -685,13 +692,13 @@ public class MainActivity extends AppCompatActivity {
 
           // Delay navigation to show animation
           android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-          handler.postDelayed(() -> navigateToChat(), 200);
+          handler.postDelayed(() -> navigateToChat(), NAVIGATION_DELAY_MS);
         });
 
     chatFloatingActionButton.setOnTouchListener(IntentExtrasManager::dragChatButtonOnTouch);
 
     // Add subtle entrance animation for the FAB
-    ButtonAnimationHelper.applyEntranceAnimation(chatFloatingActionButton, 500);
+    ButtonAnimationHelper.applyEntranceAnimation(chatFloatingActionButton, FAB_ANIMATION_DELAY_MS);
   }
 
   private void setupBottomNavigation() {
@@ -863,13 +870,6 @@ public class MainActivity extends AppCompatActivity {
     return groupMembers != null && groupMembers.containsKey(currentUserKey);
   }
 
-  // Legacy method - functionality moved to ViewModel
-  @Deprecated
-  private void sortAndDisplayGroups() {
-    // Groups sorting is now handled by the ViewModel layer
-    // This method is kept for backward compatibility but is no longer used
-  }
-
   private boolean isValidAdapterPosition(int position) {
     return groupAdapter != null && position >= 0 && position < groupAdapter.getItemCount();
   }
@@ -944,7 +944,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void scheduleNavigationToLogin() {
-    ThreadUtils.runOnMainThreadDelayed(this::completeLogout, 1000);
+    ThreadUtils.runOnMainThreadDelayed(this::completeLogout, LOGOUT_DELAY_MS);
   }
 
   private void completeLogout() {
@@ -986,13 +986,6 @@ public class MainActivity extends AppCompatActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu, menu);
     return true;
-  }
-
-  // Legacy method - UI updates now handled by data binding
-  @Deprecated
-  private void updateUI() {
-    // UI updates are now handled automatically through ViewModel observers
-    // This method is kept for backward compatibility but is no longer used
   }
 
   @Override

@@ -207,7 +207,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
     btnSaveProfile.setOnClickListener(v -> saveUserProfile());
-    
+
     btnSignOut.setOnClickListener(v -> handleSignOut());
   }
 

@@ -28,14 +28,13 @@ import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.chip.Chip;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Calendar;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class PublicGroupsActivity extends AppCompatActivity {
   private static final String TAG = "PublicGroupsActivity";
@@ -174,7 +173,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
               });
       lv1.setAdapter(allGroupsAdapter);
     }
-    
+
     // Initialize chip filter
     chipGroupFilters = findViewById(R.id.chipGroupFilters);
   }
@@ -182,12 +181,13 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private void setupEventHandlers() {
     // Setup chip filtering
     if (chipGroupFilters != null) {
-      chipGroupFilters.setOnCheckedStateChangeListener((group, checkedIds) -> {
-        if (!checkedIds.isEmpty()) {
-          int selectedChipId = checkedIds.get(0);
-          applyFilter(selectedChipId);
-        }
-      });
+      chipGroupFilters.setOnCheckedStateChangeListener(
+          (group, checkedIds) -> {
+            if (!checkedIds.isEmpty()) {
+              int selectedChipId = checkedIds.get(0);
+              applyFilter(selectedChipId);
+            }
+          });
     }
   }
 
@@ -239,10 +239,10 @@ public class PublicGroupsActivity extends AppCompatActivity {
         }
       }
     }
-    
+
     // Store original list for filtering
     allGroups = new ArrayList<>(groupList);
-    
+
     if (allGroupsAdapter != null) {
       allGroupsAdapter.updateItems(groupList);
     }
@@ -253,9 +253,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
   private void applyFilter(int chipId) {
     if (allGroups == null) return;
-    
+
     ArrayList<Group> filteredList = new ArrayList<>();
-    
+
     if (chipId == R.id.chipAll) {
       filteredList = new ArrayList<>(allGroups);
     } else if (chipId == R.id.chipToday) {
@@ -265,22 +265,22 @@ public class PublicGroupsActivity extends AppCompatActivity {
     } else if (chipId == R.id.chipFree) {
       filteredList = filterGroupsByPrice(allGroups);
     }
-    
+
     if (allGroupsAdapter != null) {
       allGroupsAdapter.updateItems(filteredList);
     }
-    
+
     Log.d(TAG, "Filter applied, showing " + filteredList.size() + " groups");
   }
 
   private ArrayList<Group> filterGroupsByDate(ArrayList<Group> groups, int daysFromNow) {
     ArrayList<Group> filtered = new ArrayList<>();
     Calendar calendar = Calendar.getInstance();
-    
+
     // Get target date range
     Calendar startDate = Calendar.getInstance();
     Calendar endDate = Calendar.getInstance();
-    
+
     if (daysFromNow == 0) {
       // Today only
       startDate.set(Calendar.HOUR_OF_DAY, 0);
@@ -293,17 +293,18 @@ public class PublicGroupsActivity extends AppCompatActivity {
       // This week (next 7 days)
       endDate.add(Calendar.DAY_OF_YEAR, daysFromNow);
     }
-    
+
     for (Group group : groups) {
       try {
-        String groupDateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
+        String groupDateStr =
+            group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date groupDate = dateFormat.parse(groupDateStr);
-        
+
         if (groupDate != null) {
           Calendar groupCalendar = Calendar.getInstance();
           groupCalendar.setTime(groupDate);
-          
+
           if (groupCalendar.compareTo(startDate) >= 0 && groupCalendar.compareTo(endDate) <= 0) {
             filtered.add(group);
           }
@@ -312,7 +313,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
         Log.w(TAG, "Failed to parse date for group: " + group.getGroupName(), e);
       }
     }
-    
+
     return filtered;
   }
 

@@ -148,7 +148,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
                   .metaData
                   .getString("com.google.android.geo.API_KEY");
         } catch (Exception e) {
-          apiKey = "YOUR_DEFAULT_API_KEY"; // Replace with your actual key if needed
+          Log.e(TAG, "Failed to retrieve API key from metadata", e);
+          // API key should be configured in secrets.properties
         }
       }
 
@@ -926,30 +927,34 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
             (view, year, month, dayOfMonth) -> {
               Calendar pickedDate = Calendar.getInstance();
               pickedDate.set(year, month, dayOfMonth);
-              
+
               // Check if picked date is in the past
               Calendar today = Calendar.getInstance();
               today.set(Calendar.HOUR_OF_DAY, 0);
               today.set(Calendar.MINUTE, 0);
               today.set(Calendar.SECOND, 0);
               today.set(Calendar.MILLISECOND, 0);
-              
+
               if (pickedDate.before(today)) {
-                Toast.makeText(this, "Cannot select a date in the past. Please choose today or a future date.", Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        this,
+                        "Cannot select a date in the past. Please choose today or a future date.",
+                        Toast.LENGTH_LONG)
+                    .show();
                 return;
               }
-              
+
               selectedDate.set(year, month, dayOfMonth);
               updateSelectedDate();
             },
             selectedDate.get(Calendar.YEAR),
             selectedDate.get(Calendar.MONTH),
             selectedDate.get(Calendar.DAY_OF_MONTH));
-    
+
     // Set minimum date to today to prevent past date selection
     Calendar today = Calendar.getInstance();
     datePickerDialog.getDatePicker().setMinDate(today.getTimeInMillis());
-    
+
     datePickerDialog.show();
   }
 

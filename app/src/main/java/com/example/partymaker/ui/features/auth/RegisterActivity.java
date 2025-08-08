@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,17 +30,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.partymaker.BuildConfig;
 import com.example.partymaker.R;
-import com.example.partymaker.data.firebase.DBRef;
-import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -219,35 +214,7 @@ public class RegisterActivity extends AppCompatActivity {
 
   /** Creates a test user for debugging purposes */
   private void createTestUserIfNeeded() {
-    // WARNING: This method contains hardcoded credentials - FOR DEBUGGING ONLY
-    if (!BuildConfig.DEBUG) {
-      Log.w("RegisterActivity", "Test user creation skipped - not in debug mode");
-      return;
-    }
-
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    String testEmail = "1@1.com";
-    String testPassword = "123456";
-
-    mAuth
-        .createUserWithEmailAndPassword(testEmail, testPassword)
-        .addOnCompleteListener(
-            task -> {
-              if (task.isSuccessful()) {
-                Log.d("RegisterActivity", "Test user created successfully");
-                // Create user in database
-                User testUser = new User("Test User", testEmail);
-                DBRef.refUsers.child(testEmail.replace('.', ' ')).setValue(testUser);
-              } else {
-                // User might already exist, that's fine
-                Log.d(
-                    "RegisterActivity",
-                    "Test user creation failed: "
-                        + (task.getException() != null
-                            ? task.getException().getMessage()
-                            : "unknown error"));
-              }
-            });
+    // Test user creation removed for security
   }
 
   /** Initializes all view components. */

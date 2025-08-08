@@ -88,7 +88,8 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                 .metaData
                 .getString("com.google.android.geo.API_KEY");
       } catch (Exception e) {
-        apiKey = "YOUR_DEFAULT_API_KEY"; // Replace with your actual key if needed
+        Log.e("AdminOptions", "Failed to retrieve API key from metadata", e);
+        // API key should be configured in secrets.properties
       }
     }
 

@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.partymaker.BuildConfig;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
@@ -65,8 +64,6 @@ public class LoginActivity extends AppCompatActivity {
     static final String SERVER_HEALTH_ENDPOINT = "/api/firebase/health";
     static final int SERVER_TIMEOUT_MS = 3000;
     static final int SUCCESS_NAVIGATION_DELAY_MS = 800;
-    static final String DEBUG_TEST_EMAIL = "1@1.com";
-    static final String DEBUG_TEST_PASSWORD = "123456";
     static final String PREFS_EXPLICIT_LOGIN = "user_explicitly_logged_in";
     static final String PREFS_PARTY_MAKER = "PartyMakerPrefs";
   }
@@ -271,23 +268,7 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   private void setupDebugTestUser() {
-    if (!BuildConfig.DEBUG) {
-      return;
-    }
-
-    try {
-      ThreadUtils.runInBackground(
-          () -> {
-            try {
-              createOrLoginTestUser(Config.DEBUG_TEST_EMAIL, Config.DEBUG_TEST_PASSWORD);
-            } catch (Exception e) {
-              Log.w(Config.LOG_TAG, "Debug test user setup failed", e);
-            }
-          });
-
-    } catch (Exception e) {
-      Log.w(Config.LOG_TAG, "Error setting up debug test user", e);
-    }
+    // Debug test user setup removed for security
   }
 
   private void createOrLoginTestUser(@NonNull String email, @NonNull String password) {
