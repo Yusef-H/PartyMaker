@@ -924,12 +924,32 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         new DatePickerDialog(
             this,
             (view, year, month, dayOfMonth) -> {
+              Calendar pickedDate = Calendar.getInstance();
+              pickedDate.set(year, month, dayOfMonth);
+              
+              // Check if picked date is in the past
+              Calendar today = Calendar.getInstance();
+              today.set(Calendar.HOUR_OF_DAY, 0);
+              today.set(Calendar.MINUTE, 0);
+              today.set(Calendar.SECOND, 0);
+              today.set(Calendar.MILLISECOND, 0);
+              
+              if (pickedDate.before(today)) {
+                Toast.makeText(this, "Cannot select a date in the past. Please choose today or a future date.", Toast.LENGTH_LONG).show();
+                return;
+              }
+              
               selectedDate.set(year, month, dayOfMonth);
               updateSelectedDate();
             },
             selectedDate.get(Calendar.YEAR),
             selectedDate.get(Calendar.MONTH),
             selectedDate.get(Calendar.DAY_OF_MONTH));
+    
+    // Set minimum date to today to prevent past date selection
+    Calendar today = Calendar.getInstance();
+    datePickerDialog.getDatePicker().setMinDate(today.getTimeInMillis());
+    
     datePickerDialog.show();
   }
 
