@@ -15,13 +15,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThreadUtils {
   private static final String TAG = "ThreadUtils";
 
-  // Number of CPU cores
+  // CPU and thread pool configuration
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-
-  // Thread pool sizes
-  private static final int CORE_POOL_SIZE = Math.max(2, Math.min(CPU_COUNT - 1, 4));
+  private static final int MIN_CORE_THREADS = 2;
+  private static final int MAX_CORE_THREADS = 4;
+  private static final int CORE_POOL_SIZE = Math.max(MIN_CORE_THREADS, Math.min(CPU_COUNT - 1, MAX_CORE_THREADS));
   private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
   private static final int KEEP_ALIVE_SECONDS = 30;
+  private static final int QUEUE_CAPACITY = 128;
+  private static final int NETWORK_THREAD_DIVISOR = 2;
+  
+  // Thread priority constants
+  private static final int BACKGROUND_THREAD_PRIORITY = Thread.MIN_PRIORITY;
+  private static final int LIGHTWEIGHT_THREAD_PRIORITY = Thread.NORM_PRIORITY;
 
   // Thread factories
   private static final ThreadFactory BACKGROUND_THREAD_FACTORY =
@@ -31,7 +37,7 @@ public class ThreadUtils {
         @Override
         public Thread newThread(@NonNull Runnable r) {
           Thread thread = new Thread(r, "PartyMaker-bg-" + mCount.getAndIncrement());
-          thread.setPriority(Thread.MIN_PRIORITY);
+          thread.setPriority(BACKGROUND_THREAD_PRIORITY);
           return thread;
         }
       };
@@ -55,18 +61,18 @@ public class ThreadUtils {
           MAXIMUM_POOL_SIZE,
           KEEP_ALIVE_SECONDS,
           TimeUnit.SECONDS,
-          new LinkedBlockingQueue<>(128),
+          new LinkedBlockingQueue<>(QUEUE_CAPACITY),
           BACKGROUND_THREAD_FACTORY,
           new ThreadPoolExecutor.DiscardOldestPolicy());
 
   private static final Executor NETWORK_EXECUTOR =
-      Executors.newFixedThreadPool(Math.max(2, CPU_COUNT / 2), NETWORK_THREAD_FACTORY);
+      Executors.newFixedThreadPool(Math.max(MIN_CORE_THREADS, CPU_COUNT / NETWORK_THREAD_DIVISOR), NETWORK_THREAD_FACTORY);
 
   private static final Executor LIGHTWEIGHT_EXECUTOR =
       Executors.newSingleThreadExecutor(
           r -> {
             Thread thread = new Thread(r, "PartyMaker-lightweight");
-            thread.setPriority(Thread.NORM_PRIORITY);
+            thread.setPriority(LIGHTWEIGHT_THREAD_PRIORITY);
             return thread;
           });
 
@@ -146,9 +152,11 @@ public class ThreadUtils {
    * Runs a task on a background thread (alternative method name).
    *
    * @param runnable The task to run
+   * @deprecated Use runInBackground() for consistency
    */
+  @Deprecated
   public static void runOnBackground(Runnable runnable) {
-    BACKGROUND_EXECUTOR.execute(runnable);
+    runInBackground(runnable);
   }
 
   /**

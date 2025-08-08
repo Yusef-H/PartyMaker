@@ -24,8 +24,16 @@ import okhttp3.Response;
  */
 public class NetworkManager {
   private static final String TAG = "NetworkManager";
+  
+  // Network configuration constants
+  private static final int HTTPS_SUCCESS_MIN = 200;
+  private static final int HTTPS_SUCCESS_MAX = 399;
+  private static final String HTTPS_PROTOCOL = "https://";
+  private static final String PARTYMAKER_DOMAIN = "partymaker";
+  private static final String HEAD_REQUEST_METHOD = "HEAD";
+  private static final String DEBUG_BUILD_TYPE = "userdebug";
+  
   private static NetworkManager instance;
-
   private final MutableLiveData<Boolean> isNetworkAvailable = new MutableLiveData<>();
   private ConnectivityManager connectivityManager;
   private ConnectivityManager.NetworkCallback networkCallback;
@@ -205,11 +213,14 @@ public class NetworkManager {
 
   /** Initialize SSL Pinning Manager */
   private void initializeSSLPinning() {
-    boolean isProduction = !android.os.Build.TYPE.equals("userdebug");
+    boolean isProduction = isProductionBuild();
     sslPinningManager = SSLPinningManager.getInstance(isProduction);
-    Log.d(
-        TAG,
-        "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
+    Log.d(TAG, "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
+  }
+  
+  /** Check if this is a production build */
+  private boolean isProductionBuild() {
+    return !android.os.Build.TYPE.equals(DEBUG_BUILD_TYPE);
   }
 
   /** Get secure OkHttpClient with SSL pinning */
@@ -232,7 +243,7 @@ public class NetworkManager {
   public boolean isServerReachable(String url, int timeout) {
     try {
       // Use secure client if available
-      if (sslPinningManager != null && (url.startsWith("https://") || url.contains("partymaker"))) {
+      if (sslPinningManager != null && (url.startsWith(HTTPS_PROTOCOL) || url.contains(PARTYMAKER_DOMAIN))) {
         return isServerReachableSecure(url, timeout);
       }
 
@@ -240,9 +251,9 @@ public class NetworkManager {
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
       connection.setConnectTimeout(timeout);
       connection.setReadTimeout(timeout);
-      connection.setRequestMethod("HEAD");
+      connection.setRequestMethod(HEAD_REQUEST_METHOD);
       int responseCode = connection.getResponseCode();
-      return (200 <= responseCode && responseCode <= 399);
+      return (HTTPS_SUCCESS_MIN <= responseCode && responseCode <= HTTPS_SUCCESS_MAX);
     } catch (IOException e) {
       Log.e(TAG, "Error checking server reachability", e);
       return false;

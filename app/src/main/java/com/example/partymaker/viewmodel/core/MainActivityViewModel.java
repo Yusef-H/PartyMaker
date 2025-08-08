@@ -38,6 +38,21 @@ public class MainActivityViewModel extends BaseViewModel {
 
   /** Tag for logging specific to MainActivityViewModel */
   private static final String TAG = "MainActivityViewModel";
+  
+  // Error messages
+  private static final String ERROR_EMPTY_USER_KEY = "User key cannot be empty";
+  private static final String ERROR_EMPTY_GROUP_ID = "Group ID cannot be empty";
+  private static final String ERROR_EMPTY_UPDATES = "Updates cannot be empty";
+  private static final String ERROR_GROUP_NOT_FOUND = "Group not found";
+  
+  // Success messages
+  private static final String MSG_GROUP_CREATED = "Group created successfully";
+  private static final String MSG_GROUP_UPDATED = "Group updated successfully";
+  private static final String MSG_GROUP_DELETED = "Group deleted successfully";
+  private static final String MSG_GROUP_JOINED = "Successfully joined group";
+  private static final String MSG_GROUP_LEFT = "Successfully left group";
+  private static final String MSG_USER_GROUPS_LOADED = "User groups loaded successfully";
+  private static final String MSG_ALL_GROUPS_LOADED = "All groups loaded successfully";
 
   // Domain-specific LiveData
   private final MutableLiveData<List<Group>> groupList = new MutableLiveData<>();
@@ -104,7 +119,7 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void loadUserGroups(@NonNull String userKey, boolean forceRefresh) {
     if (userKey.trim().isEmpty()) {
-      throw new IllegalArgumentException("User key cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_USER_KEY);
     }
 
     Log.d(TAG, "Loading groups for user: " + userKey + ", forceRefresh: " + forceRefresh);
@@ -120,7 +135,7 @@ public class MainActivityViewModel extends BaseViewModel {
                 if (result.isLoading()) {
                   setLoading(true);
                 } else if (result.isSuccess()) {
-                  handleSuccessfulGroupsLoad(result.getData(), "User groups loaded successfully");
+                  handleSuccessfulGroupsLoad(result.getData(), MSG_USER_GROUPS_LOADED);
                 } else if (result.isError()) {
                   Log.e(TAG, "Error loading user groups: " + result.getError());
                   setError(result.getUserFriendlyError());
@@ -149,7 +164,7 @@ public class MainActivityViewModel extends BaseViewModel {
 
           repository.getAllGroups(
               groups -> {
-                handleSuccessfulGroupsLoad(groups, "All groups loaded successfully");
+                handleSuccessfulGroupsLoad(groups, MSG_ALL_GROUPS_LOADED);
                 setLoading(false);
               },
               forceRefresh);
@@ -165,7 +180,7 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void loadGroup(@NonNull String groupId, boolean forceRefresh) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
 
     Log.d(TAG, "Loading group with ID: " + groupId + ", forceRefresh: " + forceRefresh);
@@ -183,7 +198,7 @@ public class MainActivityViewModel extends BaseViewModel {
                   selectedGroup.setValue(group);
                 } else {
                   Log.e(TAG, "Group not found: " + groupId);
-                  setError("Group not found");
+                  setError(ERROR_GROUP_NOT_FOUND);
                 }
                 setLoading(false);
               },
@@ -200,7 +215,7 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void createGroup(@NonNull String groupId, @NonNull Group group) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
 
     Log.d(TAG, "Creating new group: " + group.getGroupName());
@@ -217,7 +232,7 @@ public class MainActivityViewModel extends BaseViewModel {
                 Log.d(TAG, "Group created successfully");
                 addGroupToList(group);
                 selectedGroup.setValue(group);
-                setSuccess("Group created successfully");
+                setSuccess(MSG_GROUP_CREATED);
                 setLoading(false);
               });
         });
@@ -232,10 +247,10 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void updateGroup(@NonNull String groupId, @NonNull Map<String, Object> updates) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
     if (updates.isEmpty()) {
-      throw new IllegalArgumentException("Updates map cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_UPDATES);
     }
 
     Log.d(TAG, "Updating group: " + groupId + " with " + updates.size() + " changes");
@@ -251,7 +266,7 @@ public class MainActivityViewModel extends BaseViewModel {
               () -> {
                 Log.d(TAG, "Group updated successfully");
                 applyUpdatesToLocalGroups(groupId, updates);
-                setSuccess("Group updated successfully");
+                setSuccess(MSG_GROUP_UPDATED);
                 setLoading(false);
               });
         });
@@ -265,7 +280,7 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void deleteGroup(@NonNull String groupId) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
 
     Log.d(TAG, "Deleting group: " + groupId);
@@ -281,7 +296,7 @@ public class MainActivityViewModel extends BaseViewModel {
                 Log.d(TAG, "Group deleted successfully");
                 removeGroupFromList(groupId);
                 clearSelectedGroupIfMatches(groupId);
-                setSuccess("Group deleted successfully");
+                setSuccess(MSG_GROUP_DELETED);
                 setLoading(false);
               });
         });
@@ -296,10 +311,10 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void joinGroup(@NonNull String groupId, @NonNull String userKey) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
     if (userKey.trim().isEmpty()) {
-      throw new IllegalArgumentException("User key cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_USER_KEY);
     }
 
     Log.d(TAG, "Joining group: " + groupId + " for user: " + userKey);
@@ -316,7 +331,7 @@ public class MainActivityViewModel extends BaseViewModel {
                 @Override
                 public void onComplete() {
                   Log.d(TAG, "Successfully joined group: " + groupId);
-                  setSuccess("Successfully joined group");
+                  setSuccess(MSG_GROUP_JOINED);
                   setLoading(false);
                   // Refresh the group data to show the updated membership
                   loadGroup(groupId, true);
@@ -341,10 +356,10 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void leaveGroup(@NonNull String groupId, @NonNull String userKey) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
     if (userKey.trim().isEmpty()) {
-      throw new IllegalArgumentException("User key cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_USER_KEY);
     }
 
     Log.d(TAG, "Leaving group: " + groupId + " for user: " + userKey);
@@ -363,7 +378,7 @@ public class MainActivityViewModel extends BaseViewModel {
                   Log.d(TAG, "Successfully left group: " + groupId);
                   removeGroupFromList(groupId);
                   clearSelectedGroupIfMatches(groupId);
-                  setSuccess("Successfully left group");
+                  setSuccess(MSG_GROUP_LEFT);
                   setLoading(false);
                 }
 
@@ -386,7 +401,7 @@ public class MainActivityViewModel extends BaseViewModel {
    */
   public void selectGroup(@NonNull String groupId, boolean forceRefresh) {
     if (groupId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Group ID cannot be null or empty");
+      throw new IllegalArgumentException(ERROR_EMPTY_GROUP_ID);
     }
 
     Log.d(TAG, "Selecting group: " + groupId + ", forceRefresh: " + forceRefresh);

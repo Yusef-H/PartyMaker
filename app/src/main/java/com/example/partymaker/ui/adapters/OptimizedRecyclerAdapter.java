@@ -52,45 +52,75 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
    * @param newItems The new list of items
    */
   public void updateItems(@NonNull List<T> newItems) {
-    final DiffUtil.DiffResult diffResult =
-        DiffUtil.calculateDiff(
-            new DiffUtil.Callback() {
-              @Override
-              public int getOldListSize() {
-                return items.size();
-              }
-
-              @Override
-              public int getNewListSize() {
-                return newItems.size();
-              }
-
-              @Override
-              public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                return OptimizedRecyclerAdapter.this.areItemsTheSame(
-                    items.get(oldPosition), newItems.get(newPosition));
-              }
-
-              @Override
-              public boolean areContentsTheSame(int oldPosition, int newPosition) {
-                return OptimizedRecyclerAdapter.this.areContentsTheSame(
-                    items.get(oldPosition), newItems.get(newPosition));
-              }
-            });
-
+    final DiffUtil.DiffResult diffResult = calculateDiff(newItems);
     this.items = new ArrayList<>(newItems);
     diffResult.dispatchUpdatesTo(this);
   }
+  
+  /**
+   * Calculates the difference between current items and new items using DiffUtil.
+   *
+   * @param newItems The new list of items to compare against
+   * @return DiffResult containing the calculated differences
+   */
+  private DiffUtil.DiffResult calculateDiff(@NonNull List<T> newItems) {
+    return DiffUtil.calculateDiff(new ItemDiffCallback(items, newItems));
+  }
+  
+  /**
+   * DiffUtil callback for comparing items efficiently.
+   */
+  private class ItemDiffCallback extends DiffUtil.Callback {
+    private final List<T> oldList;
+    private final List<T> newList;
+    
+    ItemDiffCallback(List<T> oldList, List<T> newList) {
+      this.oldList = oldList;
+      this.newList = newList;
+    }
+    
+    @Override
+    public int getOldListSize() {
+      return oldList.size();
+    }
+
+    @Override
+    public int getNewListSize() {
+      return newList.size();
+    }
+
+    @Override
+    public boolean areItemsTheSame(int oldPosition, int newPosition) {
+      return OptimizedRecyclerAdapter.this.areItemsTheSame(
+          oldList.get(oldPosition), newList.get(newPosition));
+    }
+
+    @Override
+    public boolean areContentsTheSame(int oldPosition, int newPosition) {
+      return OptimizedRecyclerAdapter.this.areContentsTheSame(
+          oldList.get(oldPosition), newList.get(newPosition));
+    }
+  }
 
   /**
-   * Adds an item to the adapter.
+   * Adds an item to the adapter at the end of the list.
    *
    * @param item The item to add
    */
   public void addItem(T item) {
-    if (item != null) {
-      items.add(item);
-      notifyItemInserted(items.size() - 1);
+    addItem(item, items.size());
+  }
+  
+  /**
+   * Adds an item to the adapter at the specified position.
+   *
+   * @param item The item to add
+   * @param position The position to insert the item at
+   */
+  public void addItem(T item, int position) {
+    if (item != null && position >= 0 && position <= items.size()) {
+      items.add(position, item);
+      notifyItemInserted(position);
     }
   }
 
@@ -109,8 +139,19 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   /** Clears all items from the adapter. */
   public void clearItems() {
     int size = items.size();
-    items.clear();
-    notifyItemRangeRemoved(0, size);
+    if (size > 0) {
+      items.clear();
+      notifyItemRangeRemoved(0, size);
+    }
+  }
+  
+  /**
+   * Checks if the adapter has any items.
+   *
+   * @return true if the adapter is empty, false otherwise
+   */
+  public boolean isEmpty() {
+    return items.isEmpty();
   }
 
   /**
