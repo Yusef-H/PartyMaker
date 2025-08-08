@@ -39,8 +39,7 @@ public class PermissionManager {
    * FIXED: Corrected logic - was inverted!
    */
   public static boolean isPermissionGranted(Context context, String permission) {
-    return ContextCompat.checkSelfPermission(context, permission)
-        == PackageManager.PERMISSION_GRANTED;
+    return ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED;
   }
 
   /** 
@@ -49,7 +48,7 @@ public class PermissionManager {
    */
   public static boolean arePermissionsGranted(Context context, String[] permissions) {
     for (String permission : permissions) {
-      if (!isPermissionGranted(context, permission)) {
+      if (isPermissionGranted(context, permission)) {
         return false;
       }
     }
@@ -64,7 +63,7 @@ public class PermissionManager {
     List<String> permissionsToRequest = new ArrayList<>();
 
     for (String permission : permissions) {
-      if (!isPermissionGranted(activity, permission)) {
+      if (isPermissionGranted(activity, permission)) {
         permissionsToRequest.add(permission);
       }
     }

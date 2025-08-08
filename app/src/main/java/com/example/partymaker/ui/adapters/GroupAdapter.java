@@ -312,7 +312,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
      * @param error the error to log
      */
     private void logPrimaryImageError(String groupKey, Exception error) {
-      if (!isObjectNotExistError(error)) {
+      if (isObjectNotExistError(error)) {
         Log.w(TAG, "Primary path failed for group " + groupKey + ": " + error.getMessage());
       }
     }
@@ -323,7 +323,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
      * @return true if it's an object not exist error
      */
     private boolean isObjectNotExistError(Exception error) {
-      return error.getMessage() != null && error.getMessage().contains(OBJECT_NOT_EXIST_ERROR);
+      return error.getMessage() == null || !error.getMessage().contains(OBJECT_NOT_EXIST_ERROR);
     }
 
     /**
@@ -391,7 +391,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
      * @param error the error to log
      */
     private void logFallbackImageError(String groupKey, Exception error) {
-      if (!isObjectNotExistError(error)) {
+      if (isObjectNotExistError(error)) {
         Log.w(TAG, "Fallback path also failed for group " + groupKey + ": " + error.getMessage());
       }
     }

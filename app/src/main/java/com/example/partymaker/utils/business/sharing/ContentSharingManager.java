@@ -56,7 +56,7 @@ public class ContentSharingManager {
    * @param group The group/party to share (cannot be null)
    */
   public static void sharePartyText(Context context, Group group) {
-    if (!validateInputs(context, group)) {
+    if (validateInputs(context, group)) {
       return;
     }
 
@@ -83,7 +83,7 @@ public class ContentSharingManager {
    * @param group The group/party to share (cannot be null)
    */
   public static void shareToWhatsApp(Context context, Group group) {
-    if (!validateInputs(context, group)) {
+    if (validateInputs(context, group)) {
       return;
     }
 
@@ -110,7 +110,7 @@ public class ContentSharingManager {
    * @param group The group/party to share (cannot be null)
    */
   public static void shareToFacebook(Context context, Group group) {
-    if (!validateInputs(context, group)) {
+    if (validateInputs(context, group)) {
       return;
     }
 
@@ -137,7 +137,7 @@ public class ContentSharingManager {
    * @param group The group/party to share (cannot be null)
    */
   public static void shareViaSMS(Context context, Group group) {
-    if (!validateInputs(context, group)) {
+    if (validateInputs(context, group)) {
       return;
     }
 
@@ -163,7 +163,7 @@ public class ContentSharingManager {
    * @param group The group/party to share (cannot be null)
    */
   public static void shareViaEmail(Context context, Group group) {
-    if (!validateInputs(context, group)) {
+    if (validateInputs(context, group)) {
       return;
     }
 
@@ -191,7 +191,7 @@ public class ContentSharingManager {
    * @param image The image to share (cannot be null)
    */
   public static void sharePartyImage(Context context, Group group, Bitmap image) {
-    if (!validateInputs(context, group) || image == null) {
+    if (validateInputs(context, group) || image == null) {
       if (image == null) {
         Log.e(TAG, "Image cannot be null");
         if (context != null) {
@@ -341,14 +341,14 @@ public class ContentSharingManager {
   private static boolean validateInputs(Context context, Group group) {
     if (context == null) {
       Log.e(TAG, "Context cannot be null");
-      return false;
+      return true;
     }
     if (group == null) {
       Log.e(TAG, "Group cannot be null");
       Toast.makeText(context, ERROR_SHARING_PARTY, Toast.LENGTH_SHORT).show();
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   // Private constructor to prevent instantiation
