@@ -173,8 +173,7 @@ public class LoginActivity extends AppCompatActivity {
       progressBar = new ProgressBar(this);
       progressBar.setVisibility(View.GONE);
     }
-    LoadingStateManager loadingStateManager =
-        null; // Direct progress bar management to avoid interference
+    // Direct progress bar management to avoid interference with LoadingStateManager
   }
 
   private void setupViewModelObservers() {
