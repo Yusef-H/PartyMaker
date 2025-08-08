@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.utils.security.monitoring.SecurityAgent;
-import com.example.partymaker.utils.security.monitoring.SecurityIssue;
 import com.example.partymaker.utils.security.monitoring.SecurityReport;
 import java.io.File;
 import java.io.FileWriter;

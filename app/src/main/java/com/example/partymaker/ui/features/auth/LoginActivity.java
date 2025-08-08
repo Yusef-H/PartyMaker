@@ -27,7 +27,6 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.viewmodel.auth.AuthViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
