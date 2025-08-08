@@ -276,7 +276,8 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 app:lottie_autoPlay="true"
-                app:lottie_loop="false" />
+                app:lottie_loop="false"
+                tools:ignore="MissingClass" />
 
             <!-- Feedback text -->
             <TextView
