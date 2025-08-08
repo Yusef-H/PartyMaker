@@ -47,6 +47,9 @@ public class ButtonAnimationHelper {
               animatePress(v, enableHaptics);
               break;
             case MotionEvent.ACTION_UP:
+              animateRelease(v);
+              v.performClick();
+              break;
             case MotionEvent.ACTION_CANCEL:
               animateRelease(v);
               break;
