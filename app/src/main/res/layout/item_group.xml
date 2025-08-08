@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.PartyMaker.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
-    android:background="@color/primaryGray"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:rippleColor="?attr/colorPrimary"
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primaryGray"
-        android:paddingVertical="8dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="12dp">
+        android:background="@color/white"
+        android:paddingVertical="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgGroupPicture"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@mipmap/ic_launcher_round"
-            app:civ_border_color="@color/primaryBlue"
-            app:civ_border_width="2dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/default_group_image"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+            app:strokeColor="@color/primaryBlue"
+            app:strokeWidth="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,14 +38,13 @@
             android:id="@+id/tvGroupName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/group_name"
+            android:textAppearance="@style/TextAppearance.PartyMaker.TitleLarge"
             android:textColor="@color/primaryBlue"
-            android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/imgGroupPicture"
             app:layout_constraintTop_toTopOf="@id/imgGroupPicture" />
@@ -48,14 +53,14 @@
             android:id="@+id/tvGroupDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="@string/date"
-            android:textColor="@color/md_theme_secondary"
-            android:textSize="13sp"
+            android:textAppearance="@style/TextAppearance.PartyMaker.BodyLarge"
+            android:textColor="@color/gray"
             app:layout_constraintBottom_toBottomOf="@id/imgGroupPicture"
             app:layout_constraintEnd_toEndOf="@id/tvGroupName"
             app:layout_constraintStart_toStartOf="@id/tvGroupName"
             app:layout_constraintTop_toBottomOf="@id/tvGroupName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

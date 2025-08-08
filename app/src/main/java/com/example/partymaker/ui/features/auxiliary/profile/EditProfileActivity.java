@@ -71,13 +71,7 @@ public class EditProfileActivity extends AppCompatActivity {
     profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
     profileViewModel.setAppContext(getApplicationContext());
 
-    // Hide action bar to remove black bar at top
-    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
-    }
-
-    setupActionBar();
+    setupToolbar();
     initViews();
     setupObservers();
     setListeners();
@@ -87,29 +81,21 @@ public class EditProfileActivity extends AppCompatActivity {
     loadUserData();
   }
 
-  // Sets up the action bar with custom gradient background and styling.
-  private void setupActionBar() {
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar == null) {
-      Log.w(TAG, "ActionBar not available");
-      return;
-    }
-
-    try {
-      GradientDrawable gradient = createActionBarGradient();
-      actionBar.setBackgroundDrawable(gradient);
-
-      String styledTitle = createStyledTitle();
-      actionBar.setTitle(Html.fromHtml(styledTitle, Html.FROM_HTML_MODE_LEGACY));
-
-      configureActionBarProperties(actionBar);
-
-      Log.d(TAG, "ActionBar setup completed");
-
-    } catch (Exception e) {
-      Log.e(TAG, "Error setting up ActionBar", e);
+  // Sets up the toolbar with navigation and title
+  private void setupToolbar() {
+    androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+    if (toolbar != null) {
+      setSupportActionBar(toolbar);
+      
+      // Enable back button
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+      getSupportActionBar().setDisplayShowHomeEnabled(true);
+      
+      // Set custom back arrow
+      getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
     }
   }
+
 
   // Creates a gradient drawable for the action bar background.
   private GradientDrawable createActionBarGradient() {
@@ -121,20 +107,6 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     gradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
     return gradient;
-  }
-
-  // Creates a styled HTML title string.
-  private String createStyledTitle() {
-    return String.format(
-        "<font color='%s'><b>%s</b></font>",
-        EditProfileActivity.ACTION_BAR_TITLE_COLOR, "Edit Profile");
-  }
-
-  // Configures action bar properties.
-  private void configureActionBarProperties(ActionBar actionBar) {
-    actionBar.setElevation(ACTION_BAR_ELEVATION);
-    actionBar.setDisplayShowHomeEnabled(true);
-    actionBar.setDisplayHomeAsUpEnabled(false);
   }
 
   private void initViews() {
@@ -858,7 +830,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == R.id.settings) {
+    if (item.getItemId() == android.R.id.home) {
+      // Handle toolbar back button press
+      finish();
+      return true;
+    } else if (item.getItemId() == R.id.settings) {
       Intent intent = new Intent(EditProfileActivity.this, ServerSettingsActivity.class);
       startActivity(intent);
       return true;

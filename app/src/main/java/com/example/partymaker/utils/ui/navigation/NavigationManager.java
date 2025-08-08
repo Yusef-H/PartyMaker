@@ -2,9 +2,7 @@ package com.example.partymaker.utils.ui.navigation;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity;
 import com.example.partymaker.ui.features.core.MainActivity;
@@ -20,29 +18,32 @@ public class NavigationManager {
    * @param currentPage The current page identifier
    */
   public static void setupBottomNavigation(Activity activity, String currentPage) {
-    LinearLayout navProfile = activity.findViewById(R.id.navProfile);
-    LinearLayout navMyParties = activity.findViewById(R.id.navMyParties);
-    LinearLayout navPublicParties = activity.findViewById(R.id.navPublicParties);
-    LinearLayout navCreateGroup = activity.findViewById(R.id.navCreateGroup);
+    BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottom_navigation);
 
-    // Set current page highlighting
-    highlightCurrentPage(activity, currentPage);
+    if (bottomNavigationView != null) {
+      // Set current page highlighting
+      setSelectedItem(bottomNavigationView, currentPage);
 
-    // Set click listeners
-    if (navProfile != null) {
-      navProfile.setOnClickListener(v -> navigateToProfile(activity));
-    }
-
-    if (navMyParties != null) {
-      navMyParties.setOnClickListener(v -> navigateToMyParties(activity));
-    }
-
-    if (navPublicParties != null) {
-      navPublicParties.setOnClickListener(v -> navigateToPublicParties(activity));
-    }
-
-    if (navCreateGroup != null) {
-      navCreateGroup.setOnClickListener(v -> navigateToCreateGroup(activity));
+      // Set up navigation listener
+      bottomNavigationView.setOnItemSelectedListener(item -> {
+        int itemId = item.getItemId();
+        
+        if (itemId == R.id.nav_profile) {
+          navigateToProfile(activity);
+          return true;
+        } else if (itemId == R.id.nav_my_parties) {
+          navigateToMyParties(activity);
+          return true;
+        } else if (itemId == R.id.nav_public_parties) {
+          navigateToPublicParties(activity);
+          return true;
+        } else if (itemId == R.id.nav_create_group) {
+          navigateToCreateGroup(activity);
+          return true;
+        }
+        
+        return false;
+      });
     }
   }
 
@@ -55,65 +56,24 @@ public class NavigationManager {
     setupBottomNavigation(activity, "none");
   }
 
-  private static void highlightCurrentPage(Activity activity, String currentPage) {
-    // Reset all to default colors
-    resetNavColors(activity);
-
-    // Highlight current page
+  private static void setSelectedItem(BottomNavigationView bottomNavigationView, String currentPage) {
     switch (currentPage) {
       case "profile":
-        highlightNavItem(activity, R.id.navProfile);
+        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
         break;
       case "myparties":
-        highlightNavItem(activity, R.id.navMyParties);
+        bottomNavigationView.setSelectedItemId(R.id.nav_my_parties);
         break;
       case "publicparties":
-        highlightNavItem(activity, R.id.navPublicParties);
+        bottomNavigationView.setSelectedItemId(R.id.nav_public_parties);
         break;
       case "creategroup":
-        highlightNavItem(activity, R.id.navCreateGroup);
+        bottomNavigationView.setSelectedItemId(R.id.nav_create_group);
         break;
       case "none":
       default:
-        // Don't highlight any item
+        // Don't select any item
         break;
-    }
-  }
-
-  private static void resetNavColors(Activity activity) {
-    resetNavItem(activity, R.id.navProfile);
-    resetNavItem(activity, R.id.navMyParties);
-    resetNavItem(activity, R.id.navPublicParties);
-    resetNavItem(activity, R.id.navCreateGroup);
-  }
-
-  private static void resetNavItem(Activity activity, int navItemId) {
-    LinearLayout navItem = activity.findViewById(navItemId);
-    if (navItem != null) {
-      ImageView icon = (ImageView) navItem.getChildAt(0);
-      TextView text = (TextView) navItem.getChildAt(1);
-
-      if (icon != null) {
-        icon.setColorFilter(activity.getResources().getColor(R.color.gray_medium));
-      }
-      if (text != null) {
-        text.setTextColor(activity.getResources().getColor(R.color.gray_medium));
-      }
-    }
-  }
-
-  private static void highlightNavItem(Activity activity, int navItemId) {
-    LinearLayout navItem = activity.findViewById(navItemId);
-    if (navItem != null) {
-      ImageView icon = (ImageView) navItem.getChildAt(0);
-      TextView text = (TextView) navItem.getChildAt(1);
-
-      if (icon != null) {
-        icon.setColorFilter(activity.getResources().getColor(R.color.blue_primary));
-      }
-      if (text != null) {
-        text.setTextColor(activity.getResources().getColor(R.color.blue_primary));
-      }
     }
   }
 

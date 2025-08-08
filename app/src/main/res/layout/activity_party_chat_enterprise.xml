@@ -4,51 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryBlue"
     android:fitsSystemWindows="true"
-    tools:context=".ui.features.auxiliary.chatbot.GptChatActivity">
+    tools:context="com.example.partymaker.ui.features.groups.chat.ChatActivity">
 
-    <!-- App Bar with elevation and modern styling -->
+    <!-- App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primaryBlue"
-        app:elevation="4dp">
+        android:background="?attr/colorSurface"
+        app:elevation="2dp">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/chatToolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back"
-            app:navigationIconTint="@color/white">
+            app:navigationIconTint="?attr/colorOnSurface">
 
-            <!-- Custom title with AI avatar -->
+            <!-- Custom toolbar content with party info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <!-- AI Avatar -->
+                <!-- Party Avatar -->
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_marginEnd="12dp"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="2dp">
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp">
 
                     <ImageView
+                        android:id="@+id/imgPartyAvatar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:contentDescription="@string/chatgpt_icon"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_chatgpt"
-                        android:background="@color/white" />
+                        android:contentDescription="Party avatar"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_celebration" />
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Title and Status -->
+                <!-- Party Info -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -56,33 +55,33 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvPartyName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/ai_assistant"
+                        android:text="Party Name"
                         android:textAppearance="@style/TextAppearance.PartyMaker.HeadlineSmall"
-                        android:textColor="@color/white" />
+                        android:textColor="?attr/colorOnSurface" />
 
                     <TextView
-                        android:id="@+id/statusText"
+                        android:id="@+id/tvPartyMembers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Online"
+                        android:text="5 members"
                         android:textAppearance="@style/TextAppearance.PartyMaker.BodySmall"
-                        android:textColor="@color/white"
-                        android:alpha="0.8" />
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
                 <!-- Options Menu -->
                 <ImageButton
-                    android:id="@+id/menuButton"
+                    android:id="@+id/btnOptions"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Chat options"
                     android:src="@drawable/ic_more_vert"
-                    app:tint="@color/white" />
+                    app:tint="?attr/colorOnSurface" />
 
             </LinearLayout>
 
@@ -90,20 +89,21 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Chat Messages Area -->
+    <!-- Chat Messages -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatRecyclerView"
+        android:id="@+id/recyclerViewMessages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/item_chat_message_enterprise" />
 
-    <!-- Modern Message Input Area -->
+    <!-- Message Input Container -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/messageInputCard"
+        android:id="@+id/messageInputContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -119,28 +119,28 @@
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <!-- Attachment/More Options Button -->
+            <!-- Attachment Button -->
             <ImageButton
-                android:id="@+id/attachButton"
+                android:id="@+id/btnAttach"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Attachment options"
+                android:contentDescription="Attach file"
                 android:src="@drawable/ic_add"
                 app:tint="?attr/colorOnSurfaceVariant" />
 
-            <!-- Message Input Field -->
+            <!-- Message Input -->
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/messageInput"
+                android:id="@+id/etMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="8dp"
                 android:background="@android:color/transparent"
-                android:hint="@string/type_message"
+                android:hint="Type a message..."
                 android:inputType="textMultiLine|textCapSentences"
-                android:maxLines="4"
+                android:maxLines="6"
                 android:minLines="1"
                 android:paddingVertical="12dp"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
@@ -149,14 +149,14 @@
 
             <!-- Send Button -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/sendButton"
+                android:id="@+id/fabSend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:contentDescription="@string/send"
+                android:contentDescription="Send message"
                 android:src="@drawable/ic_send"
                 app:backgroundTint="?attr/colorPrimary"
-                app:elevation="4dp"
+                app:elevation="0dp"
                 app:fabSize="mini"
                 app:tint="?attr/colorOnPrimary" />
 
@@ -166,7 +166,7 @@
 
     <!-- Typing Indicator (initially hidden) -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/typingIndicatorCard"
+        android:id="@+id/typingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
@@ -185,19 +185,39 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="12dp">
 
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+            <!-- Typing Animation Dots -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:indeterminate="true"
-                app:indicatorColor="?attr/colorPrimary"
-                app:indicatorSize="16dp"
-                app:trackThickness="2dp" />
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/typing_dot"
+                    android:backgroundTint="?attr/colorPrimary" />
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/typing_dot"
+                    android:backgroundTint="?attr/colorPrimary" />
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/typing_dot"
+                    android:backgroundTint="?attr/colorPrimary" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AI is thinking..."
+                android:text="Someone is typing..."
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
