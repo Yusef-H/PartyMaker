@@ -95,10 +95,7 @@ public class PermissionManager {
    * Pre-Android 13, notifications don't need runtime permission
    */
   public static boolean canUseNotificationFeatures(Context context) {
-    if (android.os.Build.VERSION.SDK_INT < 33) {
-      return true; // Pre-Android 13 doesn't need permission
-    }
-    return arePermissionsGranted(context, NOTIFICATION_PERMISSIONS);
+      return arePermissionsGranted(context, NOTIFICATION_PERMISSIONS);
   }
 
   /** Request location permissions if needed */

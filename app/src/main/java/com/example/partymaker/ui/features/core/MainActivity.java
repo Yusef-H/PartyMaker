@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
@@ -323,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
     if (lottieAnimation != null) {
       lottieAnimation.setAnimation("party_loading.json");
       lottieAnimation.setRepeatCount(-1); // Loop indefinitely
-      lottieAnimation.setRepeatMode(android.animation.ValueAnimator.RESTART);
+      lottieAnimation.setRepeatMode(LottieDrawable.RESTART);
     }
 
     return new LoadingStateManager.Builder()

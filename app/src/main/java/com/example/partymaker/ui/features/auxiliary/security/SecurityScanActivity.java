@@ -3,6 +3,7 @@ package com.example.partymaker.ui.features.auxiliary.security;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -200,7 +201,9 @@ public class SecurityScanActivity extends AppCompatActivity {
   private File createReportsDirectory() {
     File reportsDir = new File(getExternalFilesDir(null), REPORTS_DIRECTORY);
     if (!reportsDir.exists()) {
-      reportsDir.mkdirs();
+      if (!reportsDir.mkdirs()) {
+        Log.e(TAG, "Failed to create reports directory: " + reportsDir.getAbsolutePath());
+      }
     }
     return reportsDir;
   }
@@ -244,7 +247,9 @@ public class SecurityScanActivity extends AppCompatActivity {
   private File createTempReportFile() throws Exception {
     File tempDir = new File(getCacheDir(), TEMP_REPORTS_DIRECTORY);
     if (!tempDir.exists()) {
-      tempDir.mkdirs();
+      if (!tempDir.mkdirs()) {
+        Log.e(TAG, "Failed to create temp directory: " + tempDir.getAbsolutePath());
+      }
     }
 
     File tempFile = new File(tempDir, TEMP_HTML_FILE);

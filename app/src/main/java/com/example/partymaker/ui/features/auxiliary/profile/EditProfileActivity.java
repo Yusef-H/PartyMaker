@@ -112,11 +112,13 @@ public class EditProfileActivity extends AppCompatActivity {
       setSupportActionBar(toolbar);
 
       // Enable back button
-      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-      getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-      // Set custom back arrow
-      getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+      if (getSupportActionBar() != null) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        
+        // Set custom back arrow
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+      }
     }
   }
 

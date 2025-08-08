@@ -226,12 +226,10 @@ public class ButtonAnimationHelper {
 
   /** Creates ripple effect for custom views that don't have built-in ripples */
   public static void applyCustomRipple(@NonNull View view, int rippleColor) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       RippleDrawable rippleDrawable =
-          new RippleDrawable(
-              android.content.res.ColorStateList.valueOf(rippleColor), view.getBackground(), null);
+              new RippleDrawable(
+                      android.content.res.ColorStateList.valueOf(rippleColor), view.getBackground(), null);
       view.setBackground(rippleDrawable);
-    }
   }
 
   /** Applies entrance animation for views appearing on screen */
@@ -259,11 +257,7 @@ public class ButtonAnimationHelper {
       Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
       if (vibrator != null && vibrator.hasVibrator()) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
           vibrator.vibrate(VibrationEffect.createOneShot(VIBRATION_DURATION_MS, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-          vibrator.vibrate(VIBRATION_DURATION_MS);
-        }
       }
     } catch (SecurityException e) {
       // Silently fail if vibrate permission is not granted
@@ -279,12 +273,8 @@ public class ButtonAnimationHelper {
     Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
     if (vibrator != null && vibrator.hasVibrator()) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         vibrator.vibrate(VibrationEffect.createWaveform(
-            new long[] {0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1));
-      } else {
-        vibrator.vibrate(new long[] {0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1);
-      }
+                new long[]{0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1));
     }
   }
 

@@ -453,7 +453,6 @@ public class UserRepository {
    * @param user The user to update
    * @param updates The updates to apply
    */
-  @SuppressWarnings("unchecked")
   private void applyUpdatesToUser(User user, Map<String, Object> updates) {
     if (user == null || updates == null) {
       return;

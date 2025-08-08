@@ -183,7 +183,9 @@ public class FileManager {
     if (!fileOrDirectory
         .getAbsolutePath()
         .equals(Objects.requireNonNull(fileOrDirectory.getParentFile()).getAbsolutePath())) {
-      fileOrDirectory.delete();
+      if (!fileOrDirectory.delete()) {
+        Log.w(TAG, "Failed to delete file/directory: " + fileOrDirectory.getAbsolutePath());
+      }
     }
   }
 

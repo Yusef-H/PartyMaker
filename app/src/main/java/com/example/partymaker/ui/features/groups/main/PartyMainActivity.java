@@ -1479,9 +1479,9 @@ public class PartyMainActivity extends AppCompatActivity {
     // Find a random user to transfer admin to (excluding current admin)
     String newAdminKey = null;
     for (Map.Entry<String, Object> entry : friendKeys.entrySet()) {
-      String userKey = entry.getValue().toString();
-      if (!userKey.equals(userKey)) {
-        newAdminKey = userKey;
+      String candidateKey = entry.getValue().toString();
+      if (!candidateKey.equals(this.userKey)) {
+        newAdminKey = candidateKey;
         break; // Take the first non-admin user (pseudo-random since HashMap iteration order is not
         // guaranteed)
       }
