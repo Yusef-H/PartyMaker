@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.GroupViewHolder> {
 
+  private static final long FIREBASE_TIMEOUT_MS = 3000L;
   private final Context context;
   private final OnGroupClickListener listener;
 
@@ -190,8 +191,8 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
      * paths with fallback mechanism.
      */
     private void loadGroupImageWithTimeout(String groupKey, ImageView imageView) {
-      // Shorter timeout for Firebase Storage requests to prevent delays (3 seconds)
-      final long TIMEOUT_MS = 3000;
+      // Shorter timeout for Firebase Storage requests to prevent delays
+      final long timeoutMs = FIREBASE_TIMEOUT_MS;
 
       // Try primary path with timeout
       Task<android.net.Uri> primaryTask =
@@ -201,7 +202,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
       // Apply timeout to the task
       Task<android.net.Uri> timedPrimaryTask =
-          Tasks.withTimeout(primaryTask, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+          Tasks.withTimeout(primaryTask, timeoutMs, TimeUnit.MILLISECONDS);
 
       timedPrimaryTask
           .addOnSuccessListener(
@@ -233,7 +234,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /** Tries the fallback Firebase Storage path for group images. */
     private void tryFallbackImagePath(String groupKey, ImageView imageView) {
-      final long TIMEOUT_MS = 3000;
+      final long timeoutMs = FIREBASE_TIMEOUT_MS;
 
       Task<android.net.Uri> fallbackTask =
           com.example.partymaker.data.firebase.DBRef.refStorage
@@ -242,7 +243,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
       // Apply timeout to fallback task
       Task<android.net.Uri> timedFallbackTask =
-          Tasks.withTimeout(fallbackTask, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+          Tasks.withTimeout(fallbackTask, timeoutMs, TimeUnit.MILLISECONDS);
 
       timedFallbackTask
           .addOnSuccessListener(

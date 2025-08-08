@@ -14,6 +14,10 @@ import java.util.HashMap;
  */
 @Entity(tableName = "groups")
 public class Group {
+  
+  /** Constants for group types */
+  public static final int GROUP_TYPE_PUBLIC = 0;
+  public static final int GROUP_TYPE_PRIVATE = 1;
   /** The group's display name. */
   @ColumnInfo(name = "group_name")
   private String groupName;
@@ -64,7 +68,7 @@ public class Group {
   @ColumnInfo(name = "group_price")
   private String groupPrice;
 
-  /** 0 = Public group, 1 = Private group. */
+  /** Group type: {@link #GROUP_TYPE_PUBLIC} or {@link #GROUP_TYPE_PRIVATE}. */
   @ColumnInfo(name = "group_type")
   private int groupType;
 
@@ -114,7 +118,7 @@ public class Group {
    * @param groupMonths the months
    * @param groupYears the years
    * @param groupHours the hours
-   * @param groupType the group type (0=public, 1=private)
+   * @param groupType the group type ({@link #GROUP_TYPE_PUBLIC} or {@link #GROUP_TYPE_PRIVATE})
    * @param groupPrice the price
    * @param canAdd whether users can add
    * @param friendKeys map of friend keys

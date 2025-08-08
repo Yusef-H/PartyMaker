@@ -82,17 +82,23 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   // Constants
   private static final int IMAGE_PICKER_REQUEST_CODE = 100;
   private static final int INSTRUCTION_DELAY_MS = 3000;
+  private static final int ERROR_ANIMATION_HIDE_DELAY_MS = 3000;
+  private static final int SUCCESS_ANIMATION_HIDE_DELAY_MS = 2500;
+  private static final int LOGIN_ANIMATION_DELAY_MS = 100;
+  private static final int NAME_ANIMATION_DELAY_MS = 200;
+  private static final int EDIT_TEXT_ANIMATION_DELAY_MS = 300;
+  private static final int CHAT_FAB_ANIMATION_DELAY_MS = 800;
   private static final String TAG = "CreateGroupActivity";
   private final int FINE_PERMISSION_CODE = 1;
   private Button btnAddGroup, btnNext1, btnNext2, btnBack1, btnBack2, btnDone;
   private TextView tvPartyName, tvPartyDate, tvGroupPicture, tvHours, tvSelectedDate;
   private EditText etPartyName;
   private ImageView imgLogin, imgGroupPicture;
-  private String GroupKey1, DaysSelected, MonthsSelected, YearsSelected;
-  private CheckBox cbGroupType;
+  private String currentGroupKey, selectedDays, selectedMonths, selectedYears;
+  private CheckBox groupTypeCheckBox;
   private Calendar selectedDate;
   private TimePicker timePicker;
-  private FloatingActionButton fabChat;
+  private FloatingActionButton chatFab;
   private GoogleMap map;
   private LatLng chosenLatLng;
   private FusedLocationProviderClient locationClient;
@@ -212,11 +218,11 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
     // Input views
     etPartyName = findViewById(R.id.etPartyName);
-    cbGroupType = findViewById(R.id.cbGroupType);
+    groupTypeCheckBox = findViewById(R.id.cbGroupType);
     timePicker = findViewById(R.id.timePicker);
 
     // Floating action button
-    fabChat = findViewById(R.id.fabChat);
+    chatFab = findViewById(R.id.fabChat);
 
     // Initialize calendar
     selectedDate = Calendar.getInstance();
@@ -272,15 +278,15 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     if (btnAddGroup != null) ButtonAnimationHelper.enhanceButton(btnAddGroup);
 
     // Apply special animation to FAB chat button
-    if (fabChat != null) {
-      ButtonAnimationHelper.applyPressAnimation(fabChat, true);
-      ButtonAnimationHelper.applyEntranceAnimation(fabChat, 800);
+    if (chatFab != null) {
+      ButtonAnimationHelper.applyPressAnimation(chatFab, true);
+      ButtonAnimationHelper.applyEntranceAnimation(chatFab, CHAT_FAB_ANIMATION_DELAY_MS);
     }
 
     // Add entrance animations for UI elements with stagger effect
-    if (imgLogin != null) ButtonAnimationHelper.applyEntranceAnimation(imgLogin, 100);
-    if (tvPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(tvPartyName, 200);
-    if (etPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(etPartyName, 300);
+    if (imgLogin != null) ButtonAnimationHelper.applyEntranceAnimation(imgLogin, LOGIN_ANIMATION_DELAY_MS);
+    if (tvPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(tvPartyName, NAME_ANIMATION_DELAY_MS);
+    if (etPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(etPartyName, EDIT_TEXT_ANIMATION_DELAY_MS);
   }
 
   // Initialize map fragment and location services
@@ -367,7 +373,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
               animationOverlay.setVisibility(View.GONE);
             }
           },
-          3000);
+          ERROR_ANIMATION_HIDE_DELAY_MS);
     } else {
       // Fallback to toast if overlay not available
       Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -444,8 +450,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   @SuppressLint("ClickableViewAccessibility")
   private void setupFloatingActionButton() {
-    fabChat.setOnClickListener(this::handleChatFabClick);
-    fabChat.setOnTouchListener(this::handleChatFabTouch);
+    chatFab.setOnClickListener(this::handleChatFabClick);
+    chatFab.setOnTouchListener(this::handleChatFabTouch);
   }
 
   // Navigation handlers
@@ -478,14 +484,14 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   private void transitionBackToLocationStep() {
-    showViews(cbGroupType, btnNext2, btnBack1);
+    showViews(groupTypeCheckBox, btnNext2, btnBack1);
     hideViews(tvPartyDate, tvHours, tvSelectedDate, timePicker, btnAddGroup, btnBack2);
 
     showMapAndLocationSearch();
   }
 
   private void transitionToDateTimeStep() {
-    hideViews(cbGroupType, btnNext2, btnBack1);
+    hideViews(groupTypeCheckBox, btnNext2, btnBack1);
     showViews(tvPartyDate, tvHours, tvSelectedDate, timePicker, btnAddGroup, btnBack2);
 
     hideMapAndLocationSearch();
@@ -508,7 +514,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         timePicker,
         btnBack2,
         btnAddGroup,
-        cbGroupType);
+        groupTypeCheckBox);
     showViews(imgGroupPicture, tvGroupPicture, btnDone);
 
     updateActionBarForImageStep();
@@ -568,7 +574,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   private void saveGroupToDatabase(Group group) {
     String groupKey = generateGroupKey();
-    GroupKey1 = groupKey;
+    currentGroupKey = groupKey;
     group.setGroupKey(groupKey);
 
     // Use FirebaseServerClient instead of direct Firebase calls
@@ -659,7 +665,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   // Group configuration methods
   private int determineGroupType() {
-    return cbGroupType.isChecked() ? GroupType.PRIVATE : GroupType.PUBLIC;
+    return groupTypeCheckBox.isChecked() ? GroupType.PRIVATE : GroupType.PUBLIC;
   }
 
   private String getCurrentUserEmail() {
@@ -702,7 +708,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     int minute = timePicker.getMinute();
     String timeString = String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
 
-    return new GroupDateTimeManager(DaysSelected, MonthsSelected, YearsSelected, timeString);
+    return new GroupDateTimeManager(selectedDays, selectedMonths, selectedYears, timeString);
   }
 
   private String generateGroupKey() {
@@ -824,7 +830,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
               animationOverlay.setVisibility(View.GONE);
             }
           },
-          2500);
+          SUCCESS_ANIMATION_HIDE_DELAY_MS);
     } else {
       // Fallback to toast if overlay not available
       Toast.makeText(this, "🎉 Party created successfully!", Toast.LENGTH_SHORT).show();
@@ -844,7 +850,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (resultCode == Activity.RESULT_OK) {
-      if (requestCode == 100) {
+      if (requestCode == IMAGE_PICKER_REQUEST_CODE) {
         Uri uri = data.getData();
         if (null != uri) {
 
@@ -885,7 +891,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
   private void uploadGroupImage(Uri uri) {
     DBRef.refStorage
-        .child("UsersImageProfile/Groups/" + GroupKey1)
+        .child("UsersImageProfile/Groups/" + currentGroupKey)
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot ->
@@ -970,9 +976,9 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
             selectedDate.get(Calendar.DAY_OF_MONTH), monthName, selectedDate.get(Calendar.YEAR)));
 
     // Store the values
-    DaysSelected = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
-    MonthsSelected = monthName;
-    YearsSelected = String.valueOf(selectedDate.get(Calendar.YEAR));
+    selectedDays = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
+    selectedMonths = monthName;
+    selectedYears = String.valueOf(selectedDate.get(Calendar.YEAR));
   }
 
   @Override
