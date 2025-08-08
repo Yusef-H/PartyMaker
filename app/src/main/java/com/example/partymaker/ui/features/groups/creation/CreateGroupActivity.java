@@ -102,9 +102,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private GoogleMap map;
   private LatLng chosenLatLng;
   private FusedLocationProviderClient locationClient;
-  private LoadingStateManager loadingStateManager;
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_party_create);
@@ -256,14 +255,14 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
       // Create a simple progress bar as fallback
       android.widget.ProgressBar progressBar = new android.widget.ProgressBar(this);
 
-      loadingStateManager =
-          new LoadingStateManager.Builder()
-              .contentView(findViewById(android.R.id.content)) // Use root content view
-              .progressBar(progressBar)
-              .loadingText(feedbackText)
-              .errorView(null)
-              .lottieAnimation(lottieView)
-              .build();
+        // Use root content view
+        LoadingStateManager loadingStateManager = new LoadingStateManager.Builder()
+                .contentView(findViewById(android.R.id.content)) // Use root content view
+                .progressBar(progressBar)
+                .loadingText(feedbackText)
+                .errorView(null)
+                .lottieAnimation(lottieView)
+                .build();
     }
   }
 
