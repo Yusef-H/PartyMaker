@@ -40,7 +40,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class AdminOptionsActivity extends AppCompatActivity implements OnMapReadyCallback {
   private static final String TAG = "AdminOptionsActivity";
