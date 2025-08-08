@@ -42,6 +42,15 @@ public class GroupRepository {
   private static final String FIELD_FRIEND_KEYS = "friendKeys";
   private static final String FIELD_PROFILE_IMAGE_URL = "profileImageUrl";
   
+  // Error messages
+  private static final String ERROR_NOT_INITIALIZED = "Repository not initialized";
+  private static final String ERROR_INVALID_GROUP_KEY = "Invalid group key";
+  private static final String ERROR_INVALID_USER_KEY = "Invalid user key";
+  private static final String ERROR_INVALID_GROUP_DATA = "Invalid group data";
+  private static final String ERROR_INVALID_UPDATE_DATA = "Invalid update data";
+  private static final String ERROR_GROUP_CANNOT_BE_NULL = "Group cannot be null";
+  private static final String ERROR_INVALID_GROUP = "Invalid group";
+  
   private static GroupRepository instance;
 
   private LocalGroupDataSource localDataSource;
@@ -94,13 +103,13 @@ public class GroupRepository {
   public void getGroup(String groupKey, final DataCallback<Group> callback, boolean forceRefresh) {
     if (!isInitialized) {
       Log.e(TAG, "Repository not initialized. Call initialize() first.");
-      callback.onError("Repository not initialized");
+      callback.onError(ERROR_NOT_INITIALIZED);
       return;
     }
 
     if (groupKey == null || groupKey.isEmpty()) {
       Log.e(TAG, "Invalid group key provided");
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
@@ -206,7 +215,7 @@ public class GroupRepository {
   public void getAllGroups(final DataCallback<List<Group>> callback, boolean forceRefresh) {
     if (!isInitialized) {
       Log.e(TAG, "Repository not initialized. Call initialize() first.");
-      callback.onError("Repository not initialized");
+      callback.onError(ERROR_NOT_INITIALIZED);
       return;
     }
 
@@ -309,13 +318,13 @@ public class GroupRepository {
   public void saveGroup(String groupKey, Group group, final OperationCallback callback) {
     if (!isInitialized) {
       Log.e(TAG, "Repository not initialized. Call initialize() first.");
-      callback.onError("Repository not initialized");
+      callback.onError(ERROR_NOT_INITIALIZED);
       return;
     }
 
     if (groupKey == null || groupKey.isEmpty() || group == null) {
       Log.e(TAG, "Invalid parameters for saveGroup");
-      callback.onError("Invalid group data");
+      callback.onError(ERROR_INVALID_GROUP_DATA);
       return;
     }
 
@@ -365,13 +374,13 @@ public class GroupRepository {
       String groupKey, Map<String, Object> updates, final OperationCallback callback) {
     if (!isInitialized) {
       Log.e(TAG, "Repository not initialized. Call initialize() first.");
-      callback.onError("Repository not initialized");
+      callback.onError(ERROR_NOT_INITIALIZED);
       return;
     }
 
     if (groupKey == null || groupKey.isEmpty() || updates == null || updates.isEmpty()) {
       Log.e(TAG, "Invalid parameters for updateGroup");
-      callback.onError("Invalid update data");
+      callback.onError(ERROR_INVALID_UPDATE_DATA);
       return;
     }
 
@@ -419,13 +428,13 @@ public class GroupRepository {
   public void deleteGroup(String groupKey, final OperationCallback callback) {
     if (!isInitialized) {
       Log.e(TAG, "Repository not initialized. Call initialize() first.");
-      callback.onError("Repository not initialized");
+      callback.onError(ERROR_NOT_INITIALIZED);
       return;
     }
 
     if (groupKey == null || groupKey.isEmpty()) {
       Log.e(TAG, "Invalid group key for deleteGroup");
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
@@ -534,13 +543,13 @@ public class GroupRepository {
 
     if (!isInitialized) {
       Log.e(TAG, "Repository not initialized. Call initialize() first.");
-      callback.onDataLoaded(Result.error("Repository not initialized"));
+      callback.onDataLoaded(Result.error(ERROR_NOT_INITIALIZED));
       return;
     }
 
     if (userKey == null || userKey.isEmpty()) {
       Log.e(TAG, "Invalid user key provided");
-      callback.onDataLoaded(Result.error("Invalid user key"));
+      callback.onDataLoaded(Result.error(ERROR_INVALID_USER_KEY));
       return;
     }
 
@@ -697,12 +706,12 @@ public class GroupRepository {
    */
   public void joinGroup(String groupKey, String userKey, final OperationCallback callback) {
     if (groupKey == null || groupKey.isEmpty()) {
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
     if (userKey == null || userKey.isEmpty()) {
-      callback.onError("Invalid user key");
+      callback.onError(ERROR_INVALID_USER_KEY);
       return;
     }
 
@@ -766,12 +775,12 @@ public class GroupRepository {
    */
   public void leaveGroup(String groupKey, String userKey, final OperationCallback callback) {
     if (groupKey == null || groupKey.isEmpty()) {
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
     if (userKey == null || userKey.isEmpty()) {
-      callback.onError("Invalid user key");
+      callback.onError(ERROR_INVALID_USER_KEY);
       return;
     }
 
@@ -882,7 +891,7 @@ public class GroupRepository {
    */
   public void createGroup(Group group, final Callback<Group> callback) {
     if (group == null) {
-      callback.onError(new Exception("Group cannot be null"));
+      callback.onError(new Exception(ERROR_GROUP_CANNOT_BE_NULL));
       return;
     }
 
@@ -898,7 +907,7 @@ public class GroupRepository {
    */
   public void updateGroup(Group group, final Callback<Group> callback) {
     if (group == null) {
-      callback.onError(new Exception("Invalid group"));
+      callback.onError(new Exception(ERROR_INVALID_GROUP));
       return;
     }
 

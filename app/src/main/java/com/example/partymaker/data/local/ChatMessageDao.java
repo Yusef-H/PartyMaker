@@ -11,10 +11,23 @@ import java.util.List;
 
 /**
  * Data Access Object for ChatMessage entities. Provides methods to query, insert, and update chat
- * messages in the local database.
+ * messages in the local database. Following Room DAO patterns with proper query optimization.
  */
 @Dao
 public interface ChatMessageDao {
+  
+  // Table and column constants
+  String TABLE_NAME = "chat_messages";
+  String COLUMN_MESSAGE_KEY = "messageKey";
+  String COLUMN_GROUP_KEY = "groupKey";
+  String COLUMN_TIMESTAMP = "timestamp";
+  
+  // SQL Query constants
+  String SELECT_ALL_COLUMNS = "SELECT * FROM " + TABLE_NAME;
+  String WHERE_MESSAGE_KEY = " WHERE " + COLUMN_MESSAGE_KEY + " = :messageKey";
+  String WHERE_GROUP_KEY = " WHERE " + COLUMN_GROUP_KEY + " = :groupKey";
+  String ORDER_BY_TIMESTAMP = " ORDER BY " + COLUMN_TIMESTAMP + " ASC";
+  String DELETE_FROM_TABLE = "DELETE FROM " + TABLE_NAME;
 
   /**
    * Gets a chat message by its key
@@ -22,7 +35,7 @@ public interface ChatMessageDao {
    * @param messageKey The message key
    * @return The chat message
    */
-  @Query("SELECT * FROM chat_messages WHERE messageKey = :messageKey")
+  @Query(SELECT_ALL_COLUMNS + WHERE_MESSAGE_KEY)
   ChatMessage getMessageByKey(String messageKey);
 
   /**
@@ -31,7 +44,7 @@ public interface ChatMessageDao {
    * @param groupKey The group key
    * @return List of messages for the group
    */
-  @Query("SELECT * FROM chat_messages WHERE groupKey = :groupKey ORDER BY timestamp ASC")
+  @Query(SELECT_ALL_COLUMNS + WHERE_GROUP_KEY + ORDER_BY_TIMESTAMP)
   List<ChatMessage> getMessagesForGroup(String groupKey);
 
   /**
@@ -40,7 +53,7 @@ public interface ChatMessageDao {
    * @param groupKey The group key
    * @return LiveData containing list of messages for the group
    */
-  @Query("SELECT * FROM chat_messages WHERE groupKey = :groupKey ORDER BY timestamp ASC")
+  @Query(SELECT_ALL_COLUMNS + WHERE_GROUP_KEY + ORDER_BY_TIMESTAMP)
   LiveData<List<ChatMessage>> observeMessagesForGroup(String groupKey);
 
   /**
@@ -72,7 +85,7 @@ public interface ChatMessageDao {
    *
    * @param messageKey The message key
    */
-  @Query("DELETE FROM chat_messages WHERE messageKey = :messageKey")
+  @Query(DELETE_FROM_TABLE + WHERE_MESSAGE_KEY)
   void deleteMessageByKey(String messageKey);
 
   /**
@@ -80,10 +93,10 @@ public interface ChatMessageDao {
    *
    * @param groupKey The group key
    */
-  @Query("DELETE FROM chat_messages WHERE groupKey = :groupKey")
+  @Query(DELETE_FROM_TABLE + WHERE_GROUP_KEY)
   void deleteMessagesForGroup(String groupKey);
 
   /** Deletes all messages */
-  @Query("DELETE FROM chat_messages")
+  @Query(DELETE_FROM_TABLE)
   void deleteAllMessages();
 }

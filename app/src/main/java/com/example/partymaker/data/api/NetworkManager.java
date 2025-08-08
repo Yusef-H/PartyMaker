@@ -33,6 +33,10 @@ public class NetworkManager {
   private static final String HEAD_REQUEST_METHOD = "HEAD";
   private static final String DEBUG_BUILD_TYPE = "userdebug";
   
+  // Timeout constants
+  private static final int DEFAULT_TIMEOUT_MS = 10000;
+  
+  // Instance management
   private static NetworkManager instance;
   private final MutableLiveData<Boolean> isNetworkAvailable = new MutableLiveData<>();
   private ConnectivityManager connectivityManager;
@@ -186,8 +190,15 @@ public class NetworkManager {
    */
   public void executeWithTimeout(Runnable runnable, long timeoutMs, Runnable timeoutCallback) {
     final boolean[] completed = {false};
-
-    // Timeout handler
+    
+    scheduleTimeoutHandler(completed, timeoutMs, timeoutCallback);
+    executeRequestInBackground(runnable, completed);
+  }
+  
+  /**
+   * Schedules timeout handler for network request
+   */
+  private void scheduleTimeoutHandler(boolean[] completed, long timeoutMs, Runnable timeoutCallback) {
     ThreadUtils.runOnMainThreadDelayed(
         () -> {
           if (!completed[0]) {
@@ -199,8 +210,12 @@ public class NetworkManager {
           }
         },
         timeoutMs);
-
-    // Execute the request
+  }
+  
+  /**
+   * Executes request in background thread
+   */
+  private void executeRequestInBackground(Runnable runnable, boolean[] completed) {
     ThreadUtils.runInBackground(
         () -> {
           try {

@@ -11,6 +11,21 @@ import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActiv
  * appropriate error messages and taking recovery actions.
  */
 public class AppNetworkError {
+  
+  // UI Constants
+  private static final String TAG = "AppNetworkError";
+  private static final int TOAST_DURATION_LONG = Toast.LENGTH_LONG;
+  
+  // Dialog Constants
+  private static final String DIALOG_TITLE = "Server Connection Error";
+  private static final String DIALOG_MESSAGE_SUFFIX = "\n\nWould you like to check your server settings?";
+  private static final String BUTTON_TEXT_SETTINGS = "Server Settings";
+  private static final String BUTTON_TEXT_CANCEL = "Cancel";
+  
+  // Prevent instantiation
+  private AppNetworkError() {
+    // Utility class
+  }
   /**
    * Shows an appropriate error message based on the error type
    *
@@ -31,7 +46,7 @@ public class AppNetworkError {
             || errorType == NetworkUtils.ErrorType.TIMEOUT)) {
       showServerErrorDialog(context, message);
     } else {
-      Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+      Toast.makeText(context, message, TOAST_DURATION_LONG).show();
     }
   }
 
@@ -43,17 +58,27 @@ public class AppNetworkError {
    */
   private static void showServerErrorDialog(Context context, String message) {
     new AlertDialog.Builder(context)
-        .setTitle("Server Connection Error")
-        .setMessage(message + "\n\nWould you like to check your server settings?")
+        .setTitle(DIALOG_TITLE)
+        .setMessage(message + DIALOG_MESSAGE_SUFFIX)
         .setPositiveButton(
-            "Server Settings",
-            (dialog, which) -> {
-              // Navigate to server settings
-              Intent intent = new Intent(context, ServerSettingsActivity.class);
-              context.startActivity(intent);
-            })
-        .setNegativeButton("Cancel", null)
+            BUTTON_TEXT_SETTINGS,
+            (dialog, which) -> navigateToServerSettings(context))
+        .setNegativeButton(BUTTON_TEXT_CANCEL, null)
         .show();
+  }
+  
+  /**
+   * Navigates to server settings activity
+   * 
+   * @param context The context
+   */
+  private static void navigateToServerSettings(Context context) {
+    try {
+      Intent intent = new Intent(context, ServerSettingsActivity.class);
+      context.startActivity(intent);
+    } catch (Exception e) {
+      android.util.Log.e(TAG, "Error navigating to server settings", e);
+    }
   }
 
   /**
@@ -71,6 +96,6 @@ public class AppNetworkError {
     showErrorMessage(context, errorType, isServerError);
 
     // Log the error
-    android.util.Log.e("AppNetworkError", "Network error: " + error + ", Type: " + errorType);
+    android.util.Log.e(TAG, "Network error: " + error + ", Type: " + errorType);
   }
 }

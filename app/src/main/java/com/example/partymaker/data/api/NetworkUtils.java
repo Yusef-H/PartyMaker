@@ -27,9 +27,24 @@ public class NetworkUtils {
   private static final int DEFAULT_RETRY_DELAY_MS = 1000;
   private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
   private static final int DEFAULT_READ_TIMEOUT = 15000;
+  
+  // HTTP method constants
+  private static final String HTTP_HEAD_METHOD = "HEAD";
+  
+  // Error detection constants
+  private static final String HTTP_4XX_ERROR_PATTERN = "4";
+  private static final String HTTP_5XX_ERROR_PATTERN = "5";
+  
+  // Shutdown timeout
+  private static final int SHUTDOWN_TIMEOUT_MS = 500;
 
   private static final ExecutorService executor = Executors.newCachedThreadPool();
   private static final Handler mainHandler = new Handler(Looper.getMainLooper());
+  
+  // Prevent instantiation
+  private NetworkUtils() {
+    // Utility class
+  }
 
   /**
    * Checks if the device has an active network connection
@@ -144,9 +159,9 @@ public class NetworkUtils {
     } else if (e instanceof IOException) {
       String message = e.getMessage();
       if (message != null) {
-        if (message.contains("4")) {
+        if (message.contains(HTTP_4XX_ERROR_PATTERN)) {
           return ErrorType.CLIENT_ERROR;
-        } else if (message.contains("5")) {
+        } else if (message.contains(HTTP_5XX_ERROR_PATTERN)) {
           return ErrorType.SERVER_ERROR;
         }
       }
@@ -190,7 +205,7 @@ public class NetworkUtils {
       connection = (HttpURLConnection) url.openConnection();
       connection.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
       connection.setReadTimeout(DEFAULT_READ_TIMEOUT);
-      connection.setRequestMethod("HEAD");
+      connection.setRequestMethod(HTTP_HEAD_METHOD);
       int responseCode = connection.getResponseCode();
       return responseCode == HttpURLConnection.HTTP_OK;
     } catch (Exception e) {
@@ -207,7 +222,7 @@ public class NetworkUtils {
   public static void cancelAllOperations() {
     executor.shutdownNow();
     try {
-      if (!executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+      if (!executor.awaitTermination(SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
         Log.w(TAG, "Executor did not terminate in the specified time.");
       }
     } catch (InterruptedException e) {
@@ -221,14 +236,14 @@ public class NetworkUtils {
     TIMEOUT,
     SERVER_ERROR,
     CLIENT_ERROR,
-    UNKNOWN,
     AUTHENTICATION_ERROR,
-    NETWORK_ERROR,
     VALIDATION_ERROR,
     PERMISSION_ERROR,
     RATE_LIMIT_ERROR,
     NOT_FOUND_ERROR,
-    UNKNOWN_ERROR
+    NETWORK_ERROR,
+    UNKNOWN_ERROR,
+    UNKNOWN
   }
 
   /** Interface for retry callbacks */

@@ -6,7 +6,8 @@ import java.util.Map;
 
 /**
  * Generic data source interface for handling data operations. This interface defines common
- * operations that can be implemented by both local and remote data sources.
+ * operations that can be implemented by both local and remote data sources following the
+ * Repository pattern for clean architecture.
  *
  * @param <T> The type of data this source handles
  * @param <K> The type of key used to identify data items

@@ -423,6 +423,16 @@ public class ChatMessage {
     return copy;
   }
 
+  private static final int MIN_ENCRYPTED_MESSAGE_LENGTH = 20;
+  private static final String BASE64_PATTERN = "^[A-Za-z0-9+/]*={0,2}$";
+  private static final String ENCRYPTION_TIMESTAMP_KEY = "encryption_timestamp";
+  private static final String ENCRYPTION_VERSION_KEY = "encryption_version";
+  private static final String DECRYPTION_TIMESTAMP_KEY = "decryption_timestamp";
+  private static final String ENCRYPTION_VERSION_VALUE = "group_aes_v1";
+  private static final String IS_ENCRYPTED_KEY = "is_encrypted";
+  private static final String APPEARS_ENCRYPTED_KEY = "appears_encrypted";
+  private static final int MAX_KEY_DISPLAY_LENGTH = 8;
+
   /**
    * Checks if the message content appears to be encrypted. This is a basic heuristic check based on
    * content patterns.
@@ -430,25 +440,29 @@ public class ChatMessage {
    * @return true if message appears encrypted
    */
   public boolean appearEncrypted() {
-    if (message == null || message.length() < 20) {
+    if (message == null || message.length() < MIN_ENCRYPTED_MESSAGE_LENGTH) {
       return false;
     }
 
-    // Check if message looks like Base64 encrypted data
-    return message.matches("^[A-Za-z0-9+/]*={0,2}$");
+    return message.matches(BASE64_PATTERN);
   }
 
   /** Mark message as encrypted and update metadata. Useful for tracking encryption status. */
   public void markAsEncrypted() {
     this.encrypted = true;
+    addEncryptionMetadata();
+    updateLegacyFields();
+  }
 
+  private void addEncryptionMetadata() {
     if (this.metadata == null) {
       this.metadata = new HashMap<>();
     }
-    this.metadata.put("encryption_timestamp", System.currentTimeMillis());
-    this.metadata.put("encryption_version", "group_aes_v1");
+    this.metadata.put(ENCRYPTION_TIMESTAMP_KEY, System.currentTimeMillis());
+    this.metadata.put(ENCRYPTION_VERSION_KEY, ENCRYPTION_VERSION_VALUE);
+  }
 
-    // Update legacy field for compatibility
+  private void updateLegacyFields() {
     if (this.messageContent == null) {
       this.messageContent = new HashMap<>();
     }
@@ -458,17 +472,15 @@ public class ChatMessage {
   /** Mark message as decrypted and update metadata. */
   public void markAsDecrypted() {
     this.encrypted = false;
+    addDecryptionMetadata();
+    updateLegacyFields();
+  }
 
+  private void addDecryptionMetadata() {
     if (this.metadata == null) {
       this.metadata = new HashMap<>();
     }
-    this.metadata.put("decryption_timestamp", System.currentTimeMillis());
-
-    // Update legacy field for compatibility
-    if (this.messageContent == null) {
-      this.messageContent = new HashMap<>();
-    }
-    this.messageContent.putAll(this.metadata);
+    this.metadata.put(DECRYPTION_TIMESTAMP_KEY, System.currentTimeMillis());
   }
 
   /**
@@ -478,20 +490,29 @@ public class ChatMessage {
    */
   public Map<String, Object> getEncryptionMetadata() {
     Map<String, Object> encryptionData = new HashMap<>();
+    extractEncryptionKeys(encryptionData);
+    addEncryptionStatus(encryptionData);
+    return encryptionData;
+  }
 
+  private void extractEncryptionKeys(Map<String, Object> encryptionData) {
     if (this.metadata != null) {
       for (Map.Entry<String, Object> entry : this.metadata.entrySet()) {
         String key = entry.getKey();
-        if (key.startsWith("encryption_") || key.startsWith("decryption_")) {
+        if (isEncryptionRelatedKey(key)) {
           encryptionData.put(key, entry.getValue());
         }
       }
     }
+  }
 
-    encryptionData.put("is_encrypted", this.encrypted);
-    encryptionData.put("appears_encrypted", this.appearEncrypted());
+  private boolean isEncryptionRelatedKey(String key) {
+    return key.startsWith("encryption_") || key.startsWith("decryption_");
+  }
 
-    return encryptionData;
+  private void addEncryptionStatus(Map<String, Object> encryptionData) {
+    encryptionData.put(IS_ENCRYPTED_KEY, this.encrypted);
+    encryptionData.put(APPEARS_ENCRYPTED_KEY, this.appearEncrypted());
   }
 
   /**
@@ -516,11 +537,16 @@ public class ChatMessage {
     return String.format(
         Locale.US,
         "ChatMessage{key='%s', group='%s', sender='%s', encrypted=%s, hasImage=%s, length=%d}",
-        messageKey.substring(0, Math.min(8, messageKey.length())) + "...",
-        groupKey != null ? groupKey.substring(0, Math.min(8, groupKey.length())) + "..." : "null",
+        truncateKey(messageKey),
+        truncateKey(groupKey),
         senderName != null ? senderName : "null",
         encrypted,
         imageUrl != null && !imageUrl.isEmpty(),
         message != null ? message.length() : 0);
+  }
+
+  private String truncateKey(String key) {
+    if (key == null) return "null";
+    return key.substring(0, Math.min(MAX_KEY_DISPLAY_LENGTH, key.length())) + "...";
   }
 }

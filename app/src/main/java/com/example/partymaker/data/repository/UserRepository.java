@@ -20,6 +20,26 @@ import java.util.Map;
  */
 public class UserRepository {
   private static final String TAG = "UserRepository";
+  
+  // Error messages
+  private static final String ERROR_INVALID_USER_ID = "Invalid user ID";
+  private static final String ERROR_USER_NOT_FOUND = "User not found";
+  private static final String ERROR_NO_CURRENT_USER = "No current user found";
+  private static final String ERROR_USER_IS_NULL = "User object is null";
+  private static final String ERROR_NO_UPDATES = "No updates provided";
+  private static final String ERROR_USER_CANNOT_BE_NULL = "User cannot be null";
+  private static final String ERROR_USER_KEY_NULL_OR_EMPTY = "User key cannot be null or empty";
+  private static final String ERROR_GET_CURRENT_USER = "Error getting current user: ";
+  
+  // Field names for database operations
+  private static final String FIELD_USERNAME = "username";
+  private static final String FIELD_EMAIL = "email";
+  private static final String FIELD_PROFILE_IMAGE_URL = "profileImageUrl";
+  private static final String FIELD_FRIEND_KEYS = "friendKeys";
+  
+  // Character replacement constant
+  private static final char DOT_CHAR = '.';
+  private static final char SPACE_CHAR = ' ';
   private static UserRepository instance;
   private final FirebaseServerClient serverClient;
   private AppDatabase database;
@@ -166,7 +186,7 @@ public class UserRepository {
   public void getUser(String userId, DataCallback<User> callback, boolean forceRefresh) {
     if (userId == null || userId.isEmpty()) {
       Log.e(TAG, "Invalid userId: null or empty");
-      callback.onError("Invalid user ID");
+      callback.onError(ERROR_INVALID_USER_ID);
       return;
     }
 
@@ -186,7 +206,7 @@ public class UserRepository {
           public void onSuccess(User user) {
             if (user == null) {
               Log.e(TAG, "Server returned null user for ID: " + userId);
-              callback.onError("User not found");
+              callback.onError(ERROR_USER_NOT_FOUND);
               return;
             }
 
@@ -231,11 +251,11 @@ public class UserRepository {
       String currentUserEmail = AuthenticationManager.getCurrentUserEmail(context);
       if (currentUserEmail == null || currentUserEmail.isEmpty()) {
         Log.e(TAG, "No current user found");
-        callback.onError("No current user found");
+        callback.onError(ERROR_NO_CURRENT_USER);
         return;
       }
 
-      String userKey = currentUserEmail.replace('.', ' ');
+      String userKey = currentUserEmail.replace(DOT_CHAR, SPACE_CHAR);
 
       // Check if we already have the current user in LiveData
       User cachedCurrentUser = currentUser.getValue();
@@ -263,7 +283,7 @@ public class UserRepository {
           forceRefresh);
     } catch (Exception e) {
       Log.e(TAG, "Error getting current user", e);
-      callback.onError("Error getting current user: " + e.getMessage());
+      callback.onError(ERROR_GET_CURRENT_USER + e.getMessage());
     }
   }
 
@@ -277,13 +297,13 @@ public class UserRepository {
   public void saveUser(String userId, User user, OperationCallback callback) {
     if (userId == null || userId.isEmpty()) {
       Log.e(TAG, "Invalid userId: null or empty");
-      callback.onError("Invalid user ID");
+      callback.onError(ERROR_INVALID_USER_ID);
       return;
     }
 
     if (user == null) {
       Log.e(TAG, "Cannot save null user");
-      callback.onError("User object is null");
+      callback.onError(ERROR_USER_IS_NULL);
       return;
     }
 
@@ -333,13 +353,13 @@ public class UserRepository {
   public void updateUser(String userId, Map<String, Object> updates, OperationCallback callback) {
     if (userId == null || userId.isEmpty()) {
       Log.e(TAG, "Invalid userId: null or empty");
-      callback.onError("Invalid user ID");
+      callback.onError(ERROR_INVALID_USER_ID);
       return;
     }
 
     if (updates == null || updates.isEmpty()) {
       Log.e(TAG, "Updates map is null or empty");
-      callback.onError("No updates provided");
+      callback.onError(ERROR_NO_UPDATES);
       return;
     }
 
@@ -384,6 +404,39 @@ public class UserRepository {
   }
 
   /**
+   * Applies a single field update to a user object
+   * @param user the user to update
+   * @param field the field name to update
+   * @param value the new value
+   */
+  @SuppressWarnings("unchecked")
+  private void applyFieldUpdate(User user, String field, Object value) {
+    switch (field) {
+      case FIELD_USERNAME:
+        if (value instanceof String) {
+          user.setUsername((String) value);
+        }
+        break;
+      case FIELD_EMAIL:
+        if (value instanceof String) {
+          user.setEmail((String) value);
+        }
+        break;
+      case FIELD_PROFILE_IMAGE_URL:
+        if (value instanceof String) {
+          user.setProfileImageUrl((String) value);
+        }
+        break;
+      case FIELD_FRIEND_KEYS:
+        if (value instanceof Map) {
+          user.setFriendKeys((Map<String, Boolean>) value);
+        }
+        break;
+        // Add more fields as needed
+    }
+  }
+
+  /**
    * Checks if a user ID matches the current user
    *
    * @param userId The user ID to check
@@ -409,30 +462,7 @@ public class UserRepository {
     for (Map.Entry<String, Object> entry : updates.entrySet()) {
       String field = entry.getKey();
       Object value = entry.getValue();
-
-      switch (field) {
-        case "username":
-          if (value instanceof String) {
-            user.setUsername((String) value);
-          }
-          break;
-        case "email":
-          if (value instanceof String) {
-            user.setEmail((String) value);
-          }
-          break;
-        case "profileImageUrl":
-          if (value instanceof String) {
-            user.setProfileImageUrl((String) value);
-          }
-          break;
-        case "friendKeys":
-          if (value instanceof Map) {
-            user.setFriendKeys((Map<String, Boolean>) value);
-          }
-          break;
-          // Add more fields as needed
-      }
+      applyFieldUpdate(user, field, value);
     }
   }
 
@@ -444,7 +474,7 @@ public class UserRepository {
    */
   public void getUser(String userKey, Callback<User> callback) {
     if (userKey == null || userKey.isEmpty()) {
-      callback.onError(new IllegalArgumentException("User key cannot be null or empty"));
+      callback.onError(new IllegalArgumentException(ERROR_USER_KEY_NULL_OR_EMPTY));
       return;
     }
 
@@ -491,7 +521,7 @@ public class UserRepository {
    */
   public void createUser(User user, Callback<User> callback) {
     if (user == null) {
-      callback.onError(new IllegalArgumentException("User cannot be null"));
+      callback.onError(new IllegalArgumentException(ERROR_USER_CANNOT_BE_NULL));
       return;
     }
 

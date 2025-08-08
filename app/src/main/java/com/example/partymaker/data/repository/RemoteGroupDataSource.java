@@ -9,10 +9,15 @@ import java.util.Map;
 
 /**
  * Remote data source implementation for Group entities using FirebaseServerClient. Handles all
- * network operations for groups via the PartyMaker backend server.
+ * network operations for groups via the PartyMaker backend server with proper error handling
+ * and input validation.
  */
 public class RemoteGroupDataSource implements DataSource<Group, String> {
   private static final String TAG = "RemoteGroupDataSource";
+  private static final String ERROR_INVALID_GROUP_KEY = "Invalid group key";
+  private static final String ERROR_INVALID_USER_KEY = "Invalid user key";
+  private static final String ERROR_INVALID_GROUP_DATA = "Invalid group data";
+  private static final String ERROR_NO_UPDATES = "No updates to apply";
 
   private final FirebaseServerClient serverClient;
 
@@ -23,9 +28,9 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
 
   @Override
   public void getItem(String groupKey, DataCallback<Group> callback) {
-    if (groupKey == null || groupKey.isEmpty()) {
+    if (isInvalidKey(groupKey)) {
       Log.e(TAG, "Invalid group key provided");
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
@@ -67,22 +72,19 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
 
   @Override
   public void saveItem(String groupKey, Group group, OperationCallback callback) {
-    if (groupKey == null || groupKey.isEmpty()) {
+    if (isInvalidKey(groupKey)) {
       Log.e(TAG, "Invalid group key provided");
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
     if (group == null) {
       Log.e(TAG, "Group object is null");
-      callback.onError("Invalid group data");
+      callback.onError(ERROR_INVALID_GROUP_DATA);
       return;
     }
 
-    // Ensure the group has the correct key
-    if (group.getGroupKey().isEmpty()) {
-      group.setGroupKey(groupKey);
-    }
+    ensureGroupKeyIsSet(group, groupKey);
 
     serverClient.saveGroup(
         groupKey,
@@ -104,15 +106,15 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
 
   @Override
   public void updateItem(String groupKey, Map<String, Object> updates, OperationCallback callback) {
-    if (groupKey == null || groupKey.isEmpty()) {
+    if (isInvalidKey(groupKey)) {
       Log.e(TAG, "Invalid group key provided");
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
     if (updates == null || updates.isEmpty()) {
       Log.e(TAG, "No updates provided");
-      callback.onError("No updates to apply");
+      callback.onError(ERROR_NO_UPDATES);
       return;
     }
 
@@ -136,9 +138,9 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
 
   @Override
   public void deleteItem(String groupKey, OperationCallback callback) {
-    if (groupKey == null || groupKey.isEmpty()) {
+    if (isInvalidKey(groupKey)) {
       Log.e(TAG, "Invalid group key provided");
-      callback.onError("Invalid group key");
+      callback.onError(ERROR_INVALID_GROUP_KEY);
       return;
     }
 
@@ -166,9 +168,9 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
    * @param callback Callback to receive the groups
    */
   public void getUserGroups(String userKey, DataCallback<List<Group>> callback) {
-    if (userKey == null || userKey.isEmpty()) {
+    if (isInvalidKey(userKey)) {
       Log.e(TAG, "Invalid user key provided");
-      callback.onError("Invalid user key");
+      callback.onError(ERROR_INVALID_USER_KEY);
       return;
     }
 
@@ -188,5 +190,27 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
             callback.onError(errorMessage);
           }
         });
+  }
+
+  /**
+   * Validates if a key is invalid (null or empty).
+   *
+   * @param key The key to validate
+   * @return true if the key is invalid, false otherwise
+   */
+  private boolean isInvalidKey(String key) {
+    return key == null || key.trim().isEmpty();
+  }
+
+  /**
+   * Ensures the group has the correct key set.
+   *
+   * @param group The group to update
+   * @param groupKey The key to set
+   */
+  private void ensureGroupKeyIsSet(Group group, String groupKey) {
+    if (group.getGroupKey() == null || group.getGroupKey().isEmpty()) {
+      group.setGroupKey(groupKey);
+    }
   }
 }

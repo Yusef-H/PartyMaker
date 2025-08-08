@@ -11,10 +11,17 @@ import java.util.Map;
 
 /**
  * Local data source implementation for Group entities using Room database. Handles all local
- * database operations for groups.
+ * database operations for groups with proper error handling and thread management.
  */
 public class LocalGroupDataSource implements DataSource<Group, String> {
   private static final String TAG = "LocalGroupDataSource";
+  private static final String ERROR_DATABASE_NOT_INITIALIZED = "Database not available";
+  private static final String ERROR_DATABASE_OPERATION_FAILED = "Database error: ";
+  private static final String ERROR_GROUP_NOT_FOUND = "Group not found in local database";
+  private static final String ERROR_INVALID_INPUT = "Invalid group key or group data provided";
+  private static final String ERROR_INVALID_UPDATES = "Invalid group key or updates provided";
+  private static final String WARNING_UNKNOWN_UPDATE_FIELD = "Unknown update field: ";
+  private static final String WARNING_INVALID_GROUP_TYPE_VALUE = "Invalid groupType value: ";
 
   private final AppDatabase database;
 
@@ -31,7 +38,12 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
   public void getItem(String groupKey, DataCallback<Group> callback) {
     if (database == null) {
       Log.e(TAG, "Database not initialized");
-      callback.onError("Database not available");
+      callback.onError(ERROR_DATABASE_NOT_INITIALIZED);
+      return;
+    }
+
+    if (isInvalidGroupKey(groupKey)) {
+      callback.onError("Invalid group key provided");
       return;
     }
 
@@ -43,7 +55,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           } catch (Exception e) {
             Log.e(TAG, "Error getting group from local database: " + groupKey, e);
             ThreadUtils.runOnMainThread(
-                () -> callback.onError("Database error: " + e.getMessage()));
+                () -> callback.onError(ERROR_DATABASE_OPERATION_FAILED + e.getMessage()));
           }
         });
   }
@@ -52,7 +64,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
   public void getAllItems(DataCallback<List<Group>> callback) {
     if (database == null) {
       Log.e(TAG, "Database not initialized");
-      callback.onError("Database not available");
+      callback.onError(ERROR_DATABASE_NOT_INITIALIZED);
       return;
     }
 
@@ -64,7 +76,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           } catch (Exception e) {
             Log.e(TAG, "Error getting all groups from local database", e);
             ThreadUtils.runOnMainThread(
-                () -> callback.onError("Database error: " + e.getMessage()));
+                () -> callback.onError(ERROR_DATABASE_OPERATION_FAILED + e.getMessage()));
           }
         });
   }
@@ -73,17 +85,19 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
   public void saveItem(String groupKey, Group group, OperationCallback callback) {
     if (database == null) {
       Log.e(TAG, "Database not initialized");
-      callback.onError("Database not available");
+      callback.onError(ERROR_DATABASE_NOT_INITIALIZED);
+      return;
+    }
+
+    if (isInvalidGroupKey(groupKey) || group == null) {
+      callback.onError(ERROR_INVALID_INPUT);
       return;
     }
 
     ThreadUtils.runInBackground(
         () -> {
           try {
-            // Ensure the group has the correct key
-            if (group.getGroupKey().isEmpty()) {
-              group.setGroupKey(groupKey);
-            }
+            ensureGroupKeyIsSet(group, groupKey);
 
             database.groupDao().insertGroup(group);
             Log.d(TAG, "Group saved to local database: " + groupKey);
@@ -91,7 +105,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           } catch (Exception e) {
             Log.e(TAG, "Error saving group to local database: " + groupKey, e);
             ThreadUtils.runOnMainThread(
-                () -> callback.onError("Database error: " + e.getMessage()));
+                () -> callback.onError(ERROR_DATABASE_OPERATION_FAILED + e.getMessage()));
           }
         });
   }
@@ -100,7 +114,12 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
   public void updateItem(String groupKey, Map<String, Object> updates, OperationCallback callback) {
     if (database == null) {
       Log.e(TAG, "Database not initialized");
-      callback.onError("Database not available");
+      callback.onError(ERROR_DATABASE_NOT_INITIALIZED);
+      return;
+    }
+
+    if (isInvalidGroupKey(groupKey) || updates == null || updates.isEmpty()) {
+      callback.onError(ERROR_INVALID_UPDATES);
       return;
     }
 
@@ -109,8 +128,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           try {
             Group existingGroup = database.groupDao().getGroupByKey(groupKey);
             if (existingGroup == null) {
-              ThreadUtils.runOnMainThread(
-                  () -> callback.onError("Group not found in local database"));
+              ThreadUtils.runOnMainThread(() -> callback.onError(ERROR_GROUP_NOT_FOUND));
               return;
             }
 
@@ -123,7 +141,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           } catch (Exception e) {
             Log.e(TAG, "Error updating group in local database: " + groupKey, e);
             ThreadUtils.runOnMainThread(
-                () -> callback.onError("Database error: " + e.getMessage()));
+                () -> callback.onError(ERROR_DATABASE_OPERATION_FAILED + e.getMessage()));
           }
         });
   }
@@ -132,7 +150,12 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
   public void deleteItem(String groupKey, OperationCallback callback) {
     if (database == null) {
       Log.e(TAG, "Database not initialized");
-      callback.onError("Database not available");
+      callback.onError(ERROR_DATABASE_NOT_INITIALIZED);
+      return;
+    }
+
+    if (isInvalidGroupKey(groupKey)) {
+      callback.onError("Invalid group key provided");
       return;
     }
 
@@ -145,7 +168,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           } catch (Exception e) {
             Log.e(TAG, "Error deleting group from local database: " + groupKey, e);
             ThreadUtils.runOnMainThread(
-                () -> callback.onError("Database error: " + e.getMessage()));
+                () -> callback.onError(ERROR_DATABASE_OPERATION_FAILED + e.getMessage()));
           }
         });
   }
@@ -221,7 +244,7 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
             try {
               group.setGroupType(Integer.parseInt((String) value));
             } catch (NumberFormatException e) {
-              Log.w(TAG, "Invalid groupType value: " + value);
+              Log.w(TAG, WARNING_INVALID_GROUP_TYPE_VALUE + value);
             }
           }
           break;
@@ -232,9 +255,31 @@ public class LocalGroupDataSource implements DataSource<Group, String> {
           break;
           // Add more fields as needed
         default:
-          Log.w(TAG, "Unknown update field: " + key);
+          Log.w(TAG, WARNING_UNKNOWN_UPDATE_FIELD + key);
           break;
       }
+    }
+  }
+
+  /**
+   * Validates if a group key is invalid (null or empty).
+   *
+   * @param groupKey The group key to validate
+   * @return true if the key is invalid, false otherwise
+   */
+  private boolean isInvalidGroupKey(String groupKey) {
+    return groupKey == null || groupKey.trim().isEmpty();
+  }
+
+  /**
+   * Ensures the group has the correct key set.
+   *
+   * @param group The group to update
+   * @param groupKey The key to set
+   */
+  private void ensureGroupKeyIsSet(Group group, String groupKey) {
+    if (group.getGroupKey() == null || group.getGroupKey().isEmpty()) {
+      group.setGroupKey(groupKey);
     }
   }
 }

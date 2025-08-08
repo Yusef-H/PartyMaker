@@ -11,10 +11,19 @@ import java.util.List;
 
 /**
  * Data Access Object for Group entities. Provides methods to query, insert, and update groups in
- * the local database.
+ * the local database. Following Room DAO patterns with proper query optimization.
  */
 @Dao
 public interface GroupDao {
+  
+  // Table and column constants
+  String TABLE_NAME = "groups";
+  String COLUMN_GROUP_KEY = "groupKey";
+  
+  // SQL Query constants
+  String SELECT_ALL_COLUMNS = "SELECT * FROM `" + TABLE_NAME + "`";
+  String WHERE_GROUP_KEY = " WHERE " + COLUMN_GROUP_KEY + " = :groupKey";
+  String DELETE_FROM_TABLE = "DELETE FROM `" + TABLE_NAME + "`";
 
   /**
    * Gets a group by its key
@@ -22,7 +31,7 @@ public interface GroupDao {
    * @param groupKey The group key
    * @return The group
    */
-  @Query("SELECT * FROM `groups` WHERE groupKey = :groupKey")
+  @Query(SELECT_ALL_COLUMNS + WHERE_GROUP_KEY)
   Group getGroupByKey(String groupKey);
 
   /**
@@ -31,7 +40,7 @@ public interface GroupDao {
    * @param groupKey The group key
    * @return LiveData containing the group
    */
-  @Query("SELECT * FROM `groups` WHERE groupKey = :groupKey")
+  @Query(SELECT_ALL_COLUMNS + WHERE_GROUP_KEY)
   LiveData<Group> observeGroupByKey(String groupKey);
 
   /**
@@ -39,7 +48,7 @@ public interface GroupDao {
    *
    * @return List of all groups
    */
-  @Query("SELECT * FROM `groups`")
+  @Query(SELECT_ALL_COLUMNS)
   List<Group> getAllGroups();
 
   /**
@@ -47,16 +56,16 @@ public interface GroupDao {
    *
    * @return LiveData containing list of all groups
    */
-  @Query("SELECT * FROM `groups`")
+  @Query(SELECT_ALL_COLUMNS)
   LiveData<List<Group>> observeAllGroups();
 
   /**
-   * Gets groups for a specific user This is a simplified version that just returns all groups for
-   * now In a real implementation, this would filter groups by user
+   * Gets groups for a specific user. This is a simplified version that just returns all groups for
+   * now. In a real implementation, this would filter groups by user.
    *
-   * @return List of groups
+   * @return List of groups (currently returns all groups)
    */
-  @Query("SELECT * FROM `groups`")
+  @Query(SELECT_ALL_COLUMNS)
   List<Group> getGroupsForUser();
 
   /**
@@ -88,10 +97,10 @@ public interface GroupDao {
    *
    * @param groupKey The group key
    */
-  @Query("DELETE FROM `groups` WHERE groupKey = :groupKey")
+  @Query(DELETE_FROM_TABLE + WHERE_GROUP_KEY)
   void deleteGroupByKey(String groupKey);
 
   /** Deletes all groups */
-  @Query("DELETE FROM `groups`")
+  @Query(DELETE_FROM_TABLE)
   void deleteAllGroups();
 }

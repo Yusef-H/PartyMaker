@@ -18,12 +18,15 @@ import com.example.partymaker.data.model.User;
  */
 @Database(
     entities = {Group.class, User.class, ChatMessage.class},
-    version = 6, // Updated for encryption field schema fix in ChatMessage
-    exportSchema = false) // Disable schema export to avoid build warnings
+    version = 6,
+    exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
   private static final String TAG = "AppDatabase";
+  private static final String DATABASE_NAME = "partymaker_database";
+  private static final int DATABASE_VERSION = 6;
+  private static final int CACHE_SIZE = 10000;
   private static volatile AppDatabase INSTANCE;
 
   /**
@@ -46,15 +49,11 @@ public abstract class AppDatabase extends RoomDatabase {
   /** Creates the database instance with comprehensive migration strategy */
   private static AppDatabase createDatabase(Context context) {
     return Room.databaseBuilder(
-            context.getApplicationContext(), AppDatabase.class, "partymaker_database")
-        // Add callback for database events
+            context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
         .addCallback(databaseCallback)
-        // Enable WAL mode for better performance
         .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
-        // Use destructive migration - this will recreate DB with correct schema
         .fallbackToDestructiveMigration()
         .fallbackToDestructiveMigrationOnDowngrade()
-        // Force destructive migration from any version
         .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5)
         .build();
   }
@@ -66,7 +65,6 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
           super.onCreate(db);
           Log.i(TAG, "Database created for the first time");
-          // Add any initial data setup here if needed
         }
 
         @Override
@@ -74,20 +72,15 @@ public abstract class AppDatabase extends RoomDatabase {
           super.onOpen(db);
           Log.d(TAG, "Database opened, version: " + db.getVersion());
 
-          // Enable foreign keys
-          db.execSQL("PRAGMA foreign_keys=ON");
-
-          // Optimize performance
-          db.execSQL("PRAGMA synchronous=NORMAL");
-          db.execSQL("PRAGMA cache_size=10000");
-          db.execSQL("PRAGMA temp_store=MEMORY");
+          enableForeignKeys(db);
+          optimizeDatabasePerformance(db);
         }
 
         @Override
         public void onDestructiveMigration(@NonNull SupportSQLiteDatabase db) {
           super.onDestructiveMigration(db);
           Log.w(TAG, "Destructive migration occurred - all data lost");
-          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), 6);
+          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), DATABASE_VERSION);
         }
       };
 
@@ -103,15 +96,30 @@ public abstract class AppDatabase extends RoomDatabase {
   /** Forces database recreation (for testing purposes) */
   public static void recreateDatabase(Context context) {
     closeDatabase();
-    context.deleteDatabase("partymaker_database");
-    // Also delete any related files
+    deleteDatabaseFiles(context);
+    Log.i(TAG, "Database and related files deleted");
+  }
+
+  private static void enableForeignKeys(SupportSQLiteDatabase db) {
+    db.execSQL("PRAGMA foreign_keys=ON");
+  }
+
+  private static void optimizeDatabasePerformance(SupportSQLiteDatabase db) {
+    db.execSQL("PRAGMA synchronous=NORMAL");
+    db.execSQL("PRAGMA cache_size=" + CACHE_SIZE);
+    db.execSQL("PRAGMA temp_store=MEMORY");
+  }
+
+  private static void deleteDatabaseFiles(Context context) {
+    context.deleteDatabase(DATABASE_NAME);
     String[] filesToDelete = {
-      "partymaker_database-shm", "partymaker_database-wal", "partymaker_database-journal"
+      DATABASE_NAME + "-shm", 
+      DATABASE_NAME + "-wal", 
+      DATABASE_NAME + "-journal"
     };
     for (String fileName : filesToDelete) {
       context.deleteDatabase(fileName);
     }
-    Log.i(TAG, "Database and related files deleted");
   }
 
   // DAOs (Data Access Objects)
