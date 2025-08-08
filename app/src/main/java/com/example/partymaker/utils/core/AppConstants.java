@@ -60,4 +60,58 @@ public final class AppConstants {
 
     private Security() {}
   }
+
+  // UI and Animation Constants
+  public static final class UI {
+    // Delays and timeouts for UI operations
+    public static final int NETWORK_STATUS_UPDATE_DELAY_MS = 500;
+    public static final int SPLASH_DELAY_MS = 3000;
+    public static final int DOT_ANIMATION_DELAY_MS = 500;
+    public static final int DOT_ANIMATION_STAGGER_MS = 200;
+    public static final int DOT_ANIMATION_DURATION_MS = 600;
+    public static final int DOT_ANIMATION_LOOP_MS = 1500;
+    public static final int RESUME_NETWORK_CHECK_DELAY_MS = 1000;
+
+    // Animation values
+    public static final float DOT_SCALE_FACTOR = 1.3f;
+    public static final float DOT_ALPHA_MIN = 0.5f;
+    public static final float DOT_ALPHA_MAX = 1.0f;
+
+    // Message display intervals
+    public static final int MESSAGE_PADDING_SAME_USER = 2;
+    public static final int MESSAGE_PADDING_DIFFERENT_USER = 8;
+
+    private UI() {}
+  }
+
+  // Validation Constants
+  public static final class Validation {
+    public static final int MIN_USERNAME_LENGTH = 2;
+    public static final int MAX_USERNAME_LENGTH = 50;
+    public static final int DOWNLOAD_BUFFER_SIZE = 1024;
+    public static final int TIME_SUBSTRING_START = 11;
+    public static final int TIME_SUBSTRING_END = 16;
+
+    private Validation() {}
+  }
+
+  // Firebase Storage Paths
+  public static final class FirebasePaths {
+    public static final String PROFILE_IMAGE_PRIMARY = "UsersImageProfile/Users/";
+    public static final String PROFILE_IMAGE_SECONDARY = "Users/";
+    public static final String PROFILE_IMAGE_TEMPLATE = "profile_%s.jpg";
+
+    private FirebasePaths() {}
+  }
+
+  // Database Field Names
+  public static final class DatabaseFields {
+    public static final String USERNAME = "username";
+    public static final String USER_NAME = "userName";
+    public static final String ADMIN_KEY = "adminKey";
+    public static final String FRIEND_KEYS = "friendKeys";
+    public static final String PROFILE_IMAGE_URL = "profileImageUrl";
+
+    private DatabaseFields() {}
+  }
 }

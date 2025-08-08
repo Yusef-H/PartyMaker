@@ -30,7 +30,18 @@ import java.util.Objects;
  */
 public class GroupRepository {
   private static final String TAG = "GroupRepository";
-
+  
+  // Cache and operation constants
+  private static final int MAX_CACHE_RETRIES = 3;
+  private static final long CACHE_TIMEOUT_MS = 5000L;
+  
+  // Field names for database operations
+  private static final String FIELD_USERNAME = "username";
+  private static final String FIELD_USER_NAME = "userName";
+  private static final String FIELD_ADMIN_KEY = "adminKey";
+  private static final String FIELD_FRIEND_KEYS = "friendKeys";
+  private static final String FIELD_PROFILE_IMAGE_URL = "profileImageUrl";
+  
   private static GroupRepository instance;
 
   private LocalGroupDataSource localDataSource;
@@ -552,13 +563,10 @@ public class GroupRepository {
               Log.d(
                   TAG, "Filtering " + cachedGroups.size() + " cached groups for user: " + userKey);
               for (Group group : cachedGroups) {
-                boolean isAdmin =
-                    (group.getAdminKey() != null && group.getAdminKey().equals(userKey));
-                boolean isMember =
-                    (group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey));
-
-                if (isAdmin || isMember) {
+                if (isUserInGroup(group, userKey)) {
                   userGroups.add(group);
+                  boolean isAdmin = group.getAdminKey() != null && group.getAdminKey().equals(userKey);
+                  boolean isMember = group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey);
                   Log.d(
                       TAG,
                       "Group "
@@ -652,10 +660,7 @@ public class GroupRepository {
                         // Filter groups for this user
                         if (cachedGroups != null && !cachedGroups.isEmpty()) {
                           for (Group group : cachedGroups) {
-                            if ((group.getFriendKeys() != null
-                                    && group.getFriendKeys().containsKey(userKey))
-                                || (group.getAdminKey() != null
-                                    && group.getAdminKey().equals(userKey))) {
+                            if (isUserInGroup(group, userKey)) {
                               userGroups.add(group);
                             }
                           }
@@ -705,7 +710,7 @@ public class GroupRepository {
 
     // Add user to group's friendKeys
     Map<String, Object> updates = new HashMap<>();
-    updates.put("friendKeys/" + userKey, true);
+    updates.put(FIELD_FRIEND_KEYS + "/" + userKey, true);
 
     updateGroup(
         groupKey,
@@ -774,7 +779,7 @@ public class GroupRepository {
 
     // Remove user from group's friendKeys
     Map<String, Object> updates = new HashMap<>();
-    updates.put("friendKeys/" + userKey, null); // null removes the field in Firebase
+    updates.put(FIELD_FRIEND_KEYS + "/" + userKey, null); // null removes the field in Firebase
 
     updateGroup(
         groupKey,
@@ -1048,6 +1053,24 @@ public class GroupRepository {
     } catch (Exception e) {
       Log.w(TAG, "Failed to decode group data", e);
     }
+  }
+
+  /**
+   * Checks if a user belongs to a group (either as admin or member).
+   *
+   * @param group The group to check
+   * @param userKey The user key to check
+   * @return true if user is admin or member of the group
+   */
+  private boolean isUserInGroup(Group group, String userKey) {
+    if (group == null || userKey == null) {
+      return false;
+    }
+    
+    boolean isAdmin = group.getAdminKey() != null && group.getAdminKey().equals(userKey);
+    boolean isMember = group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey);
+    
+    return isAdmin || isMember;
   }
 
   /** Interface for generic callbacks used by ViewModels */
