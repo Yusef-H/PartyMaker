@@ -21,6 +21,14 @@ import okhttp3.Response;
  */
 public class SSLPinningManager {
   private static final String TAG = "SSLPinningManager";
+  
+  // SSL/Security constants
+  private static final int DIGITAL_SIGNATURE_KEY_USAGE_INDEX = 0;
+  private static final String CERTIFICATE_ALGORITHM = "SHA-256";
+  private static final String BASE64_NO_WRAP_OPTION = "NO_WRAP";
+  
+  // Certificate validation constants
+  private static final String DEV_CERTIFICATE_PLACEHOLDER = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=";
 
   // Production certificate pins for partymaker.onrender.com
   private static final String[] RENDER_PINS = {
@@ -33,7 +41,7 @@ public class SSLPinningManager {
 
   // Development/localhost pins
   private static final String[] DEV_PINS = {
-    "sha256/CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=", // Development certificate
+    "sha256/" + DEV_CERTIFICATE_PLACEHOLDER, // Development certificate
   };
 
   private static SSLPinningManager instance;
@@ -99,10 +107,11 @@ public class SSLPinningManager {
 
   /** Extracts SHA256 pin from certificate */
   private String getPinFromCertificate(X509Certificate certificate) throws Exception {
-    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    MessageDigest digest = MessageDigest.getInstance(CERTIFICATE_ALGORITHM);
     byte[] publicKey = certificate.getPublicKey().getEncoded();
     byte[] hash = digest.digest(publicKey);
-    return "sha256/" + android.util.Base64.encodeToString(hash, android.util.Base64.NO_WRAP);
+    return CERTIFICATE_ALGORITHM.toLowerCase() + "/" + 
+           android.util.Base64.encodeToString(hash, android.util.Base64.NO_WRAP);
   }
 
   /** Custom Trust Manager for additional certificate validation */
@@ -148,9 +157,9 @@ public class SSLPinningManager {
 
       // Check key usage
       boolean[] keyUsage = certificate.getKeyUsage();
-      if (keyUsage != null && keyUsage.length > 0) {
+      if (keyUsage != null && keyUsage.length > DIGITAL_SIGNATURE_KEY_USAGE_INDEX) {
         // Ensure digital signature is allowed
-        if (!keyUsage[0]) {
+        if (!keyUsage[DIGITAL_SIGNATURE_KEY_USAGE_INDEX]) {
           Log.w(TAG, "Certificate does not allow digital signatures");
         }
       }
@@ -196,20 +205,32 @@ public class SSLPinningManager {
     }
   }
 
-  /** Updates certificate pins (for certificate rotation) */
+  /** 
+   * Updates certificate pins (for certificate rotation).
+   * This method should only be called during planned certificate updates.
+   */
   public void updateCertificatePins(String[] newPins) {
     if (newPins != null && newPins.length > 0) {
       pinnedCertificates.clear();
       pinnedCertificates.addAll(Arrays.asList(newPins));
       Log.i(TAG, "Certificate pins updated. Count: " + newPins.length);
+    } else {
+      Log.w(TAG, "Cannot update certificate pins: newPins is null or empty");
     }
   }
 
-  /** Security event logging helper */
+  /** 
+   * Security event logging helper for monitoring SSL violations.
+   * This class provides centralized security event logging.
+   */
   private static class SecurityEvent {
+    private static final String SECURITY_VIOLATION_PREFIX = "SECURITY VIOLATION - ";
+    
     static void logSecurityViolation(String eventType, String details) {
-      Log.w(TAG, "SECURITY VIOLATION - " + eventType + ": " + details);
+      String message = SECURITY_VIOLATION_PREFIX + eventType + ": " + details;
+      Log.w(TAG, message);
       // In production, send to security monitoring system
+      // SecurityMonitoringService.reportViolation(eventType, details);
     }
   }
 }

@@ -9,6 +9,10 @@ import com.example.partymaker.BuildConfig;
 public class SecureConfigManager {
   private static final String TAG = "SecureConfig";
   private static final String PREFS_FILE_NAME = "secure_prefs";
+  
+  // Configuration constants
+  private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
+  private static final String DEFAULT_API_KEY_PLACEHOLDER = "YOUR_API_KEY_HERE";
 
   // Keys for secure storage
   private static final String KEY_OPENAI_API = "openai_api_key";
@@ -38,7 +42,7 @@ public class SecureConfigManager {
   private void initializeDefaults() {
     // Set default server URL if not already set
     if (!prefs.contains(KEY_DEFAULT_SERVER_URL)) {
-      prefs.edit().putString(KEY_DEFAULT_SERVER_URL, "https://partymaker.onrender.com").apply();
+      prefs.edit().putString(KEY_DEFAULT_SERVER_URL, DEFAULT_SERVER_URL).apply();
     }
 
     // Initialize server URL with default if not set
@@ -81,13 +85,16 @@ public class SecureConfigManager {
     try {
       // First check BuildConfig
       String apiKey = BuildConfig.MAPS_API_KEY;
+      if (apiKey != null && !apiKey.isEmpty() && !apiKey.equals(DEFAULT_API_KEY_PLACEHOLDER)) {
+        return apiKey;
+      }
     } catch (Exception e) {
       // BuildConfig field might not exist yet
       Log.d(TAG, "BuildConfig.MAPS_API_KEY not available");
     }
     // Fallback to storage
     String key = prefs.getString(KEY_GOOGLE_MAPS_API, null);
-    return key != null ? key : "YOUR_API_KEY_HERE";
+    return key != null ? key : DEFAULT_API_KEY_PLACEHOLDER;
   }
 
   /** Set Google Maps API key */
@@ -111,24 +118,29 @@ public class SecureConfigManager {
 
   /** Get default server URL */
   public String getDefaultServerUrl() {
-    return prefs.getString(KEY_DEFAULT_SERVER_URL, "https://partymaker.onrender.com");
+    return prefs.getString(KEY_DEFAULT_SERVER_URL, DEFAULT_SERVER_URL);
   }
 
   /** Check if OpenAI API is configured */
   public boolean isOpenAiConfigured() {
     String key = getOpenAiApiKey();
-    return key != null && !key.isEmpty() && !key.equals("YOUR_API_KEY_HERE");
+    return isValidApiKey(key);
   }
 
   /** Check if Google Maps is configured */
   public boolean isGoogleMapsConfigured() {
     String key = getGoogleMapsApiKey();
-    return key != null && !key.isEmpty() && !key.equals("YOUR_API_KEY_HERE");
+    return isValidApiKey(key);
   }
 
   /** Clear all secure configuration */
   public void clearAll() {
     prefs.edit().clear().apply();
     initializeDefaults();
+  }
+  
+  /** Check if API key is valid (not null, empty, or placeholder) */
+  private boolean isValidApiKey(String apiKey) {
+    return apiKey != null && !apiKey.isEmpty() && !apiKey.equals(DEFAULT_API_KEY_PLACEHOLDER);
   }
 }

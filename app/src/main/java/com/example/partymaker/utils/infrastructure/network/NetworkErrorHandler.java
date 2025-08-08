@@ -12,6 +12,23 @@ import javax.net.ssl.SSLException;
  * error categorization and user-friendly error messages.
  */
 public final class NetworkErrorHandler {
+  
+  // HTTP Status Code Constants
+  private static final String HTTP_UNAUTHORIZED = "401";
+  private static final String HTTP_FORBIDDEN = "403";
+  private static final String HTTP_NOT_FOUND = "404";
+  private static final String HTTP_SERVER_ERROR = "500";
+  
+  // Error Message Keywords
+  private static final String KEYWORD_UNAUTHORIZED = "unauthorized";
+  private static final String KEYWORD_FORBIDDEN = "forbidden";
+  private static final String KEYWORD_NOT_FOUND = "not found";
+  private static final String KEYWORD_SERVER = "server";
+  
+  // Retry Delay Constants
+  private static final long BASE_RETRY_DELAY_MS = 1000L;
+  private static final long NETWORK_RETRY_MULTIPLIER = 3L;
+  private static final int EXPONENTIAL_BASE = 2;
 
   private NetworkErrorHandler() {
     throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -34,14 +51,9 @@ public final class NetworkErrorHandler {
       return NetworkUtils.ErrorType.SERVER_ERROR; // Treat SSL errors as server errors
     } else if (exception.getMessage() != null) {
       String message = exception.getMessage().toLowerCase();
-      if (message.contains("unauthorized")
-          || message.contains("401")
-          || message.contains("forbidden")
-          || message.contains("403")
-          || message.contains("not found")
-          || message.contains("404")) {
+      if (isClientErrorMessage(message)) {
         return NetworkUtils.ErrorType.CLIENT_ERROR;
-      } else if (message.contains("server") || message.contains("500")) {
+      } else if (isServerErrorMessage(message)) {
         return NetworkUtils.ErrorType.SERVER_ERROR;
       }
     }
@@ -81,6 +93,25 @@ public final class NetworkErrorHandler {
   }
 
   /**
+   * Checks if the error message indicates a client error.
+   */
+  private static boolean isClientErrorMessage(String message) {
+    return message.contains(KEYWORD_UNAUTHORIZED)
+        || message.contains(HTTP_UNAUTHORIZED)
+        || message.contains(KEYWORD_FORBIDDEN)
+        || message.contains(HTTP_FORBIDDEN)
+        || message.contains(KEYWORD_NOT_FOUND)
+        || message.contains(HTTP_NOT_FOUND);
+  }
+  
+  /**
+   * Checks if the error message indicates a server error.
+   */
+  private static boolean isServerErrorMessage(String message) {
+    return message.contains(KEYWORD_SERVER) || message.contains(HTTP_SERVER_ERROR);
+  }
+  
+  /**
    * Gets the appropriate retry delay for a given error type and attempt count.
    *
    * @param errorType The type of error
@@ -88,23 +119,39 @@ public final class NetworkErrorHandler {
    * @return Delay in milliseconds before next retry
    */
   public static long getRetryDelay(NetworkUtils.ErrorType errorType, int attemptCount) {
-    long baseDelay = 1000L; // 1 second
-
     switch (errorType) {
       case TIMEOUT:
-        // Exponential backoff for timeouts
-        return baseDelay * (long) Math.pow(2, attemptCount);
+        return calculateExponentialBackoff(attemptCount);
       case NO_NETWORK:
-        // Longer delay for network issues
-        return baseDelay * 3L * (attemptCount + 1);
+        return calculateNetworkRetryDelay(attemptCount);
       case SERVER_ERROR:
-        // Linear backoff for server issues
-        return baseDelay * (attemptCount + 1);
+        return calculateLinearBackoff(attemptCount);
       case CLIENT_ERROR:
       case UNKNOWN:
       default:
-        return baseDelay;
+        return BASE_RETRY_DELAY_MS;
     }
+  }
+  
+  /**
+   * Calculates exponential backoff delay for timeout errors.
+   */
+  private static long calculateExponentialBackoff(int attemptCount) {
+    return BASE_RETRY_DELAY_MS * (long) Math.pow(EXPONENTIAL_BASE, attemptCount);
+  }
+  
+  /**
+   * Calculates retry delay for network connectivity issues.
+   */
+  private static long calculateNetworkRetryDelay(int attemptCount) {
+    return BASE_RETRY_DELAY_MS * NETWORK_RETRY_MULTIPLIER * (attemptCount + 1);
+  }
+  
+  /**
+   * Calculates linear backoff delay for server errors.
+   */
+  private static long calculateLinearBackoff(int attemptCount) {
+    return BASE_RETRY_DELAY_MS * (attemptCount + 1);
   }
 
   /**

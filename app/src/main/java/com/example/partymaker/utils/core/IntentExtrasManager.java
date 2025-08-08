@@ -26,18 +26,31 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import java.util.HashMap;
 
-/** Utility methods for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker. */
-public class IntentExtrasManager {
+/**
+ * Utility class for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker.
+ * Provides static methods for intent manipulation, drag-and-drop functionality,
+ * and various UI utilities. This class cannot be instantiated.
+ */
+public final class IntentExtrasManager {
+  
+  // Constants for drag and drop functionality
+  private static final String PROPERTY_FILE_NAME = "local.properties";
+  private static final String EMPTY_STRING = "";
+  
+  // Touch handling variables
   private static float downX, downY, dX, dY;
   private static int touchSlop;
 
   /**
    * Packs all fields from ExtrasMetadata into the given Intent.
    *
-   * @param intent the Intent to add extras to
-   * @param extras the ExtrasMetadata object
+   * @param intent the Intent to add extras to (cannot be null)
+   * @param extras the ExtrasMetadata object (cannot be null)
+   * @throws IllegalArgumentException if intent or extras is null
    */
   public static void addExtrasToIntent(Intent intent, ExtrasMetadata extras) {
+    validateNotNull(intent, "Intent cannot be null");
+    validateNotNull(extras, "ExtrasMetadata cannot be null");
     intent.putExtra(GROUP_NAME, extras.getGroupName());
     intent.putExtra(GROUP_KEY, extras.getGroupKey());
     intent.putExtra(GROUP_DAYS, extras.getGroupDays());
@@ -58,12 +71,16 @@ public class IntentExtrasManager {
   /**
    * Extracts ExtrasMetadata from an Intent.
    *
-   * @param intent the Intent containing extras
-   * @return the extracted ExtrasMetadata, or null if not found
+   * @param intent the Intent containing extras (cannot be null)
+   * @return the extracted ExtrasMetadata, or null if extras bundle is missing
+   * @throws IllegalArgumentException if intent is null
    */
   public static ExtrasMetadata getExtrasMetadataFromIntent(Intent intent) {
+    validateNotNull(intent, "Intent cannot be null");
     Bundle extras = intent.getExtras();
-    if (extras == null) return null;
+    if (extras == null) {
+      return null;
+    }
 
     return new ExtrasMetadata(
         extras.getString(GROUP_NAME, DEFAULT_KEY),
@@ -86,16 +103,17 @@ public class IntentExtrasManager {
   /**
    * Handles drag-and-drop for a floating chat button.
    *
-   * @param view the button view
-   * @param event the MotionEvent
+   * @param view the button view (cannot be null)
+   * @param event the MotionEvent (cannot be null)
    * @return true if handled, false otherwise
+   * @throws IllegalArgumentException if view or event is null
    */
   @SuppressLint("ClickableViewAccessibility")
   public static boolean dragChatButtonOnTouch(View view, MotionEvent event) {
-    // lazy‐init slop
-    if (touchSlop == 0) {
-      touchSlop = ViewConfiguration.get(view.getContext()).getScaledTouchSlop();
-    }
+    validateNotNull(view, "View cannot be null");
+    validateNotNull(event, "MotionEvent cannot be null");
+    
+    initializeTouchSlopIfNeeded(view);
 
     switch (event.getActionMasked()) {
       case MotionEvent.ACTION_DOWN:
@@ -134,30 +152,38 @@ public class IntentExtrasManager {
   /**
    * Reads an API key from local.properties in assets.
    *
-   * @param ctx the context
-   * @param key the property key
-   * @return the API key value, or empty string if not found
+   * @param context the context (cannot be null)
+   * @param key the property key (cannot be null or empty)
+   * @return the API key value, or empty string if not found or error occurs
+   * @throws IllegalArgumentException if context is null or key is null/empty
    */
-  public static String getApiKey(Context ctx, String key) {
-    try {
+  public static String getApiKey(Context context, String key) {
+    validateNotNull(context, "Context cannot be null");
+    validateNotNullOrEmpty(key, "Property key cannot be null or empty");
+    
+    try (java.io.InputStream inputStream = context.getAssets().open(PROPERTY_FILE_NAME)) {
       java.util.Properties properties = new java.util.Properties();
-      java.io.InputStream inputStream = ctx.getAssets().open("local.properties");
       properties.load(inputStream);
-      return properties.getProperty(key);
+      String value = properties.getProperty(key);
+      return value != null ? value : EMPTY_STRING;
     } catch (java.io.IOException e) {
-      return "";
+      android.util.Log.w("IntentExtrasManager", "Error reading API key: " + key, e);
+      return EMPTY_STRING;
     }
   }
 
   /**
    * Extracts a HashMap extra from a Bundle.
    *
-   * @param extras the Bundle
-   * @param key the key for the HashMap
+   * @param extras the Bundle (cannot be null)
+   * @param key the key for the HashMap (cannot be null or empty)
    * @return the HashMap, or null if not found
+   * @throws IllegalArgumentException if extras is null or key is null/empty
    */
   @SuppressWarnings("unchecked")
   public static HashMap<String, Object> getHashMapExtra(Bundle extras, String key) {
+    validateNotNull(extras, "Bundle cannot be null");
+    validateNotNullOrEmpty(key, "Key cannot be null or empty");
     return (HashMap<String, Object>) extras.getSerializable(key);
   }
 
@@ -166,10 +192,13 @@ public class IntentExtrasManager {
   /**
    * Sets visibility to VISIBLE for all given views.
    *
-   * @param views the views to show
+   * @param views the views to show (cannot contain null elements)
+   * @throws IllegalArgumentException if views array is null or contains null elements
    */
   public static void showViews(View... views) {
+    validateNotNull(views, "Views array cannot be null");
     for (View view : views) {
+      validateNotNull(view, "View in array cannot be null");
       view.setVisibility(View.VISIBLE);
     }
   }
@@ -177,11 +206,58 @@ public class IntentExtrasManager {
   /**
    * Sets visibility to INVISIBLE for all given views.
    *
-   * @param views the views to hide
+   * @param views the views to hide (cannot contain null elements)
+   * @throws IllegalArgumentException if views array is null or contains null elements
    */
   public static void hideViews(View... views) {
+    validateNotNull(views, "Views array cannot be null");
     for (View view : views) {
+      validateNotNull(view, "View in array cannot be null");
       view.setVisibility(View.INVISIBLE);
     }
+  }
+
+  // Private helper methods
+
+  /**
+   * Initializes touch slop value if not already set.
+   *
+   * @param view the view to get context from
+   */
+  private static void initializeTouchSlopIfNeeded(View view) {
+    if (touchSlop == 0) {
+      touchSlop = ViewConfiguration.get(view.getContext()).getScaledTouchSlop();
+    }
+  }
+
+  /**
+   * Validates that an object is not null.
+   *
+   * @param obj the object to validate
+   * @param message the error message if validation fails
+   * @throws IllegalArgumentException if obj is null
+   */
+  private static void validateNotNull(Object obj, String message) {
+    if (obj == null) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  /**
+   * Validates that a string is not null or empty.
+   *
+   * @param str the string to validate
+   * @param message the error message if validation fails
+   * @throws IllegalArgumentException if str is null or empty
+   */
+  private static void validateNotNullOrEmpty(String str, String message) {
+    if (str == null || str.trim().isEmpty()) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  // Private constructor to prevent instantiation
+  private IntentExtrasManager() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
   }
 }

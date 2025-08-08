@@ -18,6 +18,24 @@ public final class PasswordValidator {
 
   // Maximum password length (to prevent DoS attacks)
   private static final int MAX_LENGTH = 128;
+  
+  // Strength score thresholds
+  private static final int STRENGTH_VERY_WEAK_THRESHOLD = 20;
+  private static final int STRENGTH_WEAK_THRESHOLD = 40;
+  private static final int STRENGTH_FAIR_THRESHOLD = 60;
+  private static final int STRENGTH_GOOD_THRESHOLD = 80;
+  
+  // Score points for different criteria
+  private static final int LENGTH_SCORE_MULTIPLIER = 2;
+  private static final int CRITERIA_SCORE = 20;
+  private static final int COMMON_PASSWORD_PENALTY = 50;
+  private static final int REPEATED_CHAR_PENALTY = 10;
+  private static final int SEQUENTIAL_CHAR_PENALTY = 10;
+  private static final int MAX_STRENGTH_SCORE = 100;
+  
+  // Pattern validation lengths
+  private static final int MIN_REPEATED_SEQUENCE = 3;
+  private static final int MIN_SEQUENTIAL_SEQUENCE = 3;
 
   // Regex patterns for password requirements
   private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
@@ -86,7 +104,7 @@ public final class PasswordValidator {
       errors.add("Password must not exceed " + MAX_LENGTH + " characters");
     } else {
       // Add points for length
-      strengthScore += Math.min(20, password.length() * 2);
+      strengthScore += Math.min(CRITERIA_SCORE, password.length() * LENGTH_SCORE_MULTIPLIER);
     }
 
     // Check for required character types
@@ -98,26 +116,26 @@ public final class PasswordValidator {
     if (!hasUppercase) {
       errors.add("Password must contain at least one uppercase letter");
     } else {
-      strengthScore += 20;
+      strengthScore += CRITERIA_SCORE;
     }
 
     if (!hasLowercase) {
       errors.add("Password must contain at least one lowercase letter");
     } else {
-      strengthScore += 20;
+      strengthScore += CRITERIA_SCORE;
     }
 
     if (!hasDigit) {
       errors.add("Password must contain at least one number");
     } else {
-      strengthScore += 20;
+      strengthScore += CRITERIA_SCORE;
     }
 
     if (!hasSpecialChar) {
       errors.add(
           "Password must contain at least one special character (!@#$%^&*()_+-=[]{};':\"\\|,.<>/?)");
     } else {
-      strengthScore += 20;
+      strengthScore += CRITERIA_SCORE;
     }
 
     // Check for common passwords
@@ -125,7 +143,7 @@ public final class PasswordValidator {
     for (String commonPassword : COMMON_PASSWORDS) {
       if (lowerPassword.equals(commonPassword)) {
         errors.add("This password is too common. Please choose a more unique password");
-        strengthScore = Math.max(0, strengthScore - 50);
+        strengthScore = Math.max(0, strengthScore - COMMON_PASSWORD_PENALTY);
         break;
       }
     }
@@ -133,16 +151,16 @@ public final class PasswordValidator {
     // Check for repeated characters
     if (hasRepeatedCharacters(password)) {
       errors.add("Password should not contain repeated characters (e.g., 'aaa' or '111')");
-      strengthScore = Math.max(0, strengthScore - 10);
+      strengthScore = Math.max(0, strengthScore - REPEATED_CHAR_PENALTY);
     }
 
     // Check for sequential characters
     if (hasSequentialCharacters(password)) {
       errors.add("Password should not contain sequential characters (e.g., 'abc' or '123')");
-      strengthScore = Math.max(0, strengthScore - 10);
+      strengthScore = Math.max(0, strengthScore - REPEATED_CHAR_PENALTY);
     }
 
-    return new ValidationResult(errors.isEmpty(), errors, Math.min(100, strengthScore));
+    return new ValidationResult(errors.isEmpty(), errors, Math.min(MAX_STRENGTH_SCORE, strengthScore));
   }
 
   /** Check if password contains repeated characters */
@@ -191,13 +209,13 @@ public final class PasswordValidator {
 
   /** Get password strength as a string */
   public static String getStrengthText(int strengthScore) {
-    if (strengthScore < 20) {
+    if (strengthScore < STRENGTH_VERY_WEAK_THRESHOLD) {
       return "Very Weak";
-    } else if (strengthScore < 40) {
+    } else if (strengthScore < STRENGTH_WEAK_THRESHOLD) {
       return "Weak";
-    } else if (strengthScore < 60) {
+    } else if (strengthScore < STRENGTH_FAIR_THRESHOLD) {
       return "Fair";
-    } else if (strengthScore < 80) {
+    } else if (strengthScore < STRENGTH_GOOD_THRESHOLD) {
       return "Good";
     } else {
       return "Strong";

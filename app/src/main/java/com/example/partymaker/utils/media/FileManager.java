@@ -25,6 +25,21 @@ public class FileManager {
   private static final String TAG = "FileManager";
   private static final String FILE_PROVIDER_AUTHORITY = "com.example.partymaker.fileprovider";
   private static final Executor executor = Executors.newSingleThreadExecutor();
+  
+  // File operation constants
+  private static final String DATE_FORMAT_PATTERN = "yyyyMMdd_HHmmss";
+  private static final String IMAGE_FILE_PREFIX = "JPEG_";
+  private static final String IMAGE_FILE_SUFFIX = "_";
+  private static final String IMAGE_FILE_EXTENSION = ".jpg";
+  private static final int JPEG_QUALITY = 90;
+  private static final int COPY_BUFFER_SIZE = 4096;
+  
+  // Size formatting constants
+  private static final String[] SIZE_UNITS = {"B", "KB", "MB", "GB", "TB"};
+  private static final int SIZE_UNIT_BASE = 1024;
+  private static final double LOG_BASE = Math.log10(SIZE_UNIT_BASE);
+  private static final String SIZE_FORMAT = "%.1f %s";
+  private static final String ZERO_SIZE = "0 B";
 
   /**
    * Creates a temporary image file.
@@ -35,12 +50,11 @@ public class FileManager {
    */
   public static File createImageFile(Context context) throws IOException {
     // Create an image file name
-    String timeStamp =
-        new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-    String imageFileName = "JPEG_" + timeStamp + "_";
+    String timeStamp = createTimestamp();
+    String imageFileName = IMAGE_FILE_PREFIX + timeStamp + IMAGE_FILE_SUFFIX;
     File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-    return File.createTempFile(imageFileName, ".jpg", storageDir);
+    return File.createTempFile(imageFileName, IMAGE_FILE_EXTENSION, storageDir);
   }
 
   /**
@@ -66,7 +80,7 @@ public class FileManager {
         () -> {
           try {
             FileOutputStream outputStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream);
             outputStream.flush();
             outputStream.close();
 
@@ -99,7 +113,7 @@ public class FileManager {
             }
 
             OutputStream outputStream = new FileOutputStream(destFile);
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[COPY_BUFFER_SIZE];
             int bytesRead;
 
             while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -207,14 +221,12 @@ public class FileManager {
    */
   public static String formatSize(long size) {
     if (size <= 0) {
-      return "0 B";
+      return ZERO_SIZE;
     }
 
-    final String[] units = new String[] {"B", "KB", "MB", "GB", "TB"};
-    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-
+    int digitGroups = (int) (Math.log10(size) / LOG_BASE);
     return String.format(
-        Locale.getDefault(), "%.1f %s", size / Math.pow(1024, digitGroups), units[digitGroups]);
+        Locale.getDefault(), SIZE_FORMAT, size / Math.pow(SIZE_UNIT_BASE, digitGroups), SIZE_UNITS[digitGroups]);
   }
 
   /** Callback interface for file operations. */
@@ -222,5 +234,10 @@ public class FileManager {
     void onSuccess(@NonNull File file);
 
     void onError(String error);
+  }
+  
+  /** Create timestamp string for file naming */
+  private static String createTimestamp() {
+    return new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault()).format(new Date());
   }
 }

@@ -27,6 +27,15 @@ public class EnhancedSecureStorage {
   private static final String KEY_ALGORITHM = "AES";
   private static final int GCM_IV_LENGTH = 12; // 96 bits recommended for GCM
   private static final int GCM_TAG_LENGTH = 16; // 128 bits auth tag
+  
+  // Security constants
+  private static final int AES_KEY_SIZE = 256;
+  private static final int MIN_ENCRYPTED_DATA_LENGTH = GCM_IV_LENGTH + GCM_TAG_LENGTH;
+  private static final String DEFAULT_USER_ID = "default_user";
+  private static final String SECURE_PREFS_PREFIX = "secure_prefs_";
+  private static final String USER_KEYS_PREFS = "user_keys";
+  private static final String KEY_PREFIX = "key_";
+  private static final int TAG_LENGTH_BITS = GCM_TAG_LENGTH * 8;
 
   private final SharedPreferences prefs;
   private final SecretKey secretKey;
@@ -40,8 +49,8 @@ public class EnhancedSecureStorage {
    * @param userId Unique user identifier for per-user keys
    */
   public EnhancedSecureStorage(Context context, String userId) {
-    this.userId = userId != null ? userId : "default_user";
-    this.prefs = context.getSharedPreferences("secure_prefs_" + this.userId, Context.MODE_PRIVATE);
+    this.userId = userId != null ? userId : DEFAULT_USER_ID;
+    this.prefs = context.getSharedPreferences(SECURE_PREFS_PREFIX + this.userId, Context.MODE_PRIVATE);
     this.secureRandom = new SecureRandom();
     this.secretKey = getOrCreateUserKey(context, this.userId);
   }
@@ -61,7 +70,7 @@ public class EnhancedSecureStorage {
 
       // Initialize cipher with GCM mode for authenticated encryption
       Cipher cipher = Cipher.getInstance(ALGORITHM);
-      GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+      GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
       cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
 
       // Encrypt the plaintext
@@ -90,7 +99,7 @@ public class EnhancedSecureStorage {
       byte[] encryptedData = Base64.decode(encryptedText, Base64.NO_WRAP);
 
       // Validate minimum length (IV + some ciphertext + auth tag)
-      if (encryptedData.length < GCM_IV_LENGTH + GCM_TAG_LENGTH) {
+      if (encryptedData.length < MIN_ENCRYPTED_DATA_LENGTH) {
         Log.e(TAG, "Encrypted data too short for user: " + userId);
         return null;
       }
@@ -105,7 +114,7 @@ public class EnhancedSecureStorage {
 
       // Initialize cipher for decryption
       Cipher cipher = Cipher.getInstance(ALGORITHM);
-      GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+      GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
       cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
 
       // Decrypt and verify authentication tag
@@ -185,8 +194,8 @@ public class EnhancedSecureStorage {
   private SecretKey getOrCreateUserKey(Context context, String userId) {
     try {
       // Check if key already exists in secure storage
-      SharedPreferences keyPrefs = context.getSharedPreferences("user_keys", Context.MODE_PRIVATE);
-      String keyBase64 = keyPrefs.getString("key_" + userId, null);
+      SharedPreferences keyPrefs = context.getSharedPreferences(USER_KEYS_PREFS, Context.MODE_PRIVATE);
+      String keyBase64 = keyPrefs.getString(KEY_PREFIX + userId, null);
 
       if (keyBase64 != null) {
         // Load existing key
@@ -196,12 +205,12 @@ public class EnhancedSecureStorage {
 
       // Generate new 256-bit AES key
       KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
-      keyGenerator.init(256, secureRandom);
+      keyGenerator.init(AES_KEY_SIZE, secureRandom);
       SecretKey newKey = keyGenerator.generateKey();
 
       // Store key securely
       String newKeyBase64 = Base64.encodeToString(newKey.getEncoded(), Base64.NO_WRAP);
-      keyPrefs.edit().putString("key_" + userId, newKeyBase64).apply();
+      keyPrefs.edit().putString(KEY_PREFIX + userId, newKeyBase64).apply();
 
       Log.d(TAG, "Generated new encryption key for user: " + userId);
       return newKey;
@@ -217,13 +226,13 @@ public class EnhancedSecureStorage {
     try {
       // Generate new key
       KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
-      keyGenerator.init(256, secureRandom);
+      keyGenerator.init(AES_KEY_SIZE, secureRandom);
       SecretKey newKey = keyGenerator.generateKey();
 
       // Store new key
-      SharedPreferences keyPrefs = context.getSharedPreferences("user_keys", Context.MODE_PRIVATE);
+      SharedPreferences keyPrefs = context.getSharedPreferences(USER_KEYS_PREFS, Context.MODE_PRIVATE);
       String newKeyBase64 = Base64.encodeToString(newKey.getEncoded(), Base64.NO_WRAP);
-      keyPrefs.edit().putString("key_" + userId, newKeyBase64).apply();
+      keyPrefs.edit().putString(KEY_PREFIX + userId, newKeyBase64).apply();
 
       Log.d(TAG, "Rotated encryption key for user: " + userId);
 

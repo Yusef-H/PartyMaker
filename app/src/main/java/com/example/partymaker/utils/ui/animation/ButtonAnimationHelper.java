@@ -24,11 +24,38 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
  */
 public class ButtonAnimationHelper {
 
-  private static final int PRESS_DURATION = 150;
-  private static final int RELEASE_DURATION = 200;
+  // Animation duration constants
+  private static final int PRESS_DURATION_MS = 150;
+  private static final int RELEASE_DURATION_MS = 200;
+  private static final int BOUNCE_DURATION_MS = 400;
+  private static final int SHAKE_DURATION_MS = 500;
+  private static final int PULSE_DURATION_MS = 1000;
+  private static final int FAB_MORPH_SCALE_DOWN_MS = 150;
+  private static final int FAB_MORPH_SCALE_UP_MS = 200;
+  private static final int ENTRANCE_ANIMATION_MS = 300;
+  private static final int STAGGER_DELAY_MS = 50;
+  
+  // Scale constants
   private static final float PRESS_SCALE = 0.95f;
+  private static final float BOUNCE_SCALE_MAX = 1.15f;
+  private static final float PULSE_SCALE_MAX = 1.08f;
+  private static final float ENTRANCE_SCALE_MIN = 0.8f;
+  
+  // Elevation constants  
   private static final float ELEVATION_PRESSED = 8f;
   private static final float ELEVATION_NORMAL = 4f;
+  
+  // Animation values
+  private static final float SHAKE_TRANSLATION = 15f;
+  private static final float ENTRANCE_TRANSLATION_Y = 50f;
+  private static final int VIBRATION_DURATION_MS = 10;
+  private static final int ERROR_VIBRATION_DURATION_MS = 100;
+  private static final int ERROR_VIBRATION_PAUSE_MS = 50;
+  private static final int RIPPLE_COLOR = 0x30FFFFFF;
+  private static final float OVERSHOOT_TENSION = 1.2f;
+  private static final float FAB_OVERSHOOT_TENSION = 1.5f;
+  private static final float ENTRANCE_OVERSHOOT_TENSION = 1.1f;
+  private static final float BOUNCE_OVERSHOOT_TENSION = 2f;
 
   /**
    * Applies professional press animation to any view Creates smooth scale and elevation changes
@@ -81,7 +108,7 @@ public class ButtonAnimationHelper {
       animatorSet.playTogether(scaleX, scaleY);
     }
 
-    animatorSet.setDuration(PRESS_DURATION);
+    animatorSet.setDuration(PRESS_DURATION_MS);
     animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
     animatorSet.start();
 
@@ -114,8 +141,8 @@ public class ButtonAnimationHelper {
       animatorSet.playTogether(scaleX, scaleY);
     }
 
-    animatorSet.setDuration(RELEASE_DURATION);
-    animatorSet.setInterpolator(new OvershootInterpolator(1.2f));
+    animatorSet.setDuration(RELEASE_DURATION_MS);
+    animatorSet.setInterpolator(new OvershootInterpolator(OVERSHOOT_TENSION));
     animatorSet.start();
   }
 
@@ -126,8 +153,8 @@ public class ButtonAnimationHelper {
 
     AnimatorSet bounceSet = new AnimatorSet();
     bounceSet.playTogether(bounceX, bounceY);
-    bounceSet.setDuration(400);
-    bounceSet.setInterpolator(new OvershootInterpolator(2f));
+    bounceSet.setDuration(BOUNCE_DURATION_MS);
+    bounceSet.setInterpolator(new OvershootInterpolator(BOUNCE_OVERSHOOT_TENSION));
     bounceSet.start();
 
     performHapticFeedback(view);
@@ -136,8 +163,10 @@ public class ButtonAnimationHelper {
   /** Applies shake animation for error states */
   public static void applyErrorShake(@NonNull View view) {
     ObjectAnimator shake =
-        ObjectAnimator.ofFloat(view, "translationX", 0, -15, 15, -10, 10, -5, 5, 0);
-    shake.setDuration(500);
+        ObjectAnimator.ofFloat(view, "translationX", 0, -SHAKE_TRANSLATION, SHAKE_TRANSLATION, 
+                              -SHAKE_TRANSLATION * 0.67f, SHAKE_TRANSLATION * 0.67f, 
+                              -SHAKE_TRANSLATION * 0.33f, SHAKE_TRANSLATION * 0.33f, 0);
+    shake.setDuration(SHAKE_DURATION_MS);
     shake.setInterpolator(new DecelerateInterpolator());
     shake.start();
 
@@ -147,8 +176,8 @@ public class ButtonAnimationHelper {
 
   /** Creates pulsing animation for attention-grabbing elements */
   public static ValueAnimator applyPulseAnimation(@NonNull View view) {
-    ValueAnimator pulseAnimator = ValueAnimator.ofFloat(1f, 1.08f, 1f);
-    pulseAnimator.setDuration(1000);
+    ValueAnimator pulseAnimator = ValueAnimator.ofFloat(1f, PULSE_SCALE_MAX, 1f);
+    pulseAnimator.setDuration(PULSE_DURATION_MS);
     pulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
     pulseAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
@@ -171,7 +200,7 @@ public class ButtonAnimationHelper {
 
     AnimatorSet scaleDownSet = new AnimatorSet();
     scaleDownSet.playTogether(scaleDown, scaleDownY);
-    scaleDownSet.setDuration(150);
+    scaleDownSet.setDuration(FAB_MORPH_SCALE_DOWN_MS);
 
     scaleDownSet.addListener(
         new android.animation.AnimatorListenerAdapter() {
@@ -186,8 +215,8 @@ public class ButtonAnimationHelper {
 
             AnimatorSet scaleUpSet = new AnimatorSet();
             scaleUpSet.playTogether(scaleUp, scaleUpY);
-            scaleUpSet.setDuration(200);
-            scaleUpSet.setInterpolator(new OvershootInterpolator(1.5f));
+            scaleUpSet.setDuration(FAB_MORPH_SCALE_UP_MS);
+            scaleUpSet.setInterpolator(new OvershootInterpolator(FAB_OVERSHOOT_TENSION));
             scaleUpSet.start();
           }
         });
@@ -208,18 +237,18 @@ public class ButtonAnimationHelper {
   /** Applies entrance animation for views appearing on screen */
   public static void applyEntranceAnimation(@NonNull View view, long delay) {
     view.setAlpha(0f);
-    view.setScaleX(0.8f);
-    view.setScaleY(0.8f);
-    view.setTranslationY(50f);
+    view.setScaleX(ENTRANCE_SCALE_MIN);
+    view.setScaleY(ENTRANCE_SCALE_MIN);
+    view.setTranslationY(ENTRANCE_TRANSLATION_Y);
 
     view.animate()
         .alpha(1f)
         .scaleX(1f)
         .scaleY(1f)
         .translationY(0f)
-        .setDuration(300)
+        .setDuration(ENTRANCE_ANIMATION_MS)
         .setStartDelay(delay)
-        .setInterpolator(new OvershootInterpolator(1.1f))
+        .setInterpolator(new OvershootInterpolator(ENTRANCE_OVERSHOOT_TENSION))
         .start();
   }
 
@@ -231,9 +260,9 @@ public class ButtonAnimationHelper {
 
       if (vibrator != null && vibrator.hasVibrator()) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-          vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+          vibrator.vibrate(VibrationEffect.createOneShot(VIBRATION_DURATION_MS, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
-          vibrator.vibrate(10);
+          vibrator.vibrate(VIBRATION_DURATION_MS);
         }
       }
     } catch (SecurityException e) {
@@ -251,9 +280,10 @@ public class ButtonAnimationHelper {
 
     if (vibrator != null && vibrator.hasVibrator()) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        vibrator.vibrate(VibrationEffect.createWaveform(new long[] {0, 100, 50, 100}, -1));
+        vibrator.vibrate(VibrationEffect.createWaveform(
+            new long[] {0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1));
       } else {
-        vibrator.vibrate(new long[] {0, 100, 50, 100}, -1);
+        vibrator.vibrate(new long[] {0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1);
       }
     }
   }
@@ -261,7 +291,7 @@ public class ButtonAnimationHelper {
   /** Quick method to apply professional animations to common button types */
   public static void enhanceButton(@NonNull View button) {
     applyPressAnimation(button);
-    applyCustomRipple(button, 0x30FFFFFF); // Semi-transparent white ripple
+    applyCustomRipple(button, RIPPLE_COLOR);
   }
 
   /** Quick method to enhance card views with press animations */
@@ -273,7 +303,7 @@ public class ButtonAnimationHelper {
   /** Applies stagger animation to a list of views (for RecyclerView items) */
   public static void applyStaggerAnimation(@NonNull View[] views) {
     for (int i = 0; i < views.length; i++) {
-      applyEntranceAnimation(views[i], i * 50L); // 50ms delay between each item
+      applyEntranceAnimation(views[i], i * (long) STAGGER_DELAY_MS);
     }
   }
 }

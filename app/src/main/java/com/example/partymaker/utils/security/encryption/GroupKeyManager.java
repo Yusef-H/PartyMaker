@@ -22,6 +22,21 @@ import java.util.concurrent.CompletableFuture;
 public class GroupKeyManager {
   private static final String TAG = "GroupKeyManager";
   private static final String FIREBASE_GROUP_KEYS_PATH = "group_keys";
+  
+  // Firebase path constants
+  private static final String PATH_MEMBERS = "members";
+  private static final String PATH_METADATA = "metadata";
+  
+  // Metadata keys
+  private static final String KEY_CREATED = "created";
+  private static final String KEY_VERSION = "version";
+  private static final String KEY_CREATOR = "creator";
+  private static final String KEY_LAST_UPDATED = "lastUpdated";
+  private static final String KEY_LAST_ROTATED = "lastRotated";
+  
+  // Configuration constants
+  private static final int INITIAL_KEY_VERSION = 1;
+  private static final int MEMBER_QUERY_LIMIT = 1;
 
   private final String currentUserId;
   private final GroupMessageEncryption groupEncryption;
@@ -55,20 +70,7 @@ public class GroupKeyManager {
       // In production, this would be encrypted with each user's public key
 
       // Prepare Firebase data
-      Map<String, Object> groupKeyData = new HashMap<>();
-      Map<String, Object> members = new HashMap<>();
-      Map<String, Object> metadata = new HashMap<>();
-
-      // Add creator as first member
-      members.put(currentUserId, groupKeyBase64);
-
-      // Add metadata
-      metadata.put("created", System.currentTimeMillis());
-      metadata.put("version", 1);
-      metadata.put("creator", currentUserId);
-
-      groupKeyData.put("members", members);
-      groupKeyData.put("metadata", metadata);
+      Map<String, Object> groupKeyData = createGroupKeyData(groupKeyBase64);
 
       // Save to Firebase
       firebaseRef
@@ -105,70 +107,7 @@ public class GroupKeyManager {
 
     try {
       // First, get the group key from Firebase (from any existing member)
-      firebaseRef
-          .child(groupId)
-          .child("members")
-          .limitToFirst(1)
-          .addListenerForSingleValueEvent(
-              new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                  try {
-                    String groupKeyBase64 = null;
-
-                    // Get group key from any existing member
-                    for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
-                      groupKeyBase64 = memberSnapshot.getValue(String.class);
-                      break; // Take the first available key
-                    }
-
-                    if (groupKeyBase64 == null) {
-                      Log.e(TAG, "No existing group key found for: " + groupId);
-                      future.complete(false);
-                      return;
-                    }
-
-                    Log.i(TAG, "Found existing group key, adding user: " + newUserId);
-
-                    // Add new user with the same group key
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("members/" + newUserId, groupKeyBase64);
-                    updates.put("metadata/lastUpdated", System.currentTimeMillis());
-
-                    firebaseRef
-                        .child(groupId)
-                        .updateChildren(updates)
-                        .addOnCompleteListener(
-                            task -> {
-                              if (task.isSuccessful()) {
-                                Log.i(
-                                    TAG,
-                                    "Successfully added user "
-                                        + newUserId
-                                        + " to group encryption: "
-                                        + groupId);
-                                future.complete(true);
-                              } else {
-                                Log.e(
-                                    TAG,
-                                    "Failed to add user to group encryption",
-                                    task.getException());
-                                future.complete(false);
-                              }
-                            });
-
-                  } catch (Exception e) {
-                    Log.e(TAG, "Error processing group key for new user", e);
-                    future.complete(false);
-                  }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                  Log.e(TAG, "Failed to get existing group key", databaseError.toException());
-                  future.complete(false);
-                }
-              });
+      getExistingGroupKeyAndAddUser(groupId, newUserId, future);
 
     } catch (Exception e) {
       Log.e(TAG, "Error adding user to group encryption", e);
@@ -196,62 +135,8 @@ public class GroupKeyManager {
         return future;
       }
 
-      // Get current group members
-      firebaseRef
-          .child(groupId)
-          .child("members")
-          .addListenerForSingleValueEvent(
-              new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                  try {
-                    Map<String, Object> updates = new HashMap<>();
-                    Map<String, Object> newMembers = new HashMap<>();
-
-                    // Re-encrypt new key for all remaining members (except removed user)
-                    for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
-                      String userId = memberSnapshot.getKey();
-
-                      if (userId != null && !userId.equals(removedUserId)) {
-                        // Add remaining member with new key
-                        // Simplified: should encrypt per user's personal key
-                        newMembers.put(userId, newGroupKeyBase64);
-                      }
-                    }
-
-                    // Update Firebase
-                    updates.put("members", newMembers);
-                    updates.put(
-                        "metadata/version",
-                        System.currentTimeMillis() / 1000); // Use timestamp as version
-                    updates.put("metadata/lastRotated", System.currentTimeMillis());
-
-                    firebaseRef
-                        .child(groupId)
-                        .updateChildren(updates)
-                        .addOnCompleteListener(
-                            task -> {
-                              if (task.isSuccessful()) {
-                                Log.i(TAG, "Rotated group key and removed user: " + removedUserId);
-                                future.complete(true);
-                              } else {
-                                Log.e(TAG, "Failed to rotate group key", task.getException());
-                                future.complete(false);
-                              }
-                            });
-
-                  } catch (Exception e) {
-                    Log.e(TAG, "Error processing group member removal", e);
-                    future.complete(false);
-                  }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                  Log.e(TAG, "Failed to get group members", databaseError.toException());
-                  future.complete(false);
-                }
-              });
+      // Get current group members and rotate key
+      rotateKeyForRemainingMembers(groupId, removedUserId, newGroupKeyBase64, future);
 
     } catch (Exception e) {
       Log.e(TAG, "Error removing user and rotating key", e);
@@ -271,48 +156,7 @@ public class GroupKeyManager {
     CompletableFuture<Boolean> future = new CompletableFuture<>();
 
     try {
-      firebaseRef
-          .child(groupId)
-          .child("members")
-          .child(currentUserId)
-          .addListenerForSingleValueEvent(
-              new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                  try {
-                    String encryptedGroupKey = dataSnapshot.getValue(String.class);
-                    if (encryptedGroupKey == null) {
-                      Log.w(TAG, "No group key found for user in group: " + groupId);
-                      future.complete(false);
-                      return;
-                    }
-
-                    // Use key directly (simplified approach)
-                    // In production, this would be decrypted with user's private key
-
-                    // Store group key locally
-                    boolean stored = groupEncryption.storeGroupKey(groupId, encryptedGroupKey);
-
-                    if (stored) {
-                      Log.i(TAG, "Loaded group key for: " + groupId);
-                      future.complete(true);
-                    } else {
-                      Log.e(TAG, "Failed to store group key locally");
-                      future.complete(false);
-                    }
-
-                  } catch (Exception e) {
-                    Log.e(TAG, "Error processing loaded group key", e);
-                    future.complete(false);
-                  }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                  Log.e(TAG, "Failed to load group key", databaseError.toException());
-                  future.complete(false);
-                }
-              });
+      loadUserGroupKey(groupId, future);
 
     } catch (Exception e) {
       Log.e(TAG, "Error loading group key", e);
@@ -332,24 +176,7 @@ public class GroupKeyManager {
     CompletableFuture<Boolean> future = new CompletableFuture<>();
 
     try {
-      firebaseRef
-          .child(groupId)
-          .child("members")
-          .child(currentUserId)
-          .addListenerForSingleValueEvent(
-              new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                  boolean exists = dataSnapshot.exists();
-                  future.complete(exists);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                  Log.e(TAG, "Failed to check group membership", databaseError.toException());
-                  future.complete(false);
-                }
-              });
+      checkUserMembership(groupId, future);
 
     } catch (Exception e) {
       Log.e(TAG, "Error checking group membership", e);
@@ -433,5 +260,227 @@ public class GroupKeyManager {
    */
   public String getStatus() {
     return String.format("User: %s, %s", currentUserId, groupEncryption.getEncryptionStatus());
+  }
+  
+  /** Create Firebase group key data structure */
+  private Map<String, Object> createGroupKeyData(String groupKeyBase64) {
+    Map<String, Object> groupKeyData = new HashMap<>();
+    Map<String, Object> members = new HashMap<>();
+    Map<String, Object> metadata = new HashMap<>();
+
+    // Add creator as first member
+    members.put(currentUserId, groupKeyBase64);
+
+    // Add metadata
+    metadata.put(KEY_CREATED, System.currentTimeMillis());
+    metadata.put(KEY_VERSION, INITIAL_KEY_VERSION);
+    metadata.put(KEY_CREATOR, currentUserId);
+
+    groupKeyData.put(PATH_MEMBERS, members);
+    groupKeyData.put(PATH_METADATA, metadata);
+    
+    return groupKeyData;
+  }
+  
+  /** Get existing group key and add user */
+  private void getExistingGroupKeyAndAddUser(String groupId, String newUserId, CompletableFuture<Boolean> future) {
+    firebaseRef
+        .child(groupId)
+        .child(PATH_MEMBERS)
+        .limitToFirst(MEMBER_QUERY_LIMIT)
+        .addListenerForSingleValueEvent(
+            new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                  String groupKeyBase64 = extractGroupKeyFromSnapshot(dataSnapshot);
+                  if (groupKeyBase64 == null) {
+                    Log.e(TAG, "No existing group key found for: " + groupId);
+                    future.complete(false);
+                    return;
+                  }
+
+                  Log.i(TAG, "Found existing group key, adding user: " + newUserId);
+                  addUserToGroup(groupId, newUserId, groupKeyBase64, future);
+                  
+                } catch (Exception e) {
+                  Log.e(TAG, "Error processing group key for new user", e);
+                  future.complete(false);
+                }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Failed to get existing group key", databaseError.toException());
+                future.complete(false);
+              }
+            });
+  }
+  
+  /** Extract group key from Firebase snapshot */
+  private String extractGroupKeyFromSnapshot(DataSnapshot dataSnapshot) {
+    // Get group key from any existing member
+    for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
+      return memberSnapshot.getValue(String.class);
+    }
+    return null;
+  }
+  
+  /** Add user to group with existing key */
+  private void addUserToGroup(String groupId, String userId, String groupKeyBase64, CompletableFuture<Boolean> future) {
+    Map<String, Object> updates = new HashMap<>();
+    updates.put(PATH_MEMBERS + "/" + userId, groupKeyBase64);
+    updates.put(PATH_METADATA + "/" + KEY_LAST_UPDATED, System.currentTimeMillis());
+
+    firebaseRef
+        .child(groupId)
+        .updateChildren(updates)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.i(TAG, "Successfully added user " + userId + " to group encryption: " + groupId);
+                future.complete(true);
+              } else {
+                Log.e(TAG, "Failed to add user to group encryption", task.getException());
+                future.complete(false);
+              }
+            });
+  }
+  
+  /** Rotate key for remaining members after user removal */
+  private void rotateKeyForRemainingMembers(String groupId, String removedUserId, String newGroupKeyBase64, CompletableFuture<Boolean> future) {
+    firebaseRef
+        .child(groupId)
+        .child(PATH_MEMBERS)
+        .addListenerForSingleValueEvent(
+            new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                  Map<String, Object> updates = createKeyRotationUpdates(dataSnapshot, removedUserId, newGroupKeyBase64);
+                  updateFirebaseWithRotatedKey(groupId, updates, removedUserId, future);
+                  
+                } catch (Exception e) {
+                  Log.e(TAG, "Error processing group member removal", e);
+                  future.complete(false);
+                }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Failed to get group members", databaseError.toException());
+                future.complete(false);
+              }
+            });
+  }
+  
+  /** Create updates for key rotation */
+  private Map<String, Object> createKeyRotationUpdates(DataSnapshot dataSnapshot, String removedUserId, String newGroupKeyBase64) {
+    Map<String, Object> updates = new HashMap<>();
+    Map<String, Object> newMembers = new HashMap<>();
+
+    // Re-encrypt new key for all remaining members (except removed user)
+    for (DataSnapshot memberSnapshot : dataSnapshot.getChildren()) {
+      String userId = memberSnapshot.getKey();
+      if (userId != null && !userId.equals(removedUserId)) {
+        // Add remaining member with new key
+        // Simplified: should encrypt per user's personal key
+        newMembers.put(userId, newGroupKeyBase64);
+      }
+    }
+
+    // Update Firebase
+    updates.put(PATH_MEMBERS, newMembers);
+    updates.put(PATH_METADATA + "/" + KEY_VERSION, System.currentTimeMillis() / 1000); // Use timestamp as version
+    updates.put(PATH_METADATA + "/" + KEY_LAST_ROTATED, System.currentTimeMillis());
+    
+    return updates;
+  }
+  
+  /** Update Firebase with rotated key */
+  private void updateFirebaseWithRotatedKey(String groupId, Map<String, Object> updates, String removedUserId, CompletableFuture<Boolean> future) {
+    firebaseRef
+        .child(groupId)
+        .updateChildren(updates)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.i(TAG, "Rotated group key and removed user: " + removedUserId);
+                future.complete(true);
+              } else {
+                Log.e(TAG, "Failed to rotate group key", task.getException());
+                future.complete(false);
+              }
+            });
+  }
+  
+  /** Load group key for current user */
+  private void loadUserGroupKey(String groupId, CompletableFuture<Boolean> future) {
+    firebaseRef
+        .child(groupId)
+        .child(PATH_MEMBERS)
+        .child(currentUserId)
+        .addListenerForSingleValueEvent(
+            new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                  String encryptedGroupKey = dataSnapshot.getValue(String.class);
+                  if (encryptedGroupKey == null) {
+                    Log.w(TAG, "No group key found for user in group: " + groupId);
+                    future.complete(false);
+                    return;
+                  }
+
+                  // Use key directly (simplified approach)
+                  // In production, this would be decrypted with user's private key
+                  boolean stored = groupEncryption.storeGroupKey(groupId, encryptedGroupKey);
+                  handleKeyStorageResult(groupId, stored, future);
+                  
+                } catch (Exception e) {
+                  Log.e(TAG, "Error processing loaded group key", e);
+                  future.complete(false);
+                }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Failed to load group key", databaseError.toException());
+                future.complete(false);
+              }
+            });
+  }
+  
+  /** Handle key storage result */
+  private void handleKeyStorageResult(String groupId, boolean stored, CompletableFuture<Boolean> future) {
+    if (stored) {
+      Log.i(TAG, "Loaded group key for: " + groupId);
+      future.complete(true);
+    } else {
+      Log.e(TAG, "Failed to store group key locally");
+      future.complete(false);
+    }
+  }
+  
+  /** Check if current user is member of group */
+  private void checkUserMembership(String groupId, CompletableFuture<Boolean> future) {
+    firebaseRef
+        .child(groupId)
+        .child(PATH_MEMBERS)
+        .child(currentUserId)
+        .addListenerForSingleValueEvent(
+            new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean exists = dataSnapshot.exists();
+                future.complete(exists);
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Failed to check group membership", databaseError.toException());
+                future.complete(false);
+              }
+            });
   }
 }
