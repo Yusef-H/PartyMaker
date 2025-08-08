@@ -253,4 +253,38 @@
     <string name="run_security_scan">Run Security Scan</string>
     <string name="export_report">Export Report</string>
     <string name="share_report">Share Report</string>
+
+    <!-- Search and Filter -->
+    <string name="search">Search</string>
+    <string name="search_your_parties">Search your parties...</string>
+    <string name="search_parties">Search parties...</string>
+    <string name="voice_search">Voice search</string>
+    <string name="filter_parties">Filter parties</string>
+    <string name="all">All</string>
+    <string name="today">Today</string>
+    <string name="this_week">This Week</string>
+
+    <!-- Loading States -->
+    <string name="loading_your_parties">Loading your parties...</string>
+    <string name="loading">Loading...</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="creating_your_amazing_party">Creating your amazing party...</string>
+    <string name="main_content">Main Content</string>
+
+    <!-- Chat -->
+    <string name="online">Online</string>
+    <string name="chat_options">Chat options</string>
+    <string name="attachment_options">Attachment options</string>
+    <string name="ai_thinking">AI is thinking...</string>
+
+    <!-- Profile -->
+    <string name="edit_profile_picture">Edit profile picture</string>
+    <string name="profile_information">Profile Information</string>
+    <string name="sign_out">Sign Out</string>
+
+    <!-- Party States -->
+    <string name="no_parties">No parties</string>
+    <string name="no_public_parties">No Public Parties</string>
+    <string name="no_public_parties_message">There are no public parties available right now.\nCheck back later or create your own!</string>
+    <string name="success">Success!</string>
 </resources>

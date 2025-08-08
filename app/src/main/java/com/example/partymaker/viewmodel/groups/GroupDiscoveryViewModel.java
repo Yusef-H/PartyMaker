@@ -389,7 +389,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
 
     // Check if group allows new members
 
-      // Check if group is public
+    // Check if group is public
     return false;
   }
 

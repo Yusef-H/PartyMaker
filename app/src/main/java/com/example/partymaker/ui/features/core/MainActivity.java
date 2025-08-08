@@ -565,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void showEmptyGroupsState() {
     Log.d(TAG, "Displaying empty groups state with animation");
-    loadingStateManager.showEmptyWithAnimation("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+    loadingStateManager.showEmptyWithAnimation("No groups found. Tap + to create a new group");
     showEmptyState();
   }
 
@@ -840,11 +840,11 @@ public class MainActivity extends AppCompatActivity {
 
   private void showEmptyViewMessage(TextView emptyView) {
     emptyView.setVisibility(View.VISIBLE);
-    emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+    emptyView.setText("No groups found. Tap + to create a new group");
   }
 
   private void showEmptyStateFallback() {
-    UiStateManager.showInfo(rootView, "לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+    UiStateManager.showInfo(rootView, "No groups found. Tap + to create a new group");
   }
 
   private void hideEmptyState() {

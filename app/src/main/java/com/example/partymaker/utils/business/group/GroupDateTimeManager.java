@@ -1,8 +1,8 @@
 package com.example.partymaker.utils.business.group;
 
 /**
- * Immutable data class for managing group date and time information.
- * Provides validation for date components to ensure data integrity.
+ * Immutable data class for managing group date and time information. Provides validation for date
+ * components to ensure data integrity.
  */
 public class GroupDateTimeManager {
   private final String day;
@@ -88,7 +88,7 @@ public class GroupDateTimeManager {
    */
   @Override
   public String toString() {
-    return String.format("GroupDateTimeManager{day='%s', month='%s', year='%s', time='%s'}",
-        day, month, year, time);
+    return String.format(
+        "GroupDateTimeManager{day='%s', month='%s', year='%s', time='%s'}", day, month, year, time);
   }
 }

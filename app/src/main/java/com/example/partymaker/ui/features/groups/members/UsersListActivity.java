@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class UsersListActivity extends AppCompatActivity {
   private static final String TAG = "UsersListActivity";
-  
+
   // UI constants
   private static final String ACTIVITY_TITLE = "All users";
   private static final String ACTION_BAR_COLOR = "#0081d1";
@@ -34,10 +34,10 @@ public class UsersListActivity extends AppCompatActivity {
   private static final String NO_USERS_MESSAGE = "No users found";
   private static final String ADD_FRIEND_TITLE = "Add Friend";
   private static final String ADD_TO_COMING_TITLE = "Add to Coming List";
-  
+
   // Static context accessor
   public static Context contextOfApplication;
-  
+
   // UI Components
   private ListView userListView;
   private FirebaseServerClient serverClient;
@@ -89,7 +89,7 @@ public class UsersListActivity extends AppCompatActivity {
       Log.e(TAG, "No extras received from intent");
     }
   }
-  
+
   private void logGroupDataInfo() {
     if (friendKeys != null) {
       Log.d(TAG, "Received FriendKeys: " + friendKeys.size());
@@ -97,7 +97,7 @@ public class UsersListActivity extends AppCompatActivity {
       Log.d(TAG, "FriendKeys is null");
     }
   }
-  
+
   private void setupActionBar() {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -119,7 +119,7 @@ public class UsersListActivity extends AppCompatActivity {
           showAddUserConfirmation(selectedUser);
         });
   }
-  
+
   private boolean isValidUserSelection(User selectedUser) {
     if (selectedUser == null || selectedUser.getEmail() == null) {
       Toast.makeText(this, "Invalid user selected", Toast.LENGTH_SHORT).show();
@@ -130,10 +130,10 @@ public class UsersListActivity extends AppCompatActivity {
       Toast.makeText(this, "No group data available", Toast.LENGTH_SHORT).show();
       return false;
     }
-    
+
     return true;
   }
-  
+
   private void showAddUserConfirmation(User selectedUser) {
     new androidx.appcompat.app.AlertDialog.Builder(this)
         .setTitle(ADD_FRIEND_TITLE)

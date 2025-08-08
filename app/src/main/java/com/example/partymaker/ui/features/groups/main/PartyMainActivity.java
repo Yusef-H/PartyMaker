@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -48,22 +47,22 @@ import java.util.Map;
 
 public class PartyMainActivity extends AppCompatActivity {
   private static final String TAG = "PartyMainActivity";
-  
+
   // Animation durations
   private static final int ANIMATION_DURATION_MS = 300;
   private static final float PANEL_COLLAPSE_OFFSET = -70f;
   private static final float PANEL_EXPAND_OFFSET = 0f;
-  
+
   // UI constants
   private static final int PROCESSING_DELAY_MS = 2000;
   private static final int EDIT_TEXT_PADDING_DP = 16;
-  
+
   // Map constants
   private static final int MAP_ZOOM_LEVEL = 16;
   private static final String GEO_URI_PREFIX = "geo:";
   private static final String QUERY_PARAM = "?q=";
   private static final String ZOOM_PARAM = "&z=";
-  
+
   // Data keys
   private String groupKey;
   private String userKey;
@@ -118,7 +117,7 @@ public class PartyMainActivity extends AppCompatActivity {
 
       // Extract keys from intent
       extractKeysFromIntent(intent);
-      
+
       Log.d(TAG, "userKey initialized: " + userKey);
       Log.d(TAG, "groupKey initialized: " + groupKey);
 
@@ -391,7 +390,7 @@ public class PartyMainActivity extends AppCompatActivity {
 
     Log.d(TAG, "Views initialized successfully");
   }
-  
+
   /** Extracts keys from intent and sets up user authentication */
   private void extractKeysFromIntent(Intent intent) {
     // Try to get groupKey directly from intent first
@@ -421,7 +420,7 @@ public class PartyMainActivity extends AppCompatActivity {
       Log.d(TAG, "userKey from intent: " + userKey);
     }
   }
-  
+
   /** Validates required data and shows error if missing */
   private boolean validateRequiredData() {
     if (groupKey == null || groupKey.isEmpty()) {
@@ -435,7 +434,7 @@ public class PartyMainActivity extends AppCompatActivity {
       showErrorAndFinish("Missing user data. Please log in again.");
       return false;
     }
-    
+
     return true;
   }
 
@@ -1547,7 +1546,8 @@ public class PartyMainActivity extends AppCompatActivity {
   }
 
   @NonNull
-  private Map<String, Object> getStringObjectMap(String newAdminKey, HashMap<String, Object> friendKeys) {
+  private Map<String, Object> getStringObjectMap(
+      String newAdminKey, HashMap<String, Object> friendKeys) {
     final String finalNewAdminKey = newAdminKey;
 
     // Remove current admin from friend keys and coming keys

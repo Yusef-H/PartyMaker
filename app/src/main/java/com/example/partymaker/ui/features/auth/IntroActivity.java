@@ -25,12 +25,12 @@ import com.example.partymaker.viewmodel.auth.IntroViewModel;
  * onboarding flow.
  */
 public class IntroActivity extends AppCompatActivity {
-  
+
   // UI constants
   private static final int DOT_TEXT_SIZE = 35;
   private static final int PAGE_OFFSET = 1;
   private static final String DOT_HTML_ENTITY = "&#8226;";
-  
+
   // Slide layout resources
   private static final int[] SLIDE_LAYOUTS = {
     R.layout.activity_intro_slider1,
@@ -147,7 +147,7 @@ public class IntroActivity extends AppCompatActivity {
     addDotsToLayout(dots);
     setActiveDot(dots, currentPage);
   }
-  
+
   private TextView[] createDots() {
     TextView[] dots = new TextView[SLIDE_LAYOUTS.length];
     for (int i = 0; i < dots.length; i++) {
@@ -155,7 +155,7 @@ public class IntroActivity extends AppCompatActivity {
     }
     return dots;
   }
-  
+
   private TextView createDotTextView() {
     TextView dot = new TextView(this);
     dot.setText(Html.fromHtml(DOT_HTML_ENTITY));
@@ -163,14 +163,14 @@ public class IntroActivity extends AppCompatActivity {
     dot.setTextColor(getResources().getColor(R.color.dot_inactive));
     return dot;
   }
-  
+
   private void addDotsToLayout(TextView[] dots) {
     dotsLayout.removeAllViews();
     for (TextView dot : dots) {
       dotsLayout.addView(dot);
     }
   }
-  
+
   private void setActiveDot(TextView[] dots, int currentPage) {
     if (dots.length > 0 && currentPage >= 0 && currentPage < dots.length) {
       dots[currentPage].setTextColor(getResources().getColor(R.color.dot_active));

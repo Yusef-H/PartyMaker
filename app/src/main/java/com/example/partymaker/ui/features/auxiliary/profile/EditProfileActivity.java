@@ -46,29 +46,35 @@ public class EditProfileActivity extends AppCompatActivity {
   private static final String ACTION_BAR_END_COLOR = "#0E81D1";
   private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
   private static final float ACTION_BAR_ELEVATION = 15f;
-  
+
   // Constants for timeouts and validation
   private static final int NETWORK_STATUS_UPDATE_DELAY_MS = 500;
   private static final int RESUME_NETWORK_CHECK_DELAY_MS = 1000;
   private static final int MIN_USERNAME_LENGTH = 2;
   private static final int MAX_USERNAME_LENGTH = 50;
   private static final int DOWNLOAD_BUFFER_SIZE = 1024;
-  
+
   // Default image resource paths
   private static final String DEFAULT_PROFILE_IMAGE_PATH = "profile_%s.jpg";
   private static final String FIREBASE_PROFILE_PATH_PRIMARY = "UsersImageProfile/Users/";
   private static final String FIREBASE_PROFILE_PATH_SECONDARY = "Users/";
-  
+
   // Error messages
   private static final String ERROR_EMPTY_USERNAME = "Username cannot be empty";
-  private static final String ERROR_USERNAME_TOO_SHORT = "Username must be at least 2 characters long";
-  private static final String ERROR_USERNAME_TOO_LONG = "Username cannot be longer than 50 characters";
-  private static final String ERROR_INVALID_EMAIL_FORMAT = "Invalid email format. If using email as username, it must be a valid email address.";
-  private static final String ERROR_OFFLINE_SAVE = "Cannot save profile while offline. Please check your internet connection.";
+  private static final String ERROR_USERNAME_TOO_SHORT =
+      "Username must be at least 2 characters long";
+  private static final String ERROR_USERNAME_TOO_LONG =
+      "Username cannot be longer than 50 characters";
+  private static final String ERROR_INVALID_EMAIL_FORMAT =
+      "Invalid email format. If using email as username, it must be a valid email address.";
+  private static final String ERROR_OFFLINE_SAVE =
+      "Cannot save profile while offline. Please check your internet connection.";
   private static final String SUCCESS_PROFILE_UPDATED = "Profile picture updated";
-  private static final String SUCCESS_IMAGE_COMPRESSED = "Image compressed successfully. Uploading...";
+  private static final String SUCCESS_IMAGE_COMPRESSED =
+      "Image compressed successfully. Uploading...";
   private static final String SUCCESS_COMPRESSING_IMAGE = "Compressing image...";
-  private static final String ERROR_COMPRESSION_FAILED = "Compression failed, uploading original image...";
+  private static final String ERROR_COMPRESSION_FAILED =
+      "Compression failed, uploading original image...";
   private static final String INFO_OFFLINE_MODE = "Offline mode - limited functionality";
   private static final String INFO_NETWORK_RESTORED = "Network connection restored";
   private ImageView imgProfile;
@@ -115,7 +121,7 @@ public class EditProfileActivity extends AppCompatActivity {
       if (getSupportActionBar() != null) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        
+
         // Set custom back arrow
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
       }
@@ -286,7 +292,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
                     if (userData != null) {
                       // Update UI with user data
-                      String username = "";
+                      String username;
                       // Check for both username and userName fields
                       username = extractUsernameFromData(userData);
 
@@ -380,9 +386,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             // Show a more helpful error message
             Snackbar.make(
-                    findViewById(android.R.id.content),
-                    ERROR_OFFLINE_SAVE,
-                    Snackbar.LENGTH_LONG)
+                    findViewById(android.R.id.content), ERROR_OFFLINE_SAVE, Snackbar.LENGTH_LONG)
                 .show();
             return;
           }
@@ -406,7 +410,8 @@ public class EditProfileActivity extends AppCompatActivity {
     // Try to load from local cache first
     try {
       // Check if we have a locally cached image
-      String localCachePath = getFilesDir() + "/" + String.format(DEFAULT_PROFILE_IMAGE_PATH, userKey);
+      String localCachePath =
+          getFilesDir() + "/" + String.format(DEFAULT_PROFILE_IMAGE_PATH, userKey);
       java.io.File localFile = new java.io.File(localCachePath);
 
       if (localFile.exists()) {
@@ -642,8 +647,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 aVoid -> {
                                   Log.d(TAG, "Profile image URL updated in database");
                                   progressBar.setVisibility(View.GONE);
-                                  Toast.makeText(
-                                          this, SUCCESS_PROFILE_UPDATED, Toast.LENGTH_SHORT)
+                                  Toast.makeText(this, SUCCESS_PROFILE_UPDATED, Toast.LENGTH_SHORT)
                                       .show();
 
                                   // Also update in ViewModel to keep UI in sync
@@ -724,8 +728,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 aVoid -> {
                                   Log.d(TAG, "Profile image URL updated in database");
                                   progressBar.setVisibility(View.GONE);
-                                  Toast.makeText(
-                                          this, SUCCESS_PROFILE_UPDATED, Toast.LENGTH_SHORT)
+                                  Toast.makeText(this, SUCCESS_PROFILE_UPDATED, Toast.LENGTH_SHORT)
                                       .show();
 
                                   // Also update in ViewModel to keep UI in sync
@@ -794,8 +797,7 @@ public class EditProfileActivity extends AppCompatActivity {
       // Use a snackbar instead of a toast to be less intrusive
       View view = findViewById(android.R.id.content);
       if (view != null) {
-        Snackbar snackbar =
-            Snackbar.make(view, INFO_OFFLINE_MODE, Snackbar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(view, INFO_OFFLINE_MODE, Snackbar.LENGTH_SHORT);
         snackbar.show();
       }
 
@@ -866,7 +868,7 @@ public class EditProfileActivity extends AppCompatActivity {
     if (userData == null) {
       return "";
     }
-    
+
     if (userData.containsKey("username")) {
       String username = (String) userData.get("username");
       return username != null ? username : "";
@@ -874,10 +876,10 @@ public class EditProfileActivity extends AppCompatActivity {
       String username = (String) userData.get("userName");
       return username != null ? username : "";
     }
-    
+
     return "";
   }
-  
+
   /**
    * Validates username format and length.
    *

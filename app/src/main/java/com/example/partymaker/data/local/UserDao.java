@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Dao
 public interface UserDao {
-  
+
   // SQL Query Constants
   String QUERY_USER_BY_KEY = "SELECT * FROM users WHERE userKey = :userKey";
   String QUERY_USER_BY_EMAIL = "SELECT * FROM users WHERE email = :email";
@@ -67,8 +67,7 @@ public interface UserDao {
   LiveData<List<User>> observeAllUsers();
 
   /**
-   * Inserts a user into the local database
-   * Uses REPLACE strategy to handle conflicts
+   * Inserts a user into the local database Uses REPLACE strategy to handle conflicts
    *
    * @param user The user to insert
    */
@@ -76,8 +75,7 @@ public interface UserDao {
   void insertUser(User user);
 
   /**
-   * Inserts multiple users into the local database
-   * Uses REPLACE strategy to handle conflicts
+   * Inserts multiple users into the local database Uses REPLACE strategy to handle conflicts
    *
    * @param users The list of users to insert
    */
@@ -85,8 +83,7 @@ public interface UserDao {
   void insertUsers(List<User> users);
 
   /**
-   * Updates an existing user in the local database
-   * User must exist or operation will be ignored
+   * Updates an existing user in the local database User must exist or operation will be ignored
    *
    * @param user The user to update
    */
@@ -102,8 +99,7 @@ public interface UserDao {
   void deleteUserByKey(String userKey);
 
   /**
-   * Deletes all users from the local database
-   * Use with caution - this operation cannot be undone
+   * Deletes all users from the local database Use with caution - this operation cannot be undone
    */
   @Query(QUERY_DELETE_ALL_USERS)
   void deleteAllUsers();

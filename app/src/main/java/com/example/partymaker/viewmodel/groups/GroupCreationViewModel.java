@@ -58,14 +58,15 @@ public class GroupCreationViewModel extends BaseViewModel {
   private static final int MAX_MINUTE = 59;
   private static final String DATE_PATTERN = "\\d{2}/\\d{2}/\\d{4}";
   private static final String TIME_PATTERN = "\\d{2}:\\d{2}";
-  private static final String VALIDATION_ERROR_MESSAGE = "Please fill in all required fields correctly";
+  private static final String VALIDATION_ERROR_MESSAGE =
+      "Please fill in all required fields correctly";
   private static final String FORM_CLEAR_LOG_MESSAGE = "Form data cleared";
   private static final String VIEWMODEL_CLEARED_LOG_MESSAGE = "GroupCreationViewModel cleared";
-  private static final String VIEWMODEL_INITIALIZED_LOG_MESSAGE = "GroupCreationViewModel initialized";
+  private static final String VIEWMODEL_INITIALIZED_LOG_MESSAGE =
+      "GroupCreationViewModel initialized";
 
   // Dependencies
   private final GroupRepository groupRepository;
-  private final ImageCompressor imageCompressor;
 
   // LiveData for group creation state
   private final MutableLiveData<Boolean> groupCreated = new MutableLiveData<>();
@@ -106,11 +107,10 @@ public class GroupCreationViewModel extends BaseViewModel {
   public GroupCreationViewModel(@NonNull Application application) {
     super(application);
     this.groupRepository = GroupRepository.getInstance();
-    this.imageCompressor = new ImageCompressor();
 
     initializeDefaultValues();
     initializeValidationState();
-    
+
     Log.d(TAG, VIEWMODEL_INITIALIZED_LOG_MESSAGE);
   }
 
@@ -272,7 +272,7 @@ public class GroupCreationViewModel extends BaseViewModel {
           try {
             imageUploadInProgress.postValue(true);
 
-            imageCompressor.compressImage(
+            ImageCompressor.compressImage(
                 getApplication(),
                 imageUri,
                 new ImageCompressor.CompressCallback() {
@@ -369,9 +369,9 @@ public class GroupCreationViewModel extends BaseViewModel {
   }
 
   private boolean isValidGroupName(@Nullable String name) {
-    return name != null && 
-           name.trim().length() >= MIN_NAME_LENGTH && 
-           name.trim().length() <= MAX_NAME_LENGTH;
+    return name != null
+        && name.trim().length() >= MIN_NAME_LENGTH
+        && name.trim().length() <= MAX_NAME_LENGTH;
   }
 
   private void validateGroupLocation(@Nullable String location) {
@@ -409,9 +409,11 @@ public class GroupCreationViewModel extends BaseViewModel {
 
   private boolean isValidDateComponents(int day, int month, int year) {
     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-    return day >= MIN_DAY && day <= MAX_DAY && 
-           month >= MIN_MONTH && month <= MAX_MONTH && 
-           year >= currentYear;
+    return day >= MIN_DAY
+        && day <= MAX_DAY
+        && month >= MIN_MONTH
+        && month <= MAX_MONTH
+        && year >= currentYear;
   }
 
   private void validateTime(@Nullable String time) {
@@ -437,8 +439,7 @@ public class GroupCreationViewModel extends BaseViewModel {
   }
 
   private boolean isValidTimeComponents(int hour, int minute) {
-    return hour >= MIN_HOUR && hour <= MAX_HOUR && 
-           minute >= MIN_MINUTE && minute <= MAX_MINUTE;
+    return hour >= MIN_HOUR && hour <= MAX_HOUR && minute >= MIN_MINUTE && minute <= MAX_MINUTE;
   }
 
   private void initializeDefaultValues() {

@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Main Content"
+            android:text="@string/main_content"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Loading..."
+            android:text="@string/loading"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -78,7 +78,7 @@
             android:id="@+id/error_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Something went wrong"
+            android:text="@string/something_went_wrong"
             android:textColor="@color/black"
             android:textSize="16sp" />
 

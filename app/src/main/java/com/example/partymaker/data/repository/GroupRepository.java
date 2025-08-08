@@ -30,18 +30,18 @@ import java.util.Objects;
  */
 public class GroupRepository {
   private static final String TAG = "GroupRepository";
-  
+
   // Cache and operation constants
   private static final int MAX_CACHE_RETRIES = 3;
   private static final long CACHE_TIMEOUT_MS = 5000L;
-  
+
   // Field names for database operations
   private static final String FIELD_USERNAME = "username";
   private static final String FIELD_USER_NAME = "userName";
   private static final String FIELD_ADMIN_KEY = "adminKey";
   private static final String FIELD_FRIEND_KEYS = "friendKeys";
   private static final String FIELD_PROFILE_IMAGE_URL = "profileImageUrl";
-  
+
   // Error messages
   private static final String ERROR_NOT_INITIALIZED = "Repository not initialized";
   private static final String ERROR_INVALID_GROUP_KEY = "Invalid group key";
@@ -50,7 +50,7 @@ public class GroupRepository {
   private static final String ERROR_INVALID_UPDATE_DATA = "Invalid update data";
   private static final String ERROR_GROUP_CANNOT_BE_NULL = "Group cannot be null";
   private static final String ERROR_INVALID_GROUP = "Invalid group";
-  
+
   private static GroupRepository instance;
 
   private LocalGroupDataSource localDataSource;
@@ -574,8 +574,10 @@ public class GroupRepository {
               for (Group group : cachedGroups) {
                 if (isUserInGroup(group, userKey)) {
                   userGroups.add(group);
-                  boolean isAdmin = group.getAdminKey() != null && group.getAdminKey().equals(userKey);
-                  boolean isMember = group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey);
+                  boolean isAdmin =
+                      group.getAdminKey() != null && group.getAdminKey().equals(userKey);
+                  boolean isMember =
+                      group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey);
                   Log.d(
                       TAG,
                       "Group "
@@ -621,80 +623,77 @@ public class GroupRepository {
     callback.onDataLoaded(Result.loading());
 
     // Use RemoteGroupDataSource to get user groups
-    remoteDataSource
-        .getUserGroups(
-            userKey,
-            new DataSource.DataCallback<>() {
-              @Override
-              public void onDataLoaded(List<Group> groups) {
-                Log.d(
-                    TAG, "User groups loaded from server: " + (groups != null ? groups.size() : 0));
+    remoteDataSource.getUserGroups(
+        userKey,
+        new DataSource.DataCallback<>() {
+          @Override
+          public void onDataLoaded(List<Group> groups) {
+            Log.d(TAG, "User groups loaded from server: " + (groups != null ? groups.size() : 0));
 
-                // Cache the groups
-                if (groups != null && !groups.isEmpty() && isInitialized) {
-                  for (Group group : groups) {
-                    localDataSource.saveItem(
-                        group.getGroupKey(),
-                        group,
-                        new DataSource.OperationCallback() {
-                          @Override
-                          public void onComplete() {
-                            // Group cached successfully
-                          }
-
-                          @Override
-                          public void onError(String error) {
-                            Log.w(TAG, "Failed to cache user group: " + error);
-                          }
-                        });
-                  }
-                  Log.d(TAG, "User groups cached: " + groups.size());
-                }
-
-                // Return result
-                callback.onDataLoaded(Result.success(groups != null ? groups : new ArrayList<>()));
-              }
-
-              @Override
-              public void onError(String errorMessage) {
-                Log.e(TAG, "Error loading user groups: " + errorMessage);
-
-                // Try to get from cache as fallback
-                localDataSource.getAllItems(
-                    new DataSource.DataCallback<>() {
+            // Cache the groups
+            if (groups != null && !groups.isEmpty() && isInitialized) {
+              for (Group group : groups) {
+                localDataSource.saveItem(
+                    group.getGroupKey(),
+                    group,
+                    new DataSource.OperationCallback() {
                       @Override
-                      public void onDataLoaded(List<Group> cachedGroups) {
-                        List<Group> userGroups = new ArrayList<>();
-
-                        // Filter groups for this user
-                        if (cachedGroups != null && !cachedGroups.isEmpty()) {
-                          for (Group group : cachedGroups) {
-                            if (isUserInGroup(group, userKey)) {
-                              userGroups.add(group);
-                            }
-                          }
-                        }
-
-                        if (!userGroups.isEmpty()) {
-                          Log.d(
-                              TAG,
-                              "Using cached user groups due to network error: "
-                                  + userGroups.size());
-                          callback.onDataLoaded(Result.success(userGroups));
-                        } else {
-                          Log.e(TAG, "No cached user groups available");
-                          callback.onDataLoaded(Result.error(errorMessage));
-                        }
+                      public void onComplete() {
+                        // Group cached successfully
                       }
 
                       @Override
-                      public void onError(String cacheError) {
-                        Log.e(TAG, "Cache also failed: " + cacheError);
-                        callback.onDataLoaded(Result.error(errorMessage));
+                      public void onError(String error) {
+                        Log.w(TAG, "Failed to cache user group: " + error);
                       }
                     });
               }
-            });
+              Log.d(TAG, "User groups cached: " + groups.size());
+            }
+
+            // Return result
+            callback.onDataLoaded(Result.success(groups != null ? groups : new ArrayList<>()));
+          }
+
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Error loading user groups: " + errorMessage);
+
+            // Try to get from cache as fallback
+            localDataSource.getAllItems(
+                new DataSource.DataCallback<>() {
+                  @Override
+                  public void onDataLoaded(List<Group> cachedGroups) {
+                    List<Group> userGroups = new ArrayList<>();
+
+                    // Filter groups for this user
+                    if (cachedGroups != null && !cachedGroups.isEmpty()) {
+                      for (Group group : cachedGroups) {
+                        if (isUserInGroup(group, userKey)) {
+                          userGroups.add(group);
+                        }
+                      }
+                    }
+
+                    if (!userGroups.isEmpty()) {
+                      Log.d(
+                          TAG,
+                          "Using cached user groups due to network error: " + userGroups.size());
+                      callback.onDataLoaded(Result.success(userGroups));
+                    } else {
+                      Log.e(TAG, "No cached user groups available");
+                      callback.onDataLoaded(Result.error(errorMessage));
+                    }
+                  }
+
+                  @Override
+                  public void onError(String cacheError) {
+                    Log.e(TAG, "Cache also failed: " + cacheError);
+                    callback.onDataLoaded(Result.error(errorMessage));
+                  }
+                });
+          }
+        });
   }
 
   /**
@@ -1075,10 +1074,10 @@ public class GroupRepository {
     if (group == null || userKey == null) {
       return false;
     }
-    
+
     boolean isAdmin = group.getAdminKey() != null && group.getAdminKey().equals(userKey);
     boolean isMember = group.getFriendKeys() != null && group.getFriendKeys().containsKey(userKey);
-    
+
     return isAdmin || isMember;
   }
 

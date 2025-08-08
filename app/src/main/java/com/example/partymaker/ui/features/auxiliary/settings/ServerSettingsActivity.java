@@ -15,27 +15,29 @@ import com.example.partymaker.utils.media.FileManager;
 import com.example.partymaker.utils.server.ServerModeManager;
 
 /**
- * Activity for managing server settings. Allows users to configure the server URL
- * and manage cache settings. Server mode is always enabled in this version.
+ * Activity for managing server settings. Allows users to configure the server URL and manage cache
+ * settings. Server mode is always enabled in this version.
  */
 public class ServerSettingsActivity extends AppCompatActivity {
 
   // SharedPreferences keys
   private static final String PREF_SERVER_URL = "server_url";
-  
+
   // Default server configuration
   private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
   private static final String LOCAL_SERVER_URL = "http://10.0.2.2:8080"; // For emulator development
-  
+
   // UI messages
   private static final String ACTIVITY_TITLE = "Server Settings";
   private static final String MESSAGE_CLEARING_CACHE = "Clearing cache...";
-  private static final String MESSAGE_SETTINGS_SAVED = "Settings saved. Please restart the app for changes to take effect.";
-  private static final String MESSAGE_CACHE_CLEARED_FORMAT = "Cache cleared! Freed up %s of storage.";
-  
+  private static final String MESSAGE_SETTINGS_SAVED =
+      "Settings saved. Please restart the app for changes to take effect.";
+  private static final String MESSAGE_CACHE_CLEARED_FORMAT =
+      "Cache cleared! Freed up %s of storage.";
+
   // Log tag
   private static final String TAG = "ServerSettings";
-  
+
   private SwitchCompat switchServerMode;
   private EditText editServerUrl;
 
@@ -51,40 +53,34 @@ public class ServerSettingsActivity extends AppCompatActivity {
     setupEventListeners();
   }
 
-  /**
-   * Loads current settings from SharedPreferences and updates UI.
-   */
+  /** Loads current settings from SharedPreferences and updates UI. */
   private void loadSettings() {
     configureServerModeSwitch();
     loadServerUrl();
   }
 
-  /**
-   * Saves the current settings and finishes the activity.
-   */
+  /** Saves the current settings and finishes the activity. */
   private void saveSettings() {
     enableServerMode();
     String serverUrl = getValidatedServerUrl();
     saveServerUrl(serverUrl);
-    
+
     Log.d(TAG, "Server URL saved: " + serverUrl);
     showSettingsSavedMessage();
     finish();
   }
 
-  /**
-   * Clears the application cache and shows feedback to the user.
-   */
+  /** Clears the application cache and shows feedback to the user. */
   private void clearCache() {
     showCacheCleanupStartMessage();
-    
+
     long cacheSize = getCacheSizeBeforeClearing();
     String cacheSizeFormatted = FileManager.formatSize(cacheSize);
-    
+
     logCacheSizeBeforeClearing(cacheSizeFormatted);
     performCacheClearing();
     showCacheCleanupCompletionMessage(cacheSizeFormatted);
-    
+
     Log.d(TAG, "Cache cleared successfully");
   }
 
@@ -99,9 +95,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
   // Private helper methods
 
-  /**
-   * Sets up the action bar with back button and title.
-   */
+  /** Sets up the action bar with back button and title. */
   private void setupActionBar() {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -110,45 +104,36 @@ public class ServerSettingsActivity extends AppCompatActivity {
     }
   }
 
-  /**
-   * Initializes all view components.
-   */
+  /** Initializes all view components. */
   private void initializeViews() {
     switchServerMode = findViewById(R.id.switch_server_mode);
     editServerUrl = findViewById(R.id.edit_server_url);
   }
 
-  /**
-   * Sets up click listeners for buttons.
-   */
+  /** Sets up click listeners for buttons. */
   private void setupEventListeners() {
     Button btnSaveSettings = findViewById(R.id.btn_save_settings);
     Button btnClearCache = findViewById(R.id.btn_clear_cache);
-    
+
     btnSaveSettings.setOnClickListener(v -> saveSettings());
     btnClearCache.setOnClickListener(v -> clearCache());
   }
 
-  /**
-   * Configures the server mode switch (always enabled and disabled for user interaction).
-   */
+  /** Configures the server mode switch (always enabled and disabled for user interaction). */
   private void configureServerModeSwitch() {
     switchServerMode.setChecked(true);
     switchServerMode.setEnabled(false);
   }
 
-  /**
-   * Loads the server URL from preferences and sets it in the EditText.
-   */
+  /** Loads the server URL from preferences and sets it in the EditText. */
   private void loadServerUrl() {
-    String serverUrl = PreferenceManager.getDefaultSharedPreferences(this)
-        .getString(PREF_SERVER_URL, DEFAULT_SERVER_URL);
+    String serverUrl =
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .getString(PREF_SERVER_URL, DEFAULT_SERVER_URL);
     editServerUrl.setText(serverUrl);
   }
 
-  /**
-   * Enables server mode using ServerModeManager.
-   */
+  /** Enables server mode using ServerModeManager. */
   private void enableServerMode() {
     ServerModeManager.setServerModeEnabled(this, true);
   }
@@ -175,16 +160,12 @@ public class ServerSettingsActivity extends AppCompatActivity {
         .apply();
   }
 
-  /**
-   * Shows a toast message indicating settings have been saved.
-   */
+  /** Shows a toast message indicating settings have been saved. */
   private void showSettingsSavedMessage() {
     Toast.makeText(this, MESSAGE_SETTINGS_SAVED, Toast.LENGTH_LONG).show();
   }
 
-  /**
-   * Shows initial cache cleanup message.
-   */
+  /** Shows initial cache cleanup message. */
   private void showCacheCleanupStartMessage() {
     Toast.makeText(this, MESSAGE_CLEARING_CACHE, Toast.LENGTH_SHORT).show();
   }
@@ -207,9 +188,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
     Log.d(TAG, "Cache size before clearing: " + cacheSizeFormatted);
   }
 
-  /**
-   * Performs the actual cache clearing operation.
-   */
+  /** Performs the actual cache clearing operation. */
   private void performCacheClearing() {
     FileManager.clearCache(this);
   }

@@ -24,13 +24,13 @@ import java.util.Map;
 public class MembersInvitedActivity extends AppCompatActivity {
 
   private static final String TAG = "MembersInvitedActivity";
-  
+
   // UI constants
   private static final String ACTIVITY_TITLE = "Invited Members";
   private static final String ACTION_BAR_COLOR = "#0081d1";
   private static final String LOADING_MESSAGE = "Loading invited members...";
   private static final String NO_MEMBERS_MESSAGE = "No invited members found";
-  
+
   // UI Components
   private ListView membersList;
   private HashMap<String, Object> friendKeys;
@@ -97,7 +97,7 @@ public class MembersInvitedActivity extends AppCompatActivity {
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
-  
+
   private void setupEventHandlers() {
     membersList.setOnItemClickListener((parent, view, position, id) -> {});
     membersList.setOnItemLongClickListener((parent, view, position, id) -> false);
@@ -152,7 +152,13 @@ public class MembersInvitedActivity extends AppCompatActivity {
             for (User user : users.values()) {
               if (isValidUser(user)) {
                 String normalizedEmail = user.getEmail().replace('.', ' ');
-                Log.d(TAG, "Processing user: '" + user.getEmail() + "' -> normalized: '" + normalizedEmail + "'");
+                Log.d(
+                    TAG,
+                    "Processing user: '"
+                        + user.getEmail()
+                        + "' -> normalized: '"
+                        + normalizedEmail
+                        + "'");
 
                 if (groupFriends != null && isUserInvited(normalizedEmail, groupFriends)) {
                   Log.d(TAG, "Found matching user: " + normalizedEmail);
@@ -186,18 +192,18 @@ public class MembersInvitedActivity extends AppCompatActivity {
           }
         });
   }
-  
+
   private void logFriendKeysContents() {
     Log.d(TAG, "FriendKeys contents:");
     for (String key : friendKeys.keySet()) {
       Log.d(TAG, "  FriendKey: '" + key + "' -> " + friendKeys.get(key));
     }
   }
-  
+
   private boolean isValidUser(User user) {
     return user != null && user.getEmail() != null;
   }
-  
+
   private boolean isUserInvited(String normalizedEmail, HashMap<String, Object> groupFriends) {
     for (String friendKey : groupFriends.keySet()) {
       Log.d(TAG, "  Comparing '" + normalizedEmail + "' with '" + friendKey + "'");

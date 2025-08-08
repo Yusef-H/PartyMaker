@@ -12,19 +12,19 @@ import javax.net.ssl.SSLException;
  * error categorization and user-friendly error messages.
  */
 public final class NetworkErrorHandler {
-  
+
   // HTTP Status Code Constants
   private static final String HTTP_UNAUTHORIZED = "401";
   private static final String HTTP_FORBIDDEN = "403";
   private static final String HTTP_NOT_FOUND = "404";
   private static final String HTTP_SERVER_ERROR = "500";
-  
+
   // Error Message Keywords
   private static final String KEYWORD_UNAUTHORIZED = "unauthorized";
   private static final String KEYWORD_FORBIDDEN = "forbidden";
   private static final String KEYWORD_NOT_FOUND = "not found";
   private static final String KEYWORD_SERVER = "server";
-  
+
   // Retry Delay Constants
   private static final long BASE_RETRY_DELAY_MS = 1000L;
   private static final long NETWORK_RETRY_MULTIPLIER = 3L;
@@ -92,9 +92,7 @@ public final class NetworkErrorHandler {
     }
   }
 
-  /**
-   * Checks if the error message indicates a client error.
-   */
+  /** Checks if the error message indicates a client error. */
   private static boolean isClientErrorMessage(String message) {
     return message.contains(KEYWORD_UNAUTHORIZED)
         || message.contains(HTTP_UNAUTHORIZED)
@@ -103,14 +101,12 @@ public final class NetworkErrorHandler {
         || message.contains(KEYWORD_NOT_FOUND)
         || message.contains(HTTP_NOT_FOUND);
   }
-  
-  /**
-   * Checks if the error message indicates a server error.
-   */
+
+  /** Checks if the error message indicates a server error. */
   private static boolean isServerErrorMessage(String message) {
     return message.contains(KEYWORD_SERVER) || message.contains(HTTP_SERVER_ERROR);
   }
-  
+
   /**
    * Gets the appropriate retry delay for a given error type and attempt count.
    *
@@ -132,24 +128,18 @@ public final class NetworkErrorHandler {
         return BASE_RETRY_DELAY_MS;
     }
   }
-  
-  /**
-   * Calculates exponential backoff delay for timeout errors.
-   */
+
+  /** Calculates exponential backoff delay for timeout errors. */
   private static long calculateExponentialBackoff(int attemptCount) {
     return BASE_RETRY_DELAY_MS * (long) Math.pow(EXPONENTIAL_BASE, attemptCount);
   }
-  
-  /**
-   * Calculates retry delay for network connectivity issues.
-   */
+
+  /** Calculates retry delay for network connectivity issues. */
   private static long calculateNetworkRetryDelay(int attemptCount) {
     return BASE_RETRY_DELAY_MS * NETWORK_RETRY_MULTIPLIER * (attemptCount + 1);
   }
-  
-  /**
-   * Calculates linear backoff delay for server errors.
-   */
+
+  /** Calculates linear backoff delay for server errors. */
   private static long calculateLinearBackoff(int attemptCount) {
     return BASE_RETRY_DELAY_MS * (attemptCount + 1);
   }

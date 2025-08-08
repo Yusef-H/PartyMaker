@@ -48,8 +48,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
   /** Creates the database instance with comprehensive migration strategy */
   private static AppDatabase createDatabase(Context context) {
-    return Room.databaseBuilder(
-            context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
+    return Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
         .addCallback(databaseCallback)
         .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
         .fallbackToDestructiveMigration()
@@ -80,7 +79,8 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onDestructiveMigration(@NonNull SupportSQLiteDatabase db) {
           super.onDestructiveMigration(db);
           Log.w(TAG, "Destructive migration occurred - all data lost");
-          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(db.getVersion(), DATABASE_VERSION);
+          DatabaseMigrations.MigrationCallback.onFallbackToDestructive(
+              db.getVersion(), DATABASE_VERSION);
         }
       };
 
@@ -113,9 +113,7 @@ public abstract class AppDatabase extends RoomDatabase {
   private static void deleteDatabaseFiles(Context context) {
     context.deleteDatabase(DATABASE_NAME);
     String[] filesToDelete = {
-      DATABASE_NAME + "-shm", 
-      DATABASE_NAME + "-wal", 
-      DATABASE_NAME + "-journal"
+      DATABASE_NAME + "-shm", DATABASE_NAME + "-wal", DATABASE_NAME + "-journal"
     };
     for (String fileName : filesToDelete) {
       context.deleteDatabase(fileName);

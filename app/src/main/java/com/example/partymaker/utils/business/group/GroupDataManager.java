@@ -4,8 +4,8 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.features.groups.creation.CreateGroupActivity;
 
 /**
- * Builder pattern implementation for Group creation. Provides a fluent interface for
- * constructing Group objects with proper validation and type safety.
+ * Builder pattern implementation for Group creation. Provides a fluent interface for constructing
+ * Group objects with proper validation and type safety.
  */
 public class GroupDataManager {
   private final Group group = new Group();

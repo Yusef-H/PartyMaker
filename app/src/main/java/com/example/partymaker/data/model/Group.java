@@ -14,10 +14,12 @@ import java.util.HashMap;
  */
 @Entity(tableName = "groups")
 public class Group {
-  
+
   /** Constants for group types */
   public static final int GROUP_TYPE_PUBLIC = 0;
+
   public static final int GROUP_TYPE_PRIVATE = 1;
+
   /** The group's display name. */
   @ColumnInfo(name = "group_name")
   private String groupName;

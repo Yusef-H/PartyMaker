@@ -1,14 +1,14 @@
 package com.example.partymaker.data.api;
 
 /**
- * A generic wrapper class that holds a result with data, error information, or loading state.
- * This follows the Result pattern commonly used in Android architecture for handling 
- * success, error, and loading states in a type-safe manner.
+ * A generic wrapper class that holds a result with data, error information, or loading state. This
+ * follows the Result pattern commonly used in Android architecture for handling success, error, and
+ * loading states in a type-safe manner.
  *
  * @param <T> Type of the result data
  */
 public class Result<T> {
-  
+
   // State fields
   private T data;
   private String error;

@@ -7,15 +7,15 @@ import com.example.partymaker.data.api.FirebaseServerClient;
 // import com.google.firebase.database.DatabaseReference;
 
 /**
- * Centralized manager for Firebase access operations. 
- * Handles server mode configuration and provides unified access to Firebase services.
+ * Centralized manager for Firebase access operations. Handles server mode configuration and
+ * provides unified access to Firebase services.
  */
 public class FirebaseAccessManager {
   private static final String TAG = "FirebaseAccessManager";
-  
+
   // Configuration constants
   private static final boolean DEFAULT_SERVER_MODE_ENABLED = true;
-  
+
   private final Context context;
 
   public FirebaseAccessManager(Context context) {
@@ -24,7 +24,7 @@ public class FirebaseAccessManager {
 
   /**
    * Checks if server mode is enabled for Firebase operations.
-   * 
+   *
    * @return true if server mode is enabled, false for direct Firebase access
    */
   public boolean isServerModeEnabled() {
@@ -34,7 +34,7 @@ public class FirebaseAccessManager {
 
   /**
    * Gets the Firebase server client for groups operations.
-   * 
+   *
    * @return Initialized FirebaseServerClient instance
    */
   public FirebaseServerClient getGroupsRef() {
@@ -44,7 +44,7 @@ public class FirebaseAccessManager {
 
   /**
    * Gets the Firebase server client for users operations.
-   * 
+   *
    * @return Initialized FirebaseServerClient instance
    */
   public FirebaseServerClient getUsersRef() {
@@ -54,17 +54,17 @@ public class FirebaseAccessManager {
 
   /**
    * Gets the Firebase server client for messages operations.
-   * 
+   *
    * @return Initialized FirebaseServerClient instance
    */
   public FirebaseServerClient getMessagesRef() {
     Log.d(TAG, "Using server mode for messages");
     return getInitializedServerClient();
   }
-  
+
   /**
    * Creates and initializes a FirebaseServerClient instance.
-   * 
+   *
    * @return Initialized FirebaseServerClient
    */
   private FirebaseServerClient getInitializedServerClient() {

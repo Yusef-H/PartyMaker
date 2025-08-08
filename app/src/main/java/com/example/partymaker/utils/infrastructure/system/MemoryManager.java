@@ -16,11 +16,11 @@ import java.util.Locale;
  */
 public final class MemoryManager {
   private static final String TAG = "MemoryManager";
-  
+
   // Memory threshold constants
   private static final int LOW_MEMORY_THRESHOLD_PERCENTAGE = 15;
   private static final float PERCENTAGE_MULTIPLIER = 100.0f;
-  
+
   // Memory unit conversion constants
   private static final float BYTES_TO_MB = 1024.0f * 1024.0f;
   private static final long BYTES_TO_KB = 1024L;
@@ -34,15 +34,15 @@ public final class MemoryManager {
    */
   public static boolean isLowMemory(Context context) {
     validateNotNull(context, "Context cannot be null");
-    
+
     ActivityManager activityManager = getActivityManager(context);
     ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
     activityManager.getMemoryInfo(memoryInfo);
 
     float percentAvailable = PERCENTAGE_MULTIPLIER * memoryInfo.availMem / memoryInfo.totalMem;
-    
+
     logMemoryInfo(memoryInfo, percentAvailable);
-    
+
     return percentAvailable < LOW_MEMORY_THRESHOLD_PERCENTAGE || memoryInfo.lowMemory;
   }
 
@@ -157,11 +157,14 @@ public final class MemoryManager {
    * @param percentAvailable The percentage of available memory
    */
   private static void logMemoryInfo(ActivityManager.MemoryInfo memoryInfo, float percentAvailable) {
-    Log.d(TAG, String.format(Locale.ROOT,
-        "Memory - Available: %.2f MB, Total: %.2f MB, %.1f%% free",
-        memoryInfo.availMem / BYTES_TO_MB,
-        memoryInfo.totalMem / BYTES_TO_MB,
-        percentAvailable));
+    Log.d(
+        TAG,
+        String.format(
+            Locale.ROOT,
+            "Memory - Available: %.2f MB, Total: %.2f MB, %.1f%% free",
+            memoryInfo.availMem / BYTES_TO_MB,
+            memoryInfo.totalMem / BYTES_TO_MB,
+            percentAvailable));
   }
 
   /**

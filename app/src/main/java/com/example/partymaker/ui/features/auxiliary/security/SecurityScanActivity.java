@@ -22,7 +22,7 @@ import java.util.Locale;
 
 /** Activity for running security scans */
 public class SecurityScanActivity extends AppCompatActivity {
-  
+
   // Constants
   private static final String TAG = "SecurityScanActivity";
   private static final String FILE_PROVIDER_AUTHORITY = ".fileprovider";
@@ -34,7 +34,7 @@ public class SecurityScanActivity extends AppCompatActivity {
   private static final String JSON_EXTENSION = ".json";
   private static final String TEMP_HTML_FILE = "security_report.html";
   private static final String DATE_FORMAT_PATTERN = "yyyyMMdd_HHmmss";
-  
+
   // UI text constants
   private static final String RUNNING_SCAN_TEXT = "Running security scan...";
   private static final String SCAN_COMPLETED_TEXT = "Scan completed successfully";
@@ -51,7 +51,7 @@ public class SecurityScanActivity extends AppCompatActivity {
   private static final String SECURITY_SCORE_TEXT = "Security Score: %d/100\nGrade: %s";
   private static final String SHARE_SUBJECT = "PartyMaker Security Report";
   private static final String SHARE_CHOOSER_TITLE = "Share Security Report";
-  
+
   // UI Components
   private TextView securityScoreText;
   private TextView securityGradeText;
@@ -61,7 +61,7 @@ public class SecurityScanActivity extends AppCompatActivity {
   private Button exportReportButton;
   private Button shareReportButton;
   private ProgressBar progressBar;
-  
+
   // Data
   private SecurityAgent securityAgent;
   private SecurityReport currentReport;
@@ -100,24 +100,25 @@ public class SecurityScanActivity extends AppCompatActivity {
 
   private void runSecurityScan() {
     showScanInProgress();
-    
+
     long startTime = System.currentTimeMillis();
 
     securityAgent
         .performSecurityScan()
         .thenAccept(report -> runOnUiThread(() -> handleScanSuccess(report, startTime)))
-        .exceptionally(throwable -> {
-          runOnUiThread(() -> handleScanFailure(throwable));
-          return null;
-        });
+        .exceptionally(
+            throwable -> {
+              runOnUiThread(() -> handleScanFailure(throwable));
+              return null;
+            });
   }
-  
+
   private void showScanInProgress() {
     progressBar.setVisibility(View.VISIBLE);
     runScanButton.setEnabled(false);
     scanStatusText.setText(RUNNING_SCAN_TEXT);
   }
-  
+
   private void handleScanSuccess(SecurityReport report, long startTime) {
     long duration = System.currentTimeMillis() - startTime;
     report.setScanDuration(duration + " ms");
@@ -126,14 +127,14 @@ public class SecurityScanActivity extends AppCompatActivity {
     displayResults(report);
     showScanCompleted();
   }
-  
+
   private void handleScanFailure(Throwable throwable) {
     progressBar.setVisibility(View.GONE);
     runScanButton.setEnabled(true);
     scanStatusText.setText(String.format(SCAN_FAILED_TEXT, throwable.getMessage()));
     Toast.makeText(this, "Security scan failed", Toast.LENGTH_LONG).show();
   }
-  
+
   private void showScanCompleted() {
     progressBar.setVisibility(View.GONE);
     runScanButton.setEnabled(true);
@@ -148,26 +149,28 @@ public class SecurityScanActivity extends AppCompatActivity {
     displayIssuesSummary(report);
     displayDetailedIssues(report);
   }
-  
+
   private void displaySecurityScore(SecurityReport report) {
-    securityScoreText.setText(String.format(Locale.getDefault(), SCORE_FORMAT, report.getOverallScore()));
+    securityScoreText.setText(
+        String.format(Locale.getDefault(), SCORE_FORMAT, report.getOverallScore()));
   }
-  
+
   private void displaySecurityGrade(SecurityReport report) {
     securityGradeText.setText(String.format(GRADE_FORMAT, report.getSecurityGrade()));
   }
-  
+
   private void displayIssuesSummary(SecurityReport report) {
     int totalIssues = report.getSecurityIssues().size();
     if (totalIssues == 0) {
       issuesFoundText.setText(NO_SECURITY_ISSUES_TEXT);
       issuesFoundText.setTextColor(getColor(android.R.color.holo_green_dark));
     } else {
-      issuesFoundText.setText(String.format(Locale.getDefault(), SECURITY_ISSUES_FORMAT, totalIssues));
+      issuesFoundText.setText(
+          String.format(Locale.getDefault(), SECURITY_ISSUES_FORMAT, totalIssues));
       issuesFoundText.setTextColor(getColor(android.R.color.holo_red_dark));
     }
   }
-  
+
   private void displayDetailedIssues(SecurityReport report) {
     // For now, detailed issues are only shown in exported reports
     // UI only shows the summary count
@@ -182,21 +185,23 @@ public class SecurityScanActivity extends AppCompatActivity {
     try {
       File reportsDir = createReportsDirectory();
       String timestamp = generateTimestamp();
-      
+
       exportHtmlReport(reportsDir, timestamp);
       exportJsonReport(reportsDir, timestamp);
 
-      Toast.makeText(this, String.format(EXPORT_SUCCESS_FORMAT, reportsDir.getPath()), Toast.LENGTH_LONG)
+      Toast.makeText(
+              this, String.format(EXPORT_SUCCESS_FORMAT, reportsDir.getPath()), Toast.LENGTH_LONG)
           .show();
 
       // Also upload to Firebase
       securityAgent.uploadReportToFirebase(currentReport);
 
     } catch (Exception e) {
-      Toast.makeText(this, String.format(EXPORT_FAILED_FORMAT, e.getMessage()), Toast.LENGTH_LONG).show();
+      Toast.makeText(this, String.format(EXPORT_FAILED_FORMAT, e.getMessage()), Toast.LENGTH_LONG)
+          .show();
     }
   }
-  
+
   private File createReportsDirectory() {
     File reportsDir = new File(getExternalFilesDir(null), REPORTS_DIRECTORY);
     if (!reportsDir.exists()) {
@@ -206,19 +211,19 @@ public class SecurityScanActivity extends AppCompatActivity {
     }
     return reportsDir;
   }
-  
+
   private String generateTimestamp() {
     SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault());
     return sdf.format(new Date());
   }
-  
+
   private void exportHtmlReport(File reportsDir, String timestamp) throws Exception {
     File htmlFile = new File(reportsDir, HTML_FILE_PREFIX + timestamp + HTML_EXTENSION);
     try (FileWriter htmlWriter = new FileWriter(htmlFile)) {
       htmlWriter.write(currentReport.toHTML());
     }
   }
-  
+
   private void exportJsonReport(File reportsDir, String timestamp) throws Exception {
     File jsonFile = new File(reportsDir, JSON_FILE_PREFIX + timestamp + JSON_EXTENSION);
     try (FileWriter jsonWriter = new FileWriter(jsonFile)) {
@@ -239,10 +244,11 @@ public class SecurityScanActivity extends AppCompatActivity {
       startActivity(Intent.createChooser(shareIntent, SHARE_CHOOSER_TITLE));
 
     } catch (Exception e) {
-      Toast.makeText(this, String.format(SHARE_FAILED_FORMAT, e.getMessage()), Toast.LENGTH_LONG).show();
+      Toast.makeText(this, String.format(SHARE_FAILED_FORMAT, e.getMessage()), Toast.LENGTH_LONG)
+          .show();
     }
   }
-  
+
   private File createTempReportFile() throws Exception {
     File tempDir = new File(getCacheDir(), TEMP_REPORTS_DIRECTORY);
     if (!tempDir.exists()) {
@@ -257,11 +263,11 @@ public class SecurityScanActivity extends AppCompatActivity {
     }
     return tempFile;
   }
-  
+
   private Uri createFileUri(File tempFile) {
     return FileProvider.getUriForFile(this, getPackageName() + FILE_PROVIDER_AUTHORITY, tempFile);
   }
-  
+
   private Intent createShareIntent(Uri fileUri) {
     Intent shareIntent = new Intent(Intent.ACTION_SEND);
     shareIntent.setType("text/html");
@@ -271,8 +277,9 @@ public class SecurityScanActivity extends AppCompatActivity {
     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     return shareIntent;
   }
-  
+
   private String createShareText() {
-    return String.format(SECURITY_SCORE_TEXT, currentReport.getOverallScore(), currentReport.getSecurityGrade());
+    return String.format(
+        SECURITY_SCORE_TEXT, currentReport.getOverallScore(), currentReport.getSecurityGrade());
   }
 }

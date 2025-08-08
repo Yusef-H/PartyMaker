@@ -65,7 +65,7 @@
                         android:layout_weight="1"
                         android:autofillHints=""
                         android:background="@android:color/transparent"
-                        android:hint="Search parties..."
+                        android:hint="@string/search_parties"
                         android:inputType="text"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
                         android:textColor="?attr/colorOnSurface"
@@ -76,7 +76,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Filter parties"
+                        android:contentDescription="@string/filter_parties"
                         android:src="@drawable/ic_filter"
                         app:tint="?attr/colorPrimary" />
 
@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="All"
+                    android:text="@string/all"
                     android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
@@ -107,7 +107,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Today"
+                    android:text="@string/today"
                     android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
@@ -116,7 +116,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This Week"
+                    android:text="@string/this_week"
                     android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
@@ -125,7 +125,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Free"
+                    android:text="@string/free"
                     android:textColor="?attr/colorPrimary"
                     app:chipBackgroundColor="?attr/colorOnPrimary" />
 
@@ -172,7 +172,7 @@
                     android:layout_height="120dp"
                     android:layout_marginBottom="24dp"
                     android:alpha="0.6"
-                    android:contentDescription="No parties"
+                    android:contentDescription="@string/no_parties"
                     android:src="@drawable/ic_celebration"
                     app:tint="?attr/colorOnSurfaceVariant" />
 
@@ -180,7 +180,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="No Public Parties"
+                    android:text="@string/no_public_parties"
                     android:textAppearance="@style/TextAppearance.PartyMaker.HeadlineSmall"
                     android:textColor="?attr/colorOnSurface" />
 
@@ -189,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
                     android:gravity="center"
-                    android:text="There are no public parties available right now.\nCheck back later or create your own!"
+                    android:text="@string/no_public_parties_message"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -198,7 +198,7 @@
                     style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Create Party"
+                    android:text="@string/create_party"
                     app:icon="@drawable/ic_add"
                     app:cornerRadius="20dp" />
 

@@ -18,13 +18,13 @@ public final class PasswordValidator {
 
   // Maximum password length (to prevent DoS attacks)
   private static final int MAX_LENGTH = 128;
-  
+
   // Strength score thresholds
   private static final int STRENGTH_VERY_WEAK_THRESHOLD = 20;
   private static final int STRENGTH_WEAK_THRESHOLD = 40;
   private static final int STRENGTH_FAIR_THRESHOLD = 60;
   private static final int STRENGTH_GOOD_THRESHOLD = 80;
-  
+
   // Score points for different criteria
   private static final int LENGTH_SCORE_MULTIPLIER = 2;
   private static final int CRITERIA_SCORE = 20;
@@ -32,7 +32,7 @@ public final class PasswordValidator {
   private static final int REPEATED_CHAR_PENALTY = 10;
   private static final int SEQUENTIAL_CHAR_PENALTY = 10;
   private static final int MAX_STRENGTH_SCORE = 100;
-  
+
   // Pattern validation lengths
   private static final int MIN_REPEATED_SEQUENCE = 3;
   private static final int MIN_SEQUENTIAL_SEQUENCE = 3;
@@ -160,7 +160,8 @@ public final class PasswordValidator {
       strengthScore = Math.max(0, strengthScore - REPEATED_CHAR_PENALTY);
     }
 
-    return new ValidationResult(errors.isEmpty(), errors, Math.min(MAX_STRENGTH_SCORE, strengthScore));
+    return new ValidationResult(
+        errors.isEmpty(), errors, Math.min(MAX_STRENGTH_SCORE, strengthScore));
   }
 
   /** Check if password contains repeated characters */

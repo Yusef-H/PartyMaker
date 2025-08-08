@@ -682,7 +682,7 @@ public class DateManagementViewModel extends BaseViewModel {
 
         // Generate suggestion based on day of week and time
         int dayOfWeek = selectedCal.get(Calendar.DAY_OF_WEEK);
-        String suggestion = "";
+        String suggestion;
 
         if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
           if (hour >= 10 && hour <= 14) {

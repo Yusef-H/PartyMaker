@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class FriendsRemoveActivity extends AppCompatActivity {
   private static final String TAG = "FriendsRemoveActivity";
-  
+
   // UI constants
   private static final String ACTIVITY_TITLE = "Remove Friends";
   private static final String ACTION_BAR_COLOR = "#0081d1";
@@ -39,17 +39,17 @@ public class FriendsRemoveActivity extends AppCompatActivity {
   private static final String EMAIL_REQUIRED_MESSAGE = "Please enter an email address";
   private static final String EMAIL_NOT_FOUND_MESSAGE = "Email not found";
   private static final String USER_NOT_IN_GROUP_MESSAGE = "User is not in this group";
-  
+
   // Data collections
   private final ArrayList<User> usersList = new ArrayList<>();
   private final ArrayList<String> userKeys = new ArrayList<>();
-  
+
   // UI Components
   private Button deleteButton;
   private EditText emailInput;
   private UserAdapter adapter;
   private FirebaseServerClient serverClient;
-  
+
   // Group data
   private HashMap<String, Object> friendKeys, comingKeys, messageKeys;
   private String groupKey, currentFriend, groupName, groupDay, groupMonth, groupYear;
@@ -116,7 +116,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     comingKeys = extras.getComingKeys();
     messageKeys = extras.getMessageKeys();
   }
-  
+
   private void showRemoveConfirmation(User selectedUser, String selectedKey) {
     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
     builder.setTitle(REMOVE_CONFIRMATION_TITLE);
@@ -125,7 +125,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     builder.setNegativeButton("No", null);
     builder.show();
   }
-  
+
   private void setupActionBar() {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -163,15 +163,27 @@ public class FriendsRemoveActivity extends AppCompatActivity {
 
   private ExtrasMetadata createExtrasMetadata() {
     return new ExtrasMetadata(
-        groupName, groupKey, groupDay, groupMonth, groupYear, groupHour,
-        groupLocation, adminKey, createdAt, groupPrice, groupType, canAdd,
-        friendKeys, comingKeys, messageKeys);
+        groupName,
+        groupKey,
+        groupDay,
+        groupMonth,
+        groupYear,
+        groupHour,
+        groupLocation,
+        adminKey,
+        createdAt,
+        groupPrice,
+        groupType,
+        canAdd,
+        friendKeys,
+        comingKeys,
+        messageKeys);
   }
-  
+
   private void setupEventHandlers() {
     deleteButton.setOnClickListener(v -> handleDeleteButtonClick());
   }
-  
+
   private void handleDeleteButtonClick() {
     String emailText = emailInput.getText().toString().trim();
     if (!emailText.isEmpty()) {
@@ -181,7 +193,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
       Toast.makeText(this, EMAIL_REQUIRED_MESSAGE, Toast.LENGTH_SHORT).show();
     }
   }
-  
+
   private void loadAndProcessUsers() {
     serverClient.getUsers(
         new FirebaseServerClient.DataCallback<>() {
@@ -193,9 +205,7 @@ public class FriendsRemoveActivity extends AppCompatActivity {
           @Override
           public void onError(String errorMessage) {
             Toast.makeText(
-                    FriendsRemoveActivity.this,
-                    "Server error: " + errorMessage,
-                    Toast.LENGTH_SHORT)
+                    FriendsRemoveActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
                 .show();
           }
         });
@@ -219,7 +229,8 @@ public class FriendsRemoveActivity extends AppCompatActivity {
     }
 
     if (!userFound) {
-      Toast.makeText(FriendsRemoveActivity.this, EMAIL_NOT_FOUND_MESSAGE, Toast.LENGTH_SHORT).show();
+      Toast.makeText(FriendsRemoveActivity.this, EMAIL_NOT_FOUND_MESSAGE, Toast.LENGTH_SHORT)
+          .show();
       return;
     }
 
@@ -249,7 +260,8 @@ public class FriendsRemoveActivity extends AppCompatActivity {
             }
 
             if (!isInGroup) {
-              Toast.makeText(FriendsRemoveActivity.this, USER_NOT_IN_GROUP_MESSAGE, Toast.LENGTH_SHORT)
+              Toast.makeText(
+                      FriendsRemoveActivity.this, USER_NOT_IN_GROUP_MESSAGE, Toast.LENGTH_SHORT)
                   .show();
               return;
             }

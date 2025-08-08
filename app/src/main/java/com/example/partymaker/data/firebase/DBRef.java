@@ -40,7 +40,7 @@ public class DBRef {
       initializeAuthentication();
       initializeDatabase();
       initializeStorage();
-      
+
       Log.d(TAG, "Firebase references initialized successfully");
       Log.d(TAG, "Storage reference path: " + refStorage.getPath());
     } catch (Exception e) {

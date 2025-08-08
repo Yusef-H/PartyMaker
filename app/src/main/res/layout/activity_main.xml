@@ -35,7 +35,7 @@
                     android:layout_height="24dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="12dp"
-                    android:contentDescription="Search"
+                    android:contentDescription="@string/search"
                     android:src="@drawable/ic_search"
                     app:tint="@color/gray" />
 
@@ -44,7 +44,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Search your parties..."
+                    android:text="@string/search_your_parties"
                     android:textAppearance="@style/TextAppearance.PartyMaker.BodyLarge"
                     android:textColor="@color/gray"
                     android:background="@android:color/transparent"
@@ -56,7 +56,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="8dp"
-                    android:contentDescription="Voice search"
+                    android:contentDescription="@string/voice_search"
                     android:src="@drawable/ic_mic"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
@@ -123,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Loading your parties..."
+                    android:text="@string/loading_your_parties"
                     android:textAppearance="@style/TextAppearance.PartyMaker.BodyLarge"
                     android:textColor="@color/white" />
 

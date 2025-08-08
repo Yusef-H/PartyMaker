@@ -66,7 +66,6 @@ public class ChatActivity extends AppCompatActivity {
     Log.d(TAG, "ChatActivity onCreate called");
     setContentView(R.layout.activity_party_chat);
 
-
     // Initialize server client
     serverClient = FirebaseServerClient.getInstance();
 
@@ -864,6 +863,7 @@ public class ChatActivity extends AppCompatActivity {
 
   /**
    * Process GPT request with proper error handling
+   *
    * @param gptQuestion the question to ask GPT
    */
   private void processGptRequest(String gptQuestion) {
@@ -879,6 +879,7 @@ public class ChatActivity extends AppCompatActivity {
 
   /**
    * Gets response from GPT API
+   *
    * @param gptQuestion the question to ask
    * @return GPT's response
    * @throws Exception if API call fails
@@ -891,6 +892,7 @@ public class ChatActivity extends AppCompatActivity {
 
   /**
    * Builds the prompt for GPT with party details
+   *
    * @return formatted prompt string
    */
   private String buildGptPrompt() {
@@ -899,35 +901,51 @@ public class ChatActivity extends AppCompatActivity {
         + "\n\nQuestion: ";
   }
 
-  /**
-   * Handles network errors when communicating with GPT
-   */
+  /** Handles network errors when communicating with GPT */
   private void handleGptNetworkError() {
-    ThreadUtils.runOnMainThread(() -> {
-      Toast.makeText(ChatActivity.this, "Internet connection error, check your connection and try again.", Toast.LENGTH_LONG).show();
-      sendBotMessage("Sorry I can not connect to the internet at the moment, check your connection and try again.");
-    });
+    ThreadUtils.runOnMainThread(
+        () -> {
+          Toast.makeText(
+                  ChatActivity.this,
+                  "Internet connection error, check your connection and try again.",
+                  Toast.LENGTH_LONG)
+              .show();
+          sendBotMessage(
+              "Sorry I can not connect to the internet at the moment, check your connection and try again.");
+        });
   }
 
   /**
    * Handles service errors when communicating with GPT
+   *
    * @param exception the exception that occurred
    */
   private void handleGptServiceError(Exception exception) {
-    ThreadUtils.runOnMainThread(() -> {
-      Toast.makeText(ChatActivity.this, "GPT Service Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
-      sendBotMessage("Internal Service Error, try again later.");
-    });
+    ThreadUtils.runOnMainThread(
+        () -> {
+          Toast.makeText(
+                  ChatActivity.this,
+                  "GPT Service Error: " + exception.getMessage(),
+                  Toast.LENGTH_LONG)
+              .show();
+          sendBotMessage("Internal Service Error, try again later.");
+        });
   }
 
   /**
    * Handle GPT processing errors
+   *
    * @param exception the exception that occurred during GPT processing
    */
   private void handleGptError(Exception exception) {
-    ThreadUtils.runOnMainThread(() -> {
-      Toast.makeText(ChatActivity.this, "Error processing GPT request: " + exception.getMessage(), Toast.LENGTH_LONG).show();
-      Log.e(TAG, "GPT request processing failed", exception);
-    });
+    ThreadUtils.runOnMainThread(
+        () -> {
+          Toast.makeText(
+                  ChatActivity.this,
+                  "Error processing GPT request: " + exception.getMessage(),
+                  Toast.LENGTH_LONG)
+              .show();
+          Log.e(TAG, "GPT request processing failed", exception);
+        });
   }
 }

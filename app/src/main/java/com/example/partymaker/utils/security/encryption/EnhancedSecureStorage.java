@@ -27,7 +27,7 @@ public class EnhancedSecureStorage {
   private static final String KEY_ALGORITHM = "AES";
   private static final int GCM_IV_LENGTH = 12; // 96 bits recommended for GCM
   private static final int GCM_TAG_LENGTH = 16; // 128 bits auth tag
-  
+
   // Security constants
   private static final int AES_KEY_SIZE = 256;
   private static final int MIN_ENCRYPTED_DATA_LENGTH = GCM_IV_LENGTH + GCM_TAG_LENGTH;
@@ -50,7 +50,8 @@ public class EnhancedSecureStorage {
    */
   public EnhancedSecureStorage(Context context, String userId) {
     this.userId = userId != null ? userId : DEFAULT_USER_ID;
-    this.prefs = context.getSharedPreferences(SECURE_PREFS_PREFIX + this.userId, Context.MODE_PRIVATE);
+    this.prefs =
+        context.getSharedPreferences(SECURE_PREFS_PREFIX + this.userId, Context.MODE_PRIVATE);
     this.secureRandom = new SecureRandom();
     this.secretKey = getOrCreateUserKey(context, this.userId);
   }
@@ -194,7 +195,8 @@ public class EnhancedSecureStorage {
   private SecretKey getOrCreateUserKey(Context context, String userId) {
     try {
       // Check if key already exists in secure storage
-      SharedPreferences keyPrefs = context.getSharedPreferences(USER_KEYS_PREFS, Context.MODE_PRIVATE);
+      SharedPreferences keyPrefs =
+          context.getSharedPreferences(USER_KEYS_PREFS, Context.MODE_PRIVATE);
       String keyBase64 = keyPrefs.getString(KEY_PREFIX + userId, null);
 
       if (keyBase64 != null) {
@@ -230,7 +232,8 @@ public class EnhancedSecureStorage {
       SecretKey newKey = keyGenerator.generateKey();
 
       // Store new key
-      SharedPreferences keyPrefs = context.getSharedPreferences(USER_KEYS_PREFS, Context.MODE_PRIVATE);
+      SharedPreferences keyPrefs =
+          context.getSharedPreferences(USER_KEYS_PREFS, Context.MODE_PRIVATE);
       String newKeyBase64 = Base64.encodeToString(newKey.getEncoded(), Base64.NO_WRAP);
       keyPrefs.edit().putString(KEY_PREFIX + userId, newKeyBase64).apply();
 

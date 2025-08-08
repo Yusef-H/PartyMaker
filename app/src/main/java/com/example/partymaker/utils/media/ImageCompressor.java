@@ -46,7 +46,8 @@ public class ImageCompressor {
     executor.execute(() -> performImageCompression(context, imageUri, callback));
   }
 
-  private static void performImageCompression(Context context, Uri imageUri, CompressCallback callback) {
+  private static void performImageCompression(
+      Context context, Uri imageUri, CompressCallback callback) {
     try {
       File compressedFile = compressImageInternal(context, imageUri);
       if (compressedFile != null) {
@@ -71,7 +72,7 @@ public class ImageCompressor {
     try {
       File outputFile = createOutputFile(context);
       Bitmap bitmap = loadAndProcessBitmap(context, imageUri);
-      
+
       if (bitmap == null) {
         return null;
       }
@@ -85,7 +86,8 @@ public class ImageCompressor {
 
   private static File createOutputFile(Context context) {
     File outputDir = context.getCacheDir();
-    return new File(outputDir, COMPRESSED_FILE_PREFIX + UUID.randomUUID().toString() + JPG_EXTENSION);
+    return new File(
+        outputDir, COMPRESSED_FILE_PREFIX + UUID.randomUUID().toString() + JPG_EXTENSION);
   }
 
   private static Bitmap loadAndProcessBitmap(Context context, Uri imageUri) {
@@ -98,12 +100,12 @@ public class ImageCompressor {
 
   private static File saveBitmapToFile(Bitmap bitmap, File outputFile) throws IOException {
     try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-         FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
-      
+        FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+
       bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream);
       fileOutputStream.write(outputStream.toByteArray());
       fileOutputStream.flush();
-      
+
       bitmap.recycle();
       return outputFile;
     }
@@ -160,7 +162,8 @@ public class ImageCompressor {
    * @param maxHeight The maximum height
    * @return The sample size
    */
-  private static int calculateInSampleSize(BitmapFactory.Options options, int maxWidth, int maxHeight) {
+  private static int calculateInSampleSize(
+      BitmapFactory.Options options, int maxWidth, int maxHeight) {
     int height = options.outHeight;
     int width = options.outWidth;
     int sampleSize = 1;
@@ -176,7 +179,8 @@ public class ImageCompressor {
     return height > maxHeight || width > maxWidth;
   }
 
-  private static int calculateOptimalSampleSize(int height, int width, int maxHeight, int maxWidth) {
+  private static int calculateOptimalSampleSize(
+      int height, int width, int maxHeight, int maxWidth) {
     int sampleSize = 1;
     int halfHeight = height / 2;
     int halfWidth = width / 2;
@@ -213,7 +217,7 @@ public class ImageCompressor {
       if (rotationAngle == 0) {
         return bitmap;
       }
-      
+
       matrix.postRotate(rotationAngle);
 
       return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);

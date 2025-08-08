@@ -17,13 +17,13 @@ import androidx.lifecycle.MutableLiveData;
  */
 public class ConnectivityManager {
   private static final String TAG = "ConnectivityManager";
-  
+
   // Network check constants
   private static final String NETWORK_TEST_URL = "https://www.google.com";
   private static final int NETWORK_TIMEOUT_MS = 3000;
   private static final int NETWORK_CHECK_INTERVAL_MS = 30000;
   private static final int HTTP_SUCCESS_CODE = 200;
-  
+
   // Instance management
   private static ConnectivityManager instance;
 
@@ -96,10 +96,10 @@ public class ConnectivityManager {
   private void schedulePeriodicNetworkChecks() {
     mainHandler.postDelayed(createPeriodicCheckRunnable(), NETWORK_CHECK_INTERVAL_MS);
   }
-  
+
   /**
    * Creates a runnable for periodic network checks
-   * 
+   *
    * @return Runnable for periodic checks
    */
   private Runnable createPeriodicCheckRunnable() {
@@ -128,10 +128,8 @@ public class ConnectivityManager {
   private void performActiveNetworkCheck() {
     new Thread(this::checkNetworkConnection).start();
   }
-  
-  /**
-   * Checks network connection by attempting to connect to a known server
-   */
+
+  /** Checks network connection by attempting to connect to a known server */
   private void checkNetworkConnection() {
     try {
       boolean isConnected = testNetworkConnection();
@@ -142,10 +140,10 @@ public class ConnectivityManager {
       updateNetworkStateOnMainThread(false, NetworkUtils.ErrorType.NO_NETWORK);
     }
   }
-  
+
   /**
    * Tests network connection to a known server
-   * 
+   *
    * @return true if connection successful
    * @throws Exception if connection fails
    */
@@ -158,23 +156,25 @@ public class ConnectivityManager {
     connection.disconnect();
     return isConnected;
   }
-  
+
   /**
    * Updates network state on the main thread
-   * 
+   *
    * @param isConnected Whether network is connected
    * @param errorType Error type if connection failed
    */
-  private void updateNetworkStateOnMainThread(boolean isConnected, NetworkUtils.ErrorType errorType) {
-    mainHandler.post(() -> {
-      isNetworkAvailable.setValue(isConnected);
-      if (!isConnected && errorType != null) {
-        lastNetworkError.setValue(errorType);
-      } else if (isConnected) {
-        // Clear error if we're now connected
-        lastNetworkError.setValue(null);
-      }
-    });
+  private void updateNetworkStateOnMainThread(
+      boolean isConnected, NetworkUtils.ErrorType errorType) {
+    mainHandler.post(
+        () -> {
+          isNetworkAvailable.setValue(isConnected);
+          if (!isConnected && errorType != null) {
+            lastNetworkError.setValue(errorType);
+          } else if (isConnected) {
+            // Clear error if we're now connected
+            lastNetworkError.setValue(null);
+          }
+        });
   }
 
   /** Registers a callback for network changes */

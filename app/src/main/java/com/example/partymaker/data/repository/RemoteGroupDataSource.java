@@ -9,8 +9,8 @@ import java.util.Map;
 
 /**
  * Remote data source implementation for Group entities using FirebaseServerClient. Handles all
- * network operations for groups via the PartyMaker backend server with proper error handling
- * and input validation.
+ * network operations for groups via the PartyMaker backend server with proper error handling and
+ * input validation.
  */
 public class RemoteGroupDataSource implements DataSource<Group, String> {
   private static final String TAG = "RemoteGroupDataSource";
@@ -209,7 +209,8 @@ public class RemoteGroupDataSource implements DataSource<Group, String> {
    * @param groupKey The key to set
    */
   private void ensureGroupKeyIsSet(Group group, String groupKey) {
-    if (group.getGroupKey() == null || group.getGroupKey().isEmpty()) {
+    String existingKey = group.getGroupKey();
+    if (existingKey == null || existingKey.isEmpty()) {
       group.setGroupKey(groupKey);
     }
   }

@@ -17,14 +17,14 @@ import com.google.firebase.auth.FirebaseUser;
 public class AuthenticationManager {
   private static final String TAG = "AuthenticationManager";
   private static final String PREFS_NAME = "PartyMakerPrefs";
-  
+
   // SharedPreferences keys
   private static final String KEY_USER_EMAIL = "user_email";
   private static final String KEY_SESSION_ACTIVE = "session_active";
   private static final String KEY_LAST_LOGIN_TIME = "last_login_time";
   private static final String KEY_SERVER_MODE_EMAIL = "server_mode_email";
   private static final String KEY_SERVER_MODE_ACTIVE = "server_mode_active";
-  
+
   // Session duration constants
   private static final long SESSION_DURATION_DAYS = 30L;
   private static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
@@ -205,11 +205,11 @@ public class AuthenticationManager {
     }
 
     Log.d(TAG, "Clearing all user data including Room database");
-    
+
     clearRepositoryCaches();
     clearRoomDatabase(context);
   }
-  
+
   private static void clearRepositoryCaches() {
     try {
       GroupRepository.getInstance().clearCache();
@@ -219,7 +219,7 @@ public class AuthenticationManager {
       Log.e(TAG, "Error clearing repository caches", e);
     }
   }
-  
+
   private static void clearRoomDatabase(Context context) {
     ThreadUtils.runInBackground(
         () -> {
@@ -233,21 +233,22 @@ public class AuthenticationManager {
           }
         });
   }
-  
+
   private static void clearDatabaseTables(AppDatabase database) {
     database.groupDao().deleteAllGroups();
     database.userDao().deleteAllUsers();
-    
+
     // Also clear chat messages if DAO is available
     if (database.chatMessageDao() != null) {
       database.chatMessageDao().deleteAllMessages();
     }
   }
-  
+
   private static void verifyDatabaseCleared(AppDatabase database) {
     int groupCount = database.groupDao().getAllGroups().size();
     int userCount = database.userDao().getAllUsers().size();
-    Log.d(TAG, "Database verification after clear - Groups: " + groupCount + ", Users: " + userCount);
+    Log.d(
+        TAG, "Database verification after clear - Groups: " + groupCount + ", Users: " + userCount);
   }
 
   /**

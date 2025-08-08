@@ -24,7 +24,7 @@ import okhttp3.Response;
  */
 public class NetworkManager {
   private static final String TAG = "NetworkManager";
-  
+
   // Network configuration constants
   private static final int HTTPS_SUCCESS_MIN = 200;
   private static final int HTTPS_SUCCESS_MAX = 399;
@@ -32,10 +32,10 @@ public class NetworkManager {
   private static final String PARTYMAKER_DOMAIN = "partymaker";
   private static final String HEAD_REQUEST_METHOD = "HEAD";
   private static final String DEBUG_BUILD_TYPE = "userdebug";
-  
+
   // Timeout constants
   private static final int DEFAULT_TIMEOUT_MS = 10000;
-  
+
   // Instance management
   private static NetworkManager instance;
   private final MutableLiveData<Boolean> isNetworkAvailable = new MutableLiveData<>();
@@ -190,15 +190,14 @@ public class NetworkManager {
    */
   public void executeWithTimeout(Runnable runnable, long timeoutMs, Runnable timeoutCallback) {
     final boolean[] completed = {false};
-    
+
     scheduleTimeoutHandler(completed, timeoutMs, timeoutCallback);
     executeRequestInBackground(runnable, completed);
   }
-  
-  /**
-   * Schedules timeout handler for network request
-   */
-  private void scheduleTimeoutHandler(boolean[] completed, long timeoutMs, Runnable timeoutCallback) {
+
+  /** Schedules timeout handler for network request */
+  private void scheduleTimeoutHandler(
+      boolean[] completed, long timeoutMs, Runnable timeoutCallback) {
     ThreadUtils.runOnMainThreadDelayed(
         () -> {
           if (!completed[0]) {
@@ -211,10 +210,8 @@ public class NetworkManager {
         },
         timeoutMs);
   }
-  
-  /**
-   * Executes request in background thread
-   */
+
+  /** Executes request in background thread */
   private void executeRequestInBackground(Runnable runnable, boolean[] completed) {
     ThreadUtils.runInBackground(
         () -> {
@@ -230,9 +227,11 @@ public class NetworkManager {
   private void initializeSSLPinning() {
     boolean isProduction = isProductionBuild();
     sslPinningManager = SSLPinningManager.getInstance(isProduction);
-    Log.d(TAG, "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
+    Log.d(
+        TAG,
+        "SSL Pinning Manager initialized for " + (isProduction ? "production" : "development"));
   }
-  
+
   /** Check if this is a production build */
   private boolean isProductionBuild() {
     return !android.os.Build.TYPE.equals(DEBUG_BUILD_TYPE);
@@ -258,7 +257,8 @@ public class NetworkManager {
   public boolean isServerReachable(String url, int timeout) {
     try {
       // Use secure client if available
-      if (sslPinningManager != null && (url.startsWith(HTTPS_PROTOCOL) || url.contains(PARTYMAKER_DOMAIN))) {
+      if (sslPinningManager != null
+          && (url.startsWith(HTTPS_PROTOCOL) || url.contains(PARTYMAKER_DOMAIN))) {
         return isServerReachableSecure(url, timeout);
       }
 

@@ -22,18 +22,18 @@ import java.util.concurrent.CompletableFuture;
 public class GroupKeyManager {
   private static final String TAG = "GroupKeyManager";
   private static final String FIREBASE_GROUP_KEYS_PATH = "group_keys";
-  
+
   // Firebase path constants
   private static final String PATH_MEMBERS = "members";
   private static final String PATH_METADATA = "metadata";
-  
+
   // Metadata keys
   private static final String KEY_CREATED = "created";
   private static final String KEY_VERSION = "version";
   private static final String KEY_CREATOR = "creator";
   private static final String KEY_LAST_UPDATED = "lastUpdated";
   private static final String KEY_LAST_ROTATED = "lastRotated";
-  
+
   // Configuration constants
   private static final int INITIAL_KEY_VERSION = 1;
   private static final int MEMBER_QUERY_LIMIT = 1;
@@ -260,7 +260,7 @@ public class GroupKeyManager {
   public String getStatus() {
     return String.format("User: %s, %s", currentUserId, groupEncryption.getEncryptionStatus());
   }
-  
+
   /** Create Firebase group key data structure */
   private Map<String, Object> createGroupKeyData(String groupKeyBase64) {
     Map<String, Object> groupKeyData = new HashMap<>();
@@ -277,12 +277,13 @@ public class GroupKeyManager {
 
     groupKeyData.put(PATH_MEMBERS, members);
     groupKeyData.put(PATH_METADATA, metadata);
-    
+
     return groupKeyData;
   }
-  
+
   /** Get existing group key and add user */
-  private void getExistingGroupKeyAndAddUser(String groupId, String newUserId, CompletableFuture<Boolean> future) {
+  private void getExistingGroupKeyAndAddUser(
+      String groupId, String newUserId, CompletableFuture<Boolean> future) {
     firebaseRef
         .child(groupId)
         .child(PATH_MEMBERS)
@@ -301,7 +302,7 @@ public class GroupKeyManager {
 
                   Log.i(TAG, "Found existing group key, adding user: " + newUserId);
                   addUserToGroup(groupId, newUserId, groupKeyBase64, future);
-                  
+
                 } catch (Exception e) {
                   Log.e(TAG, "Error processing group key for new user", e);
                   future.complete(false);
@@ -315,7 +316,7 @@ public class GroupKeyManager {
               }
             });
   }
-  
+
   /** Extract group key from Firebase snapshot */
   private String extractGroupKeyFromSnapshot(DataSnapshot dataSnapshot) {
     // Get group key from any existing member
@@ -324,9 +325,10 @@ public class GroupKeyManager {
     }
     return null;
   }
-  
+
   /** Add user to group with existing key */
-  private void addUserToGroup(String groupId, String userId, String groupKeyBase64, CompletableFuture<Boolean> future) {
+  private void addUserToGroup(
+      String groupId, String userId, String groupKeyBase64, CompletableFuture<Boolean> future) {
     Map<String, Object> updates = new HashMap<>();
     updates.put(PATH_MEMBERS + "/" + userId, groupKeyBase64);
     updates.put(PATH_METADATA + "/" + KEY_LAST_UPDATED, System.currentTimeMillis());
@@ -337,7 +339,8 @@ public class GroupKeyManager {
         .addOnCompleteListener(
             task -> {
               if (task.isSuccessful()) {
-                Log.i(TAG, "Successfully added user " + userId + " to group encryption: " + groupId);
+                Log.i(
+                    TAG, "Successfully added user " + userId + " to group encryption: " + groupId);
                 future.complete(true);
               } else {
                 Log.e(TAG, "Failed to add user to group encryption", task.getException());
@@ -345,9 +348,13 @@ public class GroupKeyManager {
               }
             });
   }
-  
+
   /** Rotate key for remaining members after user removal */
-  private void rotateKeyForRemainingMembers(String groupId, String removedUserId, String newGroupKeyBase64, CompletableFuture<Boolean> future) {
+  private void rotateKeyForRemainingMembers(
+      String groupId,
+      String removedUserId,
+      String newGroupKeyBase64,
+      CompletableFuture<Boolean> future) {
     firebaseRef
         .child(groupId)
         .child(PATH_MEMBERS)
@@ -356,9 +363,10 @@ public class GroupKeyManager {
               @Override
               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                  Map<String, Object> updates = createKeyRotationUpdates(dataSnapshot, removedUserId, newGroupKeyBase64);
+                  Map<String, Object> updates =
+                      createKeyRotationUpdates(dataSnapshot, removedUserId, newGroupKeyBase64);
                   updateFirebaseWithRotatedKey(groupId, updates, removedUserId, future);
-                  
+
                 } catch (Exception e) {
                   Log.e(TAG, "Error processing group member removal", e);
                   future.complete(false);
@@ -372,9 +380,10 @@ public class GroupKeyManager {
               }
             });
   }
-  
+
   /** Create updates for key rotation */
-  private Map<String, Object> createKeyRotationUpdates(DataSnapshot dataSnapshot, String removedUserId, String newGroupKeyBase64) {
+  private Map<String, Object> createKeyRotationUpdates(
+      DataSnapshot dataSnapshot, String removedUserId, String newGroupKeyBase64) {
     Map<String, Object> updates = new HashMap<>();
     Map<String, Object> newMembers = new HashMap<>();
 
@@ -390,14 +399,20 @@ public class GroupKeyManager {
 
     // Update Firebase
     updates.put(PATH_MEMBERS, newMembers);
-    updates.put(PATH_METADATA + "/" + KEY_VERSION, System.currentTimeMillis() / 1000); // Use timestamp as version
+    updates.put(
+        PATH_METADATA + "/" + KEY_VERSION,
+        System.currentTimeMillis() / 1000); // Use timestamp as version
     updates.put(PATH_METADATA + "/" + KEY_LAST_ROTATED, System.currentTimeMillis());
-    
+
     return updates;
   }
-  
+
   /** Update Firebase with rotated key */
-  private void updateFirebaseWithRotatedKey(String groupId, Map<String, Object> updates, String removedUserId, CompletableFuture<Boolean> future) {
+  private void updateFirebaseWithRotatedKey(
+      String groupId,
+      Map<String, Object> updates,
+      String removedUserId,
+      CompletableFuture<Boolean> future) {
     firebaseRef
         .child(groupId)
         .updateChildren(updates)
@@ -412,7 +427,7 @@ public class GroupKeyManager {
               }
             });
   }
-  
+
   /** Load group key for current user */
   private void loadUserGroupKey(String groupId, CompletableFuture<Boolean> future) {
     firebaseRef
@@ -435,7 +450,7 @@ public class GroupKeyManager {
                   // In production, this would be decrypted with user's private key
                   boolean stored = groupEncryption.storeGroupKey(groupId, encryptedGroupKey);
                   handleKeyStorageResult(groupId, stored, future);
-                  
+
                 } catch (Exception e) {
                   Log.e(TAG, "Error processing loaded group key", e);
                   future.complete(false);
@@ -449,9 +464,10 @@ public class GroupKeyManager {
               }
             });
   }
-  
+
   /** Handle key storage result */
-  private void handleKeyStorageResult(String groupId, boolean stored, CompletableFuture<Boolean> future) {
+  private void handleKeyStorageResult(
+      String groupId, boolean stored, CompletableFuture<Boolean> future) {
     if (stored) {
       Log.i(TAG, "Loaded group key for: " + groupId);
       future.complete(true);
@@ -460,7 +476,7 @@ public class GroupKeyManager {
       future.complete(false);
     }
   }
-  
+
   /** Check if current user is member of group */
   private void checkUserMembership(String groupId, CompletableFuture<Boolean> future) {
     firebaseRef

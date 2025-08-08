@@ -17,26 +17,28 @@ import java.io.ByteArrayOutputStream;
  */
 public class ContentSharingManager {
   private static final String TAG = "ContentSharingManager";
-  
+
   // Share message constants
   private static final String SHARE_SUBJECT_PREFIX = "Join my party: ";
   private static final String SHARE_TITLE_GENERIC = "Share Party Details";
   private static final String SHARE_TITLE_EMAIL = "Send Email";
   private static final String SHARE_TITLE_IMAGE = "Share Party Image";
-  
+
   // Error messages
   private static final String ERROR_SHARING_PARTY = "Error sharing party details";
-  private static final String ERROR_WHATSAPP_NOT_AVAILABLE = "WhatsApp is not installed or an error occurred";
-  private static final String ERROR_FACEBOOK_NOT_AVAILABLE = "Facebook is not installed or an error occurred";
+  private static final String ERROR_WHATSAPP_NOT_AVAILABLE =
+      "WhatsApp is not installed or an error occurred";
+  private static final String ERROR_FACEBOOK_NOT_AVAILABLE =
+      "Facebook is not installed or an error occurred";
   private static final String ERROR_SMS_FAILED = "Error sharing via SMS";
   private static final String ERROR_EMAIL_FAILED = "Error sharing via email";
   private static final String ERROR_IMAGE_SAVE_FAILED = "Error preparing image to share";
   private static final String ERROR_IMAGE_SHARE_FAILED = "Error sharing party image";
-  
+
   // App package names
   private static final String WHATSAPP_PACKAGE = "com.whatsapp";
   private static final String FACEBOOK_PACKAGE = "com.facebook.katana";
-  
+
   // Share message format constants
   private static final String PARTY_INVITATION_EMOJI = "🎉";
   private static final String DATE_EMOJI = "📅";
@@ -46,7 +48,8 @@ public class ContentSharingManager {
   private static final String DATE_SEPARATOR = "/";
   private static final String PRICE_FREE = "Free";
   private static final String LOCATION_FALLBACK = "Check the app for location details";
-  private static final String APP_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.example.partymaker";
+  private static final String APP_DOWNLOAD_URL =
+      "https://play.google.com/store/apps/details?id=com.example.partymaker";
   private static final int IMAGE_COMPRESSION_QUALITY = 100;
 
   /**
@@ -204,8 +207,9 @@ public class ContentSharingManager {
     try {
       ByteArrayOutputStream bytes = new ByteArrayOutputStream();
       image.compress(Bitmap.CompressFormat.JPEG, IMAGE_COMPRESSION_QUALITY, bytes);
-      String path = MediaStore.Images.Media.insertImage(
-          context.getContentResolver(), image, "Party: " + group.getGroupName(), null);
+      String path =
+          MediaStore.Images.Media.insertImage(
+              context.getContentResolver(), image, "Party: " + group.getGroupName(), null);
 
       if (path == null) {
         Log.e(TAG, "Failed to save image to MediaStore");
@@ -236,7 +240,8 @@ public class ContentSharingManager {
   private static String createShareMessage(Group group) {
     StringBuilder message = new StringBuilder();
 
-    message.append(PARTY_INVITATION_EMOJI)
+    message
+        .append(PARTY_INVITATION_EMOJI)
         .append(" You're invited to ")
         .append(group.getGroupName())
         .append("! ")
@@ -258,7 +263,8 @@ public class ContentSharingManager {
    * @param group The group containing date/time info
    */
   private static void appendDateTimeInfo(StringBuilder message, Group group) {
-    message.append(DATE_EMOJI)
+    message
+        .append(DATE_EMOJI)
         .append(" Date: ")
         .append(group.getGroupDays())
         .append(DATE_SEPARATOR)
@@ -267,10 +273,7 @@ public class ContentSharingManager {
         .append(group.getGroupYears())
         .append("\n");
 
-    message.append(TIME_EMOJI)
-        .append(" Time: ")
-        .append(group.getGroupHours())
-        .append("\n\n");
+    message.append(TIME_EMOJI).append(" Time: ").append(group.getGroupHours()).append("\n\n");
   }
 
   /**
@@ -282,7 +285,7 @@ public class ContentSharingManager {
   private static void appendLocationInfo(StringBuilder message, Group group) {
     if (group.getGroupLocation() != null && !group.getGroupLocation().trim().isEmpty()) {
       message.append(LOCATION_EMOJI).append(" Location: ");
-      
+
       if (isLocationCoordinates(group.getGroupLocation())) {
         message.append(LOCATION_FALLBACK);
       } else {
@@ -301,7 +304,7 @@ public class ContentSharingManager {
   private static void appendPriceInfo(StringBuilder message, Group group) {
     if (group.getGroupPrice() != null) {
       message.append(PRICE_EMOJI).append(" Entry: ");
-      
+
       if ("0".equals(group.getGroupPrice().trim())) {
         message.append(PRICE_FREE);
       } else {
@@ -317,7 +320,8 @@ public class ContentSharingManager {
    * @param message The StringBuilder to append to
    */
   private static void appendAppPromotion(StringBuilder message) {
-    message.append("Download PartyMaker app to join this party and more!\n")
+    message
+        .append("Download PartyMaker app to join this party and more!\n")
         .append(APP_DOWNLOAD_URL);
   }
 

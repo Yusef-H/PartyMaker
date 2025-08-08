@@ -25,30 +25,32 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class ChangeDateActivity extends AppCompatActivity {
-  
+
   private static final String TAG = "ChangeDateActivity";
-  
+
   // UI constants
   private static final String ADMIN_VERIFICATION_MESSAGE = "Verifying admin permissions...";
-  private static final String ACCESS_DENIED_MESSAGE = "Access denied. Only group admin can change party dates.";
+  private static final String ACCESS_DENIED_MESSAGE =
+      "Access denied. Only group admin can change party dates.";
   private static final String AUTH_ERROR_MESSAGE = "Authentication error. Please login again.";
   private static final String VERIFICATION_FAILED_MESSAGE = "Failed to verify admin status: ";
-  private static final String ACCESS_DENIED_VERIFICATION_MESSAGE = "Access denied. Admin verification failed.";
+  private static final String ACCESS_DENIED_VERIFICATION_MESSAGE =
+      "Access denied. Admin verification failed.";
   private static final String DATE_SELECTED_MESSAGE = "Date selected: ";
   private static final String TIME_SELECTED_MESSAGE = "Time selected: ";
   private static final String SUCCESSFULLY_CHANGED_MESSAGE = "Successfully Changed";
-  
+
   // UI Components
   private Button hideButton, helpButton, changeDateButton, selectDateButton, selectTimeButton;
   private TextView hideText, helpText, instructionsText, selectedDateText, selectedTimeText;
-  
+
   // Group data
   private HashMap<String, Object> friendKeys, comingKeys, messageKeys;
   private String groupKey, groupName, groupDay, groupMonth, groupYear, groupHour;
   private String groupLocation, adminKey, createdAt, groupPrice, userKey;
   private int groupType;
   private boolean canAdd;
-  
+
   // Date and verification state
   private Calendar selectedDate;
   private boolean isAdminVerified = false;
@@ -60,7 +62,7 @@ public class ChangeDateActivity extends AppCompatActivity {
 
     hideActionBar();
     initializeDate();
-    
+
     if (!authenticateUser() || !extractGroupDataFromIntent()) {
       return;
     }
@@ -75,11 +77,11 @@ public class ChangeDateActivity extends AppCompatActivity {
       actionBar.hide();
     }
   }
-  
+
   private void initializeDate() {
     selectedDate = Calendar.getInstance();
   }
-  
+
   private boolean authenticateUser() {
     try {
       userKey = AuthenticationManager.getCurrentUserKey(this);
@@ -90,7 +92,7 @@ public class ChangeDateActivity extends AppCompatActivity {
       return false;
     }
   }
-  
+
   private boolean extractGroupDataFromIntent() {
     ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
     if (extras == null) {
@@ -98,7 +100,7 @@ public class ChangeDateActivity extends AppCompatActivity {
       finish();
       return false;
     }
-    
+
     groupName = extras.getGroupName();
     groupKey = extras.getGroupKey();
     groupDay = extras.getGroupDays();
@@ -114,10 +116,10 @@ public class ChangeDateActivity extends AppCompatActivity {
     friendKeys = extras.getFriendKeys();
     comingKeys = extras.getComingKeys();
     messageKeys = extras.getMessageKeys();
-    
+
     return true;
   }
-  
+
   private void verifyAdminStatus() {
     // Show loading message
     Toast.makeText(this, ADMIN_VERIFICATION_MESSAGE, Toast.LENGTH_SHORT).show();
@@ -169,7 +171,7 @@ public class ChangeDateActivity extends AppCompatActivity {
 
     setupEventHandlers();
   }
-  
+
   private void initializeViewComponents() {
     changeDateButton = findViewById(R.id.btnChangeDate);
     selectDateButton = findViewById(R.id.btnSelectDate);
@@ -294,22 +296,23 @@ public class ChangeDateActivity extends AppCompatActivity {
     saveChangesToFirebase();
     showSuccessAndNavigate();
   }
-  
+
   private void updateGroupDateData() {
     groupDay = String.valueOf(selectedDate.get(Calendar.DAY_OF_MONTH));
     groupMonth = new SimpleDateFormat("MMMM", Locale.ENGLISH).format(selectedDate.getTime());
     groupYear = String.valueOf(selectedDate.get(Calendar.YEAR));
   }
-  
+
   private void saveChangesToFirebase() {
     DBRef.refGroups.child(groupKey).child("groupDays").setValue(groupDay);
     DBRef.refGroups.child(groupKey).child("groupMonths").setValue(groupMonth);
     DBRef.refGroups.child(groupKey).child("groupYears").setValue(groupYear);
     DBRef.refGroups.child(groupKey).child("groupHours").setValue(groupHour);
   }
-  
+
   private void showSuccessAndNavigate() {
-    Toast.makeText(ChangeDateActivity.this, SUCCESSFULLY_CHANGED_MESSAGE, Toast.LENGTH_SHORT).show();
+    Toast.makeText(ChangeDateActivity.this, SUCCESSFULLY_CHANGED_MESSAGE, Toast.LENGTH_SHORT)
+        .show();
 
     // Navigate back to AdminOptions
     Intent intent = new Intent(getBaseContext(), AdminOptionsActivity.class);
@@ -317,14 +320,26 @@ public class ChangeDateActivity extends AppCompatActivity {
     IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
   }
-  
+
   private ExtrasMetadata createExtrasMetadata() {
     return new ExtrasMetadata(
-        groupName, groupKey, groupDay, groupMonth, groupYear, groupHour,
-        groupLocation, adminKey, createdAt, groupPrice, groupType, canAdd,
-        friendKeys, comingKeys, messageKeys);
+        groupName,
+        groupKey,
+        groupDay,
+        groupMonth,
+        groupYear,
+        groupHour,
+        groupLocation,
+        adminKey,
+        createdAt,
+        groupPrice,
+        groupType,
+        canAdd,
+        friendKeys,
+        comingKeys,
+        messageKeys);
   }
-  
+
   private void showDatePicker() {
     // Check admin verification before allowing date selection
     if (!isAdminVerified || !adminKey.equals(userKey)) {
@@ -371,7 +386,8 @@ public class ChangeDateActivity extends AppCompatActivity {
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog,
             (view, selectedHour, selectedMinute) -> {
-              groupHour = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+              groupHour =
+                  String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
               updateDateTimeDisplay();
               Toast.makeText(this, TIME_SELECTED_MESSAGE + groupHour, Toast.LENGTH_SHORT).show();
             },
@@ -382,7 +398,7 @@ public class ChangeDateActivity extends AppCompatActivity {
 
     timePickerDialog.show();
   }
-  
+
   private int[] parseCurrentTime() {
     int hour = 12;
     int minute = 0;
@@ -396,7 +412,7 @@ public class ChangeDateActivity extends AppCompatActivity {
     } catch (Exception e) {
       // Use default values if parsing fails
     }
-    
-    return new int[]{hour, minute};
+
+    return new int[] {hour, minute};
   }
 }

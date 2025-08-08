@@ -49,7 +49,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private static final int WEEK_FILTER = 7;
   private static final String FREE_PRICE = "0";
   private static final String FREE_PRICE_TEXT = "free";
-  
+
   private ArrayList<Group> groups;
   private String userKey;
   private Object groupsRef;
@@ -130,10 +130,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
     RecyclerView lv1 = findViewById(R.id.lv5);
     if (lv1 != null) {
       lv1.setLayoutManager(new LinearLayoutManager(this));
-      allGroupsAdapter =
-          new GroupAdapter(
-              this,
-              this::navigateToJoinGroup);
+      allGroupsAdapter = new GroupAdapter(this, this::navigateToJoinGroup);
       lv1.setAdapter(allGroupsAdapter);
     }
 
@@ -167,27 +164,40 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
   private ExtrasMetadata createExtrasFromGroup(Group group) {
     return new ExtrasMetadata(
-        group.getGroupName(), group.getGroupKey(), group.getGroupDays(),
-        group.getGroupMonths(), group.getGroupYears(), group.getGroupHours(),
-        group.getGroupLocation(), group.getAdminKey(), group.getCreatedAt(),
-        group.getGroupPrice(), group.getGroupType(), group.isCanAdd(),
-        group.getFriendKeys(), group.getComingKeys(), group.getMessageKeys());
+        group.getGroupName(),
+        group.getGroupKey(),
+        group.getGroupDays(),
+        group.getGroupMonths(),
+        group.getGroupYears(),
+        group.getGroupHours(),
+        group.getGroupLocation(),
+        group.getAdminKey(),
+        group.getCreatedAt(),
+        group.getGroupPrice(),
+        group.getGroupType(),
+        group.isCanAdd(),
+        group.getFriendKeys(),
+        group.getComingKeys(),
+        group.getMessageKeys());
   }
 
   public void loadPublicGroups() {
     initializeGroupsRef();
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
-    serverClient.getGroups(new FirebaseServerClient.DataCallback<>() {
-      @Override
-      public void onSuccess(Map<String, Group> data) {
-        processServerGroupData(data);
-      }
+    serverClient.getGroups(
+        new FirebaseServerClient.DataCallback<>() {
+          @Override
+          public void onSuccess(Map<String, Group> data) {
+            processServerGroupData(data);
+          }
 
-      @Override
-      public void onError(String errorMessage) {
-        Toast.makeText(PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT).show();
-      }
-    });
+          @Override
+          public void onError(String errorMessage) {
+            Toast.makeText(
+                    PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 
   private void initializeGroupsRef() {
@@ -287,12 +297,13 @@ public class PublicGroupsActivity extends AppCompatActivity {
       endDate.add(Calendar.DAY_OF_YEAR, daysFromNow);
     }
 
-    return new Calendar[]{startDate, endDate};
+    return new Calendar[] {startDate, endDate};
   }
 
   private boolean isGroupInDateRange(Group group, Calendar startDate, Calendar endDate) {
     try {
-      String groupDateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
+      String groupDateStr =
+          group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
       Date groupDate = dateFormat.parse(groupDateStr);
 
@@ -320,7 +331,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private boolean isFreeGroup(Group group) {
     try {
       String priceStr = group.getGroupPrice();
-      return priceStr == null || priceStr.equals(FREE_PRICE) || priceStr.equalsIgnoreCase(FREE_PRICE_TEXT);
+      return priceStr == null
+          || priceStr.equals(FREE_PRICE)
+          || priceStr.equalsIgnoreCase(FREE_PRICE_TEXT);
     } catch (Exception e) {
       Log.w(TAG, "Failed to parse price for group: " + group.getGroupName(), e);
       return false;

@@ -14,6 +14,8 @@ import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
 
 /**
  * Enhanced SSL Certificate Pinning Manager for secure network connections. Implements certificate
@@ -21,14 +23,15 @@ import okhttp3.Response;
  */
 public class SSLPinningManager {
   private static final String TAG = "SSLPinningManager";
-  
+
   // SSL/Security constants
   private static final int DIGITAL_SIGNATURE_KEY_USAGE_INDEX = 0;
   private static final String CERTIFICATE_ALGORITHM = "SHA-256";
   private static final String BASE64_NO_WRAP_OPTION = "NO_WRAP";
-  
+
   // Certificate validation constants
-  private static final String DEV_CERTIFICATE_PLACEHOLDER = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=";
+  private static final String DEV_CERTIFICATE_PLACEHOLDER =
+      "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=";
 
   // Production certificate pins for partymaker.onrender.com
   private static final String[] RENDER_PINS = {
@@ -110,29 +113,58 @@ public class SSLPinningManager {
     MessageDigest digest = MessageDigest.getInstance(CERTIFICATE_ALGORITHM);
     byte[] publicKey = certificate.getPublicKey().getEncoded();
     byte[] hash = digest.digest(publicKey);
-    return CERTIFICATE_ALGORITHM.toLowerCase() + "/" + 
-           android.util.Base64.encodeToString(hash, android.util.Base64.NO_WRAP);
+    return CERTIFICATE_ALGORITHM.toLowerCase()
+        + "/"
+        + android.util.Base64.encodeToString(hash, android.util.Base64.NO_WRAP);
   }
 
-  /** Custom Trust Manager for additional certificate validation */
+  /** Custom Trust Manager that delegates to system trust manager with additional pinning validation */
   private class CustomTrustManager implements X509TrustManager {
+    private final X509TrustManager systemTrustManager;
+
+    public CustomTrustManager() throws Exception {
+      // Initialize with system's default trust manager
+      TrustManagerFactory tmf = TrustManagerFactory.getInstance(
+          TrustManagerFactory.getDefaultAlgorithm());
+      tmf.init((KeyStore) null); // Use system's default trust store
+      
+      X509TrustManager defaultTm = null;
+      for (javax.net.ssl.TrustManager tm : tmf.getTrustManagers()) {
+        if (tm instanceof X509TrustManager) {
+          defaultTm = (X509TrustManager) tm;
+          break;
+        }
+      }
+      
+      if (defaultTm == null) {
+        throw new Exception("Could not find system trust manager");
+      }
+      
+      this.systemTrustManager = defaultTm;
+    }
+
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType)
         throws CertificateException {
-      // We don't use client certificates, so reject all
-      throw new CertificateException("Client certificates not supported");
+      // Delegate to system trust manager for client certificates
+      systemTrustManager.checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType)
         throws CertificateException {
+      // First, let the system trust manager perform standard validation
+      systemTrustManager.checkServerTrusted(chain, authType);
+      
+      // Then perform our additional pinning validation
       if (chain == null || chain.length == 0) {
         throw new CertificateException("No certificate chain provided");
       }
 
-      // Validate each certificate in the chain
-      for (X509Certificate cert : chain) {
-        if (!validateCertificate(cert)) {
+      // Only validate pinning in production
+      if (isProduction) {
+        // Validate the leaf certificate against our pins
+        if (!validateCertificate(chain[0])) {
           throw new CertificateException("Certificate pinning validation failed");
         }
       }
@@ -143,7 +175,8 @@ public class SSLPinningManager {
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-      return new X509Certificate[0];
+      // Return system's accepted issuers
+      return systemTrustManager.getAcceptedIssuers();
     }
 
     private void performAdditionalSecurityChecks(X509Certificate certificate)
@@ -205,9 +238,9 @@ public class SSLPinningManager {
     }
   }
 
-  /** 
-   * Updates certificate pins (for certificate rotation).
-   * This method should only be called during planned certificate updates.
+  /**
+   * Updates certificate pins (for certificate rotation). This method should only be called during
+   * planned certificate updates.
    */
   public void updateCertificatePins(String[] newPins) {
     if (newPins != null && newPins.length > 0) {
@@ -219,13 +252,13 @@ public class SSLPinningManager {
     }
   }
 
-  /** 
-   * Security event logging helper for monitoring SSL violations.
-   * This class provides centralized security event logging.
+  /**
+   * Security event logging helper for monitoring SSL violations. This class provides centralized
+   * security event logging.
    */
   private static class SecurityEvent {
     private static final String SECURITY_VIOLATION_PREFIX = "SECURITY VIOLATION - ";
-    
+
     static void logSecurityViolation(String eventType, String details) {
       String message = SECURITY_VIOLATION_PREFIX + eventType + ": " + details;
       Log.w(TAG, message);

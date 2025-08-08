@@ -15,13 +15,13 @@ import org.json.JSONObject;
  * messages and message history.
  */
 public class OpenAiApi {
-  
+
   // API Constants
   private static final String API_URL = "https://api.openai.com/v1/chat/completions";
   private static final String GPT_MODEL = "gpt-3.5-turbo";
   private static final String CONTENT_TYPE = "application/json";
   private static final String CONTENT_TYPE_CHARSET = "application/json; charset=utf-8";
-  
+
   // JSON Field Names
   private static final String FIELD_ROLE = "role";
   private static final String FIELD_CONTENT = "content";
@@ -29,10 +29,10 @@ public class OpenAiApi {
   private static final String FIELD_MESSAGES = "messages";
   private static final String FIELD_CHOICES = "choices";
   private static final String FIELD_MESSAGE = "message";
-  
+
   // Role Constants
   private static final String ROLE_USER = "user";
-  
+
   // Header Constants
   private static final String HEADER_AUTHORIZATION = "Authorization";
   private static final String HEADER_CONTENT_TYPE = "Content-Type";
@@ -64,17 +64,17 @@ public class OpenAiApi {
     if (userMessage == null || userMessage.trim().isEmpty()) {
       throw new IllegalArgumentException("User message cannot be null or empty");
     }
-    
+
     JSONObject message = createUserMessage(userMessage);
     JSONArray messages = new JSONArray();
     messages.put(message);
-    
+
     return sendMessagesToApi(messages);
   }
-  
+
   /**
    * Creates a user message JSON object
-   * 
+   *
    * @param userMessage The user's message
    * @return JSON object representing the user message
    * @throws Exception if JSON creation fails
@@ -97,14 +97,14 @@ public class OpenAiApi {
     if (history == null || history.isEmpty()) {
       throw new IllegalArgumentException("Message history cannot be null or empty");
     }
-    
+
     JSONArray messages = convertHistoryToJsonArray(history);
     return sendMessagesToApi(messages);
   }
-  
+
   /**
    * Converts chat message history to JSON array
-   * 
+   *
    * @param history List of chat messages
    * @return JSON array of messages
    * @throws Exception if JSON creation fails
@@ -121,10 +121,10 @@ public class OpenAiApi {
     }
     return messages;
   }
-  
+
   /**
    * Sends messages to OpenAI API and returns response
-   * 
+   *
    * @param messages JSON array of messages
    * @return API response content
    * @throws Exception if request fails
@@ -132,19 +132,19 @@ public class OpenAiApi {
   private String sendMessagesToApi(JSONArray messages) throws Exception {
     JSONObject body = createRequestBody(messages);
     Request request = buildApiRequest(body);
-    
+
     try (Response response = client.newCall(request).execute()) {
       if (!response.isSuccessful()) {
         throw new Exception("API request failed with code: " + response.code());
       }
-      
+
       return parseApiResponse(response);
     }
   }
-  
+
   /**
    * Creates request body for API call
-   * 
+   *
    * @param messages JSON array of messages
    * @return Request body JSON object
    * @throws Exception if JSON creation fails
@@ -155,17 +155,17 @@ public class OpenAiApi {
     body.put(FIELD_MESSAGES, messages);
     return body;
   }
-  
+
   /**
    * Builds HTTP request for API call
-   * 
+   *
    * @param body Request body
    * @return HTTP request
    */
   private Request buildApiRequest(JSONObject body) {
-    RequestBody requestBody = RequestBody.create(
-        MediaType.parse(CONTENT_TYPE_CHARSET), body.toString());
-    
+    RequestBody requestBody =
+        RequestBody.create(MediaType.parse(CONTENT_TYPE_CHARSET), body.toString());
+
     return new Request.Builder()
         .url(API_URL)
         .addHeader(HEADER_AUTHORIZATION, BEARER_PREFIX + apiKey)
@@ -173,10 +173,10 @@ public class OpenAiApi {
         .post(requestBody)
         .build();
   }
-  
+
   /**
    * Parses API response to extract content
-   * 
+   *
    * @param response HTTP response
    * @return Response content
    * @throws Exception if parsing fails

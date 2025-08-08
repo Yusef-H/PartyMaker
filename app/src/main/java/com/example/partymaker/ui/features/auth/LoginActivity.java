@@ -372,7 +372,7 @@ public class LoginActivity extends AppCompatActivity {
 
     } catch (Exception e) {
       Log.e(Config.LOG_TAG, "Error during login attempt", e);
-      UiStateManager.showError(rootView, "Login failed. Please try again.", null);
+      UiStateManager.showError(rootView, "Login failed. Please try again.");
     }
   }
 
@@ -397,11 +397,11 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, Config.GOOGLE_SIGN_IN_REQUEST_CODE);
       } else {
         Log.w(Config.LOG_TAG, "Google Sign-In client not available");
-        UiStateManager.showError(rootView, "Google Sign-In temporarily unavailable", null);
+        UiStateManager.showError(rootView, "Google Sign-In temporarily unavailable");
       }
     } catch (Exception e) {
       Log.e(Config.LOG_TAG, "Error initiating Google Sign-In", e);
-      UiStateManager.showError(rootView, "Google Sign-In failed. Please try again.", null);
+      UiStateManager.showError(rootView, "Google Sign-In failed. Please try again.");
     }
   }
 
@@ -443,7 +443,7 @@ public class LoginActivity extends AppCompatActivity {
 
       } catch (Exception e) {
         Log.e(Config.LOG_TAG, "Error processing Google Sign-In result", e);
-        UiStateManager.showError(rootView, "Google Sign-In processing failed", null);
+        UiStateManager.showError(rootView, "Google Sign-In processing failed");
       }
     }
   }
@@ -516,7 +516,7 @@ public class LoginActivity extends AppCompatActivity {
 
   private void handleInitializationError(@NonNull Exception error) {
     Log.e(Config.LOG_TAG, "Critical initialization error - showing fallback UI", error);
-    UiStateManager.showError(rootView, "App initialization failed. Please restart the app.", null);
+    UiStateManager.showError(rootView, "App initialization failed. Please restart the app.");
   }
 
   @Override

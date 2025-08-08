@@ -91,7 +91,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 
   private void setupUserImageView(View view, User user) {
     ImageView imageView = view.findViewById(R.id.imgUserListProfile);
-    
+
     if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
       loadUserProfileImage(imageView, user);
     } else {
@@ -102,7 +102,7 @@ public class UserAdapter extends ArrayAdapter<User> {
   private void loadUserProfileImage(ImageView imageView, User user) {
     String email = getProcessedEmail(user);
     String imagePath = "Users/" + email;
-    
+
     DBRef.refStorage
         .child(imagePath)
         .getDownloadUrl()
@@ -116,11 +116,7 @@ public class UserAdapter extends ArrayAdapter<User> {
   }
 
   private void loadImageWithPicasso(ImageView imageView, android.net.Uri uri) {
-    Picasso.get()
-        .load(uri)
-        .fit()
-        .centerCrop()
-        .into(imageView);
+    Picasso.get().load(uri).fit().centerCrop().into(imageView);
   }
 
   private void setDefaultImage(ImageView imageView) {

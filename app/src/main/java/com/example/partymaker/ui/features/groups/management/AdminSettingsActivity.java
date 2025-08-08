@@ -35,7 +35,7 @@ import java.io.File;
 import java.util.HashMap;
 
 public class AdminSettingsActivity extends AppCompatActivity {
-  
+
   // UI constants
   private static final String TAG = "AdminSettingsActivity";
   private static final int REQUEST_CODE_IMAGE_PICK = 100;
@@ -46,19 +46,20 @@ public class AdminSettingsActivity extends AppCompatActivity {
   private static final String ADMIN_ADD_TEXT = "Admin Add";
   private static final String COMPRESSION_MESSAGE = "Compressing group image...";
   private static final String UPLOAD_MESSAGE = "Image compressed successfully. Uploading...";
-  private static final String COMPRESSION_FAILED_MESSAGE = "Compression failed, uploading original image...";
+  private static final String COMPRESSION_FAILED_MESSAGE =
+      "Compression failed, uploading original image...";
   private static final String UPDATE_SUCCESS_MESSAGE = "Group image updated successfully";
   private static final String NAME_CHANGED_MESSAGE = "Name Changed";
   private static final String DELETE_SUCCESS_MESSAGE = "successfully deleted";
-  
+
   // Group settings
   private boolean canAdd;
-  
+
   // UI Components
   private ImageView addPermissionIcon, typeIcon, groupImageView;
   private ImageButton editNameButton;
   private TextView groupNameText, addPermissionText, typeText;
-  
+
   // Group data
   private String adminKey, groupKey, groupName, groupDay, groupMonth, groupYear;
   private String groupHour, groupLocation, createdAt, groupPrice;
@@ -128,7 +129,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
       finish();
       return false;
     }
-    
+
     groupName = extras.getGroupName();
     groupKey = extras.getGroupKey();
     groupDay = extras.getGroupDays();
@@ -144,10 +145,10 @@ public class AdminSettingsActivity extends AppCompatActivity {
     friendKeys = extras.getFriendKeys();
     comingKeys = extras.getComingKeys();
     messageKeys = extras.getMessageKeys();
-    
+
     return true;
   }
-  
+
   private void initializeViews() {
     addPermissionText = findViewById(R.id.tvCanAdd);
     typeText = findViewById(R.id.tvType);
@@ -157,7 +158,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
     groupImageView = findViewById(R.id.imgEditGroup);
     editNameButton = findViewById(R.id.btnEditName1);
   }
-  
+
   private void loadGroupImage() {
     DBRef.refStorage
         .child("UsersImageProfile/Groups/" + groupKey)
@@ -177,11 +178,11 @@ public class AdminSettingsActivity extends AppCompatActivity {
                       });
             });
   }
-  
+
   private void setupInitialUIState() {
     groupNameText.setText(groupName);
   }
-  
+
   private void updateGroupTypeUI() {
     if (groupType == 0) { // if group is public
       typeIcon.setImageResource(R.drawable.ic_party_everyone);
@@ -191,7 +192,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
       typeText.setText(PRIVATE_GROUP_TEXT);
     }
   }
-  
+
   private void updateAddPermissionUI() {
     if (canAdd) {
       addPermissionIcon.setImageResource(R.drawable.ic_party_everyone);
@@ -201,26 +202,38 @@ public class AdminSettingsActivity extends AppCompatActivity {
       addPermissionText.setText(ADMIN_ADD_TEXT);
     }
   }
-  
+
   private ExtrasMetadata createExtrasMetadata() {
     return new ExtrasMetadata(
-        groupName, groupKey, groupDay, groupMonth, groupYear, groupHour,
-        groupLocation, adminKey, createdAt, groupPrice, groupType, canAdd,
-        friendKeys, comingKeys, messageKeys);
+        groupName,
+        groupKey,
+        groupDay,
+        groupMonth,
+        groupYear,
+        groupHour,
+        groupLocation,
+        adminKey,
+        createdAt,
+        groupPrice,
+        groupType,
+        canAdd,
+        friendKeys,
+        comingKeys,
+        messageKeys);
   }
-  
+
   private void setupEventHandlers() {
     groupImageView.setOnClickListener(v -> selectImageFromGallery());
     editNameButton.setOnClickListener(v -> showEditNameDialog());
   }
-  
+
   private void selectImageFromGallery() {
     Intent intent = new Intent();
     intent.setType("image/*");
     intent.setAction(Intent.ACTION_GET_CONTENT);
     startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE_IMAGE_PICK);
   }
-  
+
   private void showEditNameDialog() {
     final EditText editText = new EditText(AdminSettingsActivity.this);
     AlertDialog.Builder alert = new AlertDialog.Builder(AdminSettingsActivity.this);
@@ -263,7 +276,8 @@ public class AdminSettingsActivity extends AppCompatActivity {
                         Uri compressedUri = Uri.fromFile(compressedFile);
                         groupImageView.setImageURI(compressedUri);
 
-                        Toast.makeText(AdminSettingsActivity.this, UPLOAD_MESSAGE, Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                                AdminSettingsActivity.this, UPLOAD_MESSAGE, Toast.LENGTH_SHORT)
                             .show();
 
                         // Upload the compressed image
@@ -275,7 +289,10 @@ public class AdminSettingsActivity extends AppCompatActivity {
                 public void onCompressError(String error) {
                   ThreadUtils.runOnMainThread(
                       () -> {
-                        Toast.makeText(AdminSettingsActivity.this, COMPRESSION_FAILED_MESSAGE, Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                                AdminSettingsActivity.this,
+                                COMPRESSION_FAILED_MESSAGE,
+                                Toast.LENGTH_SHORT)
                             .show();
                         groupImageView.setImageURI(uri);
 
@@ -300,7 +317,8 @@ public class AdminSettingsActivity extends AppCompatActivity {
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot ->
-                Toast.makeText(AdminSettingsActivity.this, UPDATE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT)
+                Toast.makeText(
+                        AdminSettingsActivity.this, UPDATE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT)
                     .show())
         .addOnFailureListener(
             exception ->
@@ -367,7 +385,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
       DBRef.refGroups.child(groupKey).child("groupType").setValue(0);
     }
   }
-  
+
   private void toggleAddPermission() {
     if (canAdd) {
       addPermissionIcon.setImageResource(R.drawable.ic_party_private);
@@ -381,7 +399,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
       DBRef.refGroups.child(groupKey).child("canAdd").setValue(true);
     }
   }
-  
+
   private void deleteGroup() {
     // delete all messages written by current group
     deleteGroupMessages();
@@ -393,14 +411,13 @@ public class AdminSettingsActivity extends AppCompatActivity {
     DBRef.refStorage.child("Groups/" + groupKey).delete();
 
     // Show success message
-    Toast.makeText(AdminSettingsActivity.this, DELETE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT)
-        .show();
+    Toast.makeText(AdminSettingsActivity.this, DELETE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
 
     // Navigate to main activity
     Intent intent = new Intent(getBaseContext(), MainActivity.class);
     startActivity(intent);
   }
-  
+
   private void deleteGroupMessages() {
     DBRef.refMessages.addListenerForSingleValueEvent(
         new ValueEventListener() {

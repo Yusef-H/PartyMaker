@@ -30,7 +30,7 @@ public final class SecureAuthenticationManager {
 
   // Session duration: 7 days (reduced from 30 days for better security)
   private static final long SESSION_DURATION_MS = 7L * 24 * 60 * 60 * 1000;
-  
+
   // Magic number constants
   private static final long MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000L;
   private static final int HASH_MULTIPLIER = 7;
@@ -143,10 +143,7 @@ public final class SecureAuthenticationManager {
     }
   }
 
-  /** 
-   * Generate a secure session token.
-   * Uses UUID for session identification.
-   */
+  /** Generate a secure session token. Uses UUID for session identification. */
   private static String generateSessionToken() {
     return java.util.UUID.randomUUID().toString();
   }
@@ -351,26 +348,20 @@ public final class SecureAuthenticationManager {
       return 0;
     }
   }
-  
+
   // Helper methods for key generation and validation
-  
-  /**
-   * Generates a consistent key for failed attempts storage.
-   */
+
+  /** Generates a consistent key for failed attempts storage. */
   private static String generateFailedAttemptsKey(String email) {
     return KEY_FAILED_ATTEMPTS + "_" + email.hashCode();
   }
-  
-  /**
-   * Generates a consistent key for lockout storage.
-   */
+
+  /** Generates a consistent key for lockout storage. */
   private static String generateLockoutKey(String email) {
     return KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
   }
-  
-  /**
-   * Checks if a lockout is currently active.
-   */
+
+  /** Checks if a lockout is currently active. */
   private static boolean isLockoutActive(long lockoutUntil) {
     return lockoutUntil > 0 && System.currentTimeMillis() < lockoutUntil;
   }
