@@ -109,7 +109,9 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar).hide();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     // Get current user key for admin verification
     try {

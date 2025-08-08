@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
   // Dependencies
   private FirebaseAuth firebaseAuth;
   private AuthViewModel authViewModel;
-    private NetworkManager networkManager;
+  private NetworkManager networkManager;
 
   // State Management
   private final AtomicBoolean isDestroyed = new AtomicBoolean(false);
@@ -176,7 +176,8 @@ public class LoginActivity extends AppCompatActivity {
       progressBar = new ProgressBar(this);
       progressBar.setVisibility(View.GONE);
     }
-      LoadingStateManager loadingStateManager = null; // Direct progress bar management to avoid interference
+    LoadingStateManager loadingStateManager =
+        null; // Direct progress bar management to avoid interference
   }
 
   private void setupViewModelObservers() {
@@ -214,12 +215,14 @@ public class LoginActivity extends AppCompatActivity {
     if (Boolean.TRUE.equals(isAuthenticated)) {
       // Show simple success message instead of problematic animation
       UiStateManager.showSuccess(rootView, "🎉 Login successful! Welcome back!");
-      
+
       // Delay navigation briefly to show success message
-      ThreadUtils.runOnMainThreadDelayed(() -> {
-        saveUserPreferences();
-        navigateToMainActivity();
-      }, 800);
+      ThreadUtils.runOnMainThreadDelayed(
+          () -> {
+            saveUserPreferences();
+            navigateToMainActivity();
+          },
+          800);
     }
   }
 

@@ -73,9 +73,10 @@ public class ChatActivity extends AppCompatActivity {
 
     // Actionbar settings
     ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
-    actionBar.setTitle("Chat");
-    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+    if (actionBar != null) {
+      actionBar.setTitle("Chat");
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+    }
 
     // Get data from intent directly
     Log.d(TAG, "Getting extras from intent");
@@ -222,11 +223,7 @@ public class ChatActivity extends AppCompatActivity {
               }
             });
 
-    viewModel
-        .getIsLoading()
-        .observe(
-            this,
-            isLoading -> btnSend.setEnabled(!isLoading));
+    viewModel.getIsLoading().observe(this, isLoading -> btnSend.setEnabled(!isLoading));
   }
 
   private void eventHandler() {

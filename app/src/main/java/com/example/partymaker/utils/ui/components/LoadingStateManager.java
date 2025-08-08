@@ -73,7 +73,7 @@ public class LoadingStateManager {
     if (errorView != null) {
       animateViewTransition(errorView, false);
     }
-    
+
     // Use Lottie animation if available, otherwise fall back to ProgressBar
     if (lottieAnimation != null) {
       animateViewTransition(progressBar, false);
@@ -82,7 +82,7 @@ public class LoadingStateManager {
     } else {
       animateViewTransition(progressBar, true);
     }
-    
+
     if (loadingText != null) {
       animateViewTransition(loadingText, true);
     }
@@ -102,7 +102,7 @@ public class LoadingStateManager {
       animateViewTransition(lottieAnimation, false);
     }
     animateViewTransition(progressBar, false);
-    
+
     if (loadingText != null) {
       animateViewTransition(loadingText, false);
     }
@@ -363,14 +363,16 @@ public class LoadingStateManager {
 
     // Show content after celebration (delayed)
     if (lottieAnimation != null) {
-      lottieAnimation.addAnimatorListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          // Auto-transition to content after celebration
-          android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-          handler.postDelayed(() -> showContent(), 1000);
-        }
-      });
+      lottieAnimation.addAnimatorListener(
+          new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+              // Auto-transition to content after celebration
+              android.os.Handler handler =
+                  new android.os.Handler(android.os.Looper.getMainLooper());
+              handler.postDelayed(() -> showContent(), 1000);
+            }
+          });
     }
   }
 
@@ -512,7 +514,8 @@ public class LoadingStateManager {
         throw new IllegalStateException("Progress bar must be set");
       }
 
-      return new LoadingStateManager(contentView, progressBar, loadingText, errorView, lottieAnimation);
+      return new LoadingStateManager(
+          contentView, progressBar, loadingText, errorView, lottieAnimation);
     }
   }
 

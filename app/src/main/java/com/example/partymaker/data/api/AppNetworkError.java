@@ -19,9 +19,7 @@ public class AppNetworkError {
    * @param isServerError Whether the error is related to the server connection
    */
   public static void showErrorMessage(
-      Context context,
-      NetworkUtils.ErrorType errorType,
-      boolean isServerError) {
+      Context context, NetworkUtils.ErrorType errorType, boolean isServerError) {
     if (context == null) return;
 
     String message = NetworkUtils.getErrorMessage(errorType);

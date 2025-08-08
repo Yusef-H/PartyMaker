@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
@@ -50,12 +51,11 @@ import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
+import com.example.partymaker.utils.ui.animation.ButtonAnimationHelper;
+import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
-import com.example.partymaker.utils.ui.components.LoadingStateManager;
-import com.example.partymaker.utils.ui.animation.ButtonAnimationHelper;
-import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -222,7 +222,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
 
     // Setup loading state manager for animations
     setupLoadingStateManager();
-    
+
     // Setup button animations
     setupButtonAnimations();
 
@@ -244,21 +244,22 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     View animationOverlay = findViewById(R.id.animation_overlay);
     LottieAnimationView lottieView = findViewById(R.id.lottie_feedback);
     TextView feedbackText = findViewById(R.id.feedback_text);
-    
+
     if (animationOverlay != null && lottieView != null) {
       // Create a simple progress bar as fallback
       android.widget.ProgressBar progressBar = new android.widget.ProgressBar(this);
-      
-      loadingStateManager = new LoadingStateManager.Builder()
-          .contentView(findViewById(android.R.id.content)) // Use root content view
-          .progressBar(progressBar)
-          .loadingText(feedbackText)
-          .errorView(null)
-          .lottieAnimation(lottieView)
-          .build();
+
+      loadingStateManager =
+          new LoadingStateManager.Builder()
+              .contentView(findViewById(android.R.id.content)) // Use root content view
+              .progressBar(progressBar)
+              .loadingText(feedbackText)
+              .errorView(null)
+              .lottieAnimation(lottieView)
+              .build();
     }
   }
-  
+
   // Setup professional animations for all buttons
   private void setupButtonAnimations() {
     // Apply animations to all navigation buttons
@@ -268,13 +269,13 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     if (btnBack2 != null) ButtonAnimationHelper.enhanceButton(btnBack2);
     if (btnDone != null) ButtonAnimationHelper.enhanceButton(btnDone);
     if (btnAddGroup != null) ButtonAnimationHelper.enhanceButton(btnAddGroup);
-    
+
     // Apply special animation to FAB chat button
     if (fabChat != null) {
       ButtonAnimationHelper.applyPressAnimation(fabChat, true);
       ButtonAnimationHelper.applyEntranceAnimation(fabChat, 800);
     }
-    
+
     // Add entrance animations for UI elements with stagger effect
     if (imgLogin != null) ButtonAnimationHelper.applyEntranceAnimation(imgLogin, 100);
     if (tvPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(tvPartyName, 200);
@@ -348,22 +349,24 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     View animationOverlay = findViewById(R.id.animation_overlay);
     com.airbnb.lottie.LottieAnimationView lottieView = findViewById(R.id.lottie_feedback);
     TextView feedbackText = findViewById(R.id.feedback_text);
-    
+
     if (animationOverlay != null && lottieView != null && feedbackText != null) {
       // Setup and show error animation
       animationOverlay.setVisibility(View.VISIBLE);
       feedbackText.setText(message);
-      
+
       lottieView.setAnimation("error_warning.json");
       lottieView.setRepeatCount(0); // Play once
       lottieView.playAnimation();
-      
+
       // Auto-hide after animation completes
-      ThreadUtils.runOnMainThreadDelayed(() -> {
-        if (animationOverlay != null) {
-          animationOverlay.setVisibility(View.GONE);
-        }
-      }, 3000);
+      ThreadUtils.runOnMainThreadDelayed(
+          () -> {
+            if (animationOverlay != null) {
+              animationOverlay.setVisibility(View.GONE);
+            }
+          },
+          3000);
     } else {
       // Fallback to toast if overlay not available
       Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -779,7 +782,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     try {
       String currentUserId = AuthenticationManager.getCurrentUserKey(this);
 
-        GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
+      GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
 
       // Create encryption for new group
       groupKeyManager
@@ -803,22 +806,24 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     View animationOverlay = findViewById(R.id.animation_overlay);
     com.airbnb.lottie.LottieAnimationView lottieView = findViewById(R.id.lottie_feedback);
     TextView feedbackText = findViewById(R.id.feedback_text);
-    
+
     if (animationOverlay != null && lottieView != null && feedbackText != null) {
       // Setup and show success animation
       animationOverlay.setVisibility(View.VISIBLE);
       feedbackText.setText("🎉 Party created successfully!");
-      
+
       lottieView.setAnimation("success_checkmark.json");
       lottieView.setRepeatCount(0); // Play once
       lottieView.playAnimation();
-      
+
       // Auto-hide after animation completes
-      ThreadUtils.runOnMainThreadDelayed(() -> {
-        if (animationOverlay != null) {
-          animationOverlay.setVisibility(View.GONE);
-        }
-      }, 2500);
+      ThreadUtils.runOnMainThreadDelayed(
+          () -> {
+            if (animationOverlay != null) {
+              animationOverlay.setVisibility(View.GONE);
+            }
+          },
+          2500);
     } else {
       // Fallback to toast if overlay not available
       Toast.makeText(this, "🎉 Party created successfully!", Toast.LENGTH_SHORT).show();

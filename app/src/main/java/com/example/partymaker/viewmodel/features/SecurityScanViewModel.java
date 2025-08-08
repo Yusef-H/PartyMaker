@@ -39,7 +39,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
   private static final String TAG = "SecurityScanViewModel";
 
-    // LiveData for security scan state
+  // LiveData for security scan state
   private final MutableLiveData<Boolean> scanInProgress = new MutableLiveData<>();
   private final MutableLiveData<SecurityReport> latestReport = new MutableLiveData<>();
   private final MutableLiveData<List<SecurityIssue>> securityIssues = new MutableLiveData<>();
@@ -71,8 +71,8 @@ public class SecurityScanViewModel extends BaseViewModel {
    */
   public SecurityScanViewModel(@NonNull Application application) {
     super(application);
-      // Dependencies
-      SecurityAgent securityAgent = SecurityAgent.getInstance(application);
+    // Dependencies
+    SecurityAgent securityAgent = SecurityAgent.getInstance(application);
 
     // Initialize state
     scanInProgress.setValue(false);
@@ -304,9 +304,10 @@ public class SecurityScanViewModel extends BaseViewModel {
 
                   // Simulate fix application
                   ThreadUtils.runOnMainThreadDelayed(
-                      () -> updateScanStep(
-                          "Fixing " + issue.getType() + "...",
-                          (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0])),
+                      () ->
+                          updateScanStep(
+                              "Fixing " + issue.getType() + "...",
+                              (fixedIssues[0] * 100) / Math.max(1, fixableIssues[0])),
                       fixedIssues[0] * 500L);
 
                   fixedIssues[0]++;
@@ -396,10 +397,10 @@ public class SecurityScanViewModel extends BaseViewModel {
 
   private void performSecurityScan() {
 
-      // Scan step 1: Network security
+    // Scan step 1: Network security
     updateScanStep("Scanning network security...", 10);
     ThreadUtils.sleep(1000);
-      List<SecurityIssue> foundIssues = new ArrayList<>(scanNetworkSecurity());
+    List<SecurityIssue> foundIssues = new ArrayList<>(scanNetworkSecurity());
 
     // Scan step 2: Data encryption
     updateScanStep("Checking data encryption...", 25);
@@ -450,10 +451,10 @@ public class SecurityScanViewModel extends BaseViewModel {
 
   private void performQuickScan() {
 
-      // Quick scan - essential checks only
+    // Quick scan - essential checks only
     updateScanStep("Quick security check...", 20);
     ThreadUtils.sleep(500);
-      List<SecurityIssue> foundIssues = new ArrayList<>(scanCriticalSecurity());
+    List<SecurityIssue> foundIssues = new ArrayList<>(scanCriticalSecurity());
 
     updateScanStep("Checking encryption status...", 60);
     ThreadUtils.sleep(500);

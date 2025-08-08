@@ -64,7 +64,7 @@ public class OpenAiApi {
             .build();
 
     try (Response response = client.newCall(request).execute()) {
-        String responseBody = response.body().string();
+      String responseBody = response.body().string();
       JSONObject json = new JSONObject(responseBody);
       return json.getJSONArray("choices")
           .getJSONObject(0)
@@ -104,7 +104,7 @@ public class OpenAiApi {
             .build();
 
     try (Response response = client.newCall(request).execute()) {
-        String responseBody = response.body().string();
+      String responseBody = response.body().string();
       JSONObject json = new JSONObject(responseBody);
       return json.getJSONArray("choices")
           .getJSONObject(0)

@@ -13,7 +13,6 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.utils.business.sharing.ContentSharingManager;
 import com.example.partymaker.utils.media.GlideImageLoader;
-import com.example.partymaker.utils.ui.animation.ButtonAnimationHelper;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import java.util.Objects;
@@ -53,15 +52,13 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       // Ensure view is in normal state to prevent spacing issues
       resetViewState(holder.itemView);
       holder.bind(group);
-      
+
       // No entrance animations to prevent spacing issues
       // Items will appear immediately without animation interference
     }
   }
-  
-  /**
-   * Ensures view is in completely normal state to prevent spacing issues
-   */
+
+  /** Ensures view is in completely normal state to prevent spacing issues */
   private void resetViewState(View view) {
     view.setAlpha(1.0f);
     view.setScaleX(1.0f);
@@ -171,21 +168,19 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       // Handle image loading separately to avoid blocking text display
       loadGroupImage(group.getGroupKey());
     }
-    
-    /** 
-     * Improved image loading that doesn't interfere with text display
-     */
+
+    /** Improved image loading that doesn't interfere with text display */
     private void loadGroupImage(String groupKey) {
       // Set default image first
       groupImageView.setImageResource(R.drawable.default_group_image);
-      
+
       if (groupKey == null || groupKey.isEmpty()) {
         return;
       }
-      
+
       // Store group key as tag for recycling check
       groupImageView.setTag(groupKey);
-      
+
       // Load image with shorter timeout to prevent delays
       loadGroupImageWithTimeout(groupKey, groupImageView);
     }

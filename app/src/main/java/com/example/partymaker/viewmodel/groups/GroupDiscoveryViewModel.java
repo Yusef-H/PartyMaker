@@ -166,18 +166,19 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     Log.d(TAG, "Loading public groups, forceRefresh: " + forceRefresh);
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.getPublicGroups(
-            forceRefresh,
+        () ->
+            groupRepository.getPublicGroups(
+                forceRefresh,
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(List<Group> groups) {
-                        handlePublicGroupsLoaded(groups);
-                    }
+                  @Override
+                  public void onSuccess(List<Group> groups) {
+                    handlePublicGroupsLoaded(groups);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handlePublicGroupsError(error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handlePublicGroupsError(error);
+                  }
                 }));
   }
 
@@ -300,19 +301,20 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     Log.d(TAG, "Joining group: " + group.getGroupName());
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.joinGroup(
-            group.getGroupKey(),
-            currentUserKey,
+        () ->
+            groupRepository.joinGroup(
+                group.getGroupKey(),
+                currentUserKey,
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        handleJoinSuccess(group);
-                    }
+                  @Override
+                  public void onSuccess(Boolean result) {
+                    handleJoinSuccess(group);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleJoinError(group, error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleJoinError(group, error);
+                  }
                 }));
   }
 
@@ -338,19 +340,20 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     Log.d(TAG, "Leaving group: " + group.getGroupName());
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.leaveGroup(
-            group.getGroupKey(),
-            currentUserKey,
+        () ->
+            groupRepository.leaveGroup(
+                group.getGroupKey(),
+                currentUserKey,
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        handleLeaveSuccess(group);
-                    }
+                  @Override
+                  public void onSuccess(Boolean result) {
+                    handleLeaveSuccess(group);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleLeaveError(group, error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleLeaveError(group, error);
+                  }
                 }));
   }
 

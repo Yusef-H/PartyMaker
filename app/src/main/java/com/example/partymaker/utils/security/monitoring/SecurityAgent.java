@@ -112,8 +112,9 @@ public class SecurityAgent {
       } else {
         // Calculate signature hash for comparison
         signatureHash =
-                Arrays.toString(MessageDigest.getInstance("SHA-256")
-                        .digest(packageInfo.signatures[0].toByteArray()));
+            Arrays.toString(
+                MessageDigest.getInstance("SHA-256")
+                    .digest(packageInfo.signatures[0].toByteArray()));
       }
 
       // Compare with known good signature hash

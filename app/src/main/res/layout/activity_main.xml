@@ -93,7 +93,7 @@
                 android:text="@string/no_groups_found"
                 android:textSize="18sp"
                 android:visibility="gone" />
-                
+
             <!-- Loading overlay with Lottie animation -->
             <LinearLayout
                 android:id="@+id/loading_overlay"
@@ -126,7 +126,7 @@
                     android:textColor="@color/white" />
 
             </LinearLayout>
-            
+
             <!-- Fallback ProgressBar (hidden when Lottie is used) -->
             <ProgressBar
                 android:id="@+id/progress_bar_fallback"

@@ -25,7 +25,7 @@
 
     <!-- Notifications (required for Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    
+
     <!-- Vibration permission for haptic feedback -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -98,7 +98,7 @@
         <activity android:name=".ui.features.groups.main.PartyMainActivity" />
         <activity
             android:name=".ui.features.groups.discovery.PublicGroupsActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.PartyMaker" />
 
         <!-- Profile screen -->
         <activity android:name=".ui.features.auxiliary.profile.EditProfileActivity"

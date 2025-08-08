@@ -224,7 +224,7 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(libs.glide)
     annotationProcessor(libs.compiler)
-    
+
     // --- Animations ---
     implementation(libs.lottie)
 

@@ -516,7 +516,7 @@ public class ChatMessage {
     return String.format(
         Locale.US,
         "ChatMessage{key='%s', group='%s', sender='%s', encrypted=%s, hasImage=%s, length=%d}",
-            messageKey.substring(0, Math.min(8, messageKey.length())) + "...",
+        messageKey.substring(0, Math.min(8, messageKey.length())) + "...",
         groupKey != null ? groupKey.substring(0, Math.min(8, groupKey.length())) + "..." : "null",
         senderName != null ? senderName : "null",
         encrypted,

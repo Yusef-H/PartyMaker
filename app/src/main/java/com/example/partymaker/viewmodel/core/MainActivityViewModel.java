@@ -203,7 +203,7 @@ public class MainActivityViewModel extends BaseViewModel {
       throw new IllegalArgumentException("Group ID cannot be null or empty");
     }
 
-      Log.d(TAG, "Creating new group: " + group.getGroupName());
+    Log.d(TAG, "Creating new group: " + group.getGroupName());
 
     executeIfNotLoading(
         () -> {

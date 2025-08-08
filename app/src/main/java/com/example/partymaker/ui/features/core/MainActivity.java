@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
@@ -30,13 +31,12 @@ import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
-import com.example.partymaker.utils.ui.components.LoadingStateManager;
-import com.example.partymaker.utils.ui.components.UiStateManager;
-import com.airbnb.lottie.LottieAnimationView;
-import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
-import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.utils.ui.animation.ButtonAnimationHelper;
 import com.example.partymaker.utils.ui.animation.CustomRefreshAnimationHelper;
+import com.example.partymaker.utils.ui.components.LoadingStateManager;
+import com.example.partymaker.utils.ui.components.UiStateManager;
+import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
+import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
@@ -268,8 +268,9 @@ public class MainActivity extends AppCompatActivity {
     LottieAnimationView lottieAnimation = findViewById(R.id.lottie_loading);
     View loadingOverlay = findViewById(R.id.loading_overlay);
 
-    loadingStateManager = createLoadingStateManagerWithLottie(
-        progressBar, loadingText, lottieAnimation, loadingOverlay);
+    loadingStateManager =
+        createLoadingStateManagerWithLottie(
+            progressBar, loadingText, lottieAnimation, loadingOverlay);
   }
 
   private android.widget.ProgressBar findOrCreateProgressBar() {
@@ -306,18 +307,18 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private LoadingStateManager createLoadingStateManagerWithLottie(
-      android.widget.ProgressBar progressBar, 
-      android.widget.TextView loadingText, 
+      android.widget.ProgressBar progressBar,
+      android.widget.TextView loadingText,
       LottieAnimationView lottieAnimation,
       View errorView) {
-    
+
     // Set up the Lottie animation
     if (lottieAnimation != null) {
       lottieAnimation.setAnimation("party_loading.json");
       lottieAnimation.setRepeatCount(-1); // Loop indefinitely
       lottieAnimation.setRepeatMode(android.animation.ValueAnimator.RESTART);
     }
-    
+
     return new LoadingStateManager.Builder()
         .contentView(groupsRecyclerView)
         .progressBar(progressBar)
@@ -361,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
   private void performForceRefresh() {
     // Don't show loading state manager for refresh to avoid shake
     Log.d(TAG, "Performing force refresh without loading overlay");
-    
+
     // No custom animations during refresh to prevent shake
     viewModel.loadUserGroups(currentUserKey, true);
   }
@@ -491,20 +492,22 @@ public class MainActivity extends AppCompatActivity {
   private void updateGroupsDisplay(List<Group> groups) {
     groupAdapter.updateItems(groups);
     Log.d(TAG, "Group adapter updated with " + groups.size() + " groups");
-    
+
     // Ensure content is properly visible after update
     if (groupsRecyclerView != null) {
       groupsRecyclerView.setVisibility(View.VISIBLE);
       groupsRecyclerView.setAlpha(1.0f);
-      
+
       // Slight delay to ensure images have time to load properly
       android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-      handler.postDelayed(() -> {
-        if (groupsRecyclerView != null) {
-          groupsRecyclerView.invalidate();
-          groupsRecyclerView.requestLayout();
-        }
-      }, 100);
+      handler.postDelayed(
+          () -> {
+            if (groupsRecyclerView != null) {
+              groupsRecyclerView.invalidate();
+              groupsRecyclerView.requestLayout();
+            }
+          },
+          100);
     }
   }
 
@@ -520,30 +523,33 @@ public class MainActivity extends AppCompatActivity {
   private void checkForFirstGroupCelebration(List<Group> groups) {
     // Check if this is the user's first group by looking at SharedPreferences
     SharedPreferences prefs = getSharedPreferences(PREFS_PARTY_MAKER, Context.MODE_PRIVATE);
-    boolean hasShownFirstGroupCelebration = prefs.getBoolean("has_shown_first_group_celebration", false);
-    
+    boolean hasShownFirstGroupCelebration =
+        prefs.getBoolean("has_shown_first_group_celebration", false);
+
     if (!hasShownFirstGroupCelebration && groups.size() == 1) {
       // Show celebration for first group using direct Lottie approach
       LottieAnimationView lottieAnimation = findViewById(R.id.lottie_loading);
       View loadingOverlay = findViewById(R.id.loading_overlay);
       TextView loadingText = findViewById(R.id.loading_text);
-      
+
       if (lottieAnimation != null && loadingOverlay != null) {
         loadingOverlay.setVisibility(View.VISIBLE);
         loadingText.setText("🎉 Welcome to PartyMaker! Your first party awaits!");
-        
+
         lottieAnimation.setAnimation("party_celebration.json");
         lottieAnimation.setRepeatCount(1); // Play twice
         lottieAnimation.playAnimation();
-        
+
         // Auto-hide after animation
-        ThreadUtils.runOnMainThreadDelayed(() -> {
-          if (loadingOverlay != null) {
-            loadingOverlay.setVisibility(View.GONE);
-          }
-        }, 4000);
+        ThreadUtils.runOnMainThreadDelayed(
+            () -> {
+              if (loadingOverlay != null) {
+                loadingOverlay.setVisibility(View.GONE);
+              }
+            },
+            4000);
       }
-      
+
       // Mark that we've shown the celebration
       prefs.edit().putBoolean("has_shown_first_group_celebration", true).apply();
     }
@@ -599,7 +605,7 @@ public class MainActivity extends AppCompatActivity {
     // Always ensure loading states are hidden and content is visible
     loadingStateManager.showContent();
     stopSwipeRefreshIfActive();
-    
+
     // Ensure RecyclerView is fully visible
     if (groupsRecyclerView != null) {
       groupsRecyclerView.setVisibility(View.VISIBLE);
@@ -610,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
   private void stopSwipeRefreshIfActive() {
     if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
       swipeRefreshLayout.setRefreshing(false);
-      
+
       // Stop custom refresh animation without zoom feedback
       LottieAnimationView lottieView = findViewById(R.id.lottie_loading);
       if (lottieView != null) {
@@ -671,18 +677,19 @@ public class MainActivity extends AppCompatActivity {
   private void configureChatButtonActions() {
     // Apply professional FAB animations
     ButtonAnimationHelper.applyPressAnimation(chatFloatingActionButton, true);
-    
-    chatFloatingActionButton.setOnClickListener(view -> {
-      // Add success bounce animation before navigation
-      ButtonAnimationHelper.applySuccessBounce(view);
-      
-      // Delay navigation to show animation
-      android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-      handler.postDelayed(() -> navigateToChat(), 200);
-    });
-    
+
+    chatFloatingActionButton.setOnClickListener(
+        view -> {
+          // Add success bounce animation before navigation
+          ButtonAnimationHelper.applySuccessBounce(view);
+
+          // Delay navigation to show animation
+          android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+          handler.postDelayed(() -> navigateToChat(), 200);
+        });
+
     chatFloatingActionButton.setOnTouchListener(IntentExtrasManager::dragChatButtonOnTouch);
-    
+
     // Add subtle entrance animation for the FAB
     ButtonAnimationHelper.applyEntranceAnimation(chatFloatingActionButton, 500);
   }

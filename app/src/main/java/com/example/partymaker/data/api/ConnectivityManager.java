@@ -110,9 +110,7 @@ public class ConnectivityManager {
     }
   }
 
-  /**
-   * Performs an active check of the network connectivity
-   */
+  /** Performs an active check of the network connectivity */
   private void performActiveNetworkCheck() {
     new Thread(
             () -> {

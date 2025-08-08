@@ -218,18 +218,19 @@ public class DateManagementViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group data for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.getGroup(
-            currentGroupKey,
+        () ->
+            groupRepository.getGroup(
+                currentGroupKey,
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Group group) {
-                        handleGroupLoaded(group);
-                    }
+                  @Override
+                  public void onSuccess(Group group) {
+                    handleGroupLoaded(group);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleGroupLoadError(error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleGroupLoadError(error);
+                  }
                 }));
   }
 
@@ -332,17 +333,17 @@ public class DateManagementViewModel extends BaseViewModel {
 
             groupRepository.updateGroup(
                 updatedGroup,
-                    new GroupRepository.Callback<>() {
-                        @Override
-                        public void onSuccess(Group result) {
-                            handleUpdateSuccess(result);
-                        }
+                new GroupRepository.Callback<>() {
+                  @Override
+                  public void onSuccess(Group result) {
+                    handleUpdateSuccess(result);
+                  }
 
-                        @Override
-                        public void onError(Exception error) {
-                            handleUpdateError(error);
-                        }
-                    });
+                  @Override
+                  public void onError(Exception error) {
+                    handleUpdateError(error);
+                  }
+                });
 
           } catch (Exception e) {
             Log.e(TAG, "Error creating updated group", e);
@@ -522,7 +523,7 @@ public class DateManagementViewModel extends BaseViewModel {
     }
 
     isDateValid.setValue(valid);
-      validationError.setValue(error);
+    validationError.setValue(error);
   }
 
   private void validateTime(String time) {

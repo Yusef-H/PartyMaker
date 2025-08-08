@@ -143,11 +143,9 @@ public class UserFeedbackManager {
       handler.onSuccess(result.getData());
     } else if (result.isError()) {
       if (result.getErrorType() != null) {
-        UiStateManager.showError(
-            containerView, result.getErrorType(), handler::onRetryRequested);
+        UiStateManager.showError(containerView, result.getErrorType(), handler::onRetryRequested);
       } else {
-        UiStateManager.showError(
-            containerView, result.getError(), handler::onRetryRequested);
+        UiStateManager.showError(containerView, result.getError(), handler::onRetryRequested);
       }
       handler.onError(result.getError(), result.getErrorType());
     }
@@ -203,10 +201,7 @@ public class UserFeedbackManager {
 
     new MaterialAlertDialogBuilder(context)
         .setTitle(title)
-        .setSingleChoiceItems(
-            choices,
-            selectedIndex,
-            (dialog, which) -> selectedItem[0] = which)
+        .setSingleChoiceItems(choices, selectedIndex, (dialog, which) -> selectedItem[0] = which)
         .setPositiveButton(
             "OK",
             (dialog, which) -> {

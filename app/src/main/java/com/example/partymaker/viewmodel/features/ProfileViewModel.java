@@ -11,7 +11,6 @@ import com.example.partymaker.data.api.NetworkUtils;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.auth.AuthenticationManager;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

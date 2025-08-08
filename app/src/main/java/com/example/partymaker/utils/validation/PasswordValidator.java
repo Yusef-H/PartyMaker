@@ -44,9 +44,8 @@ public class PasswordValidator {
     }
 
     // Basic validation passed
-      password.length();
-      return new ValidationResult(true, "Password is valid");
-
+    password.length();
+    return new ValidationResult(true, "Password is valid");
   }
 
   /**

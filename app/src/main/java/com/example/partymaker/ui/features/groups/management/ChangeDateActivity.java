@@ -51,8 +51,9 @@ public class ChangeDateActivity extends AppCompatActivity {
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
-    actionBar.hide();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     // Initialize calendar with current date
     selectedDate = Calendar.getInstance();

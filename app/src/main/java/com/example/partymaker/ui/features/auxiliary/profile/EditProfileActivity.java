@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
@@ -86,16 +84,15 @@ public class EditProfileActivity extends AppCompatActivity {
     androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
     if (toolbar != null) {
       setSupportActionBar(toolbar);
-      
+
       // Enable back button
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
       getSupportActionBar().setDisplayShowHomeEnabled(true);
-      
+
       // Set custom back arrow
       getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
     }
   }
-
 
   // Creates a gradient drawable for the action bar background.
   private GradientDrawable createActionBarGradient() {
@@ -200,8 +197,7 @@ public class EditProfileActivity extends AppCompatActivity {
           // Check network availability before launching image picker
           if (Boolean.FALSE.equals(
               ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
-            AppNetworkError.showErrorMessage(
-                this, NetworkUtils.ErrorType.NO_NETWORK, false);
+            AppNetworkError.showErrorMessage(this, NetworkUtils.ErrorType.NO_NETWORK, false);
             return;
           }
 
@@ -531,10 +527,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
             && ConnectivityManager.getInstance().getNetworkAvailability().getValue();
     if (!isNetworkAvailable) {
-      AppNetworkError.showErrorMessage(
-          this,
-          NetworkUtils.ErrorType.NO_NETWORK,
-          false);
+      AppNetworkError.showErrorMessage(this, NetworkUtils.ErrorType.NO_NETWORK, false);
       return;
     }
 
@@ -749,7 +742,7 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void setupBottomNavigation() {
-    NavigationManager.setupBottomNavigation(this);
+    NavigationManager.setupBottomNavigation(this, "profile");
   }
 
   private void showError(String message) {

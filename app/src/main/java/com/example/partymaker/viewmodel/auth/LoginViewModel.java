@@ -424,34 +424,34 @@ public class LoginViewModel extends BaseViewModel {
 
     userRepository.getUser(
         userKey,
-            new UserRepository.Callback<>() {
-                @Override
-                public void onSuccess(User user) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+        new UserRepository.Callback<>() {
+          @Override
+          public void onSuccess(User user) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.d(TAG, "User profile loaded successfully");
+            Log.d(TAG, "User profile loaded successfully");
 
-                    ThreadUtils.runOnMainThread(
-                            () -> {
-                                setLoading(false);
-                                loginSuccess.setValue(true);
-                                loggedInUser.setValue(user);
-                                setSuccess("Welcome back, " + user.getUsername() + "!");
-                            });
-                }
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  setLoading(false);
+                  loginSuccess.setValue(true);
+                  loggedInUser.setValue(user);
+                  setSuccess("Welcome back, " + user.getUsername() + "!");
+                });
+          }
 
-                @Override
-                public void onError(Exception error) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+          @Override
+          public void onError(Exception error) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.w(TAG, "User profile not found, trying to create new profile", error);
+            Log.w(TAG, "User profile not found, trying to create new profile", error);
 
-                    // Try to create user profile with timeout
-                    createUserProfileFromFirebaseWithTimeout(firebaseUser);
-                }
-            });
+            // Try to create user profile with timeout
+            createUserProfileFromFirebaseWithTimeout(firebaseUser);
+          }
+        });
   }
 
   private void checkAndCreateUserProfile(FirebaseUser firebaseUser) {
@@ -471,32 +471,32 @@ public class LoginViewModel extends BaseViewModel {
 
     userRepository.getUser(
         userKey,
-            new UserRepository.Callback<>() {
-                @Override
-                public void onSuccess(User user) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+        new UserRepository.Callback<>() {
+          @Override
+          public void onSuccess(User user) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.d(TAG, "Existing user profile found");
+            Log.d(TAG, "Existing user profile found");
 
-                    ThreadUtils.runOnMainThread(
-                            () -> {
-                                setLoading(false);
-                                loginSuccess.setValue(true);
-                                loggedInUser.setValue(user);
-                                setSuccess("Welcome back, " + user.getUsername() + "!");
-                            });
-                }
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  setLoading(false);
+                  loginSuccess.setValue(true);
+                  loggedInUser.setValue(user);
+                  setSuccess("Welcome back, " + user.getUsername() + "!");
+                });
+          }
 
-                @Override
-                public void onError(Exception error) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+          @Override
+          public void onError(Exception error) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.d(TAG, "Creating new user profile for Google Sign-In user");
-                    createUserProfileFromFirebaseWithTimeout(firebaseUser);
-                }
-            });
+            Log.d(TAG, "Creating new user profile for Google Sign-In user");
+            createUserProfileFromFirebaseWithTimeout(firebaseUser);
+          }
+        });
   }
 
   private void createUserProfileFromFirebase(FirebaseUser firebaseUser) {
@@ -526,32 +526,32 @@ public class LoginViewModel extends BaseViewModel {
 
     userRepository.createUser(
         newUser,
-            new UserRepository.Callback<>() {
-                @Override
-                public void onSuccess(User user) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+        new UserRepository.Callback<>() {
+          @Override
+          public void onSuccess(User user) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.d(TAG, "User profile created successfully");
+            Log.d(TAG, "User profile created successfully");
 
-                    ThreadUtils.runOnMainThread(
-                            () -> {
-                                setLoading(false);
-                                loginSuccess.setValue(true);
-                                loggedInUser.setValue(user);
-                                setSuccess("Welcome to PartyMaker, " + user.getUsername() + "!");
-                            });
-                }
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  setLoading(false);
+                  loginSuccess.setValue(true);
+                  loggedInUser.setValue(user);
+                  setSuccess("Welcome to PartyMaker, " + user.getUsername() + "!");
+                });
+          }
 
-                @Override
-                public void onError(Exception error) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+          @Override
+          public void onError(Exception error) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.e(TAG, "Failed to create user profile, using offline mode", error);
-                    handleOfflineLogin(firebaseUser, newUser);
-                }
-            });
+            Log.e(TAG, "Failed to create user profile, using offline mode", error);
+            handleOfflineLogin(firebaseUser, newUser);
+          }
+        });
   }
 
   /** Handles login when server is unavailable (offline mode). */
