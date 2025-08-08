@@ -150,7 +150,10 @@ public class LoadingStateManager {
 
     // Update error message if error view has a TextView
     if (errorView instanceof ViewGroup) {
-      TextView errorText = null; // Optional error text view
+      TextView errorText = findTextViewInViewGroup((ViewGroup) errorView);
+      if (errorText != null) {
+        errorText.setText(errorMessage);
+      }
     }
 
     // Animate transitions
@@ -223,6 +226,23 @@ public class LoadingStateManager {
   /** Checks if currently syncing */
   public boolean isNetworkSyncing() {
     return currentState == LoadingState.NETWORK_SYNC;
+  }
+
+  /** Helper method to find a TextView within a ViewGroup */
+  @Nullable
+  private TextView findTextViewInViewGroup(@NonNull ViewGroup viewGroup) {
+    for (int i = 0; i < viewGroup.getChildCount(); i++) {
+      View child = viewGroup.getChildAt(i);
+      if (child instanceof TextView) {
+        return (TextView) child;
+      } else if (child instanceof ViewGroup) {
+        TextView foundTextView = findTextViewInViewGroup((ViewGroup) child);
+        if (foundTextView != null) {
+          return foundTextView;
+        }
+      }
+    }
+    return null;
   }
 
   /** Animates view visibility changes */
