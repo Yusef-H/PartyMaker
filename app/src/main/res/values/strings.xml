@@ -253,9 +253,4 @@
     <string name="run_security_scan">Run Security Scan</string>
     <string name="export_report">Export Report</string>
     <string name="share_report">Share Report</string>
-    <string name="running_security_scan">Running security scan…</string>
-    <string name="scan_completed_successfully">Scan completed successfully</string>
-    <string name="scan_failed">Scan failed: %1$s</string>
-    <string name="grade_with_value">Grade: %1$s</string>
-    <string name="no_security_issues_found">No security issues found!</string>
 </resources>
