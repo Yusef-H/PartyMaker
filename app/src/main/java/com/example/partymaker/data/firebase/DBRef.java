@@ -14,46 +14,55 @@ import com.google.firebase.storage.StorageReference;
 public class DBRef {
   private static final String TAG = "DBRef";
 
+  private static final String GROUPS_PATH = "Groups";
+  private static final String USERS_PATH = "Users";
+  private static final String MESSAGES_PATH = "GroupsMessages";
+
   // Firebase Authentication
-  public static FirebaseAuth Auth;
+  public static FirebaseAuth auth;
 
   // Firebase Realtime Database
-  public static FirebaseDatabase DataBase;
+  public static FirebaseDatabase database;
   public static DatabaseReference refGroups;
   public static DatabaseReference refUsers;
   public static DatabaseReference refMessages;
 
   // Firebase Storage
-  public static FirebaseStorage Storage;
+  public static FirebaseStorage storage;
   public static StorageReference refStorage;
 
   // Current user
-  public static String CurrentUser;
+  public static String currentUser;
 
   /** Initializes all Firebase references. This method should be called in the Application class. */
   public static void init() {
     try {
-      // Initialize Firebase Authentication
-      Auth = FirebaseAuth.getInstance();
-
-      // Initialize Firebase Realtime Database
-      DataBase = FirebaseDatabase.getInstance();
-      refGroups = DataBase.getReference("Groups");
-      refUsers = DataBase.getReference("Users");
-      refMessages = DataBase.getReference("GroupsMessages");
-
-      // Initialize Firebase Storage
-      Storage = FirebaseStorage.getInstance();
-
-      // Fix: Use the root reference instead of a specific path
-      refStorage = Storage.getReference();
-
+      initializeAuthentication();
+      initializeDatabase();
+      initializeStorage();
+      
       Log.d(TAG, "Firebase references initialized successfully");
       Log.d(TAG, "Storage reference path: " + refStorage.getPath());
     } catch (Exception e) {
       Log.e(TAG, "Error initializing Firebase references", e);
       throw new RuntimeException("Failed to initialize Firebase references", e);
     }
+  }
+
+  private static void initializeAuthentication() {
+    auth = FirebaseAuth.getInstance();
+  }
+
+  private static void initializeDatabase() {
+    database = FirebaseDatabase.getInstance();
+    refGroups = database.getReference(GROUPS_PATH);
+    refUsers = database.getReference(USERS_PATH);
+    refMessages = database.getReference(MESSAGES_PATH);
+  }
+
+  private static void initializeStorage() {
+    storage = FirebaseStorage.getInstance();
+    refStorage = storage.getReference();
   }
 
   /**

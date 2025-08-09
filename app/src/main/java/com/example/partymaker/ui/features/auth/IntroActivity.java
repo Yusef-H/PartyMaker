@@ -25,6 +25,18 @@ import com.example.partymaker.viewmodel.auth.IntroViewModel;
  * onboarding flow.
  */
 public class IntroActivity extends AppCompatActivity {
+  
+  // UI constants
+  private static final int DOT_TEXT_SIZE = 35;
+  private static final int PAGE_OFFSET = 1;
+  private static final String DOT_HTML_ENTITY = "&#8226;";
+  
+  // Slide layout resources
+  private static final int[] SLIDE_LAYOUTS = {
+    R.layout.activity_intro_slider1,
+    R.layout.activity_intro_slider2,
+    R.layout.activity_intro_slider3
+  };
 
   /** The ViewPager for intro slides. */
   private ViewPager viewPager;
@@ -34,9 +46,6 @@ public class IntroActivity extends AppCompatActivity {
 
   /** The layout for the bottom dots indicator. */
   private LinearLayout dotsLayout;
-
-  /** The layouts for each intro slide. */
-  private int[] layouts;
 
   /** Skip and Next buttons. */
   private Button btnSkip, btnNext;
@@ -78,12 +87,7 @@ public class IntroActivity extends AppCompatActivity {
     btnSkip = findViewById(R.id.btn_skip);
     btnNext = findViewById(R.id.btn_next);
 
-    layouts =
-        new int[] {
-          R.layout.activity_intro_slider1,
-          R.layout.activity_intro_slider2,
-          R.layout.activity_intro_slider3
-        };
+    // Layouts are now defined as a constant
 
     // adding bottom dots
     addBottomDots(0);
@@ -125,8 +129,8 @@ public class IntroActivity extends AppCompatActivity {
   }
 
   public void btnNextClick(View v) {
-    int current = getItem(1);
-    if (current < layouts.length) {
+    int current = getItem(PAGE_OFFSET);
+    if (current < SLIDE_LAYOUTS.length) {
       viewPager.setCurrentItem(current);
     } else {
       viewModel.onNextClicked();
@@ -139,19 +143,38 @@ public class IntroActivity extends AppCompatActivity {
    * @param currentPage the current page index
    */
   private void addBottomDots(int currentPage) {
-    TextView[] dots = new TextView[layouts.length];
-
-    dotsLayout.removeAllViews();
+    TextView[] dots = createDots();
+    addDotsToLayout(dots);
+    setActiveDot(dots, currentPage);
+  }
+  
+  private TextView[] createDots() {
+    TextView[] dots = new TextView[SLIDE_LAYOUTS.length];
     for (int i = 0; i < dots.length; i++) {
-      dots[i] = new TextView(this);
-      dots[i].setText(Html.fromHtml("&#8226;"));
-      dots[i].setTextSize(35);
-      dots[i].setTextColor(getResources().getColor(R.color.dot_inactive));
-      dotsLayout.addView(dots[i]);
+      dots[i] = createDotTextView();
     }
-
-    if (dots.length > 0)
+    return dots;
+  }
+  
+  private TextView createDotTextView() {
+    TextView dot = new TextView(this);
+    dot.setText(Html.fromHtml(DOT_HTML_ENTITY));
+    dot.setTextSize(DOT_TEXT_SIZE);
+    dot.setTextColor(getResources().getColor(R.color.dot_inactive));
+    return dot;
+  }
+  
+  private void addDotsToLayout(TextView[] dots) {
+    dotsLayout.removeAllViews();
+    for (TextView dot : dots) {
+      dotsLayout.addView(dot);
+    }
+  }
+  
+  private void setActiveDot(TextView[] dots, int currentPage) {
+    if (dots.length > 0 && currentPage >= 0 && currentPage < dots.length) {
       dots[currentPage].setTextColor(getResources().getColor(R.color.dot_active));
+    }
   }
 
   /**
@@ -182,7 +205,7 @@ public class IntroActivity extends AppCompatActivity {
       LayoutInflater layoutInflater =
           (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-      View view = layoutInflater.inflate(layouts[position], container, false);
+      View view = layoutInflater.inflate(SLIDE_LAYOUTS[position], container, false);
       container.addView(view);
 
       return view;
@@ -190,7 +213,7 @@ public class IntroActivity extends AppCompatActivity {
 
     @Override
     public int getCount() {
-      return layouts.length;
+      return SLIDE_LAYOUTS.length;
     }
 
     @Override

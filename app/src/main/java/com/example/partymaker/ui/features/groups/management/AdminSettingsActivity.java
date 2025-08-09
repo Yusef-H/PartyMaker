@@ -35,22 +35,35 @@ import java.io.File;
 import java.util.HashMap;
 
 public class AdminSettingsActivity extends AppCompatActivity {
-  boolean CanAdd;
-  private ImageView imgCanAdd, imgType, imgEditGroup;
-  private ImageButton btnEditName;
-  private String AdminKey,
-      GroupKey,
-      GroupName,
-      GroupDay,
-      GroupMonth,
-      GroupYear,
-      GroupHour,
-      GroupLocation,
-      CreatedAt,
-      GroupPrice;
-  private TextView tvNameGroup, tvCanAdd, tvType;
-  private int GroupType;
-  private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
+  
+  // UI constants
+  private static final String TAG = "AdminSettingsActivity";
+  private static final int REQUEST_CODE_IMAGE_PICK = 100;
+  private static final String PUBLIC_GROUP_TEXT = "Public Group";
+  private static final String PRIVATE_GROUP_TEXT = "Private Group";
+  private static final String EVERYONE_ADD_TEXT = "Everyone Add";
+  private static final String ONLY_ADMIN_TEXT = "Only Admin";
+  private static final String ADMIN_ADD_TEXT = "Admin Add";
+  private static final String COMPRESSION_MESSAGE = "Compressing group image...";
+  private static final String UPLOAD_MESSAGE = "Image compressed successfully. Uploading...";
+  private static final String COMPRESSION_FAILED_MESSAGE = "Compression failed, uploading original image...";
+  private static final String UPDATE_SUCCESS_MESSAGE = "Group image updated successfully";
+  private static final String NAME_CHANGED_MESSAGE = "Name Changed";
+  private static final String DELETE_SUCCESS_MESSAGE = "successfully deleted";
+  
+  // Group settings
+  private boolean canAdd;
+  
+  // UI Components
+  private ImageView addPermissionIcon, typeIcon, groupImageView;
+  private ImageButton editNameButton;
+  private TextView groupNameText, addPermissionText, typeText;
+  
+  // Group data
+  private String adminKey, groupKey, groupName, groupDay, groupMonth, groupYear;
+  private String groupHour, groupLocation, createdAt, groupPrice;
+  private int groupType;
+  private HashMap<String, Object> friendKeys, comingKeys, messageKeys;
 
   @SuppressLint("SetTextI18n")
   @Override
@@ -64,112 +77,37 @@ public class AdminSettingsActivity extends AppCompatActivity {
       actionBar.hide();
     }
 
-    // Get Values from GroupScreen By intent + connection between intent and current
-    // activity objects
-    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
-    if (extras == null) {
-      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
-      finish();
+    // Get Values from GroupScreen By intent
+    if (!extractGroupDataFromIntent()) {
       return;
     }
-    GroupName = extras.getGroupName();
-    GroupKey = extras.getGroupKey();
-    GroupDay = extras.getGroupDays();
-    GroupMonth = extras.getGroupMonths();
-    GroupYear = extras.getGroupYears();
-    GroupHour = extras.getGroupHours();
-    GroupLocation = extras.getGroupLocation();
-    AdminKey = extras.getAdminKey();
-    CreatedAt = extras.getCreatedAt();
-    GroupPrice = extras.getGroupPrice();
-    GroupType = extras.getGroupType();
-    CanAdd = extras.isCanAdd();
-    FriendKeys = extras.getFriendKeys();
-    ComingKeys = extras.getComingKeys();
-    MessageKeys = extras.getMessageKeys();
 
-    // connection
+    // Initialize UI components
+    initializeViews();
     GridLayout groupGrid = findViewById(R.id.GroupGrid);
-    tvCanAdd = findViewById(R.id.tvCanAdd);
-    tvType = findViewById(R.id.tvType);
-    tvNameGroup = findViewById(R.id.tvNameGroup);
-    imgCanAdd = findViewById(R.id.imgCanAdd);
-    imgType = findViewById(R.id.imgType);
-    imgEditGroup = findViewById(R.id.imgEditGroup);
-    btnEditName = findViewById(R.id.btnEditName1);
-    ImageButton btnBack = findViewById(R.id.btnBack); // Initialize back button
+    ImageButton btnBack = findViewById(R.id.btnBack);
 
     // Set up back button click listener
     if (btnBack != null) {
       btnBack.setOnClickListener(v -> navigateBackToPartyMain());
     }
 
-    // group's Picture options
-    DBRef.refStorage
-        .child("UsersImageProfile/Groups/" + GroupKey)
-        .getDownloadUrl()
-        .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgEditGroup))
-        .addOnFailureListener(
-            exception -> {
-              // If image not found in new path, try the old path
-              DBRef.refStorage
-                  .child("Groups/" + GroupKey)
-                  .getDownloadUrl()
-                  .addOnSuccessListener(uri -> Picasso.get().load(uri).into(imgEditGroup))
-                  .addOnFailureListener(
-                      e -> {
-                        // Set default image if both paths fail
-                        imgEditGroup.setImageResource(R.drawable.default_group_image);
-                      });
-            });
+    // Load group image and set initial UI state
+    loadGroupImage();
+    setupInitialUIState();
 
-    // set Group Name
-    tvNameGroup.setText(GroupName);
+    // Setup group type and permission UI
+    updateGroupTypeUI();
+    updateAddPermissionUI();
 
-    // set 1st button if group is private or if group is public
-    if (GroupType == 0) { // if group is public
-      imgType.setImageResource(R.drawable.ic_party_everyone);
-      tvType.setText("Public Group");
-    } else { // if group is private
-      imgType.setImageResource(R.drawable.ic_party_lock);
-      tvType.setText("Private Group");
-    }
-
-    // set 3rd button if all can add it shows that all can if if only admin can add
-    // it shows that only admin can add
-    if (CanAdd) {
-      imgCanAdd.setImageResource(R.drawable.ic_party_everyone);
-      tvCanAdd.setText("Everyone Add");
-    } else {
-      imgCanAdd.setImageResource(R.drawable.ic_party_private);
-      tvCanAdd.setText("Admin Add");
-    }
-
-    // call GroupOptions
-    Options(groupGrid);
-
-    eventHandler();
+    // Setup event handlers and options
+    setupGroupOptions(groupGrid);
+    setupEventHandlers();
   }
 
   private void navigateBackToPartyMain() {
     Intent intent = new Intent(this, PartyMainActivity.class);
-    ExtrasMetadata extras =
-        new ExtrasMetadata(
-            GroupName,
-            GroupKey,
-            GroupDay,
-            GroupMonth,
-            GroupYear,
-            GroupHour,
-            GroupLocation,
-            AdminKey,
-            CreatedAt,
-            GroupPrice,
-            GroupType,
-            CanAdd,
-            FriendKeys,
-            ComingKeys,
-            MessageKeys);
+    ExtrasMetadata extras = createExtrasMetadata();
     IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity to prevent it from staying in the back stack
@@ -183,53 +121,135 @@ public class AdminSettingsActivity extends AppCompatActivity {
     navigateBackToPartyMain();
   }
 
-  private void eventHandler() {
-    // Profile picture on click to change it
-    imgEditGroup.setOnClickListener(
-        v -> {
-          Intent i = new Intent();
-          i.setType("image/*");
-          i.setAction(Intent.ACTION_GET_CONTENT);
-          startActivityForResult(Intent.createChooser(i, "Select Picture"), 100);
+  private boolean extractGroupDataFromIntent() {
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return false;
+    }
+    
+    groupName = extras.getGroupName();
+    groupKey = extras.getGroupKey();
+    groupDay = extras.getGroupDays();
+    groupMonth = extras.getGroupMonths();
+    groupYear = extras.getGroupYears();
+    groupHour = extras.getGroupHours();
+    groupLocation = extras.getGroupLocation();
+    adminKey = extras.getAdminKey();
+    createdAt = extras.getCreatedAt();
+    groupPrice = extras.getGroupPrice();
+    groupType = extras.getGroupType();
+    canAdd = extras.isCanAdd();
+    friendKeys = extras.getFriendKeys();
+    comingKeys = extras.getComingKeys();
+    messageKeys = extras.getMessageKeys();
+    
+    return true;
+  }
+  
+  private void initializeViews() {
+    addPermissionText = findViewById(R.id.tvCanAdd);
+    typeText = findViewById(R.id.tvType);
+    groupNameText = findViewById(R.id.tvNameGroup);
+    addPermissionIcon = findViewById(R.id.imgCanAdd);
+    typeIcon = findViewById(R.id.imgType);
+    groupImageView = findViewById(R.id.imgEditGroup);
+    editNameButton = findViewById(R.id.btnEditName1);
+  }
+  
+  private void loadGroupImage() {
+    DBRef.refStorage
+        .child("UsersImageProfile/Groups/" + groupKey)
+        .getDownloadUrl()
+        .addOnSuccessListener(uri -> Picasso.get().load(uri).into(groupImageView))
+        .addOnFailureListener(
+            exception -> {
+              // If image not found in new path, try the old path
+              DBRef.refStorage
+                  .child("Groups/" + groupKey)
+                  .getDownloadUrl()
+                  .addOnSuccessListener(uri -> Picasso.get().load(uri).into(groupImageView))
+                  .addOnFailureListener(
+                      e -> {
+                        // Set default image if both paths fail
+                        groupImageView.setImageResource(R.drawable.default_group_image);
+                      });
+            });
+  }
+  
+  private void setupInitialUIState() {
+    groupNameText.setText(groupName);
+  }
+  
+  private void updateGroupTypeUI() {
+    if (groupType == 0) { // if group is public
+      typeIcon.setImageResource(R.drawable.ic_party_everyone);
+      typeText.setText(PUBLIC_GROUP_TEXT);
+    } else { // if group is private
+      typeIcon.setImageResource(R.drawable.ic_party_lock);
+      typeText.setText(PRIVATE_GROUP_TEXT);
+    }
+  }
+  
+  private void updateAddPermissionUI() {
+    if (canAdd) {
+      addPermissionIcon.setImageResource(R.drawable.ic_party_everyone);
+      addPermissionText.setText(EVERYONE_ADD_TEXT);
+    } else {
+      addPermissionIcon.setImageResource(R.drawable.ic_party_private);
+      addPermissionText.setText(ADMIN_ADD_TEXT);
+    }
+  }
+  
+  private ExtrasMetadata createExtrasMetadata() {
+    return new ExtrasMetadata(
+        groupName, groupKey, groupDay, groupMonth, groupYear, groupHour,
+        groupLocation, adminKey, createdAt, groupPrice, groupType, canAdd,
+        friendKeys, comingKeys, messageKeys);
+  }
+  
+  private void setupEventHandlers() {
+    groupImageView.setOnClickListener(v -> selectImageFromGallery());
+    editNameButton.setOnClickListener(v -> showEditNameDialog());
+  }
+  
+  private void selectImageFromGallery() {
+    Intent intent = new Intent();
+    intent.setType("image/*");
+    intent.setAction(Intent.ACTION_GET_CONTENT);
+    startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE_IMAGE_PICK);
+  }
+  
+  private void showEditNameDialog() {
+    final EditText editText = new EditText(AdminSettingsActivity.this);
+    AlertDialog.Builder alert = new AlertDialog.Builder(AdminSettingsActivity.this);
+    alert.setMessage("Input new name below");
+    alert.setTitle("Change party's name");
+    alert.setView(editText);
+
+    alert.setPositiveButton(
+        "Change name",
+        (dialog, whichButton) -> {
+          groupName = editText.getText().toString();
+          DBRef.refGroups.child(groupKey).child(GROUP_NAME).setValue(groupName);
+          groupNameText.setText(groupName);
+          Toast.makeText(AdminSettingsActivity.this, NAME_CHANGED_MESSAGE, Toast.LENGTH_SHORT)
+              .show();
         });
-    btnEditName.setOnClickListener(
-        v -> {
-          final EditText edittext = new EditText(AdminSettingsActivity.this);
-          AlertDialog.Builder alert = new AlertDialog.Builder(AdminSettingsActivity.this);
-          alert.setMessage("Input new name below");
-          alert.setTitle("Change party's name");
 
-          alert.setView(edittext);
-
-          alert.setPositiveButton(
-              "Change name",
-              (dialog, whichButton) -> {
-                // if pressed changed name
-                GroupName = edittext.getText().toString();
-                DBRef.refGroups.child(GroupKey).child(GROUP_NAME).setValue(GroupName);
-                tvNameGroup.setText(GroupName);
-                Toast.makeText(AdminSettingsActivity.this, "Name Changed", Toast.LENGTH_SHORT)
-                    .show();
-              });
-
-          alert.setNegativeButton(
-              "Back",
-              (dialog, whichButton) -> {
-                // what ever you want to do with Back.
-              });
-
-          alert.show();
-        });
+    alert.setNegativeButton("Back", (dialog, whichButton) -> {});
+    alert.show();
   }
 
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (resultCode == Activity.RESULT_OK) {
-      if (requestCode == 100) {
+      if (requestCode == REQUEST_CODE_IMAGE_PICK) {
         Uri uri = data.getData();
         if (null != uri) {
           // Show compression progress
-          Toast.makeText(this, "Compressing group image...", Toast.LENGTH_SHORT).show();
+          Toast.makeText(this, COMPRESSION_MESSAGE, Toast.LENGTH_SHORT).show();
 
           // First compress the image to reduce size and improve upload speed
           ImageCompressor.compressImage(
@@ -241,12 +261,9 @@ public class AdminSettingsActivity extends AppCompatActivity {
                   ThreadUtils.runOnMainThread(
                       () -> {
                         Uri compressedUri = Uri.fromFile(compressedFile);
-                        ((ImageView) findViewById(R.id.imgEditGroup)).setImageURI(compressedUri);
+                        groupImageView.setImageURI(compressedUri);
 
-                        Toast.makeText(
-                                AdminSettingsActivity.this,
-                                "Image compressed successfully. Uploading...",
-                                Toast.LENGTH_SHORT)
+                        Toast.makeText(AdminSettingsActivity.this, UPLOAD_MESSAGE, Toast.LENGTH_SHORT)
                             .show();
 
                         // Upload the compressed image
@@ -258,12 +275,9 @@ public class AdminSettingsActivity extends AppCompatActivity {
                 public void onCompressError(String error) {
                   ThreadUtils.runOnMainThread(
                       () -> {
-                        Toast.makeText(
-                                AdminSettingsActivity.this,
-                                "Compression failed, uploading original image...",
-                                Toast.LENGTH_SHORT)
+                        Toast.makeText(AdminSettingsActivity.this, COMPRESSION_FAILED_MESSAGE, Toast.LENGTH_SHORT)
                             .show();
-                        ((ImageView) findViewById(R.id.imgEditGroup)).setImageURI(uri);
+                        groupImageView.setImageURI(uri);
 
                         // Upload original image if compression fails
                         uploadGroupImage(uri);
@@ -282,14 +296,11 @@ public class AdminSettingsActivity extends AppCompatActivity {
    */
   private void uploadGroupImage(Uri uri) {
     DBRef.refStorage
-        .child("UsersImageProfile/Groups/" + GroupKey)
+        .child("UsersImageProfile/Groups/" + groupKey)
         .putFile(uri)
         .addOnSuccessListener(
             taskSnapshot ->
-                Toast.makeText(
-                        AdminSettingsActivity.this,
-                        "Group image updated successfully",
-                        Toast.LENGTH_SHORT)
+                Toast.makeText(AdminSettingsActivity.this, UPDATE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT)
                     .show())
         .addOnFailureListener(
             exception ->
@@ -301,43 +312,22 @@ public class AdminSettingsActivity extends AppCompatActivity {
   }
 
   @SuppressLint("SetTextI18n")
-  private void Options(GridLayout GroupGrid) {
+  private void setupGroupOptions(GridLayout groupGrid) {
     // Loop all child item of Main Grid
-    for (int i = 0; i < GroupGrid.getChildCount(); i++) {
+    for (int i = 0; i < groupGrid.getChildCount(); i++) {
       // You can see , all child item is CardView , so we just cast object to CardView
-      final CardView cardView = (CardView) GroupGrid.getChildAt(i);
+      final CardView cardView = (CardView) groupGrid.getChildAt(i);
       final int finalI = i;
       cardView.setOnClickListener(
           view -> {
-            if (finalI == 0) // open 1,1 (1) Change GroupType to Public/Private
+            if (finalI == 0) // Change GroupType to Public/Private
             {
-              if (GroupType == 0) {
-                imgType.setImageResource(R.drawable.ic_party_lock);
-                tvType.setText("Private Group");
-                GroupType = 1;
-                DBRef.refGroups.child(GroupKey).child("groupType").setValue(1);
-              } else {
-                imgType.setImageResource(R.drawable.ic_party_everyone);
-                tvType.setText("Public Group");
-                GroupType = 0;
-                DBRef.refGroups.child(GroupKey).child("groupType").setValue(0);
-              }
-            } else if (finalI == 1) // open 1,2 (2) set if anyone can add/only admin can add
+              toggleGroupType();
+            } else if (finalI == 1) // set if anyone can add/only admin can add
             {
+              toggleAddPermission();
 
-              if (CanAdd) {
-                imgCanAdd.setImageResource(R.drawable.ic_party_private);
-                tvCanAdd.setText("Only Admin");
-                CanAdd = false;
-                DBRef.refGroups.child(GroupKey).child("canAdd").setValue(false);
-              } else {
-                imgCanAdd.setImageResource(R.drawable.ic_party_everyone);
-                tvCanAdd.setText("Everyone Add");
-                CanAdd = true;
-                DBRef.refGroups.child(GroupKey).child("canAdd").setValue(true);
-              }
-
-            } else if (finalI == 2) // open 2,1 (3) Delete Group
+            } else if (finalI == 2) // Delete Group
             {
               // Show confirmation dialog before deleting
               new AlertDialog.Builder(AdminSettingsActivity.this)
@@ -347,21 +337,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
                   .setPositiveButton(
                       "Delete",
                       (dialog, which) -> {
-                        // delete all messages written by current group
-                        deleteMessages();
-
-                        // delete group from database
-                        DBRef.refGroups.child(GroupKey).removeValue();
-
-                        // delete group's picture
-                        DBRef.refStorage.child("Groups/" + GroupKey).delete();
-
-                        // if it went successfully so toast write it
-                        Toast.makeText(
-                                AdminSettingsActivity.this,
-                                "successfully deleted",
-                                Toast.LENGTH_SHORT)
-                            .show();
+                        deleteGroup();
 
                         // intent from GroupScreen to MainMenu
                         Intent intent = new Intent(getBaseContext(), MainActivity.class);
@@ -369,7 +345,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
                       })
                   .setNegativeButton("Cancel", null)
                   .show();
-            } else if (finalI == 3) // open 2,2 (4) Back
+            } else if (finalI == 3) // Back
             {
               // Navigate back to PartyMainActivity
               navigateBackToPartyMain();
@@ -378,7 +354,54 @@ public class AdminSettingsActivity extends AppCompatActivity {
     }
   }
 
-  private void deleteMessages() {
+  private void toggleGroupType() {
+    if (groupType == 0) {
+      typeIcon.setImageResource(R.drawable.ic_party_lock);
+      typeText.setText(PRIVATE_GROUP_TEXT);
+      groupType = 1;
+      DBRef.refGroups.child(groupKey).child("groupType").setValue(1);
+    } else {
+      typeIcon.setImageResource(R.drawable.ic_party_everyone);
+      typeText.setText(PUBLIC_GROUP_TEXT);
+      groupType = 0;
+      DBRef.refGroups.child(groupKey).child("groupType").setValue(0);
+    }
+  }
+  
+  private void toggleAddPermission() {
+    if (canAdd) {
+      addPermissionIcon.setImageResource(R.drawable.ic_party_private);
+      addPermissionText.setText(ONLY_ADMIN_TEXT);
+      canAdd = false;
+      DBRef.refGroups.child(groupKey).child("canAdd").setValue(false);
+    } else {
+      addPermissionIcon.setImageResource(R.drawable.ic_party_everyone);
+      addPermissionText.setText(EVERYONE_ADD_TEXT);
+      canAdd = true;
+      DBRef.refGroups.child(groupKey).child("canAdd").setValue(true);
+    }
+  }
+  
+  private void deleteGroup() {
+    // delete all messages written by current group
+    deleteGroupMessages();
+
+    // delete group from database
+    DBRef.refGroups.child(groupKey).removeValue();
+
+    // delete group's picture
+    DBRef.refStorage.child("Groups/" + groupKey).delete();
+
+    // Show success message
+    Toast.makeText(AdminSettingsActivity.this, DELETE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT)
+        .show();
+
+    // Navigate to main activity
+    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+    startActivity(intent);
+  }
+  
+  private void deleteGroupMessages() {
     DBRef.refMessages.addListenerForSingleValueEvent(
         new ValueEventListener() {
           @Override
@@ -386,7 +409,7 @@ public class AdminSettingsActivity extends AppCompatActivity {
             for (DataSnapshot data : dataSnapshot.getChildren()) {
               ChatMessage message = data.getValue(ChatMessage.class);
               if (message != null && message.getGroupId() != null) {
-                if (message.getGroupId().equals(GroupKey)) {
+                if (message.getGroupId().equals(groupKey)) {
                   data.getRef().removeValue();
                 }
               }

@@ -21,6 +21,15 @@ import com.example.partymaker.R;
  * consistent caching and error handling.
  */
 public class GlideImageLoader {
+  
+  // Animation constants
+  private static final int CROSSFADE_DURATION_MS = 200;
+  
+  // Timeout constants
+  private static final int NETWORK_TIMEOUT_MS = 10000; // 10 seconds
+  
+  // Default placeholder
+  private static final int DEFAULT_PLACEHOLDER = R.drawable.default_profile_image;
 
   /**
    * Loads an image from a URL into an ImageView.
@@ -30,7 +39,7 @@ public class GlideImageLoader {
    * @param imageView The ImageView to load the image into
    */
   public static void loadImage(Context context, String imageUrl, ImageView imageView) {
-    loadImage(context, imageUrl, imageView, R.drawable.default_profile_image);
+    loadImage(context, imageUrl, imageView, DEFAULT_PLACEHOLDER);
   }
 
   /**
@@ -56,7 +65,7 @@ public class GlideImageLoader {
             .load(imageUrl)
             .apply(getRecyclerViewRequestOptions(placeholderResId))
             .transition(
-                DrawableTransitionOptions.withCrossFade(200)) // Shorter crossfade for better UX
+                DrawableTransitionOptions.withCrossFade(CROSSFADE_DURATION_MS)) // Shorter crossfade for better UX
             .listener(
                 new RequestListener<>() {
                   @Override
@@ -100,7 +109,7 @@ public class GlideImageLoader {
 
     Glide.with(context)
         .load(imageUrl)
-        .apply(getDefaultRequestOptions(R.drawable.default_profile_image).circleCrop())
+        .apply(getDefaultRequestOptions(DEFAULT_PLACEHOLDER).circleCrop())
         .into(imageView);
   }
 
@@ -117,10 +126,7 @@ public class GlideImageLoader {
 
     Glide.with(context)
         .load(imageUrl)
-        .apply(
-            new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .timeout(10000)) // 10 second timeout
+        .apply(createPreloadRequestOptions())
         .preload();
   }
 
@@ -215,7 +221,14 @@ public class GlideImageLoader {
         .fallback(placeholderResId)
         .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache both original and resized images
         .skipMemoryCache(false) // Enable memory caching for better performance
-        .timeout(10000) // 10 second timeout for network requests
+        .timeout(NETWORK_TIMEOUT_MS) // 10 second timeout for network requests
         .dontTransform(); // Prevent unnecessary transformations for better performance
+  }
+  
+  /** Create request options for preloading */
+  private static RequestOptions createPreloadRequestOptions() {
+    return new RequestOptions()
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .timeout(NETWORK_TIMEOUT_MS);
   }
 }

@@ -26,6 +26,12 @@ public class ImageCompressor {
   private static final int MAX_WIDTH = 1024;
   private static final int MAX_HEIGHT = 1024;
   private static final int QUALITY = 80;
+  private static final String COMPRESSED_FILE_PREFIX = "compressed_";
+  private static final String JPG_EXTENSION = ".jpg";
+  private static final int SAMPLE_SIZE_MULTIPLIER = 2;
+  private static final int ROTATION_90 = 90;
+  private static final int ROTATION_180 = 180;
+  private static final int ROTATION_270 = 270;
 
   private static final Executor executor = Executors.newSingleThreadExecutor();
 
@@ -37,20 +43,21 @@ public class ImageCompressor {
    * @param callback Callback to receive the compressed image file
    */
   public static void compressImage(Context context, Uri imageUri, CompressCallback callback) {
-    executor.execute(
-        () -> {
-          try {
-            File compressedFile = compressImageInternal(context, imageUri);
-            if (compressedFile != null) {
-              callback.onCompressSuccess(compressedFile);
-            } else {
-              callback.onCompressError("Failed to compress image");
-            }
-          } catch (Exception e) {
-            Log.e(TAG, "Error compressing image", e);
-            callback.onCompressError("Error: " + e.getMessage());
-          }
-        });
+    executor.execute(() -> performImageCompression(context, imageUri, callback));
+  }
+
+  private static void performImageCompression(Context context, Uri imageUri, CompressCallback callback) {
+    try {
+      File compressedFile = compressImageInternal(context, imageUri);
+      if (compressedFile != null) {
+        callback.onCompressSuccess(compressedFile);
+      } else {
+        callback.onCompressError("Failed to compress image");
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error compressing image", e);
+      callback.onCompressError("Error: " + e.getMessage());
+    }
   }
 
   /**
@@ -62,35 +69,43 @@ public class ImageCompressor {
    */
   private static File compressImageInternal(Context context, Uri imageUri) {
     try {
-      // Create a temporary file to store the compressed image
-      File outputDir = context.getCacheDir();
-      File outputFile = new File(outputDir, "compressed_" + UUID.randomUUID().toString() + ".jpg");
-
-      // Load the bitmap with appropriate sampling to avoid OOM
-      Bitmap bitmap = loadScaledBitmapFromUri(context, imageUri, MAX_WIDTH, MAX_HEIGHT);
+      File outputFile = createOutputFile(context);
+      Bitmap bitmap = loadAndProcessBitmap(context, imageUri);
+      
       if (bitmap == null) {
         return null;
       }
 
-      // Rotate the bitmap if needed
-      bitmap = rotateBitmapIfNeeded(context, imageUri, bitmap);
-
-      // Compress the bitmap to the output file
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream);
-
-      FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
-      fileOutputStream.write(outputStream.toByteArray());
-      fileOutputStream.flush();
-      fileOutputStream.close();
-
-      // Recycle the bitmap to free memory
-      bitmap.recycle();
-
-      return outputFile;
+      return saveBitmapToFile(bitmap, outputFile);
     } catch (Exception e) {
       Log.e(TAG, "Error compressing image", e);
       return null;
+    }
+  }
+
+  private static File createOutputFile(Context context) {
+    File outputDir = context.getCacheDir();
+    return new File(outputDir, COMPRESSED_FILE_PREFIX + UUID.randomUUID().toString() + JPG_EXTENSION);
+  }
+
+  private static Bitmap loadAndProcessBitmap(Context context, Uri imageUri) {
+    Bitmap bitmap = loadScaledBitmapFromUri(context, imageUri, MAX_WIDTH, MAX_HEIGHT);
+    if (bitmap != null) {
+      bitmap = rotateBitmapIfNeeded(context, imageUri, bitmap);
+    }
+    return bitmap;
+  }
+
+  private static File saveBitmapToFile(Bitmap bitmap, File outputFile) throws IOException {
+    try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+         FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+      
+      bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream);
+      fileOutputStream.write(outputStream.toByteArray());
+      fileOutputStream.flush();
+      
+      bitmap.recycle();
+      return outputFile;
     }
   }
 
@@ -145,19 +160,29 @@ public class ImageCompressor {
    * @param maxHeight The maximum height
    * @return The sample size
    */
-  private static int calculateInSampleSize(
-      BitmapFactory.Options options, int maxWidth, int maxHeight) {
+  private static int calculateInSampleSize(BitmapFactory.Options options, int maxWidth, int maxHeight) {
     int height = options.outHeight;
     int width = options.outWidth;
     int sampleSize = 1;
 
-    if (height > maxHeight || width > maxWidth) {
-      int halfHeight = height / 2;
-      int halfWidth = width / 2;
+    if (needsScaling(height, width, maxHeight, maxWidth)) {
+      sampleSize = calculateOptimalSampleSize(height, width, maxHeight, maxWidth);
+    }
 
-      while ((halfHeight / sampleSize) >= maxHeight && (halfWidth / sampleSize) >= maxWidth) {
-        sampleSize *= 2;
-      }
+    return sampleSize;
+  }
+
+  private static boolean needsScaling(int height, int width, int maxHeight, int maxWidth) {
+    return height > maxHeight || width > maxWidth;
+  }
+
+  private static int calculateOptimalSampleSize(int height, int width, int maxHeight, int maxWidth) {
+    int sampleSize = 1;
+    int halfHeight = height / 2;
+    int halfWidth = width / 2;
+
+    while ((halfHeight / sampleSize) >= maxHeight && (halfWidth / sampleSize) >= maxWidth) {
+      sampleSize *= SAMPLE_SIZE_MULTIPLIER;
     }
 
     return sampleSize;
@@ -184,24 +209,30 @@ public class ImageCompressor {
       inputStream.close();
 
       Matrix matrix = new Matrix();
-      switch (orientation) {
-        case ExifInterface.ORIENTATION_ROTATE_90:
-          matrix.postRotate(90);
-          break;
-        case ExifInterface.ORIENTATION_ROTATE_180:
-          matrix.postRotate(180);
-          break;
-        case ExifInterface.ORIENTATION_ROTATE_270:
-          matrix.postRotate(270);
-          break;
-        default:
-          return bitmap;
+      float rotationAngle = getRotationAngle(orientation);
+      if (rotationAngle == 0) {
+        return bitmap;
       }
+      
+      matrix.postRotate(rotationAngle);
 
       return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     } catch (IOException e) {
       Log.e(TAG, "Error rotating bitmap", e);
       return bitmap;
+    }
+  }
+
+  private static float getRotationAngle(int orientation) {
+    switch (orientation) {
+      case ExifInterface.ORIENTATION_ROTATE_90:
+        return ROTATION_90;
+      case ExifInterface.ORIENTATION_ROTATE_180:
+        return ROTATION_180;
+      case ExifInterface.ORIENTATION_ROTATE_270:
+        return ROTATION_270;
+      default:
+        return 0;
     }
   }
 

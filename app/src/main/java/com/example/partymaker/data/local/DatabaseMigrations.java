@@ -7,35 +7,59 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 /**
  * Database migration strategies for Room database. Handles schema changes while preserving user
- * data.
+ * data. Each migration is carefully designed to maintain data integrity during upgrades.
  *
  * @noinspection ALL
  */
 public class DatabaseMigrations {
   private static final String TAG = "DatabaseMigrations";
+  
+  // Database version constants
+  private static final int VERSION_1 = 1;
+  private static final int VERSION_2 = 2;
+  private static final int VERSION_3 = 3;
+  private static final int VERSION_4 = 4;
+  private static final int VERSION_5 = 5;
+  private static final int VERSION_6 = 6;
+  
+  // Default values for new columns
+  private static final String DEFAULT_INTEGER_FALSE = "0";
+  private static final String DEFAULT_INTEGER_TRUE = "1";
+  private static final String DEFAULT_TEXT_EMPTY = "''";
+  private static final String DEFAULT_MESSAGE_TYPE = "'TEXT'";
+  private static final String DEFAULT_GROUP_TYPE = "'GENERAL'";
+  private static final String DEFAULT_CATEGORY = "'OTHER'";
+  private static final int DEFAULT_MAX_PARTICIPANTS = -1;
+  private static final double DEFAULT_GROUP_PRICE = 0.0;
+  
+  // Table names
+  private static final String TABLE_GROUPS = "groups";
+  private static final String TABLE_USERS = "users";
+  private static final String TABLE_CHAT_MESSAGES = "chat_messages";
+  private static final String TABLE_USER_PREFERENCES = "user_preferences";
+  
+  // Prevent instantiation
+  private DatabaseMigrations() {
+    // Utility class for database migrations
+  }
 
   /** Migration from version 1 to 2 Example: Adding a new column to existing tables */
   public static final Migration MIGRATION_1_2 =
-      new Migration(1, 2) {
+      new Migration(VERSION_1, VERSION_2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
           try {
             Log.d(TAG, "Starting migration from version 1 to 2");
 
-            // Example: Add new columns
-            database.execSQL("ALTER TABLE groups ADD COLUMN isPrivate INTEGER NOT NULL DEFAULT 0");
-            database.execSQL(
-                "ALTER TABLE users ADD COLUMN lastActiveTime INTEGER NOT NULL DEFAULT 0");
-            database.execSQL(
-                "ALTER TABLE chat_messages ADD COLUMN messageType TEXT NOT NULL DEFAULT 'TEXT'");
+            // Add new columns with proper defaults
+            addColumnToTable(database, TABLE_GROUPS, "isPrivate", "INTEGER NOT NULL DEFAULT " + DEFAULT_INTEGER_FALSE);
+            addColumnToTable(database, TABLE_USERS, "lastActiveTime", "INTEGER NOT NULL DEFAULT " + DEFAULT_INTEGER_FALSE);
+            addColumnToTable(database, TABLE_CHAT_MESSAGES, "messageType", "TEXT NOT NULL DEFAULT " + DEFAULT_MESSAGE_TYPE);
 
-            // Example: Create indexes for better performance
-            database.execSQL(
-                "CREATE INDEX IF NOT EXISTS index_groups_isPrivate ON groups(isPrivate)");
-            database.execSQL(
-                "CREATE INDEX IF NOT EXISTS index_users_lastActiveTime ON users(lastActiveTime)");
-            database.execSQL(
-                "CREATE INDEX IF NOT EXISTS index_chat_messages_messageType ON chat_messages(messageType)");
+            // Create indexes for better performance
+            createIndexIfNotExists(database, "index_groups_isPrivate", TABLE_GROUPS, "isPrivate");
+            createIndexIfNotExists(database, "index_users_lastActiveTime", TABLE_USERS, "lastActiveTime");
+            createIndexIfNotExists(database, "index_chat_messages_messageType", TABLE_CHAT_MESSAGES, "messageType");
 
             Log.d(TAG, "Successfully migrated from version 1 to 2");
 
@@ -48,7 +72,7 @@ public class DatabaseMigrations {
 
   /** Migration from version 4 to 5: Adding encryption field to ChatMessage */
   public static final Migration MIGRATION_4_5 =
-      new Migration(4, 5) {
+      new Migration(VERSION_4, VERSION_5) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
           try {
@@ -104,7 +128,7 @@ public class DatabaseMigrations {
 
   /** Migration from version 5 to 6: Fix schema validation for encrypted field */
   public static final Migration MIGRATION_5_6 =
-      new Migration(5, 6) {
+      new Migration(VERSION_5, VERSION_6) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
           try {
@@ -124,7 +148,7 @@ public class DatabaseMigrations {
 
   /** Migration from version 2 to 3 Example: Adding new tables and relationships */
   public static final Migration MIGRATION_2_3 =
-      new Migration(2, 3) {
+      new Migration(VERSION_2, VERSION_3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
           try {
@@ -163,7 +187,7 @@ public class DatabaseMigrations {
 
   /** Migration from version 3 to 4 Example: Data transformation and cleanup */
   public static final Migration MIGRATION_3_4 =
-      new Migration(3, 4) {
+      new Migration(VERSION_3, VERSION_4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
           try {
@@ -229,7 +253,7 @@ public class DatabaseMigrations {
    * integrity is compromised
    */
   public static final Migration EMERGENCY_CLEAR_ALL =
-      new Migration(1, 4) {
+      new Migration(VERSION_1, VERSION_4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
           Log.w(TAG, "Performing emergency migration - all data will be lost");
@@ -307,6 +331,34 @@ public class DatabaseMigrations {
           database.execSQL("CREATE INDEX IF NOT EXISTS `index_users_email` ON `users`(`email`)");
         }
       };
+  
+  // Migration helper methods
+  
+  /**
+   * Helper method to add a column to a table
+   * 
+   * @param database The database instance
+   * @param tableName The table name
+   * @param columnName The column name
+   * @param columnDefinition The column definition
+   */
+  private static void addColumnToTable(SupportSQLiteDatabase database, String tableName, String columnName, String columnDefinition) {
+    String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + columnDefinition;
+    database.execSQL(sql);
+  }
+  
+  /**
+   * Helper method to create an index if it doesn't exist
+   * 
+   * @param database The database instance
+   * @param indexName The index name
+   * @param tableName The table name
+   * @param columnName The column name
+   */
+  private static void createIndexIfNotExists(SupportSQLiteDatabase database, String indexName, String tableName, String columnName) {
+    String sql = "CREATE INDEX IF NOT EXISTS " + indexName + " ON " + tableName + "(" + columnName + ")";
+    database.execSQL(sql);
+  }
 
   /** Get all available migrations in order */
   public static Migration[] getAllMigrations() {

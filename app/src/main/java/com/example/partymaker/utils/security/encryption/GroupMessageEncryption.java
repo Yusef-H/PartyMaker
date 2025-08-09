@@ -32,6 +32,18 @@ public class GroupMessageEncryption {
   private static final int AES_KEY_SIZE = 256;
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
+  
+  // Validation constants
+  private static final int MIN_ENCRYPTED_MESSAGE_LENGTH = 20;
+  private static final int MIN_ENCRYPTED_DATA_LENGTH = GCM_IV_LENGTH + GCM_TAG_LENGTH;
+  private static final int TAG_LENGTH_BITS = GCM_TAG_LENGTH * 8;
+  private static final int AES_KEY_BYTES = AES_KEY_SIZE / 8;
+  
+  // Storage constants
+  private static final String GROUP_KEY_PREFIX = "group_";
+  
+  // Regex patterns
+  private static final String BASE64_PATTERN = "^[A-Za-z0-9+/]*={0,2}$";
 
   private final String currentUserId;
   private final SecureRandom secureRandom;
@@ -70,7 +82,7 @@ public class GroupMessageEncryption {
 
       // Encrypt with AES-GCM
       Cipher cipher = Cipher.getInstance(ALGORITHM);
-      GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+      GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
       cipher.init(Cipher.ENCRYPT_MODE, groupKey, gcmSpec);
 
       byte[] ciphertext = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
@@ -117,7 +129,7 @@ public class GroupMessageEncryption {
       byte[] encryptedData = Base64.decode(encryptedMessage, Base64.NO_WRAP);
 
       // Validate minimum length
-      if (encryptedData.length < GCM_IV_LENGTH + GCM_TAG_LENGTH) {
+      if (encryptedData.length < MIN_ENCRYPTED_DATA_LENGTH) {
         Log.w(TAG, "Encrypted data too short for group: " + groupId);
         return encryptedMessage;
       }
@@ -132,7 +144,7 @@ public class GroupMessageEncryption {
 
       // Decrypt with AES-GCM
       Cipher cipher = Cipher.getInstance(ALGORITHM);
-      GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+      GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
       cipher.init(Cipher.DECRYPT_MODE, groupKey, gcmSpec);
 
       byte[] plaintext = cipher.doFinal(ciphertext);
@@ -222,7 +234,7 @@ public class GroupMessageEncryption {
 
       // Store in user's secure storage
       String keyBase64 = Base64.encodeToString(groupKey.getEncoded(), Base64.NO_WRAP);
-      userStorage.putString("group_key_" + groupId, keyBase64);
+      userStorage.putString(GROUP_KEY_PREFIX + groupId, keyBase64);
 
       // Cache for performance
       groupKeyCache.put(groupId, groupKey);
@@ -247,13 +259,13 @@ public class GroupMessageEncryption {
     try {
       // Validate key format
       byte[] keyBytes = Base64.decode(keyBase64, Base64.NO_WRAP);
-      if (keyBytes.length != 32) { // 256 bits = 32 bytes
+      if (keyBytes.length != AES_KEY_BYTES) { // 256 bits = 32 bytes
         Log.e(TAG, "Invalid group key length for: " + groupId);
         return false;
       }
 
       // Store in user's secure storage
-      userStorage.putString("group_key_" + groupId, keyBase64);
+      userStorage.putString(GROUP_KEY_PREFIX + groupId, keyBase64);
 
       // Cache for performance
       SecretKey groupKey = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
@@ -282,7 +294,7 @@ public class GroupMessageEncryption {
       }
 
       // Load from secure storage
-      String keyBase64 = userStorage.getString("group_key_" + groupId, null);
+      String keyBase64 = userStorage.getString(GROUP_KEY_PREFIX + groupId, null);
       if (keyBase64 == null) {
         Log.w(TAG, "No stored key found for group: " + groupId);
         return null;
@@ -308,7 +320,7 @@ public class GroupMessageEncryption {
    */
   public void removeGroupKey(String groupId) {
     try {
-      userStorage.remove("group_key_" + groupId);
+      userStorage.remove(GROUP_KEY_PREFIX + groupId);
       groupKeyCache.remove(groupId);
       Log.i(TAG, "Removed group key for: " + groupId);
     } catch (Exception e) {
@@ -323,7 +335,7 @@ public class GroupMessageEncryption {
    * @return true if user has the group key
    */
   public boolean hasGroupKey(String groupId) {
-    return groupKeyCache.containsKey(groupId) || userStorage.contains("group_key_" + groupId);
+    return groupKeyCache.containsKey(groupId) || userStorage.contains(GROUP_KEY_PREFIX + groupId);
   }
 
   /**
@@ -334,7 +346,7 @@ public class GroupMessageEncryption {
    */
   public String getGroupKeyForSharing(String groupId) {
     try {
-      return userStorage.getString("group_key_" + groupId, null);
+      return userStorage.getString(GROUP_KEY_PREFIX + groupId, null);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get group key for sharing: " + groupId, e);
       return null;
@@ -360,12 +372,12 @@ public class GroupMessageEncryption {
    * @return true if appears encrypted
    */
   private boolean isMessageEncrypted(String message) {
-    if (message == null || message.length() < 20) {
+    if (message == null || message.length() < MIN_ENCRYPTED_MESSAGE_LENGTH) {
       return false;
     }
 
     // Base64 pattern check
-    return message.matches("^[A-Za-z0-9+/]*={0,2}$") && message.length() > 20;
+    return message.matches(BASE64_PATTERN) && message.length() > MIN_ENCRYPTED_MESSAGE_LENGTH;
   }
 
   /**

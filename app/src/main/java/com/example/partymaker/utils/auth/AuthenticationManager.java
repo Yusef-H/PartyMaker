@@ -15,13 +15,19 @@ import com.google.firebase.auth.FirebaseUser;
  * information and clearing auth data.
  */
 public class AuthenticationManager {
-  private static final String TAG = "AuthHelper";
+  private static final String TAG = "AuthenticationManager";
   private static final String PREFS_NAME = "PartyMakerPrefs";
+  
+  // SharedPreferences keys
   private static final String KEY_USER_EMAIL = "user_email";
   private static final String KEY_SESSION_ACTIVE = "session_active";
   private static final String KEY_LAST_LOGIN_TIME = "last_login_time";
   private static final String KEY_SERVER_MODE_EMAIL = "server_mode_email";
   private static final String KEY_SERVER_MODE_ACTIVE = "server_mode_active";
+  
+  // Session duration constants
+  private static final long SESSION_DURATION_DAYS = 30L;
+  private static final long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
 
   /**
    * Gets the current user's email from Firebase Auth or SharedPreferences as fallback
@@ -199,8 +205,12 @@ public class AuthenticationManager {
     }
 
     Log.d(TAG, "Clearing all user data including Room database");
-
-    // Clear repositories cache first
+    
+    clearRepositoryCaches();
+    clearRoomDatabase(context);
+  }
+  
+  private static void clearRepositoryCaches() {
     try {
       GroupRepository.getInstance().clearCache();
       UserRepository.getInstance().clearCache();
@@ -208,36 +218,36 @@ public class AuthenticationManager {
     } catch (Exception e) {
       Log.e(TAG, "Error clearing repository caches", e);
     }
-
-    // Clear Room database in background thread but wait for completion
+  }
+  
+  private static void clearRoomDatabase(Context context) {
     ThreadUtils.runInBackground(
         () -> {
           try {
             AppDatabase database = AppDatabase.getInstance(context);
-            database.groupDao().deleteAllGroups();
-            database.userDao().deleteAllUsers();
-
-            // Also clear chat messages if needed
-            if (database.chatMessageDao() != null) {
-              database.chatMessageDao().deleteAllMessages();
-            }
-
+            clearDatabaseTables(database);
+            verifyDatabaseCleared(database);
             Log.d(TAG, "Room database cleared successfully");
-
-            // Additional verification: check that database is actually empty
-            int groupCount = database.groupDao().getAllGroups().size();
-            int userCount = database.userDao().getAllUsers().size();
-            Log.d(
-                TAG,
-                "Database verification after clear - Groups: "
-                    + groupCount
-                    + ", Users: "
-                    + userCount);
-
           } catch (Exception e) {
             Log.e(TAG, "Error clearing Room database", e);
           }
         });
+  }
+  
+  private static void clearDatabaseTables(AppDatabase database) {
+    database.groupDao().deleteAllGroups();
+    database.userDao().deleteAllUsers();
+    
+    // Also clear chat messages if DAO is available
+    if (database.chatMessageDao() != null) {
+      database.chatMessageDao().deleteAllMessages();
+    }
+  }
+  
+  private static void verifyDatabaseCleared(AppDatabase database) {
+    int groupCount = database.groupDao().getAllGroups().size();
+    int userCount = database.userDao().getAllUsers().size();
+    Log.d(TAG, "Database verification after clear - Groups: " + groupCount + ", Users: " + userCount);
   }
 
   /**
@@ -338,8 +348,8 @@ public class AuthenticationManager {
         return false;
       }
 
-      // Session is valid for 30 days
-      long sessionDuration = 30L * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+      // Session is valid for configured duration
+      long sessionDuration = SESSION_DURATION_DAYS * MILLISECONDS_PER_DAY;
       long currentTime = System.currentTimeMillis();
 
       return (currentTime - lastLoginTime) < sessionDuration;

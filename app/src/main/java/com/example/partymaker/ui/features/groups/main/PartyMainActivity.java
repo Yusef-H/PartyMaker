@@ -46,10 +46,26 @@ import java.util.Map;
 
 public class PartyMainActivity extends AppCompatActivity {
   private static final String TAG = "PartyMainActivity";
-
-  private String GroupKey;
-  private String UserKey;
-  private Map<String, String> MessageKeys;
+  
+  // Animation durations
+  private static final int ANIMATION_DURATION_MS = 300;
+  private static final float PANEL_COLLAPSE_OFFSET = -70f;
+  private static final float PANEL_EXPAND_OFFSET = 0f;
+  
+  // UI constants
+  private static final int PROCESSING_DELAY_MS = 2000;
+  private static final int EDIT_TEXT_PADDING_DP = 16;
+  
+  // Map constants
+  private static final int MAP_ZOOM_LEVEL = 16;
+  private static final String GEO_URI_PREFIX = "geo:";
+  private static final String QUERY_PARAM = "?q=";
+  private static final String ZOOM_PARAM = "&z=";
+  
+  // Data keys
+  private String groupKey;
+  private String userKey;
+  private Map<String, String> messageKeys;
   private GroupRepository groupRepository;
   private Button back5;
   private TextView tvGroupName;
@@ -98,35 +114,11 @@ public class PartyMainActivity extends AppCompatActivity {
           TAG,
           "Intent extras: " + (intent.getExtras() != null ? intent.getExtras().keySet() : "null"));
 
-      // Try to get GroupKey directly from intent first
-      GroupKey = intent.getStringExtra("GroupKey");
-      Log.d(TAG, "GroupKey from intent: " + GroupKey);
-
-      // If not found, try to get it from ExtrasMetadata
-      if (GroupKey == null || GroupKey.isEmpty()) {
-        Log.d(TAG, "GroupKey not found directly in intent, checking ExtrasMetadata");
-        ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
-        if (extras != null) {
-          GroupKey = extras.getGroupKey();
-          Log.d(TAG, "GroupKey from ExtrasMetadata: " + GroupKey);
-        } else {
-          Log.d(TAG, "ExtrasMetadata is null");
-        }
-      }
-
-      // Try to get UserKey from AuthHelper first
-      try {
-        UserKey = AuthenticationManager.getCurrentUserKey(this);
-        Log.d(TAG, "UserKey from AuthHelper: " + UserKey);
-      } catch (Exception e) {
-        Log.e(TAG, "Failed to get current user email", e);
-        // Fallback to intent if auth fails
-        UserKey = intent.getStringExtra("UserKey");
-        Log.d(TAG, "UserKey from intent: " + UserKey);
-      }
-
-      Log.d(TAG, "UserKey initialized: " + UserKey);
-      Log.d(TAG, "GroupKey initialized: " + GroupKey);
+      // Extract keys from intent
+      extractKeysFromIntent(intent);
+      
+      Log.d(TAG, "userKey initialized: " + userKey);
+      Log.d(TAG, "groupKey initialized: " + groupKey);
 
       // Initialize views
       initializeViews();
@@ -138,16 +130,8 @@ public class PartyMainActivity extends AppCompatActivity {
         Log.d(TAG, "Card6 is not null");
       }
 
-      // Check if we have the required data
-      if (GroupKey == null || GroupKey.isEmpty()) {
-        Log.e(TAG, "Missing GroupKey in intent");
-        showErrorAndFinish("Missing group data. Please try again.");
-        return;
-      }
-
-      if (UserKey == null || UserKey.isEmpty()) {
-        Log.e(TAG, "Missing UserKey");
-        showErrorAndFinish("Missing user data. Please log in again.");
+      // Validate required data
+      if (!validateRequiredData()) {
         return;
       }
 
@@ -189,7 +173,7 @@ public class PartyMainActivity extends AppCompatActivity {
       showLoading(true);
 
       groupRepository.getGroup(
-          GroupKey,
+          groupKey,
           new GroupRepository.DataCallback<>() {
             @Override
             public void onDataLoaded(Group group) {
@@ -206,8 +190,8 @@ public class PartyMainActivity extends AppCompatActivity {
                     "Loaded group data from server: "
                         + group.getGroupName()
                         + ", key: "
-                        + GroupKey);
-                Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+                        + groupKey);
+                Log.d(TAG, "Current user: " + userKey + ", Admin key: " + group.getAdminKey());
 
                 // Debug: Log ComingKeys data from server
                 if (group.getComingKeys() != null) {
@@ -270,7 +254,7 @@ public class PartyMainActivity extends AppCompatActivity {
     try {
       FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
       serverClient.getMessages(
-          GroupKey,
+          groupKey,
           new FirebaseServerClient.DataCallback<>() {
             @Override
             public void onSuccess(
@@ -282,9 +266,9 @@ public class PartyMainActivity extends AppCompatActivity {
                 }
 
                 // Update message keys
-                MessageKeys = new HashMap<>();
+                messageKeys = new HashMap<>();
                 for (ChatMessage message : messages) {
-                  MessageKeys.put(message.getMessageKey(), "true");
+                  messageKeys.put(message.getMessageKey(), "true");
                 }
 
                 Log.d(TAG, "Loaded " + messages.size() + " messages for group");
@@ -400,10 +384,57 @@ public class PartyMainActivity extends AppCompatActivity {
       imgEditGroupName.setOnClickListener(v -> showEditGroupNameDialog());
     }
 
-    // Initialize MessageKeys
-    MessageKeys = new HashMap<>();
+    // Initialize message keys
+    messageKeys = new HashMap<>();
 
     Log.d(TAG, "Views initialized successfully");
+  }
+  
+  /** Extracts keys from intent and sets up user authentication */
+  private void extractKeysFromIntent(Intent intent) {
+    // Try to get groupKey directly from intent first
+    groupKey = intent.getStringExtra("groupKey");
+    Log.d(TAG, "groupKey from intent: " + groupKey);
+
+    // If not found, try to get it from ExtrasMetadata
+    if (groupKey == null || groupKey.isEmpty()) {
+      Log.d(TAG, "groupKey not found directly in intent, checking ExtrasMetadata");
+      ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
+      if (extras != null) {
+        groupKey = extras.getGroupKey();
+        Log.d(TAG, "groupKey from ExtrasMetadata: " + groupKey);
+      } else {
+        Log.d(TAG, "ExtrasMetadata is null");
+      }
+    }
+
+    // Try to get userKey from AuthenticationManager first
+    try {
+      userKey = AuthenticationManager.getCurrentUserKey(this);
+      Log.d(TAG, "userKey from AuthenticationManager: " + userKey);
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to get current user email", e);
+      // Fallback to intent if auth fails
+      userKey = intent.getStringExtra("userKey");
+      Log.d(TAG, "userKey from intent: " + userKey);
+    }
+  }
+  
+  /** Validates required data and shows error if missing */
+  private boolean validateRequiredData() {
+    if (groupKey == null || groupKey.isEmpty()) {
+      Log.e(TAG, "Missing groupKey in intent");
+      showErrorAndFinish("Missing group data. Please try again.");
+      return false;
+    }
+
+    if (userKey == null || userKey.isEmpty()) {
+      Log.e(TAG, "Missing userKey");
+      showErrorAndFinish("Missing user data. Please log in again.");
+      return false;
+    }
+    
+    return true;
   }
 
   /** Shows a dialog for editing the group name */
@@ -447,7 +478,7 @@ public class PartyMainActivity extends AppCompatActivity {
    * @param newName The new group name
    */
   private void updateGroupName(String newName) {
-    if (currentGroup == null || GroupKey == null || GroupKey.isEmpty()) {
+    if (currentGroup == null || groupKey == null || groupKey.isEmpty()) {
       Toast.makeText(this, "Group data not available", Toast.LENGTH_SHORT).show();
       return;
     }
@@ -462,7 +493,7 @@ public class PartyMainActivity extends AppCompatActivity {
     // Update the group name through FirebaseServerClient
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         updates,
         new FirebaseServerClient.OperationCallback() {
           @Override
@@ -656,8 +687,8 @@ public class PartyMainActivity extends AppCompatActivity {
 
           // Double check admin status
           boolean isAdmin = false;
-          if (currentGroup != null && currentGroup.getAdminKey() != null && UserKey != null) {
-            isAdmin = currentGroup.getAdminKey().equals(UserKey);
+          if (currentGroup != null && currentGroup.getAdminKey() != null && userKey != null) {
+            isAdmin = currentGroup.getAdminKey().equals(userKey);
             Log.d(TAG, "Card5 click - Rechecked admin status: " + isAdmin);
           }
 
@@ -706,7 +737,7 @@ public class PartyMainActivity extends AppCompatActivity {
     if (groupImage != null) {
       // Try to load from new path first
       com.example.partymaker.data.firebase.DBRef.refStorage
-          .child("UsersImageProfile/Groups/" + GroupKey)
+          .child("UsersImageProfile/Groups/" + groupKey)
           .getDownloadUrl()
           .addOnSuccessListener(
               uri -> {
@@ -721,7 +752,7 @@ public class PartyMainActivity extends AppCompatActivity {
               e -> {
                 // Try old path as fallback
                 com.example.partymaker.data.firebase.DBRef.refStorage
-                    .child("Groups/" + GroupKey)
+                    .child("Groups/" + groupKey)
                     .getDownloadUrl()
                     .addOnSuccessListener(
                         uri -> {
@@ -767,10 +798,10 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Check if user is admin - compare the actual strings
     String adminKey = group.getAdminKey();
-    Log.d(TAG, "Checking admin status - AdminKey: " + adminKey + ", UserKey: " + UserKey);
+    Log.d(TAG, "Checking admin status - AdminKey: " + adminKey + ", userKey: " + userKey);
 
-    if (adminKey != null && UserKey != null) {
-      isUserAdmin = adminKey.equals(UserKey);
+    if (adminKey != null && userKey != null) {
+      isUserAdmin = adminKey.equals(userKey);
       Log.d(TAG, "Admin status determined: " + isUserAdmin);
     } else {
       isUserAdmin = false;
@@ -780,7 +811,7 @@ public class PartyMainActivity extends AppCompatActivity {
     // Check if user is coming
     boolean userComingStatus = false;
     if (group.getComingKeys() != null) {
-      userComingStatus = group.getComingKeys().containsKey(UserKey);
+      userComingStatus = group.getComingKeys().containsKey(userKey);
       Log.d(TAG, "User coming status from server: " + userComingStatus);
     }
     isUserComing = userComingStatus;
@@ -834,7 +865,7 @@ public class PartyMainActivity extends AppCompatActivity {
 
   /** Checks if the user has already paid for the event */
   private void checkPaymentStatus() {
-    if (currentGroup == null || UserKey == null) {
+    if (currentGroup == null || userKey == null) {
       return;
     }
 
@@ -886,12 +917,12 @@ public class PartyMainActivity extends AppCompatActivity {
             tvPayNow.setTextColor(getResources().getColor(android.R.color.darker_gray));
           }
         },
-        2000); // Simulate 2 second processing time
+        PROCESSING_DELAY_MS); // Simulate processing time
   }
 
   /** Updates the payment status in the database */
   private void updatePaymentInDatabase() {
-    if (currentGroup == null || UserKey == null) {
+    if (currentGroup == null || userKey == null) {
       return;
     }
 
@@ -900,9 +931,9 @@ public class PartyMainActivity extends AppCompatActivity {
 
     // Example of how this might be implemented:
     // Path would be something like "Payments/{groupKey}/{userKey}"
-    String paymentPath = "Payments/" + GroupKey;
+    String paymentPath = "Payments/" + groupKey;
     Map<String, Object> paymentData = new HashMap<>();
-    paymentData.put(UserKey, true);
+    paymentData.put(userKey, true);
 
     // Update the database
     serverClient.updateData(
@@ -933,8 +964,8 @@ public class PartyMainActivity extends AppCompatActivity {
         TAG,
         "updateCard5UI - isUserAdmin: "
             + isUserAdmin
-            + ", UserKey: "
-            + UserKey
+            + ", userKey: "
+            + userKey
             + ", Admin key: "
             + (currentGroup != null ? currentGroup.getAdminKey() : "null"));
 
@@ -954,7 +985,7 @@ public class PartyMainActivity extends AppCompatActivity {
   private boolean checkIfUserIsAdmin() {
     return currentGroup != null
         && currentGroup.getAdminKey() != null
-        && currentGroup.getAdminKey().equals(UserKey);
+        && currentGroup.getAdminKey().equals(userKey);
   }
 
   private void showAdminUI() {
@@ -976,7 +1007,7 @@ public class PartyMainActivity extends AppCompatActivity {
   }
 
   private void toggleComingStatus() {
-    if (currentGroup == null || UserKey == null) {
+    if (currentGroup == null || userKey == null) {
       Toast.makeText(this, "Error: Missing group or user data", Toast.LENGTH_SHORT).show();
       return;
     }
@@ -1003,13 +1034,13 @@ public class PartyMainActivity extends AppCompatActivity {
 
     if (isUserComing) {
       // Add user to ComingKeys
-      updatedComingKeys.put(UserKey, true);
+      updatedComingKeys.put(userKey, true);
       currentGroup.setComingKeys(updatedComingKeys);
 
       Toast.makeText(this, "Marked as coming", Toast.LENGTH_SHORT).show();
     } else {
       // Remove user from ComingKeys
-      updatedComingKeys.remove(UserKey);
+      updatedComingKeys.remove(userKey);
       currentGroup.setComingKeys(updatedComingKeys);
 
       Toast.makeText(this, "Marked as not coming", Toast.LENGTH_SHORT).show();
@@ -1020,7 +1051,7 @@ public class PartyMainActivity extends AppCompatActivity {
     updates.put("ComingKeys", updatedComingKeys);
 
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         updates,
         new FirebaseServerClient.OperationCallback() {
           @Override
@@ -1059,25 +1090,25 @@ public class PartyMainActivity extends AppCompatActivity {
     Log.d(TAG, "Attempting to navigate to ChatActivity");
 
     // Check if we have the required data
-    if (GroupKey == null || GroupKey.isEmpty()) {
-      Log.e(TAG, "Cannot navigate to ChatActivity: GroupKey is null or empty");
+    if (groupKey == null || groupKey.isEmpty()) {
+      Log.e(TAG, "Cannot navigate to ChatActivity: groupKey is null or empty");
       Toast.makeText(this, "Missing group data for chat", Toast.LENGTH_SHORT).show();
       return;
     }
 
-    if (UserKey == null || UserKey.isEmpty()) {
-      Log.e(TAG, "Cannot navigate to ChatActivity: UserKey is null or empty");
+    if (userKey == null || userKey.isEmpty()) {
+      Log.e(TAG, "Cannot navigate to ChatActivity: userKey is null or empty");
       Toast.makeText(this, "Missing user data for chat", Toast.LENGTH_SHORT).show();
       return;
     }
 
     try {
       Intent intent = new Intent(PartyMainActivity.this, ChatActivity.class);
-      intent.putExtra("GroupKey", GroupKey);
-      intent.putExtra("UserKey", UserKey);
+      intent.putExtra("groupKey", groupKey);
+      intent.putExtra("userKey", userKey);
       Log.d(
           TAG,
-          "Adding extras to ChatActivity intent: GroupKey=" + GroupKey + ", UserKey=" + UserKey);
+          "Adding extras to ChatActivity intent: groupKey=" + groupKey + ", userKey=" + userKey);
 
       // Add additional debug info
       if (currentGroup != null) {
@@ -1112,7 +1143,7 @@ public class PartyMainActivity extends AppCompatActivity {
       ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
       if (extras != null) {
         IntentExtrasManager.addExtrasToIntent(intent, extras);
-        intent.putExtra("UserKey", UserKey);
+        intent.putExtra("userKey", userKey);
         startActivity(intent);
       } else {
         Toast.makeText(this, "Missing group data", Toast.LENGTH_SHORT).show();
@@ -1132,7 +1163,7 @@ public class PartyMainActivity extends AppCompatActivity {
         ExtrasMetadata extras =
             new ExtrasMetadata(
                 currentGroup.getGroupName(),
-                GroupKey,
+                groupKey,
                 currentGroup.getGroupDays(),
                 currentGroup.getGroupMonths(),
                 currentGroup.getGroupYears(),
@@ -1182,7 +1213,7 @@ public class PartyMainActivity extends AppCompatActivity {
         ExtrasMetadata extras =
             new ExtrasMetadata(
                 currentGroup.getGroupName(),
-                GroupKey,
+                groupKey,
                 currentGroup.getGroupDays(),
                 currentGroup.getGroupMonths(),
                 currentGroup.getGroupYears(),
@@ -1199,10 +1230,10 @@ public class PartyMainActivity extends AppCompatActivity {
                 currentGroup.getComingKeys() != null
                     ? new HashMap<>(currentGroup.getComingKeys())
                     : new HashMap<>(),
-                new HashMap<>(MessageKeys));
+                new HashMap<>(messageKeys));
 
         IntentExtrasManager.addExtrasToIntent(intent, extras);
-        intent.putExtra("UserKey", UserKey);
+        intent.putExtra("userKey", userKey);
         startActivity(intent);
       } else {
         Log.e(TAG, "currentGroup is null when trying to navigate to MembersInvitedActivity");
@@ -1255,7 +1286,7 @@ public class PartyMainActivity extends AppCompatActivity {
         ExtrasMetadata extras =
             new ExtrasMetadata(
                 currentGroup.getGroupName(),
-                GroupKey,
+                groupKey,
                 currentGroup.getGroupDays(),
                 currentGroup.getGroupMonths(),
                 currentGroup.getGroupYears(),
@@ -1270,10 +1301,10 @@ public class PartyMainActivity extends AppCompatActivity {
                     ? new HashMap<>(currentGroup.getFriendKeys())
                     : new HashMap<>(),
                 comingKeysToPass,
-                new HashMap<>(MessageKeys));
+                new HashMap<>(messageKeys));
 
         IntentExtrasManager.addExtrasToIntent(intent, extras);
-        intent.putExtra("UserKey", UserKey);
+        intent.putExtra("userKey", userKey);
 
         // Debug: Also add ComingKeys directly to intent as backup
         intent.putExtra("ComingKeys", comingKeysToPass);
@@ -1291,14 +1322,14 @@ public class PartyMainActivity extends AppCompatActivity {
   }
 
   private void leaveGroup() {
-    if (currentGroup == null || UserKey == null) {
+    if (currentGroup == null || userKey == null) {
       Toast.makeText(this, "Cannot leave group: missing data", Toast.LENGTH_SHORT).show();
       return;
     }
 
     // Check if current user is admin
     boolean isCurrentUserAdmin =
-        currentGroup.getAdminKey() != null && currentGroup.getAdminKey().equals(UserKey);
+        currentGroup.getAdminKey() != null && currentGroup.getAdminKey().equals(userKey);
 
     if (isCurrentUserAdmin) {
       handleAdminLeavingGroup();
@@ -1325,15 +1356,15 @@ public class PartyMainActivity extends AppCompatActivity {
     HashMap<String, Object> updatedFriendKeys = new HashMap<>(currentGroup.getFriendKeys());
     HashMap<String, Object> updatedComingKeys = new HashMap<>(currentGroup.getComingKeys());
 
-    updatedFriendKeys.remove(UserKey);
-    updatedComingKeys.remove(UserKey);
+    updatedFriendKeys.remove(userKey);
+    updatedComingKeys.remove(userKey);
 
     // Update the group in the server
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
     // Update friend keys
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         "FriendKeys",
         updatedFriendKeys,
         new FirebaseServerClient.DataCallback<>() {
@@ -1341,7 +1372,7 @@ public class PartyMainActivity extends AppCompatActivity {
           public void onSuccess(Void result) {
             // Update coming keys
             serverClient.updateGroup(
-                GroupKey,
+                groupKey,
                 "ComingKeys",
                 updatedComingKeys,
                 new FirebaseServerClient.DataCallback<>() {
@@ -1358,7 +1389,7 @@ public class PartyMainActivity extends AppCompatActivity {
                                   com.example.partymaker.data.local.AppDatabase.getInstance(
                                       getApplicationContext());
                               if (database != null) {
-                                database.groupDao().deleteGroupByKey(GroupKey);
+                                database.groupDao().deleteGroupByKey(groupKey);
                                 Log.d(TAG, "Group removed from local cache after user left");
                               }
                             } catch (Exception e) {
@@ -1398,7 +1429,7 @@ public class PartyMainActivity extends AppCompatActivity {
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
     serverClient.deleteGroup(
-        GroupKey,
+        groupKey,
         new FirebaseServerClient.OperationCallback() {
           @Override
           public void onSuccess() {
@@ -1417,7 +1448,7 @@ public class PartyMainActivity extends AppCompatActivity {
                           com.example.partymaker.data.local.AppDatabase.getInstance(
                               getApplicationContext());
                       if (database != null) {
-                        database.groupDao().deleteGroupByKey(GroupKey);
+                        database.groupDao().deleteGroupByKey(groupKey);
                         Log.d(TAG, "Group deleted from local cache directly");
                       }
                     } catch (Exception e) {
@@ -1449,7 +1480,7 @@ public class PartyMainActivity extends AppCompatActivity {
     String newAdminKey = null;
     for (Map.Entry<String, Object> entry : friendKeys.entrySet()) {
       String userKey = entry.getValue().toString();
-      if (!userKey.equals(UserKey)) {
+      if (!userKey.equals(userKey)) {
         newAdminKey = userKey;
         break; // Take the first non-admin user (pseudo-random since HashMap iteration order is not
         // guaranteed)
@@ -1467,8 +1498,8 @@ public class PartyMainActivity extends AppCompatActivity {
     HashMap<String, Object> updatedFriendKeys = new HashMap<>(friendKeys);
     HashMap<String, Object> updatedComingKeys = new HashMap<>(currentGroup.getComingKeys());
 
-    updatedFriendKeys.remove(UserKey);
-    updatedComingKeys.remove(UserKey);
+    updatedFriendKeys.remove(userKey);
+    updatedComingKeys.remove(userKey);
 
     // Create the update map with all changes
     Map<String, Object> groupUpdates = new HashMap<>();
@@ -1479,7 +1510,7 @@ public class PartyMainActivity extends AppCompatActivity {
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         groupUpdates,
         new FirebaseServerClient.OperationCallback() {
           @Override
@@ -1495,7 +1526,7 @@ public class PartyMainActivity extends AppCompatActivity {
                           com.example.partymaker.data.local.AppDatabase.getInstance(
                               getApplicationContext());
                       if (database != null) {
-                        database.groupDao().deleteGroupByKey(GroupKey);
+                        database.groupDao().deleteGroupByKey(groupKey);
                         Log.d(TAG, "Group removed from local cache after admin transfer");
                       }
                     } catch (Exception e) {
@@ -1703,25 +1734,25 @@ public class PartyMainActivity extends AppCompatActivity {
 
   /** Initialize group encryption proactively */
   private void initializeGroupEncryption() {
-    if (UserKey == null || GroupKey == null) {
-      Log.w(TAG, "Cannot initialize encryption: missing UserKey or GroupKey");
+    if (userKey == null || groupKey == null) {
+      Log.w(TAG, "Cannot initialize encryption: missing userKey or groupKey");
       return;
     }
 
     try {
       // Initialize encryption managers proactively
-      GroupKeyManager groupKeyManager = new GroupKeyManager(this, UserKey);
+      GroupKeyManager groupKeyManager = new GroupKeyManager(this, userKey);
 
       // Check if user is already a member of this group's encryption
       groupKeyManager
-          .isGroupMember(GroupKey)
+          .isGroupMember(groupKey)
           .thenAccept(
               isMember -> {
                 if (!isMember) {
                   Log.i(TAG, "User not in group encryption, adding automatically");
                   // Auto-add current user to group encryption
                   groupKeyManager
-                      .addUserToGroupEncryption(GroupKey, UserKey)
+                      .addUserToGroupEncryption(groupKey, userKey)
                       .thenAccept(
                           success -> {
                             if (success) {
@@ -1729,7 +1760,7 @@ public class PartyMainActivity extends AppCompatActivity {
                                   TAG,
                                   "Successfully added user to group encryption in main screen");
                               // Now initialize for existing group
-                              groupKeyManager.initializeForExistingGroup(GroupKey);
+                              groupKeyManager.initializeForExistingGroup(groupKey);
                             } else {
                               Log.e(TAG, "Failed to add user to group encryption in main screen");
                             }
@@ -1737,11 +1768,11 @@ public class PartyMainActivity extends AppCompatActivity {
                 } else {
                   Log.i(TAG, "User already in group encryption, initializing in main screen");
                   // Initialize encryption for existing group
-                  groupKeyManager.initializeForExistingGroup(GroupKey);
+                  groupKeyManager.initializeForExistingGroup(groupKey);
                 }
               });
 
-      Log.i(TAG, "Group encryption initialization started proactively for: " + GroupKey);
+      Log.i(TAG, "Group encryption initialization started proactively for: " + groupKey);
 
     } catch (Exception e) {
       Log.e(TAG, "Failed to initialize group encryption proactively", e);

@@ -46,6 +46,31 @@ public class EditProfileActivity extends AppCompatActivity {
   private static final String ACTION_BAR_END_COLOR = "#0E81D1";
   private static final String ACTION_BAR_TITLE_COLOR = "#FFFFFF";
   private static final float ACTION_BAR_ELEVATION = 15f;
+  
+  // Constants for timeouts and validation
+  private static final int NETWORK_STATUS_UPDATE_DELAY_MS = 500;
+  private static final int RESUME_NETWORK_CHECK_DELAY_MS = 1000;
+  private static final int MIN_USERNAME_LENGTH = 2;
+  private static final int MAX_USERNAME_LENGTH = 50;
+  private static final int DOWNLOAD_BUFFER_SIZE = 1024;
+  
+  // Default image resource paths
+  private static final String DEFAULT_PROFILE_IMAGE_PATH = "profile_%s.jpg";
+  private static final String FIREBASE_PROFILE_PATH_PRIMARY = "UsersImageProfile/Users/";
+  private static final String FIREBASE_PROFILE_PATH_SECONDARY = "Users/";
+  
+  // Error messages
+  private static final String ERROR_EMPTY_USERNAME = "Username cannot be empty";
+  private static final String ERROR_USERNAME_TOO_SHORT = "Username must be at least 2 characters long";
+  private static final String ERROR_USERNAME_TOO_LONG = "Username cannot be longer than 50 characters";
+  private static final String ERROR_INVALID_EMAIL_FORMAT = "Invalid email format. If using email as username, it must be a valid email address.";
+  private static final String ERROR_OFFLINE_SAVE = "Cannot save profile while offline. Please check your internet connection.";
+  private static final String SUCCESS_PROFILE_UPDATED = "Profile picture updated";
+  private static final String SUCCESS_IMAGE_COMPRESSED = "Image compressed successfully. Uploading...";
+  private static final String SUCCESS_COMPRESSING_IMAGE = "Compressing image...";
+  private static final String ERROR_COMPRESSION_FAILED = "Compression failed, uploading original image...";
+  private static final String INFO_OFFLINE_MODE = "Offline mode - limited functionality";
+  private static final String INFO_NETWORK_RESTORED = "Network connection restored";
   private ImageView imgProfile;
   private EditText etUsername;
   private Button btnSaveProfile;
@@ -207,7 +232,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
     btnSaveProfile.setOnClickListener(v -> saveUserProfile());
-    
+
     btnSignOut.setOnClickListener(v -> handleSignOut());
   }
 
@@ -261,11 +286,7 @@ public class EditProfileActivity extends AppCompatActivity {
                       // Update UI with user data
                       String username = "";
                       // Check for both username and userName fields
-                      if (userData.containsKey("username")) {
-                        username = (String) userData.get("username");
-                      } else if (userData.containsKey("userName")) {
-                        username = (String) userData.get("userName");
-                      }
+                      username = extractUsernameFromData(userData);
 
                       if (username != null && !username.isEmpty()) {
                         etUsername.setText(username);
@@ -320,26 +341,19 @@ public class EditProfileActivity extends AppCompatActivity {
     String username = etUsername.getText().toString().trim();
 
     if (username.isEmpty()) {
-      etUsername.setError("Username cannot be empty");
+      etUsername.setError(ERROR_EMPTY_USERNAME);
       return;
     }
 
-    // Allow spaces in username - validate length and basic format
-    if (username.length() < 2) {
-      etUsername.setError("Username must be at least 2 characters long");
-      return;
-    }
-
-    if (username.length() > 50) {
-      etUsername.setError("Username cannot be longer than 50 characters");
+    // Validate username
+    if (!isValidUsername(username)) {
       return;
     }
 
     // If it looks like an email, validate it properly
     if (username.contains("@")) {
       if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
-        etUsername.setError(
-            "Invalid email format. If using email as username, it must be a valid email address.");
+        etUsername.setError(ERROR_INVALID_EMAIL_FORMAT);
         return;
       }
     }
@@ -365,7 +379,7 @@ public class EditProfileActivity extends AppCompatActivity {
             // Show a more helpful error message
             Snackbar.make(
                     findViewById(android.R.id.content),
-                    "Cannot save profile while offline. Please check your internet connection.",
+                    ERROR_OFFLINE_SAVE,
                     Snackbar.LENGTH_LONG)
                 .show();
             return;
@@ -378,7 +392,7 @@ public class EditProfileActivity extends AppCompatActivity {
           // Update the user profile
           profileViewModel.updateCurrentUser(updates);
         },
-        500); // 500ms delay to allow network status to update
+        NETWORK_STATUS_UPDATE_DELAY_MS);
   }
 
   private void loadProfileImageFromStorage(String userKey) {
@@ -390,7 +404,7 @@ public class EditProfileActivity extends AppCompatActivity {
     // Try to load from local cache first
     try {
       // Check if we have a locally cached image
-      String localCachePath = getFilesDir() + "/profile_" + userKey + ".jpg";
+      String localCachePath = getFilesDir() + "/" + String.format(DEFAULT_PROFILE_IMAGE_PATH, userKey);
       java.io.File localFile = new java.io.File(localCachePath);
 
       if (localFile.exists()) {
@@ -436,13 +450,13 @@ public class EditProfileActivity extends AppCompatActivity {
     String[] paths =
         new String[] {
           // Path 1: UsersImageProfile/Users/[userKey] (without extension)
-          "UsersImageProfile/Users/" + userKey,
+          FIREBASE_PROFILE_PATH_PRIMARY + userKey,
           // Path 2: UsersImageProfile/Users/[userKey].jpg
-          "UsersImageProfile/Users/" + userKey + ".jpg",
+          FIREBASE_PROFILE_PATH_PRIMARY + userKey + ".jpg",
           // Path 3: Users/[userKey] (without extension)
-          "Users/" + userKey,
+          FIREBASE_PROFILE_PATH_SECONDARY + userKey,
           // Path 4: Users/[userKey].jpg
-          "Users/" + userKey + ".jpg",
+          FIREBASE_PROFILE_PATH_SECONDARY + userKey + ".jpg",
           // Path 5: [userKey] (root level, without extension)
           userKey,
           // Path 6: [userKey].jpg (root level)
@@ -508,7 +522,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             // Save to local file
             java.io.FileOutputStream output = new java.io.FileOutputStream(localPath);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {
               output.write(buffer, 0, bytesRead);
@@ -537,7 +551,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Show compression progress
     progressBar.setVisibility(View.VISIBLE);
-    showSuccess("Compressing image...");
+    showSuccess(SUCCESS_COMPRESSING_IMAGE);
 
     // First compress the image to reduce size and improve upload speed
     ImageCompressor.compressImage(
@@ -548,7 +562,7 @@ public class EditProfileActivity extends AppCompatActivity {
           public void onCompressSuccess(@NonNull File compressedFile) {
             ThreadUtils.runOnMainThread(
                 () -> {
-                  showSuccess("Image compressed successfully. Uploading...");
+                  showSuccess(SUCCESS_IMAGE_COMPRESSED);
                   uploadCompressedImageToFirebase(Uri.fromFile(compressedFile));
                 });
           }
@@ -558,7 +572,7 @@ public class EditProfileActivity extends AppCompatActivity {
             ThreadUtils.runOnMainThread(
                 () -> {
                   Log.w(TAG, "Image compression failed, uploading original: " + error);
-                  showError("Compression failed, uploading original image...");
+                  showError(ERROR_COMPRESSION_FAILED);
                   uploadCompressedImageToFirebase(uri);
                 });
           }
@@ -592,7 +606,7 @@ public class EditProfileActivity extends AppCompatActivity {
     imgProfile.setImageURI(uri);
 
     // Use the correct path for the image - without extension
-    String imagePath = "UsersImageProfile/Users/" + userKey;
+    String imagePath = FIREBASE_PROFILE_PATH_PRIMARY + userKey;
     Log.d(TAG, "Uploading to Firebase Storage at path: " + imagePath);
 
     FirebaseStorage.getInstance()
@@ -627,7 +641,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                   Log.d(TAG, "Profile image URL updated in database");
                                   progressBar.setVisibility(View.GONE);
                                   Toast.makeText(
-                                          this, "Profile picture updated", Toast.LENGTH_SHORT)
+                                          this, SUCCESS_PROFILE_UPDATED, Toast.LENGTH_SHORT)
                                       .show();
 
                                   // Also update in ViewModel to keep UI in sync
@@ -671,7 +685,7 @@ public class EditProfileActivity extends AppCompatActivity {
    */
   private void tryAlternativePath(Uri uri, String userKey) {
     // Try a simpler path without extension
-    String alternativePath = "Users/" + userKey;
+    String alternativePath = FIREBASE_PROFILE_PATH_SECONDARY + userKey;
     Log.d(TAG, "Trying alternative upload path: " + alternativePath);
 
     // Show loading indicator again
@@ -709,7 +723,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                   Log.d(TAG, "Profile image URL updated in database");
                                   progressBar.setVisibility(View.GONE);
                                   Toast.makeText(
-                                          this, "Profile picture updated", Toast.LENGTH_SHORT)
+                                          this, SUCCESS_PROFILE_UPDATED, Toast.LENGTH_SHORT)
                                       .show();
 
                                   // Also update in ViewModel to keep UI in sync
@@ -779,7 +793,7 @@ public class EditProfileActivity extends AppCompatActivity {
       View view = findViewById(android.R.id.content);
       if (view != null) {
         Snackbar snackbar =
-            Snackbar.make(view, "Offline mode - limited functionality", Snackbar.LENGTH_SHORT);
+            Snackbar.make(view, INFO_OFFLINE_MODE, Snackbar.LENGTH_SHORT);
         snackbar.show();
       }
 
@@ -795,7 +809,7 @@ public class EditProfileActivity extends AppCompatActivity {
     // Only show network restored message if we're not in onResume
     // to avoid showing it every time the activity resumes
     if (rootLayout != null && !isResuming) {
-      Snackbar.make(rootLayout, "Network connection restored", Snackbar.LENGTH_SHORT).show();
+      Snackbar.make(rootLayout, INFO_NETWORK_RESTORED, Snackbar.LENGTH_SHORT).show();
     }
   }
 
@@ -831,12 +845,55 @@ public class EditProfileActivity extends AppCompatActivity {
 
           isResuming = false;
         },
-        1000);
+        RESUME_NETWORK_CHECK_DELAY_MS);
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu, menu);
+    return true;
+  }
+
+  /**
+   * Extracts username from user data map, checking both "username" and "userName" keys.
+   *
+   * @param userData The user data map
+   * @return The username or empty string if not found
+   */
+  private String extractUsernameFromData(Map<String, Object> userData) {
+    if (userData == null) {
+      return "";
+    }
+    
+    if (userData.containsKey("username")) {
+      String username = (String) userData.get("username");
+      return username != null ? username : "";
+    } else if (userData.containsKey("userName")) {
+      String username = (String) userData.get("userName");
+      return username != null ? username : "";
+    }
+    
+    return "";
+  }
+  
+  /**
+   * Validates username format and length.
+   *
+   * @param username The username to validate
+   * @return true if valid, false otherwise (also sets error on etUsername)
+   */
+  private boolean isValidUsername(String username) {
+    // Allow spaces in username - validate length and basic format
+    if (username.length() < MIN_USERNAME_LENGTH) {
+      etUsername.setError(ERROR_USERNAME_TOO_SHORT);
+      return false;
+    }
+
+    if (username.length() > MAX_USERNAME_LENGTH) {
+      etUsername.setError(ERROR_USERNAME_TOO_LONG);
+      return false;
+    }
+
     return true;
   }
 

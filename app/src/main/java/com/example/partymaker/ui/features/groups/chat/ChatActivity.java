@@ -41,16 +41,21 @@ public class ChatActivity extends AppCompatActivity {
 
   private static final String TAG = "ChatActivity";
   private static final int MAX_RETRY_ATTEMPTS = 3;
+  private static final int FIRST_RETRY_DELAY_MS = 1000;
+  private static final int RANDOM_RANGE = 10000;
+  private static final int GPT_TIMEOUT_MS = 3000;
+  private static final long ANIMATION_HIDE_DELAY_MS = 3000L;
+  private static final long SUCCESS_ANIMATION_DELAY_MS = 2500L;
   private final Handler retryHandler = new Handler(Looper.getMainLooper());
-  private ListView lv4;
-  private EditText etMessage;
-  private ImageButton btnSend;
-  private ImageButton btnGpt;
-  private String GroupKey;
-  private HashMap<String, Object> MessageKeys;
+  private ListView messageListView;
+  private EditText messageEditText;
+  private ImageButton sendButton;
+  private ImageButton gptButton;
+  private String groupKey;
+  private HashMap<String, Object> messageKeys;
   private FirebaseServerClient serverClient;
   private ChatAdapter adapter;
-  private String UserKey;
+  private String userKey;
   private GroupChatViewModel viewModel;
   private GroupKeyManager groupKeyManager;
   private GroupMessageEncryption groupEncryption;
@@ -61,8 +66,6 @@ public class ChatActivity extends AppCompatActivity {
     Log.d(TAG, "ChatActivity onCreate called");
     setContentView(R.layout.activity_party_chat);
 
-    // Show a toast message to confirm onCreate is called
-    Toast.makeText(this, "ChatActivity onCreate called", Toast.LENGTH_SHORT).show();
 
     // Initialize server client
     serverClient = FirebaseServerClient.getInstance();
@@ -82,66 +85,66 @@ public class ChatActivity extends AppCompatActivity {
     Log.d(TAG, "Getting extras from intent");
     Intent intent = getIntent();
 
-    // Get GroupKey directly from intent first
-    GroupKey = intent.getStringExtra("GroupKey");
-    Log.d(TAG, "GroupKey from direct intent extra: " + GroupKey);
+    // Get groupKey directly from intent first
+    groupKey = intent.getStringExtra("GroupKey");
+    Log.d(TAG, "groupKey from direct intent extra: " + groupKey);
 
     // Try to get data from ExtrasMetadata only if direct intent extra is null
-    if (GroupKey == null || GroupKey.isEmpty()) {
+    if (groupKey == null || groupKey.isEmpty()) {
       ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
       if (extras != null) {
         Log.d(TAG, "Found ExtrasMetadata in intent");
-        MessageKeys = extras.getMessageKeys();
-        GroupKey = extras.getGroupKey();
+        messageKeys = extras.getMessageKeys();
+        groupKey = extras.getGroupKey();
       } else {
-        // Initialize empty MessageKeys
-        MessageKeys = new HashMap<>();
+        // Initialize empty messageKeys
+        messageKeys = new HashMap<>();
       }
     } else {
-      // Initialize empty MessageKeys
-      MessageKeys = new HashMap<>();
+      // Initialize empty messageKeys
+      messageKeys = new HashMap<>();
     }
 
     // Check if we have the required data
-    if (GroupKey == null || GroupKey.isEmpty()) {
-      Log.e(TAG, "Missing GroupKey in intent");
+    if (groupKey == null || groupKey.isEmpty()) {
+      Log.e(TAG, "Missing groupKey in intent");
       Toast.makeText(this, "Missing group data", Toast.LENGTH_SHORT).show();
       finish();
       return;
     }
 
-    Log.d(TAG, "GroupKey retrieved: " + GroupKey);
+    Log.d(TAG, "groupKey retrieved: " + groupKey);
 
-    // Get UserKey from AuthHelper instead of Firebase Auth
+    // Get userKey from AuthHelper instead of Firebase Auth
     try {
-      UserKey = AuthenticationManager.getCurrentUserKey(this);
-      Log.d(TAG, "UserKey initialized from AuthHelper: " + UserKey);
+      userKey = AuthenticationManager.getCurrentUserKey(this);
+      Log.d(TAG, "userKey initialized from AuthHelper: " + userKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
-      UserKey = intent.getStringExtra("UserKey"); // Fallback to intent if auth fails
-      Log.d(TAG, "Using fallback UserKey from intent: " + UserKey);
+      userKey = intent.getStringExtra("UserKey"); // Fallback to intent if auth fails
+      Log.d(TAG, "Using fallback userKey from intent: " + userKey);
 
-      if (UserKey == null) {
-        Log.e(TAG, "UserKey is null after fallback");
+      if (userKey == null) {
+        Log.e(TAG, "userKey is null after fallback");
         Toast.makeText(this, "Error: Missing user information", Toast.LENGTH_SHORT).show();
         finish();
         return;
       }
     }
 
-    // connection
+    // Initialize UI components
     Log.d(TAG, "Initializing UI components");
-    lv4 = findViewById(R.id.lv4);
-    etMessage = findViewById(R.id.etMessage);
-    btnSend = findViewById(R.id.btnSend);
-    btnGpt = findViewById(R.id.btnGpt);
+    messageListView = findViewById(R.id.lv4);
+    messageEditText = findViewById(R.id.etMessage);
+    sendButton = findViewById(R.id.btnSend);
+    gptButton = findViewById(R.id.btnGpt);
 
     ShowData();
     eventHandler();
     setupGptButton();
 
     // Set the group key in ViewModel
-    viewModel.setGroupKey(GroupKey);
+    viewModel.setGroupKey(groupKey);
 
     // Initialize encryption for this group
     initializeGroupEncryption();
@@ -149,32 +152,32 @@ public class ChatActivity extends AppCompatActivity {
 
   /** Initialize group encryption for secure messaging */
   private void initializeGroupEncryption() {
-    if (UserKey == null || GroupKey == null) {
-      Log.w(TAG, "Cannot initialize encryption: missing UserKey or GroupKey");
+    if (userKey == null || groupKey == null) {
+      Log.w(TAG, "Cannot initialize encryption: missing userKey or groupKey");
       return;
     }
 
     try {
       // Initialize encryption managers
-      groupKeyManager = new GroupKeyManager(this, UserKey);
+      groupKeyManager = new GroupKeyManager(this, userKey);
       groupEncryption = groupKeyManager.getEncryptionManager();
 
       // Check if user is already a member of this group's encryption
       groupKeyManager
-          .isGroupMember(GroupKey)
+          .isGroupMember(groupKey)
           .thenAccept(
               isMember -> {
                 if (!isMember) {
                   Log.i(TAG, "User not in group encryption, adding automatically");
                   // Auto-add current user to group encryption
                   groupKeyManager
-                      .addUserToGroupEncryption(GroupKey, UserKey)
+                      .addUserToGroupEncryption(groupKey, userKey)
                       .thenAccept(
                           success -> {
                             if (success) {
                               Log.i(TAG, "Successfully added user to group encryption");
                               // Now initialize for existing group
-                              groupKeyManager.initializeForExistingGroup(GroupKey);
+                              groupKeyManager.initializeForExistingGroup(groupKey);
                             } else {
                               Log.e(TAG, "Failed to add user to group encryption");
                               Toast.makeText(
@@ -187,11 +190,11 @@ public class ChatActivity extends AppCompatActivity {
                 } else {
                   Log.i(TAG, "User already in group encryption, initializing");
                   // Initialize encryption for existing group
-                  groupKeyManager.initializeForExistingGroup(GroupKey);
+                  groupKeyManager.initializeForExistingGroup(groupKey);
                 }
               });
 
-      Log.i(TAG, "Group encryption initialization started for: " + GroupKey);
+      Log.i(TAG, "Group encryption initialization started for: " + groupKey);
 
     } catch (Exception e) {
       Log.e(TAG, "Failed to initialize group encryption", e);
@@ -218,30 +221,30 @@ public class ChatActivity extends AppCompatActivity {
             this,
             isSent -> {
               if (isSent) {
-                etMessage.setText("");
+                messageEditText.setText("");
                 viewModel.resetMessageSentFlag();
               }
             });
 
-    viewModel.getIsLoading().observe(this, isLoading -> btnSend.setEnabled(!isLoading));
+    viewModel.getIsLoading().observe(this, isLoading -> sendButton.setEnabled(!isLoading));
   }
 
   private void eventHandler() {
     Log.d(TAG, "Setting up event handlers");
-    lv4.setOnItemClickListener((parent, view, position, id) -> {});
-    lv4.setOnItemLongClickListener((parent, view, position, id) -> false);
+    messageListView.setOnItemClickListener((parent, view, position, id) -> {});
+    messageListView.setOnItemLongClickListener((parent, view, position, id) -> false);
 
-    Log.d(TAG, "Setting up btnSend click listener");
-    btnSend.setOnClickListener(
+    Log.d(TAG, "Setting up send button click listener");
+    sendButton.setOnClickListener(
         v -> {
           Log.d(TAG, "Send button clicked");
-          String messageText = etMessage.getText().toString().trim();
+          String messageText = messageEditText.getText().toString().trim();
           Log.d(TAG, "Message text: '" + messageText + "'");
 
           if (!messageText.isEmpty()) {
             Log.d(TAG, "Message is not empty, sending message");
             sendMessage(messageText);
-            etMessage.setText("");
+            messageEditText.setText("");
           } else {
             Log.d(TAG, "Message is empty, not sending");
             Toast.makeText(this, "Cannot send empty message", Toast.LENGTH_SHORT).show();
@@ -253,12 +256,12 @@ public class ChatActivity extends AppCompatActivity {
 
   private String generateUniqueKey() {
     // Generate a timestamp-based unique key
-    return "msg_" + System.currentTimeMillis() + "_" + (int) (Math.random() * 10000);
+    return "msg_" + System.currentTimeMillis() + "_" + (int) (Math.random() * RANDOM_RANGE);
   }
 
   private void saveMessageToServer(String messageKey, ChatMessage message) {
     serverClient.saveMessage(
-        GroupKey,
+        groupKey,
         messageKey,
         message,
         new OperationCallback() {
@@ -278,9 +281,9 @@ public class ChatActivity extends AppCompatActivity {
   private void updateGroupMessageKeys() {
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     Map<String, Object> updates = new HashMap<>();
-    updates.put("MessageKeys", MessageKeys);
+    updates.put("MessageKeys", messageKeys);
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         updates,
         new FirebaseServerClient.OperationCallback() {
           @Override
@@ -296,7 +299,7 @@ public class ChatActivity extends AppCompatActivity {
   }
 
   private void setupGptButton() {
-    btnGpt.setOnClickListener(
+    gptButton.setOnClickListener(
         v -> {
           android.app.AlertDialog.Builder builder =
               new android.app.AlertDialog.Builder(ChatActivity.this);
@@ -321,36 +324,9 @@ public class ChatActivity extends AppCompatActivity {
                   ThreadUtils.runInBackground(
                       () -> {
                         try {
-                          String prompt =
-                              "You are a party assistant. Your role is to provide details and help with whatever you can for this party. Here are the party details: "
-                                  + getGroupDetails()
-                                  + "\n\nQuestion: ";
-                          OpenAiApi openAiApi = new OpenAiApi(getApiKey());
-                          String gptAnswer = openAiApi.sendMessage(prompt + gptQuestion);
-                          ThreadUtils.runOnMainThread(() -> sendBotMessage(gptAnswer));
-                        } catch (java.net.UnknownHostException e) {
-                          ThreadUtils.runOnMainThread(
-                              () -> {
-                                Toast.makeText(
-                                        ChatActivity.this,
-                                        "Internet connection error, check your connection and try again.",
-                                        Toast.LENGTH_LONG)
-                                    .show();
-                                // Send a fallback message
-                                sendBotMessage(
-                                    "Sorry I can not connect to the internet at the moment, check your connection and try again.");
-                              });
+                          processGptRequest(gptQuestion);
                         } catch (Exception e) {
-                          ThreadUtils.runOnMainThread(
-                              () -> {
-                                Toast.makeText(
-                                        ChatActivity.this,
-                                        "GPT Service Error: " + e.getMessage(),
-                                        Toast.LENGTH_LONG)
-                                    .show();
-                                // Send a fallback message
-                                sendBotMessage("Internal Service Error, try again later.");
-                              });
+                          handleGptError(e);
                         }
                       });
                 }
@@ -378,7 +354,7 @@ public class ChatActivity extends AppCompatActivity {
     saveMessageToServer(messageKey, botMsg);
 
     // Update group's message keys
-    MessageKeys.put(messageKey, "true");
+    messageKeys.put(messageKey, "true");
     updateGroupMessageKeys();
   }
 
@@ -402,25 +378,25 @@ public class ChatActivity extends AppCompatActivity {
     if (adapter == null) {
       Log.d(TAG, "ShowData: Adapter is null, initializing new adapter");
       adapter = new ChatAdapter(this, R.layout.item_chat_message, new ArrayList<>());
-      lv4.setAdapter(adapter);
+      messageListView.setAdapter(adapter);
       Log.d(TAG, "ShowData: Adapter set on ListView");
     } else {
       Log.d(TAG, "ShowData: Adapter already initialized");
     }
 
     // We can't cast ListView to ProgressBar, so let's use the ListView directly
-    lv4.setVisibility(View.VISIBLE);
+    messageListView.setVisibility(View.VISIBLE);
 
-    // Add debug logging for GroupKey
-    Log.d(TAG, "ShowData: Fetching messages for group: " + GroupKey);
+    // Add debug logging for groupKey
+    Log.d(TAG, "ShowData: Fetching messages for group: " + groupKey);
 
     serverClient.getMessages(
-        GroupKey,
+        groupKey,
         new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(List<ChatMessage> messages) {
             // Show the ListView
-            ThreadUtils.runOnMainThread(() -> lv4.setVisibility(View.VISIBLE));
+            ThreadUtils.runOnMainThread(() -> messageListView.setVisibility(View.VISIBLE));
 
             if (messages != null && !messages.isEmpty()) {
               Log.d(TAG, "ShowData: Received " + messages.size() + " messages from server");
@@ -439,8 +415,8 @@ public class ChatActivity extends AppCompatActivity {
               }
 
               // Decrypt messages if encryption is available
-              if (groupEncryption != null && groupEncryption.hasGroupKey(GroupKey)) {
-                Log.d(TAG, "ShowData: Decrypting messages for group: " + GroupKey);
+              if (groupEncryption != null && groupEncryption.hasGroupKey(groupKey)) {
+                Log.d(TAG, "ShowData: Decrypting messages for group: " + groupKey);
                 for (int i = 0; i < messages.size(); i++) {
                   ChatMessage message = messages.get(i);
                   if (message != null && message.isEncrypted()) {
@@ -518,10 +494,10 @@ public class ChatActivity extends AppCompatActivity {
                                       .substring(0, Math.min(20, lastMessage.getMessage().length()))
                                   : "null"));
 
-                      lv4.post(
+                      messageListView.post(
                           () -> {
-                            lv4.setSelection(lastPosition);
-                            lv4.smoothScrollToPosition(lastPosition);
+                            messageListView.setSelection(lastPosition);
+                            messageListView.smoothScrollToPosition(lastPosition);
                           });
                     }
                     Log.d(TAG, "ShowData: Adapter updated successfully");
@@ -548,7 +524,7 @@ public class ChatActivity extends AppCompatActivity {
                           "Error loading messages: " + errorMessage,
                           Toast.LENGTH_SHORT)
                       .show();
-                  lv4.setVisibility(View.VISIBLE);
+                  messageListView.setVisibility(View.VISIBLE);
                 });
           }
         });
@@ -557,10 +533,10 @@ public class ChatActivity extends AppCompatActivity {
   public String getGroupDetails() {
     StringBuilder details = new StringBuilder();
     details.append("Party Details:\n");
-    details.append("Party Name: ").append(GroupKey).append("\n");
+    details.append("Party Name: ").append(groupKey).append("\n");
 
     serverClient.getGroup(
-        GroupKey,
+        groupKey,
         new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
@@ -598,8 +574,8 @@ public class ChatActivity extends AppCompatActivity {
   private void sendMessage(String messageText) {
     Log.d(TAG, "sendMessage called with text: " + messageText);
 
-    if (GroupKey == null || UserKey == null) {
-      Log.e(TAG, "Cannot send message: GroupKey or UserKey is null");
+    if (groupKey == null || userKey == null) {
+      Log.e(TAG, "Cannot send message: groupKey or userKey is null");
       Toast.makeText(this, "Error: Missing group or user information", Toast.LENGTH_SHORT).show();
       return;
     }
@@ -613,9 +589,9 @@ public class ChatActivity extends AppCompatActivity {
       // Create the message object
       ChatMessage message = new ChatMessage();
       message.setMessageKey(messageId);
-      message.setGroupKey(GroupKey);
-      message.setSenderKey(UserKey);
-      message.setSenderName(UserKey); // For now, use UserKey as display name
+      message.setGroupKey(groupKey);
+      message.setSenderKey(userKey);
+      message.setSenderName(userKey); // For now, use userKey as display name
       message.setMessage(messageText);
       message.setTimestamp(System.currentTimeMillis());
 
@@ -627,13 +603,13 @@ public class ChatActivity extends AppCompatActivity {
 
       // Set legacy fields for compatibility
       message.setMessageText(messageText);
-      message.setMessageUser(UserKey);
-      message.setGroupId(GroupKey);
+      message.setMessageUser(userKey);
+      message.setGroupId(groupKey);
 
       // Encrypt the message if encryption is available
       ChatMessage messageToSend = message;
-      if (groupEncryption != null && groupEncryption.hasGroupKey(GroupKey)) {
-        Log.d(TAG, "Encrypting message for group: " + GroupKey);
+      if (groupEncryption != null && groupEncryption.hasGroupKey(groupKey)) {
+        Log.d(TAG, "Encrypting message for group: " + groupKey);
         ChatMessage encryptedMessage = groupEncryption.encryptChatMessage(message);
         if (encryptedMessage != null) {
           messageToSend = encryptedMessage;
@@ -705,14 +681,14 @@ public class ChatActivity extends AppCompatActivity {
             + message.getMessageText()
             + ", from user: "
             + message.getMessageUser());
-    Log.d(TAG, "AUTO TEST: Using GroupKey: " + GroupKey);
+    Log.d(TAG, "AUTO TEST: Using groupKey: " + groupKey);
 
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     Log.d(TAG, "AUTO TEST: Got FirebaseServerClient instance: " + serverClient);
 
     // Set groupId in the message
-    message.setGroupId(GroupKey);
-    Log.d(TAG, "AUTO TEST: Set groupId in message: " + GroupKey);
+    message.setGroupId(groupKey);
+    Log.d(TAG, "AUTO TEST: Set groupId in message: " + groupKey);
 
     // Set messageKey in the message
     message.setMessageKey(messageId);
@@ -720,13 +696,13 @@ public class ChatActivity extends AppCompatActivity {
 
     Log.d(
         TAG,
-        "AUTO TEST: About to call serverClient.saveMessage with GroupKey: "
-            + GroupKey
+        "AUTO TEST: About to call serverClient.saveMessage with groupKey: "
+            + groupKey
             + ", messageId: "
             + messageId);
     try {
       serverClient.saveMessage(
-          GroupKey,
+          groupKey,
           messageId,
           message,
           new FirebaseServerClient.OperationCallback() {
@@ -815,7 +791,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Get the current group
     serverClient.getGroup(
-        GroupKey,
+        groupKey,
         new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(Group group) {
@@ -856,7 +832,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Use updateGroup instead of saveGroup
     serverClient.updateGroup(
-        GroupKey,
+        groupKey,
         updates,
         new FirebaseServerClient.OperationCallback() {
           @Override
@@ -870,7 +846,7 @@ public class ChatActivity extends AppCompatActivity {
 
             if (retryCount < MAX_RETRY_ATTEMPTS) {
               // Retry after a delay
-              int delayMillis = 1000 * (1 << retryCount); // 1s, 2s, 4s
+              int delayMillis = FIRST_RETRY_DELAY_MS * (1 << retryCount); // 1s, 2s, 4s
               Log.d(
                   TAG,
                   "Retrying to update group in "
@@ -884,5 +860,74 @@ public class ChatActivity extends AppCompatActivity {
             }
           }
         });
+  }
+
+  /**
+   * Process GPT request with proper error handling
+   * @param gptQuestion the question to ask GPT
+   */
+  private void processGptRequest(String gptQuestion) {
+    try {
+      String answer = getGptResponse(gptQuestion);
+      ThreadUtils.runOnMainThread(() -> sendBotMessage(answer));
+    } catch (java.net.UnknownHostException e) {
+      handleGptNetworkError();
+    } catch (Exception e) {
+      handleGptServiceError(e);
+    }
+  }
+
+  /**
+   * Gets response from GPT API
+   * @param gptQuestion the question to ask
+   * @return GPT's response
+   * @throws Exception if API call fails
+   */
+  private String getGptResponse(String gptQuestion) throws Exception {
+    String prompt = buildGptPrompt();
+    OpenAiApi openAiApi = new OpenAiApi(getApiKey());
+    return openAiApi.sendMessage(prompt + gptQuestion);
+  }
+
+  /**
+   * Builds the prompt for GPT with party details
+   * @return formatted prompt string
+   */
+  private String buildGptPrompt() {
+    return "You are a party assistant. Your role is to provide details and help with whatever you can for this party. Here are the party details: "
+        + getGroupDetails()
+        + "\n\nQuestion: ";
+  }
+
+  /**
+   * Handles network errors when communicating with GPT
+   */
+  private void handleGptNetworkError() {
+    ThreadUtils.runOnMainThread(() -> {
+      Toast.makeText(ChatActivity.this, "Internet connection error, check your connection and try again.", Toast.LENGTH_LONG).show();
+      sendBotMessage("Sorry I can not connect to the internet at the moment, check your connection and try again.");
+    });
+  }
+
+  /**
+   * Handles service errors when communicating with GPT
+   * @param exception the exception that occurred
+   */
+  private void handleGptServiceError(Exception exception) {
+    ThreadUtils.runOnMainThread(() -> {
+      Toast.makeText(ChatActivity.this, "GPT Service Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+      sendBotMessage("Internal Service Error, try again later.");
+    });
+  }
+
+  /**
+   * Handle GPT processing errors
+   * @param exception the exception that occurred during GPT processing
+   */
+  private void handleGptError(Exception exception) {
+    ThreadUtils.runOnMainThread(() -> {
+      Toast.makeText(ChatActivity.this, "Error processing GPT request: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+      Log.e(TAG, "GPT request processing failed", exception);
+    });
   }
 }

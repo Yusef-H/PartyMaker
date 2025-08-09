@@ -20,6 +20,13 @@ public class SimpleSecureStorage {
   private static final String PREFS_NAME = "secure_prefs";
   private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
   private static final String KEY_ALGORITHM = "AES";
+  
+  // Security constants
+  private static final int AES_KEY_SIZE = 256;
+  private static final int IV_SIZE = 16;
+  private static final int BUFFER_SIZE = 4096;
+  private static final String KEY_GENERATION_SUFFIX = "_secure_key_2024";
+  private static final String HASH_ALGORITHM = "SHA-256";
 
   private final SharedPreferences prefs;
   private final SecretKeySpec secretKey;
@@ -29,13 +36,13 @@ public class SimpleSecureStorage {
     this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
     // Generate a key based on package name and a salt
-    String keySource = context.getPackageName() + "_secure_key_2024";
+    String keySource = context.getPackageName() + KEY_GENERATION_SUFFIX;
     byte[] keyBytes = generateKey(keySource);
     this.secretKey = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
 
     // Fixed IV for simplicity (in production, use random IV per encryption)
-    byte[] iv = new byte[16];
-    System.arraycopy(keyBytes, 0, iv, 0, 16);
+    byte[] iv = new byte[IV_SIZE];
+    System.arraycopy(keyBytes, 0, iv, 0, IV_SIZE);
     this.ivSpec = new IvParameterSpec(iv);
   }
 
@@ -109,15 +116,20 @@ public class SimpleSecureStorage {
   /** Generate a 256-bit key from string */
   private byte[] generateKey(String source) {
     try {
-      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
       return digest.digest(source.getBytes(StandardCharsets.UTF_8));
     } catch (NoSuchAlgorithmException e) {
       // Fallback to simple key
-      byte[] key = new byte[32];
-      byte[] sourceBytes = source.getBytes(StandardCharsets.UTF_8);
-      System.arraycopy(sourceBytes, 0, key, 0, Math.min(sourceBytes.length, 32));
-      return key;
+      return generateFallbackKey(source);
     }
+  }
+  
+  /** Generate fallback key when SHA-256 is not available */
+  private byte[] generateFallbackKey(String source) {
+    byte[] key = new byte[AES_KEY_SIZE / 8]; // 32 bytes for 256-bit key
+    byte[] sourceBytes = source.getBytes(StandardCharsets.UTF_8);
+    System.arraycopy(sourceBytes, 0, key, 0, Math.min(sourceBytes.length, key.length));
+    return key;
   }
 
   /** Encrypt string */

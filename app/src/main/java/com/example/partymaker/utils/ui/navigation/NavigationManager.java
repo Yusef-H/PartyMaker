@@ -3,6 +3,7 @@ package com.example.partymaker.utils.ui.navigation;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.view.MenuItem;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity;
 import com.example.partymaker.ui.features.core.MainActivity;
@@ -13,6 +14,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class NavigationManager {
 
   private static final String TAG = "NavigationManager";
+  private static final String PAGE_PROFILE = "profile";
+  private static final String PAGE_MY_PARTIES = "myparties";
+  private static final String PAGE_PUBLIC_PARTIES = "publicparties";
+  private static final String PAGE_CREATE_GROUP = "creategroup";
+  private static final String PAGE_NONE = "none";
 
   /**
    * Sets up the bottom navigation with the current page highlighted
@@ -31,34 +37,36 @@ public class NavigationManager {
 
       // Set up navigation listener
       bottomNavigationView.setOnItemSelectedListener(
-          item -> {
-            int itemId = item.getItemId();
-            Log.d(TAG, "Bottom navigation item selected: " + itemId);
-
-            if (itemId == R.id.nav_profile) {
-              Log.d(TAG, "Navigating to profile");
-              navigateToProfile(activity);
-              return true;
-            } else if (itemId == R.id.nav_my_parties) {
-              Log.d(TAG, "Navigating to my parties");
-              navigateToMyParties(activity);
-              return true;
-            } else if (itemId == R.id.nav_public_parties) {
-              Log.d(TAG, "Navigating to public parties");
-              navigateToPublicParties(activity);
-              return true;
-            } else if (itemId == R.id.nav_create_group) {
-              Log.d(TAG, "Navigating to create group");
-              navigateToCreateGroup(activity);
-              return true;
-            }
-
-            Log.d(TAG, "Unknown navigation item: " + itemId);
-            return false;
-          });
+          item -> handleNavigationItemSelected(activity, item));
     } else {
       Log.e(TAG, "BottomNavigationView not found!");
     }
+  }
+
+  private static boolean handleNavigationItemSelected(Activity activity, MenuItem item) {
+    int itemId = item.getItemId();
+    Log.d(TAG, "Bottom navigation item selected: " + itemId);
+
+    if (itemId == R.id.nav_profile) {
+      Log.d(TAG, "Navigating to profile");
+      navigateToProfile(activity);
+      return true;
+    } else if (itemId == R.id.nav_my_parties) {
+      Log.d(TAG, "Navigating to my parties");
+      navigateToMyParties(activity);
+      return true;
+    } else if (itemId == R.id.nav_public_parties) {
+      Log.d(TAG, "Navigating to public parties");
+      navigateToPublicParties(activity);
+      return true;
+    } else if (itemId == R.id.nav_create_group) {
+      Log.d(TAG, "Navigating to create group");
+      navigateToCreateGroup(activity);
+      return true;
+    }
+
+    Log.d(TAG, "Unknown navigation item: " + itemId);
+    return false;
   }
 
   /**
@@ -67,25 +75,25 @@ public class NavigationManager {
    * @param activity The activity
    */
   public static void setupBottomNavigation(Activity activity) {
-    setupBottomNavigation(activity, "none");
+    setupBottomNavigation(activity, PAGE_NONE);
   }
 
   private static void setSelectedItem(
       BottomNavigationView bottomNavigationView, String currentPage) {
     switch (currentPage) {
-      case "profile":
+      case PAGE_PROFILE:
         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
         break;
-      case "myparties":
+      case PAGE_MY_PARTIES:
         bottomNavigationView.setSelectedItemId(R.id.nav_my_parties);
         break;
-      case "publicparties":
+      case PAGE_PUBLIC_PARTIES:
         bottomNavigationView.setSelectedItemId(R.id.nav_public_parties);
         break;
-      case "creategroup":
+      case PAGE_CREATE_GROUP:
         bottomNavigationView.setSelectedItemId(R.id.nav_create_group);
         break;
-      case "none":
+      case PAGE_NONE:
       default:
         // Don't select any item
         break;

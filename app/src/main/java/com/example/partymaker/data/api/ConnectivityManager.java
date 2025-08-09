@@ -17,6 +17,14 @@ import androidx.lifecycle.MutableLiveData;
  */
 public class ConnectivityManager {
   private static final String TAG = "ConnectivityManager";
+  
+  // Network check constants
+  private static final String NETWORK_TEST_URL = "https://www.google.com";
+  private static final int NETWORK_TIMEOUT_MS = 3000;
+  private static final int NETWORK_CHECK_INTERVAL_MS = 30000;
+  private static final int HTTP_SUCCESS_CODE = 200;
+  
+  // Instance management
   private static ConnectivityManager instance;
 
   private final MutableLiveData<Boolean> isNetworkAvailable = new MutableLiveData<>(false);
@@ -28,7 +36,7 @@ public class ConnectivityManager {
 
   /** Private constructor to enforce singleton pattern */
   private ConnectivityManager() {
-    // Private constructor
+    // Prevent instantiation
   }
 
   /**
@@ -86,19 +94,25 @@ public class ConnectivityManager {
 
   /** Schedules periodic network checks to ensure connectivity status is accurate */
   private void schedulePeriodicNetworkChecks() {
-    // Run a check every 30 seconds
-    mainHandler.postDelayed(
-        new Runnable() {
-          @Override
-          public void run() {
-            if (appContext != null) {
-              performActiveNetworkCheck();
-            }
-            // Schedule the next check
-            mainHandler.postDelayed(this, 30000);
-          }
-        },
-        30000);
+    mainHandler.postDelayed(createPeriodicCheckRunnable(), NETWORK_CHECK_INTERVAL_MS);
+  }
+  
+  /**
+   * Creates a runnable for periodic network checks
+   * 
+   * @return Runnable for periodic checks
+   */
+  private Runnable createPeriodicCheckRunnable() {
+    return new Runnable() {
+      @Override
+      public void run() {
+        if (appContext != null) {
+          performActiveNetworkCheck();
+        }
+        // Schedule the next check
+        mainHandler.postDelayed(this, NETWORK_CHECK_INTERVAL_MS);
+      }
+    };
   }
 
   /** Forces a refresh of the network connectivity status */
@@ -112,45 +126,55 @@ public class ConnectivityManager {
 
   /** Performs an active check of the network connectivity */
   private void performActiveNetworkCheck() {
-    new Thread(
-            () -> {
-              try {
-                // Try to connect to a known server
-                java.net.URL url = new java.net.URL("https://www.google.com");
-                java.net.HttpURLConnection connection =
-                    (java.net.HttpURLConnection) url.openConnection();
-                connection.setConnectTimeout(3000);
-                connection.connect();
-                boolean isConnected = connection.getResponseCode() == 200;
-                connection.disconnect();
-
-                Log.d(TAG, "Active network check result: " + isConnected);
-
-                // Update the network availability on the main thread
-                new Handler(Looper.getMainLooper())
-                    .post(
-                        () -> {
-                          isNetworkAvailable.setValue(isConnected);
-                          if (!isConnected) {
-                            lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
-                          } else {
-                            // Clear error if we're now connected
-                            lastNetworkError.setValue(null);
-                          }
-                        });
-              } catch (Exception e) {
-                Log.e(TAG, "Error performing active network check", e);
-
-                // If we can't connect, assume no network
-                new Handler(Looper.getMainLooper())
-                    .post(
-                        () -> {
-                          isNetworkAvailable.setValue(false);
-                          lastNetworkError.setValue(NetworkUtils.ErrorType.NO_NETWORK);
-                        });
-              }
-            })
-        .start();
+    new Thread(this::checkNetworkConnection).start();
+  }
+  
+  /**
+   * Checks network connection by attempting to connect to a known server
+   */
+  private void checkNetworkConnection() {
+    try {
+      boolean isConnected = testNetworkConnection();
+      Log.d(TAG, "Active network check result: " + isConnected);
+      updateNetworkStateOnMainThread(isConnected, null);
+    } catch (Exception e) {
+      Log.e(TAG, "Error performing active network check", e);
+      updateNetworkStateOnMainThread(false, NetworkUtils.ErrorType.NO_NETWORK);
+    }
+  }
+  
+  /**
+   * Tests network connection to a known server
+   * 
+   * @return true if connection successful
+   * @throws Exception if connection fails
+   */
+  private boolean testNetworkConnection() throws Exception {
+    java.net.URL url = new java.net.URL(NETWORK_TEST_URL);
+    java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+    connection.setConnectTimeout(NETWORK_TIMEOUT_MS);
+    connection.connect();
+    boolean isConnected = connection.getResponseCode() == HTTP_SUCCESS_CODE;
+    connection.disconnect();
+    return isConnected;
+  }
+  
+  /**
+   * Updates network state on the main thread
+   * 
+   * @param isConnected Whether network is connected
+   * @param errorType Error type if connection failed
+   */
+  private void updateNetworkStateOnMainThread(boolean isConnected, NetworkUtils.ErrorType errorType) {
+    mainHandler.post(() -> {
+      isNetworkAvailable.setValue(isConnected);
+      if (!isConnected && errorType != null) {
+        lastNetworkError.setValue(errorType);
+      } else if (isConnected) {
+        // Clear error if we're now connected
+        lastNetworkError.setValue(null);
+      }
+    });
   }
 
   /** Registers a callback for network changes */

@@ -22,6 +22,42 @@ import java.util.concurrent.CompletableFuture;
  */
 public class SecurityAgent {
   private static final String TAG = "SecurityAgent";
+  
+  // Security severity score deductions
+  private static final int HIGH_SEVERITY_DEDUCTION = 20;
+  private static final int MEDIUM_SEVERITY_DEDUCTION = 10;
+  private static final int LOW_SEVERITY_DEDUCTION = 5;
+  
+  // Security thresholds and limits
+  private static final int MAX_SECURITY_SCORE = 100;
+  private static final int MIN_SECURITY_SCORE = 0;
+  
+  // Default timeout values
+  private static final int DEFAULT_TIMEOUT_MS = 5000;
+  
+  // Root detection paths
+  private static final String[] ROOT_DETECTION_PATHS = {
+    "/system/app/Superuser.apk",
+    "/sbin/su",
+    "/system/bin/su",
+    "/system/xbin/su",
+    "/data/local/xbin/su",
+    "/data/local/bin/su",
+    "/system/sd/xbin/su",
+    "/system/bin/failsafe/su",
+    "/data/local/su"
+  };
+  
+  // Dangerous permissions list
+  private static final String[] DANGEROUS_PERMISSIONS = {
+    "android.permission.READ_CONTACTS",
+    "android.permission.CAMERA",
+    "android.permission.RECORD_AUDIO",
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.READ_SMS",
+    "android.permission.READ_PHONE_STATE"
+  };
+  
   private static SecurityAgent instance;
   private final Context context;
   private final List<SecurityIssue> securityIssues;
@@ -260,25 +296,33 @@ public class SecurityAgent {
 
   /** Helper methods for security checks */
   private boolean isDeviceRooted() {
-    String[] paths = {
-      "/system/app/Superuser.apk",
-      "/sbin/su",
-      "/system/bin/su",
-      "/system/xbin/su",
-      "/data/local/xbin/su",
-      "/data/local/bin/su",
-      "/system/sd/xbin/su",
-      "/system/bin/failsafe/su",
-      "/data/local/su"
-    };
-
-    for (String path : paths) {
+    return checkRootPaths() || checkRootBinaries() || checkRootProperties();
+  }
+  
+  private boolean checkRootPaths() {
+    for (String path : ROOT_DETECTION_PATHS) {
       if (new File(path).exists()) {
+        Log.d(TAG, "Root detection: found root binary at " + path);
         return true;
       }
     }
-
     return false;
+  }
+  
+  private boolean checkRootBinaries() {
+    try {
+      Process process = Runtime.getRuntime().exec("which su");
+      process.waitFor();
+      return process.exitValue() == 0;
+    } catch (Exception e) {
+      // Exception means 'which' command failed or 'su' not found
+      return false;
+    }
+  }
+  
+  private boolean checkRootProperties() {
+    String buildTags = android.os.Build.TAGS;
+    return buildTags != null && buildTags.contains("test-keys");
   }
 
   private boolean isCleartextTrafficAllowed() {
@@ -330,12 +374,12 @@ public class SecurityAgent {
   }
 
   private boolean isDangerousPermission(String permission) {
-    return permission.contains("android.permission.READ_CONTACTS")
-        || permission.contains("android.permission.CAMERA")
-        || permission.contains("android.permission.RECORD_AUDIO")
-        || permission.contains("android.permission.ACCESS_FINE_LOCATION")
-        || permission.contains("android.permission.READ_SMS")
-        || permission.contains("android.permission.READ_PHONE_STATE");
+    for (String dangerousPermission : DANGEROUS_PERMISSIONS) {
+      if (permission.contains(dangerousPermission)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isPermissionJustified(String permission) {
@@ -400,25 +444,30 @@ public class SecurityAgent {
   /** Calculate overall security score */
   private int calculateSecurityScore() {
     if (securityIssues.isEmpty()) {
-      return 100;
+      return MAX_SECURITY_SCORE;
     }
 
     int totalDeductions = 0;
     for (SecurityIssue issue : securityIssues) {
-      switch (issue.getSeverityEnum()) {
-        case HIGH:
-          totalDeductions += 20;
-          break;
-        case MEDIUM:
-          totalDeductions += 10;
-          break;
-        case LOW:
-          totalDeductions += 5;
-          break;
-      }
+      totalDeductions += getDeductionForSeverity(issue.getSeverityEnum());
     }
 
-    return Math.max(0, 100 - totalDeductions);
+    return Math.max(MIN_SECURITY_SCORE, MAX_SECURITY_SCORE - totalDeductions);
+  }
+  
+  private int getDeductionForSeverity(SecurityIssue.Severity severity) {
+    switch (severity) {
+      case CRITICAL:
+        return HIGH_SEVERITY_DEDUCTION * 2; // Critical issues have double deduction
+      case HIGH:
+        return HIGH_SEVERITY_DEDUCTION;
+      case MEDIUM:
+        return MEDIUM_SEVERITY_DEDUCTION;
+      case LOW:
+        return LOW_SEVERITY_DEDUCTION;
+      default:
+        return LOW_SEVERITY_DEDUCTION;
+    }
   }
 
   /** Get device information */
@@ -449,17 +498,26 @@ public class SecurityAgent {
 
   /** Export security report to various formats */
   public String exportReportAsJSON(SecurityReport report) {
-    // TODO: Implement JSON export
+    if (report == null) {
+      Log.w(TAG, "Cannot export null security report to JSON");
+      return "{}";
+    }
     return report.toJSON();
   }
 
   public String exportReportAsHTML(SecurityReport report) {
-    // TODO: Implement HTML export
+    if (report == null) {
+      Log.w(TAG, "Cannot export null security report to HTML");
+      return "<html><body><h1>Security Report</h1><p>No data available</p></body></html>";
+    }
     return report.toHTML();
   }
 
   public String exportReportAsMarkdown(SecurityReport report) {
-    // TODO: Implement Markdown export
+    if (report == null) {
+      Log.w(TAG, "Cannot export null security report to Markdown");
+      return "# Security Report\n\nNo data available";
+    }
     return report.toMarkdown();
   }
 
@@ -478,9 +536,16 @@ public class SecurityAgent {
   /** Get expected app signature hash for verification */
   private String getExpectedSignatureHash() {
     // In production, this should be loaded from a secure configuration
-    // For now, return null to skip verification (implement as needed)
-    // TODO: Add EXPECTED_SIGNATURE_HASH to BuildConfig or secure configuration
-    return null; // Skip verification for now
+    // or BuildConfig to prevent hardcoding sensitive values in source code
+    try {
+      // Check if BuildConfig has the expected signature hash
+      Class<?> buildConfig = Class.forName(context.getPackageName() + ".BuildConfig");
+      java.lang.reflect.Field field = buildConfig.getDeclaredField("EXPECTED_SIGNATURE_HASH");
+      return (String) field.get(null);
+    } catch (Exception e) {
+      Log.d(TAG, "Expected signature hash not found in BuildConfig, skipping verification");
+      return null; // Skip verification if not configured
+    }
   }
 
   /** Check if SSL pinning is enabled in network security config */

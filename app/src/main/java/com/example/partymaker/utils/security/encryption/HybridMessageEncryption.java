@@ -43,6 +43,19 @@ public class HybridMessageEncryption {
   private static final int AES_KEY_SIZE = 256;
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
+  
+  // System constants
+  private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
+  private static final String RSA_KEY_FACTORY_ALGORITHM = "RSA";
+  private static final String AES_KEY_GENERATOR_ALGORITHM = "AES";
+  private static final int TAG_LENGTH_BITS = GCM_TAG_LENGTH * 8;
+  
+  // JSON keys
+  private static final String JSON_ENCRYPTED_MESSAGE = "encryptedMessage";
+  private static final String JSON_ALGORITHM = "algorithm";
+  private static final String JSON_TIMESTAMP = "timestamp";
+  private static final String JSON_KEYS = "keys";
+  private static final String HYBRID_ALGORITHM_NAME = "hybrid-rsa-aes";
 
   private final String currentUserId;
   private final SecureRandom secureRandom;
@@ -54,7 +67,7 @@ public class HybridMessageEncryption {
 
     try {
       // Initialize Android Keystore
-      this.keyStore = KeyStore.getInstance("AndroidKeyStore");
+      this.keyStore = KeyStore.getInstance(ANDROID_KEYSTORE);
       this.keyStore.load(null);
 
       // Ensure user has RSA key pair
@@ -81,11 +94,7 @@ public class HybridMessageEncryption {
       String encryptedMessage = encryptWithAES(message, messageKey);
 
       // 3. Encrypt AES key for each recipient with their RSA public key
-      JSONObject result = new JSONObject();
-      result.put("encryptedMessage", encryptedMessage);
-      result.put("algorithm", "hybrid-rsa-aes");
-      result.put("timestamp", System.currentTimeMillis());
-
+      JSONObject result = createResultObject(encryptedMessage);
       JSONObject encryptedKeys = new JSONObject();
       byte[] aesKeyBytes = messageKey.getEncoded();
 
@@ -101,7 +110,7 @@ public class HybridMessageEncryption {
         encryptedKeys.put(userId, encryptedKeyForRecipient);
       }
 
-      result.put("keys", encryptedKeys);
+      result.put(JSON_KEYS, encryptedKeys);
 
       Log.d(TAG, "Message encrypted for " + recipientPublicKeys.size() + " recipients");
       return result.toString();
@@ -123,10 +132,10 @@ public class HybridMessageEncryption {
       JSONObject data = new JSONObject(encryptedData);
 
       // Get encrypted message
-      String encryptedMessage = data.getString("encryptedMessage");
+      String encryptedMessage = data.getString(JSON_ENCRYPTED_MESSAGE);
 
       // Get encrypted AES key for current user
-      JSONObject keys = data.getJSONObject("keys");
+      JSONObject keys = data.getJSONObject(JSON_KEYS);
       if (!keys.has(currentUserId)) {
         Log.w(TAG, "No encrypted key found for user: " + currentUserId);
         return null;
@@ -137,7 +146,7 @@ public class HybridMessageEncryption {
       // Decrypt AES key using my RSA private key
       PrivateKey myPrivateKey = getMyPrivateKey();
       byte[] aesKeyBytes = decryptWithRSA(encryptedKeyForMe, myPrivateKey);
-      SecretKey messageKey = new SecretKeySpec(aesKeyBytes, "AES");
+      SecretKey messageKey = new SecretKeySpec(aesKeyBytes, AES_KEY_GENERATOR_ALGORITHM);
 
       // Decrypt message using AES key
       String decryptedMessage = decryptWithAES(encryptedMessage, messageKey);
@@ -208,13 +217,13 @@ public class HybridMessageEncryption {
   private PublicKey parsePublicKey(String publicKeyBase64) throws Exception {
     byte[] keyBytes = Base64.decode(publicKeyBase64, Base64.NO_WRAP);
     X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    KeyFactory keyFactory = KeyFactory.getInstance(RSA_KEY_FACTORY_ALGORITHM);
     return keyFactory.generatePublic(keySpec);
   }
 
   /** Generate random AES key for message encryption */
   private SecretKey generateAESKey() throws Exception {
-    KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+    KeyGenerator keyGenerator = KeyGenerator.getInstance(AES_KEY_GENERATOR_ALGORITHM);
     keyGenerator.init(AES_KEY_SIZE, secureRandom);
     return keyGenerator.generateKey();
   }
@@ -227,7 +236,7 @@ public class HybridMessageEncryption {
 
     // Encrypt
     Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-    GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+    GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
     cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
     byte[] ciphertext = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
 
@@ -253,7 +262,7 @@ public class HybridMessageEncryption {
 
     // Decrypt
     Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-    GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+    GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
     cipher.init(Cipher.DECRYPT_MODE, key, gcmSpec);
     byte[] plaintext = cipher.doFinal(ciphertext);
 
@@ -290,5 +299,14 @@ public class HybridMessageEncryption {
     } catch (Exception e) {
       return "Status check failed: " + e.getMessage();
     }
+  }
+  
+  /** Create JSON result object for encrypted message */
+  private JSONObject createResultObject(String encryptedMessage) throws Exception {
+    JSONObject result = new JSONObject();
+    result.put(JSON_ENCRYPTED_MESSAGE, encryptedMessage);
+    result.put(JSON_ALGORITHM, HYBRID_ALGORITHM_NAME);
+    result.put(JSON_TIMESTAMP, System.currentTimeMillis());
+    return result;
   }
 }

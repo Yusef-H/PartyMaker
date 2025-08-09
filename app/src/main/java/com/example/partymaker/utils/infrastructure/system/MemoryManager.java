@@ -11,37 +11,38 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * Utility class for managing memory. Provides methods for checking memory usage and clearing
- * caches.
+ * Utility class for managing memory operations. Provides methods for checking memory usage,
+ * clearing caches, and performing memory cleanup. All methods are static and thread-safe.
  */
-public class MemoryManager {
+public final class MemoryManager {
   private static final String TAG = "MemoryManager";
+  
+  // Memory threshold constants
   private static final int LOW_MEMORY_THRESHOLD_PERCENTAGE = 15;
+  private static final float PERCENTAGE_MULTIPLIER = 100.0f;
+  
+  // Memory unit conversion constants
+  private static final float BYTES_TO_MB = 1024.0f * 1024.0f;
+  private static final long BYTES_TO_KB = 1024L;
 
   /**
    * Checks if the device is running low on memory.
    *
-   * @param context The context
+   * @param context The context (cannot be null)
    * @return true if the device is running low on memory, false otherwise
+   * @throws IllegalArgumentException if context is null
    */
   public static boolean isLowMemory(Context context) {
-    ActivityManager activityManager =
-        (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    validateNotNull(context, "Context cannot be null");
+    
+    ActivityManager activityManager = getActivityManager(context);
     ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
     activityManager.getMemoryInfo(memoryInfo);
 
-    // Calculate the percentage of available memory
-    float percentAvailable = 100.0f * memoryInfo.availMem / memoryInfo.totalMem;
-
-    // Log memory info
-    Log.d(
-        TAG,
-        String.format(
-            "Memory - Available: %.2f MB, Total: %.2f MB, %.1f%% free",
-            memoryInfo.availMem / (1024.0f * 1024.0f),
-            memoryInfo.totalMem / (1024.0f * 1024.0f),
-            percentAvailable));
-
+    float percentAvailable = PERCENTAGE_MULTIPLIER * memoryInfo.availMem / memoryInfo.totalMem;
+    
+    logMemoryInfo(memoryInfo, percentAvailable);
+    
     return percentAvailable < LOW_MEMORY_THRESHOLD_PERCENTAGE || memoryInfo.lowMemory;
   }
 
@@ -135,5 +136,49 @@ public class MemoryManager {
    */
   public static int getProcessId() {
     return Process.myPid();
+  }
+
+  // Private helper methods
+
+  /**
+   * Gets the ActivityManager from the context.
+   *
+   * @param context The context to get the service from
+   * @return The ActivityManager instance
+   */
+  private static ActivityManager getActivityManager(Context context) {
+    return (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+  }
+
+  /**
+   * Logs memory information.
+   *
+   * @param memoryInfo The memory info object
+   * @param percentAvailable The percentage of available memory
+   */
+  private static void logMemoryInfo(ActivityManager.MemoryInfo memoryInfo, float percentAvailable) {
+    Log.d(TAG, String.format(Locale.ROOT,
+        "Memory - Available: %.2f MB, Total: %.2f MB, %.1f%% free",
+        memoryInfo.availMem / BYTES_TO_MB,
+        memoryInfo.totalMem / BYTES_TO_MB,
+        percentAvailable));
+  }
+
+  /**
+   * Validates that an object is not null.
+   *
+   * @param obj The object to validate
+   * @param message The error message if validation fails
+   * @throws IllegalArgumentException if obj is null
+   */
+  private static void validateNotNull(Object obj, String message) {
+    if (obj == null) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  // Private constructor to prevent instantiation
+  private MemoryManager() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
   }
 }

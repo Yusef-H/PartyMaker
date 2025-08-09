@@ -24,23 +24,30 @@ import java.util.Map;
 
 public class FriendsAddActivity extends AppCompatActivity {
   private static final String TAG = "FriendsAddActivity";
+  private static final String INPUT_EMAIL_MESSAGE = "Input email please";
+  private static final String EMAIL_NOT_FOUND_MESSAGE = "Email not found";
+  private static final String FRIEND_ADDED_MESSAGE = "Friend successfully added";
+  private static final String USER_ALREADY_IN_GROUP_MESSAGE = "User already in group";
+  private static final String ADDED_TO_COMING_MESSAGE = "Added to Coming List";
+  private static final String GROUP_NOT_FOUND_MESSAGE = "Group not found";
+  private static final String TRUE_VALUE = "true";
   private Button btnHide, btnHelp, btnAddFriend, btnYes, btnNo, btnFriendsList;
   private TextView tvHide, tvHelp, tvInstructions1, tvAddMore;
   private EditText etFriendEmail;
-  private HashMap<String, Object> FriendKeys, ComingKeys, MessageKeys;
-  private String GroupKey,
-      CurrentFriend,
-      GroupName,
-      GroupDay,
-      GroupMonth,
-      GroupYear,
-      GroupHour,
-      GroupLocation,
-      AdminKey,
-      CreatedAt,
-      GroupPrice;
-  private int GroupType;
-  private boolean CanAdd;
+  private HashMap<String, Object> friendKeys, comingKeys, messageKeys;
+  private String groupKey,
+      currentFriend,
+      groupName,
+      groupDay,
+      groupMonth,
+      groupYear,
+      groupHour,
+      groupLocation,
+      adminKey,
+      createdAt,
+      groupPrice;
+  private int groupType;
+  private boolean canAdd;
   private FirebaseServerClient serverClient;
 
   @Override
@@ -51,37 +58,15 @@ public class FriendsAddActivity extends AppCompatActivity {
     // Initialize server client
     serverClient = FirebaseServerClient.getInstance();
 
-    // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.hide();
     }
 
-    // Get Values from MainActivity By intent + connection between intent and
-    // current activity objects
-    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
-    if (extras == null) {
-      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
-      finish();
+    if (!initializeExtrasData()) {
       return;
     }
-    GroupName = extras.getGroupName();
-    GroupKey = extras.getGroupKey();
-    GroupDay = extras.getGroupDays();
-    GroupMonth = extras.getGroupMonths();
-    GroupYear = extras.getGroupYears();
-    GroupHour = extras.getGroupHours();
-    GroupLocation = extras.getGroupLocation();
-    AdminKey = extras.getAdminKey();
-    CreatedAt = extras.getCreatedAt();
-    GroupPrice = extras.getGroupPrice();
-    GroupType = extras.getGroupType();
-    CanAdd = extras.isCanAdd();
-    FriendKeys = extras.getFriendKeys();
-    ComingKeys = extras.getComingKeys();
-    MessageKeys = extras.getMessageKeys();
 
-    // connection
     btnAddFriend = findViewById(R.id.btnAddFriend);
     btnFriendsList = findViewById(R.id.btnFriendsList);
     btnHide = findViewById(R.id.btnHide1);
@@ -98,28 +83,28 @@ public class FriendsAddActivity extends AppCompatActivity {
     // Set up back button
     btnBack.setOnClickListener(v -> navigateBack());
 
-    EventHandler();
+    setupEventHandlers();
   }
 
   private void navigateBack() {
     Intent intent = new Intent(this, PartyMainActivity.class);
     ExtrasMetadata extras =
         new ExtrasMetadata(
-            GroupName,
-            GroupKey,
-            GroupDay,
-            GroupMonth,
-            GroupYear,
-            GroupHour,
-            GroupLocation,
-            AdminKey,
-            CreatedAt,
-            GroupPrice,
-            GroupType,
-            CanAdd,
-            FriendKeys,
-            ComingKeys,
-            MessageKeys);
+            groupName,
+            groupKey,
+            groupDay,
+            groupMonth,
+            groupYear,
+            groupHour,
+            groupLocation,
+            adminKey,
+            createdAt,
+            groupPrice,
+            groupType,
+            canAdd,
+            friendKeys,
+            comingKeys,
+            messageKeys);
     IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
@@ -129,21 +114,21 @@ public class FriendsAddActivity extends AppCompatActivity {
     Intent intent = new Intent(this, MembersInvitedActivity.class);
     ExtrasMetadata extras =
         new ExtrasMetadata(
-            GroupName,
-            GroupKey,
-            GroupDay,
-            GroupMonth,
-            GroupYear,
-            GroupHour,
-            GroupLocation,
-            AdminKey,
-            CreatedAt,
-            GroupPrice,
-            GroupType,
-            CanAdd,
-            FriendKeys,
-            ComingKeys,
-            MessageKeys);
+            groupName,
+            groupKey,
+            groupDay,
+            groupMonth,
+            groupYear,
+            groupHour,
+            groupLocation,
+            adminKey,
+            createdAt,
+            groupPrice,
+            groupType,
+            canAdd,
+            friendKeys,
+            comingKeys,
+            messageKeys);
     IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
@@ -153,21 +138,21 @@ public class FriendsAddActivity extends AppCompatActivity {
     Intent intent = new Intent(this, MembersComingActivity.class);
     ExtrasMetadata extras =
         new ExtrasMetadata(
-            GroupName,
-            GroupKey,
-            GroupDay,
-            GroupMonth,
-            GroupYear,
-            GroupHour,
-            GroupLocation,
-            AdminKey,
-            CreatedAt,
-            GroupPrice,
-            GroupType,
-            CanAdd,
-            FriendKeys,
-            ComingKeys,
-            MessageKeys);
+            groupName,
+            groupKey,
+            groupDay,
+            groupMonth,
+            groupYear,
+            groupHour,
+            groupLocation,
+            adminKey,
+            createdAt,
+            groupPrice,
+            groupType,
+            canAdd,
+            friendKeys,
+            comingKeys,
+            messageKeys);
     IntentExtrasManager.addExtrasToIntent(intent, extras);
     startActivity(intent);
     finish(); // Close this activity
@@ -180,7 +165,34 @@ public class FriendsAddActivity extends AppCompatActivity {
     navigateBack();
   }
 
-  private void EventHandler() {
+  private boolean initializeExtrasData() {
+    ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(getIntent());
+    if (extras == null) {
+      Toast.makeText(this, "Missing intent data", Toast.LENGTH_SHORT).show();
+      finish();
+      return false;
+    }
+    
+    groupName = extras.getGroupName();
+    groupKey = extras.getGroupKey();
+    groupDay = extras.getGroupDays();
+    groupMonth = extras.getGroupMonths();
+    groupYear = extras.getGroupYears();
+    groupHour = extras.getGroupHours();
+    groupLocation = extras.getGroupLocation();
+    adminKey = extras.getAdminKey();
+    createdAt = extras.getCreatedAt();
+    groupPrice = extras.getGroupPrice();
+    groupType = extras.getGroupType();
+    canAdd = extras.isCanAdd();
+    friendKeys = extras.getFriendKeys();
+    comingKeys = extras.getComingKeys();
+    messageKeys = extras.getMessageKeys();
+    
+    return true;
+  }
+
+  private void setupEventHandlers() {
     btnHelp.setOnClickListener(
         v -> {
           showViews(tvInstructions1, btnHide, tvHide);
@@ -194,316 +206,257 @@ public class FriendsAddActivity extends AppCompatActivity {
         });
 
     btnAddFriend.setOnClickListener(
-        v -> {
-          // This if - checks if EditText is not Empty
-          if (!etFriendEmail.getText().toString().trim().isEmpty()) {
-            CurrentFriend = etFriendEmail.getText().toString().replace('.', ' ');
-
-            // Always use server client for consistency
-            serverClient.getUsers(
-                new FirebaseServerClient.DataCallback<>() {
-                  @Override
-                  public void onSuccess(Map<String, User> data) {
-                    processServerUserData(data);
-                  }
-
-                  @Override
-                  public void onError(String errorMessage) {
-                    Toast.makeText(
-                            FriendsAddActivity.this,
-                            "Server error: " + errorMessage,
-                            Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                });
-          } else {
-            Toast.makeText(FriendsAddActivity.this, "Input email please", Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+        v -> handleAddFriendClick());
     btnFriendsList.setOnClickListener(
-        v -> {
-          Intent intent = new Intent(FriendsAddActivity.this, UsersListActivity.class);
-          // Pass necessary data to UsersListActivity
-          ExtrasMetadata extras =
-              new ExtrasMetadata(
-                  GroupName,
-                  GroupKey,
-                  GroupDay,
-                  GroupMonth,
-                  GroupYear,
-                  GroupHour,
-                  GroupLocation,
-                  AdminKey,
-                  CreatedAt,
-                  GroupPrice,
-                  GroupType,
-                  CanAdd,
-                  FriendKeys,
-                  ComingKeys,
-                  MessageKeys);
-          IntentExtrasManager.addExtrasToIntent(intent, extras);
-          startActivity(intent);
-        });
-    btnYes.setOnClickListener(
-        v -> {
-          // Add friend to coming list
-          if (ComingKeys == null) {
-            ComingKeys = new HashMap<>();
-          }
+        v -> navigateToUsersListActivity());
+    btnYes.setOnClickListener(v -> handleYesClick());
 
-          // Store CurrentFriend in a final variable to use in inner class
-          final String currentFriendEmail = CurrentFriend;
+    btnNo.setOnClickListener(v -> navigateToMembersInvitedActivity());
+  }
 
-          // Use server client to update ComingKeys
-          serverClient.getGroup(
-              GroupKey,
-              new FirebaseServerClient.DataCallback<>() {
-                @Override
-                public void onSuccess(com.example.partymaker.data.model.Group group) {
-                  if (group != null) {
-                    // Find the friend key in FriendKeys
-                    String friendKey = null;
-                    if (group.getFriendKeys() != null) {
-                      for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                        if (entry.getKey().equals(currentFriendEmail)) {
-                          friendKey = entry.getKey();
-                          break;
-                        }
-                      }
-                    }
+  private ExtrasMetadata createExtrasMetadata() {
+    return new ExtrasMetadata(
+        groupName, groupKey, groupDay, groupMonth, groupYear, groupHour,
+        groupLocation, adminKey, createdAt, groupPrice, groupType, canAdd,
+        friendKeys, comingKeys, messageKeys);
+  }
 
-                    // Store friendKey in a final variable for use in inner class
-                    final String finalFriendKey =
-                        friendKey != null ? friendKey : currentFriendEmail;
+  private void addExtrasToIntent(Intent intent) {
+    IntentExtrasManager.addExtrasToIntent(intent, createExtrasMetadata());
+  }
 
-                    try {
-                      // Update the entire ComingKeys object
-                      HashMap<String, Object> updatedComingKeys = group.getComingKeys();
-                      if (updatedComingKeys == null) {
-                        updatedComingKeys = new HashMap<>();
-                      }
-                      updatedComingKeys.put(finalFriendKey, "true");
+  private void navigateToUsersListActivity() {
+    Intent intent = new Intent(FriendsAddActivity.this, UsersListActivity.class);
+    addExtrasToIntent(intent);
+    startActivity(intent);
+  }
 
-                      // Create updates map for the entire group
-                      HashMap<String, Object> groupUpdates = new HashMap<>();
-                      groupUpdates.put("ComingKeys", updatedComingKeys);
+  private void handleAddFriendClick() {
+    if (!etFriendEmail.getText().toString().trim().isEmpty()) {
+      currentFriend = etFriendEmail.getText().toString().replace('.', ' ');
+      serverClient.getUsers(new FirebaseServerClient.DataCallback<>() {
+        @Override
+        public void onSuccess(Map<String, User> data) {
+          processServerUserData(data);
+        }
 
-                      Log.d(TAG, "Updating group: " + GroupKey + " with ComingKeys update");
+        @Override
+        public void onError(String errorMessage) {
+          Toast.makeText(FriendsAddActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT).show();
+        }
+      });
+    } else {
+      Toast.makeText(FriendsAddActivity.this, INPUT_EMAIL_MESSAGE, Toast.LENGTH_SHORT).show();
+    }
+  }
 
-                      // Use updateGroup instead of updateData
-                      serverClient.updateGroup(
-                          GroupKey,
-                          groupUpdates,
-                          new FirebaseServerClient.OperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                              Toast.makeText(
-                                      FriendsAddActivity.this,
-                                      "Added to Coming List",
-                                      Toast.LENGTH_SHORT)
-                                  .show();
+  private void handleYesClick() {
+    if (comingKeys == null) {
+      comingKeys = new HashMap<>();
+    }
 
-                              // Update local data
-                              if (ComingKeys == null) {
-                                ComingKeys = new HashMap<>();
-                              }
-                              ComingKeys.put(finalFriendKey, "true");
+    final String currentFriendEmail = currentFriend;
+    serverClient.getGroup(groupKey, new FirebaseServerClient.DataCallback<>() {
+      @Override
+      public void onSuccess(com.example.partymaker.data.model.Group group) {
+        if (group != null) {
+          addFriendToComingList(group, currentFriendEmail);
+        } else {
+          showGroupNotFoundError();
+        }
+      }
 
-                              // Navigate to MembersComingActivity to show the newly added member in
-                              // coming list
-                              navigateToMembersComingActivity();
-                            }
+      @Override
+      public void onError(String errorMessage) {
+        showGroupLoadError(errorMessage);
+      }
+    });
+  }
 
-                            @Override
-                            public void onError(String errorMessage) {
-                              Log.e(TAG, "Error adding to coming list: " + errorMessage);
-                              Toast.makeText(
-                                      FriendsAddActivity.this,
-                                      "Error adding to coming list: " + errorMessage,
-                                      Toast.LENGTH_SHORT)
-                                  .show();
-                            }
-                          });
-                    } catch (Exception e) {
-                      Log.e(TAG, "Exception updating coming keys", e);
-                      Toast.makeText(
-                              FriendsAddActivity.this,
-                              "Error adding to coming list: " + e.getMessage(),
-                              Toast.LENGTH_SHORT)
-                          .show();
+  private void addFriendToComingList(com.example.partymaker.data.model.Group group, String currentFriendEmail) {
+    String friendKey = findFriendKeyInGroup(group, currentFriendEmail);
+    final String finalFriendKey = friendKey != null ? friendKey : currentFriendEmail;
 
-                      showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
-                      hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
-                    }
-                  } else {
-                    Toast.makeText(FriendsAddActivity.this, "Group not found", Toast.LENGTH_SHORT)
-                        .show();
-                    showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
-                    hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
-                  }
-                }
+    try {
+      HashMap<String, Object> updatedComingKeys = group.getComingKeys();
+      if (updatedComingKeys == null) {
+        updatedComingKeys = new HashMap<>();
+      }
+      updatedComingKeys.put(finalFriendKey, TRUE_VALUE);
 
-                @Override
-                public void onError(String errorMessage) {
-                  Log.e(TAG, "Error loading group: " + errorMessage);
-                  Toast.makeText(
-                          FriendsAddActivity.this,
-                          "Error loading group: " + errorMessage,
-                          Toast.LENGTH_SHORT)
-                      .show();
+      HashMap<String, Object> groupUpdates = new HashMap<>();
+      groupUpdates.put("ComingKeys", updatedComingKeys);
 
-                  showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
-                  hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
-                }
-              });
-        });
+      Log.d(TAG, "Updating group: " + groupKey + " with ComingKeys update");
 
-    btnNo.setOnClickListener(
-        v -> {
-          // Navigate to MembersInvitedActivity to show the newly added member in invited list
-          navigateToMembersInvitedActivity();
-        });
+      serverClient.updateGroup(groupKey, groupUpdates, new FirebaseServerClient.OperationCallback() {
+        @Override
+        public void onSuccess() {
+          Toast.makeText(FriendsAddActivity.this, ADDED_TO_COMING_MESSAGE, Toast.LENGTH_SHORT).show();
+          updateLocalComingKeys(finalFriendKey);
+          navigateToMembersComingActivity();
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+          Log.e(TAG, "Error adding to coming list: " + errorMessage);
+          Toast.makeText(FriendsAddActivity.this, "Error adding to coming list: " + errorMessage, Toast.LENGTH_SHORT).show();
+        }
+      });
+    } catch (Exception e) {
+      Log.e(TAG, "Exception updating coming keys", e);
+      Toast.makeText(FriendsAddActivity.this, "Error adding to coming list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+      resetViewsAfterError();
+    }
+  }
+
+  private String findFriendKeyInGroup(com.example.partymaker.data.model.Group group, String currentFriendEmail) {
+    if (group.getFriendKeys() != null) {
+      for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
+        if (entry.getKey().equals(currentFriendEmail)) {
+          return entry.getKey();
+        }
+      }
+    }
+    return null;
+  }
+
+  private void updateLocalComingKeys(String finalFriendKey) {
+    if (comingKeys == null) {
+      comingKeys = new HashMap<>();
+    }
+    comingKeys.put(finalFriendKey, TRUE_VALUE);
+  }
+
+  private void showGroupNotFoundError() {
+    Toast.makeText(FriendsAddActivity.this, GROUP_NOT_FOUND_MESSAGE, Toast.LENGTH_SHORT).show();
+    resetViewsAfterError();
+  }
+
+  private void showGroupLoadError(String errorMessage) {
+    Log.e(TAG, "Error loading group: " + errorMessage);
+    Toast.makeText(FriendsAddActivity.this, "Error loading group: " + errorMessage, Toast.LENGTH_SHORT).show();
+    resetViewsAfterError();
+  }
+
+  private void resetViewsAfterError() {
+    showViews(etFriendEmail, btnAddFriend, btnFriendsList, btnHelp, tvHelp);
+    hideViews(tvInstructions1, btnHide, tvHide, tvAddMore, btnYes, btnNo);
   }
 
   private void processServerUserData(Map<String, User> userData) {
-    boolean userFound = false;
-    String friendKey = null;
+    String friendKey = findUserByEmail(userData);
+    
+    if (friendKey == null) {
+      Toast.makeText(FriendsAddActivity.this, EMAIL_NOT_FOUND_MESSAGE, Toast.LENGTH_SHORT).show();
+      return;
+    }
 
-    // Find the user by email
+    final String finalFriendKey = friendKey;
+    final String currentFriendEmail = currentFriend;
+
+    Log.d(TAG, "Adding user to group: " + currentFriendEmail + " with key: " + finalFriendKey);
+
+    serverClient.getGroup(groupKey, new FirebaseServerClient.DataCallback<>() {
+      @Override
+      public void onSuccess(com.example.partymaker.data.model.Group group) {
+        handleGroupForUserAddition(group, finalFriendKey, currentFriendEmail);
+      }
+
+      @Override
+      public void onError(String errorMessage) {
+        Log.e(TAG, "Error loading group: " + errorMessage);
+        Toast.makeText(FriendsAddActivity.this, "Error loading group: " + errorMessage, Toast.LENGTH_SHORT).show();
+      }
+    });
+  }
+
+  private String findUserByEmail(Map<String, User> userData) {
     for (Map.Entry<String, User> entry : userData.entrySet()) {
       User user = entry.getValue();
       if (user != null && user.getEmail() != null) {
         String userEmail = user.getEmail().replace('.', ' ');
-        if (userEmail.equals(CurrentFriend)) {
-          userFound = true;
-          friendKey = entry.getKey();
-          break;
+        if (userEmail.equals(currentFriend)) {
+          return entry.getKey();
         }
       }
     }
+    return null;
+  }
 
-    if (!userFound) {
-      Toast.makeText(FriendsAddActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
+  private void handleGroupForUserAddition(com.example.partymaker.data.model.Group group, 
+                                         String finalFriendKey, String currentFriendEmail) {
+    if (group == null) {
+      Toast.makeText(FriendsAddActivity.this, GROUP_NOT_FOUND_MESSAGE, Toast.LENGTH_SHORT).show();
       return;
     }
 
-    // Store the friendKey in a final variable for use in inner class
-    final String finalFriendKey = friendKey;
+    Log.d(TAG, "Group found: " + group.getGroupName());
 
-    // Store CurrentFriend in a final variable for use in inner class
-    final String currentFriendEmail = CurrentFriend;
+    if (isUserAlreadyInGroup(group, finalFriendKey, currentFriendEmail)) {
+      Toast.makeText(FriendsAddActivity.this, USER_ALREADY_IN_GROUP_MESSAGE, Toast.LENGTH_SHORT).show();
+      return;
+    }
 
-    Log.d(TAG, "Adding user to group: " + currentFriendEmail + " with key: " + finalFriendKey);
+    addUserToGroup(group, finalFriendKey, currentFriendEmail);
+  }
 
-    // Check if user is already in the group
-    serverClient.getGroup(
-        GroupKey,
-        new FirebaseServerClient.DataCallback<>() {
-          @Override
-          public void onSuccess(com.example.partymaker.data.model.Group group) {
-            if (group == null) {
-              Toast.makeText(FriendsAddActivity.this, "Group not found", Toast.LENGTH_SHORT).show();
-              return;
-            }
+  private boolean isUserAlreadyInGroup(com.example.partymaker.data.model.Group group, 
+                                      String finalFriendKey, String currentFriendEmail) {
+    if (group.getFriendKeys() != null) {
+      for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
+        Log.d(TAG, "Checking friend key: " + entry.getKey() + " -> " + entry.getValue());
+        if ((entry.getValue() != null && entry.getValue().toString().equals(finalFriendKey))
+            || entry.getKey().equals(currentFriendEmail)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
-            Log.d(TAG, "Group found: " + group.getGroupName());
+  private void addUserToGroup(com.example.partymaker.data.model.Group group, 
+                             String finalFriendKey, String currentFriendEmail) {
+    try {
+      HashMap<String, Object> updatedFriendKeys = group.getFriendKeys();
+      if (updatedFriendKeys == null) {
+        updatedFriendKeys = new HashMap<>();
+      }
+      updatedFriendKeys.put(currentFriendEmail, finalFriendKey);
 
-            boolean alreadyInGroup = false;
+      HashMap<String, Object> groupUpdates = new HashMap<>();
+      groupUpdates.put("FriendKeys", updatedFriendKeys);
 
-            // Check if user is already in FriendKeys
-            if (group.getFriendKeys() != null) {
-              for (Map.Entry<String, Object> entry : group.getFriendKeys().entrySet()) {
-                Log.d(TAG, "Checking friend key: " + entry.getKey() + " -> " + entry.getValue());
-                if ((entry.getValue() != null && entry.getValue().toString().equals(finalFriendKey))
-                    || entry.getKey().equals(currentFriendEmail)) {
-                  alreadyInGroup = true;
-                  break;
-                }
-              }
-            }
+      Log.d(TAG, "Updating group: " + groupKey + " with FriendKeys update");
 
-            if (alreadyInGroup) {
-              Toast.makeText(FriendsAddActivity.this, "User already in group", Toast.LENGTH_SHORT)
-                  .show();
-              return;
-            }
+      serverClient.updateGroup(groupKey, groupUpdates, new FirebaseServerClient.OperationCallback() {
+        @Override
+        public void onSuccess() {
+          handleSuccessfulUserAddition(finalFriendKey, currentFriendEmail);
+        }
 
-            try {
-              // Update the entire FriendKeys object instead of just the path
-              HashMap<String, Object> updatedFriendKeys = group.getFriendKeys();
-              if (updatedFriendKeys == null) {
-                updatedFriendKeys = new HashMap<>();
-              }
-              updatedFriendKeys.put(currentFriendEmail, finalFriendKey);
+        @Override
+        public void onError(String errorMessage) {
+          Log.e(TAG, "Error adding friend: " + errorMessage);
+          Toast.makeText(FriendsAddActivity.this, "Error adding friend: " + errorMessage, Toast.LENGTH_SHORT).show();
+        }
+      });
+    } catch (Exception e) {
+      Log.e(TAG, "Exception updating group", e);
+      Toast.makeText(FriendsAddActivity.this, "Error adding friend: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+  }
 
-              // Create updates map for the entire group
-              HashMap<String, Object> groupUpdates = new HashMap<>();
-              groupUpdates.put("FriendKeys", updatedFriendKeys);
+  private void handleSuccessfulUserAddition(String finalFriendKey, String currentFriendEmail) {
+    if (friendKeys == null) {
+      friendKeys = new HashMap<>();
+    }
+    friendKeys.put(currentFriendEmail, finalFriendKey);
 
-              Log.d(TAG, "Updating group: " + GroupKey + " with FriendKeys update");
+    Toast.makeText(FriendsAddActivity.this, FRIEND_ADDED_MESSAGE, Toast.LENGTH_SHORT).show();
 
-              // Use updateGroup instead of updateData
-              serverClient.updateGroup(
-                  GroupKey,
-                  groupUpdates,
-                  new FirebaseServerClient.OperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                      // Update local data
-                      if (FriendKeys == null) {
-                        FriendKeys = new HashMap<>();
-                      }
-                      FriendKeys.put(currentFriendEmail, finalFriendKey);
-
-                      Toast.makeText(
-                              FriendsAddActivity.this,
-                              "Friend successfully added",
-                              Toast.LENGTH_SHORT)
-                          .show();
-
-                      // Ask if user wants to add to coming list
-                      hideViews(
-                          etFriendEmail,
-                          btnAddFriend,
-                          btnFriendsList,
-                          tvInstructions1,
-                          btnHide,
-                          tvHide,
-                          btnHelp,
-                          tvHelp);
-                      showViews(tvAddMore, btnYes, btnNo);
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                      Log.e(TAG, "Error adding friend: " + errorMessage);
-                      Toast.makeText(
-                              FriendsAddActivity.this,
-                              "Error adding friend: " + errorMessage,
-                              Toast.LENGTH_SHORT)
-                          .show();
-                    }
-                  });
-            } catch (Exception e) {
-              Log.e(TAG, "Exception updating group", e);
-              Toast.makeText(
-                      FriendsAddActivity.this,
-                      "Error adding friend: " + e.getMessage(),
-                      Toast.LENGTH_SHORT)
-                  .show();
-            }
-          }
-
-          @Override
-          public void onError(String errorMessage) {
-            Log.e(TAG, "Error loading group: " + errorMessage);
-            Toast.makeText(
-                    FriendsAddActivity.this,
-                    "Error loading group: " + errorMessage,
-                    Toast.LENGTH_SHORT)
-                .show();
-          }
-        });
+    hideViews(etFriendEmail, btnAddFriend, btnFriendsList, tvInstructions1, 
+              btnHide, tvHide, btnHelp, tvHelp);
+    showViews(tvAddMore, btnYes, btnNo);
   }
 }

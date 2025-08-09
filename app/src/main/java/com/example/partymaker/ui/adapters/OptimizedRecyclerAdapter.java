@@ -24,23 +24,34 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   }
 
   /**
-   * Gets an item at the specified position.
+   * Gets an item at the specified position with bounds checking.
    *
    * @param position The position
-   * @return The item
+   * @return The item, or null if position is out of bounds
    */
   public T getItem(int position) {
-    if (position >= 0 && position < items.size()) {
+    if (isValidPosition(position)) {
       return items.get(position);
     }
     return null;
   }
+  
+  /**
+   * Checks if the position is valid for the current items list.
+   *
+   * @param position The position to check
+   * @return true if position is valid
+   */
+  protected boolean isValidPosition(int position) {
+    return position >= 0 && position < items.size();
+  }
 
   /**
-   * Gets all items.
+   * Gets a defensive copy of all items.
    *
-   * @return The list of items
+   * @return A new list containing all items
    */
+  @NonNull
   public List<T> getItems() {
     return new ArrayList<>(items);
   }
@@ -52,55 +63,85 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
    * @param newItems The new list of items
    */
   public void updateItems(@NonNull List<T> newItems) {
-    final DiffUtil.DiffResult diffResult =
-        DiffUtil.calculateDiff(
-            new DiffUtil.Callback() {
-              @Override
-              public int getOldListSize() {
-                return items.size();
-              }
-
-              @Override
-              public int getNewListSize() {
-                return newItems.size();
-              }
-
-              @Override
-              public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                return OptimizedRecyclerAdapter.this.areItemsTheSame(
-                    items.get(oldPosition), newItems.get(newPosition));
-              }
-
-              @Override
-              public boolean areContentsTheSame(int oldPosition, int newPosition) {
-                return OptimizedRecyclerAdapter.this.areContentsTheSame(
-                    items.get(oldPosition), newItems.get(newPosition));
-              }
-            });
-
+    final DiffUtil.DiffResult diffResult = calculateDiff(newItems);
     this.items = new ArrayList<>(newItems);
     diffResult.dispatchUpdatesTo(this);
   }
-
+  
   /**
-   * Adds an item to the adapter.
+   * Calculates the difference between current items and new items using DiffUtil.
    *
-   * @param item The item to add
+   * @param newItems The new list of items to compare against
+   * @return DiffResult containing the calculated differences
    */
-  public void addItem(T item) {
-    if (item != null) {
-      items.add(item);
-      notifyItemInserted(items.size() - 1);
+  private DiffUtil.DiffResult calculateDiff(@NonNull List<T> newItems) {
+    return DiffUtil.calculateDiff(new ItemDiffCallback(items, newItems));
+  }
+  
+  /**
+   * DiffUtil callback for comparing items efficiently.
+   */
+  private class ItemDiffCallback extends DiffUtil.Callback {
+    private final List<T> oldList;
+    private final List<T> newList;
+    
+    ItemDiffCallback(List<T> oldList, List<T> newList) {
+      this.oldList = oldList;
+      this.newList = newList;
+    }
+    
+    @Override
+    public int getOldListSize() {
+      return oldList.size();
+    }
+
+    @Override
+    public int getNewListSize() {
+      return newList.size();
+    }
+
+    @Override
+    public boolean areItemsTheSame(int oldPosition, int newPosition) {
+      return OptimizedRecyclerAdapter.this.areItemsTheSame(
+          oldList.get(oldPosition), newList.get(newPosition));
+    }
+
+    @Override
+    public boolean areContentsTheSame(int oldPosition, int newPosition) {
+      return OptimizedRecyclerAdapter.this.areContentsTheSame(
+          oldList.get(oldPosition), newList.get(newPosition));
     }
   }
 
   /**
-   * Removes an item from the adapter.
+   * Adds an item to the adapter at the end of the list.
+   *
+   * @param item The item to add
+   */
+  public void addItem(T item) {
+    addItem(item, items.size());
+  }
+  
+  /**
+   * Adds an item to the adapter at the specified position with validation.
+   *
+   * @param item The item to add (must not be null)
+   * @param position The position to insert the item at
+   */
+  public void addItem(T item, int position) {
+    if (item != null && position >= 0 && position <= items.size()) {
+      items.add(position, item);
+      notifyItemInserted(position);
+    }
+  }
+
+  /**
+   * Removes an item from the adapter with bounds checking.
    *
    * @param position The position of the item to remove
    */
   public void removeItem(int position) {
-    if (position >= 0 && position < items.size()) {
+    if (isValidPosition(position)) {
       items.remove(position);
       notifyItemRemoved(position);
     }
@@ -109,8 +150,19 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   /** Clears all items from the adapter. */
   public void clearItems() {
     int size = items.size();
-    items.clear();
-    notifyItemRangeRemoved(0, size);
+    if (size > 0) {
+      items.clear();
+      notifyItemRangeRemoved(0, size);
+    }
+  }
+  
+  /**
+   * Checks if the adapter has any items.
+   *
+   * @return true if the adapter is empty, false otherwise
+   */
+  public boolean isEmpty() {
+    return items.isEmpty();
   }
 
   /**

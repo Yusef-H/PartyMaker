@@ -17,7 +17,30 @@ import com.airbnb.lottie.LottieAnimationView;
  */
 public class LoadingStateManager {
 
-  private static final int ANIMATION_DURATION = 300;
+  // Animation constants
+  private static final int FADE_ANIMATION_DURATION_MS = 300;
+  private static final int CELEBRATION_AUTO_TRANSITION_DELAY_MS = 1000;
+  
+  // Default messages
+  private static final String DEFAULT_LOADING_MESSAGE = "Loading...";
+  private static final String DEFAULT_ERROR_MESSAGE = "An error occurred";
+  private static final String DEFAULT_SUCCESS_MESSAGE = "Success!";
+  private static final String DEFAULT_CELEBRATION_MESSAGE = "Congratulations!";
+  private static final String DEFAULT_EMPTY_MESSAGE = "No parties found";
+  private static final String DEFAULT_SYNC_MESSAGE = "Syncing...";
+  
+  // Lottie animation file names
+  private static final String LOTTIE_SUCCESS_ANIMATION = "success_checkmark.json";
+  private static final String LOTTIE_ERROR_ANIMATION = "error_warning.json";
+  private static final String LOTTIE_CELEBRATION_ANIMATION = "party_celebration.json";
+  private static final String LOTTIE_EMPTY_ANIMATION = "empty_no_parties.json";
+  private static final String LOTTIE_NETWORK_SYNC_ANIMATION = "network_sync.json";
+  private static final String LOTTIE_USER_SWITCH_ANIMATION = "user_switch.json";
+  
+  // Lottie repeat counts
+  private static final int LOTTIE_PLAY_ONCE = 0;
+  private static final int LOTTIE_PLAY_TWICE = 1;
+  private static final int LOTTIE_LOOP_INDEFINITELY = -1;
 
   private final View contentView;
   private final ProgressBar progressBar;
@@ -51,7 +74,7 @@ public class LoadingStateManager {
 
   /** Shows loading state with default message */
   public void showLoading() {
-    showLoading("Loading...");
+    showLoading(DEFAULT_LOADING_MESSAGE);
   }
 
   /** Shows loading state with custom message */
@@ -114,7 +137,7 @@ public class LoadingStateManager {
 
   /** Shows error state with default error view */
   public void showError() {
-    showError("An error occurred");
+    showError(DEFAULT_ERROR_MESSAGE);
   }
 
   /** Shows error state with custom message */
@@ -217,12 +240,12 @@ public class LoadingStateManager {
       view.setVisibility(View.VISIBLE);
 
       ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
-      fadeIn.setDuration(ANIMATION_DURATION);
+      fadeIn.setDuration(FADE_ANIMATION_DURATION_MS);
       fadeIn.start();
     } else {
       // Hide with fade out
       ObjectAnimator fadeOut = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
-      fadeOut.setDuration(ANIMATION_DURATION);
+      fadeOut.setDuration(FADE_ANIMATION_DURATION_MS);
       fadeOut.addListener(
           new AnimatorListenerAdapter() {
             @Override
@@ -267,7 +290,7 @@ public class LoadingStateManager {
 
   /** Shows success state with checkmark animation */
   public void showSuccess() {
-    showSuccess("Success!");
+    showSuccess(DEFAULT_SUCCESS_MESSAGE);
   }
 
   /** Shows success state with custom message */
@@ -284,8 +307,8 @@ public class LoadingStateManager {
 
     // Show success animation
     if (lottieAnimation != null) {
-      lottieAnimation.setAnimation("success_checkmark.json");
-      lottieAnimation.setRepeatCount(0); // Play once
+      lottieAnimation.setAnimation(LOTTIE_SUCCESS_ANIMATION);
+      lottieAnimation.setRepeatCount(LOTTIE_PLAY_ONCE);
       animateViewTransition(lottieAnimation, true);
       lottieAnimation.playAnimation();
     }
@@ -299,7 +322,7 @@ public class LoadingStateManager {
 
   /** Shows error state with warning animation */
   public void showErrorWithAnimation() {
-    showErrorWithAnimation("Error occurred");
+    showErrorWithAnimation(DEFAULT_ERROR_MESSAGE);
   }
 
   /** Shows error state with warning animation and custom message */
@@ -313,8 +336,8 @@ public class LoadingStateManager {
 
     // Show error animation
     if (lottieAnimation != null) {
-      lottieAnimation.setAnimation("error_warning.json");
-      lottieAnimation.setRepeatCount(0); // Play once
+      lottieAnimation.setAnimation(LOTTIE_ERROR_ANIMATION);
+      lottieAnimation.setRepeatCount(LOTTIE_PLAY_ONCE);
       animateViewTransition(lottieAnimation, true);
       lottieAnimation.playAnimation();
     }
@@ -333,7 +356,7 @@ public class LoadingStateManager {
 
   /** Shows celebration animation for achievements */
   public void showCelebration() {
-    showCelebration("Congratulations!");
+    showCelebration(DEFAULT_CELEBRATION_MESSAGE);
   }
 
   /** Shows celebration animation with custom message */
@@ -349,8 +372,8 @@ public class LoadingStateManager {
 
     // Show celebration animation
     if (lottieAnimation != null) {
-      lottieAnimation.setAnimation("party_celebration.json");
-      lottieAnimation.setRepeatCount(1); // Play twice for effect
+      lottieAnimation.setAnimation(LOTTIE_CELEBRATION_ANIMATION);
+      lottieAnimation.setRepeatCount(LOTTIE_PLAY_TWICE);
       animateViewTransition(lottieAnimation, true);
       lottieAnimation.playAnimation();
     }
@@ -370,7 +393,7 @@ public class LoadingStateManager {
               // Auto-transition to content after celebration
               android.os.Handler handler =
                   new android.os.Handler(android.os.Looper.getMainLooper());
-              handler.postDelayed(() -> showContent(), 1000);
+              handler.postDelayed(() -> showContent(), CELEBRATION_AUTO_TRANSITION_DELAY_MS);
             }
           });
     }
@@ -378,7 +401,7 @@ public class LoadingStateManager {
 
   /** Shows empty state with sad face animation */
   public void showEmptyWithAnimation() {
-    showEmptyWithAnimation("No parties found");
+    showEmptyWithAnimation(DEFAULT_EMPTY_MESSAGE);
   }
 
   /** Shows empty state with animation and custom message */
@@ -394,8 +417,8 @@ public class LoadingStateManager {
 
     // Show empty animation
     if (lottieAnimation != null) {
-      lottieAnimation.setAnimation("empty_no_parties.json");
-      lottieAnimation.setRepeatCount(-1); // Loop indefinitely
+      lottieAnimation.setAnimation(LOTTIE_EMPTY_ANIMATION);
+      lottieAnimation.setRepeatCount(LOTTIE_LOOP_INDEFINITELY);
       animateViewTransition(lottieAnimation, true);
       lottieAnimation.playAnimation();
     }
@@ -412,7 +435,7 @@ public class LoadingStateManager {
 
   /** Shows network sync animation for Firebase operations */
   public void showNetworkSync() {
-    showNetworkSync("Syncing...");
+    showNetworkSync(DEFAULT_SYNC_MESSAGE);
   }
 
   /** Shows network sync animation with custom message */
@@ -429,8 +452,8 @@ public class LoadingStateManager {
     // Show network sync animation
     if (lottieAnimation != null) {
       animateViewTransition(progressBar, false);
-      lottieAnimation.setAnimation("network_sync.json");
-      lottieAnimation.setRepeatCount(-1); // Loop while syncing
+      lottieAnimation.setAnimation(LOTTIE_NETWORK_SYNC_ANIMATION);
+      lottieAnimation.setRepeatCount(LOTTIE_LOOP_INDEFINITELY);
       animateViewTransition(lottieAnimation, true);
       lottieAnimation.playAnimation();
     } else {
@@ -458,8 +481,8 @@ public class LoadingStateManager {
     // Show user switch animation
     if (lottieAnimation != null) {
       animateViewTransition(progressBar, false);
-      lottieAnimation.setAnimation("user_switch.json");
-      lottieAnimation.setRepeatCount(0); // Play once
+      lottieAnimation.setAnimation(LOTTIE_USER_SWITCH_ANIMATION);
+      lottieAnimation.setRepeatCount(LOTTIE_PLAY_ONCE);
       animateViewTransition(lottieAnimation, true);
       lottieAnimation.playAnimation();
     } else {

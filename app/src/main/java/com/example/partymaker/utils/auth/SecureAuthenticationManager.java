@@ -30,6 +30,11 @@ public final class SecureAuthenticationManager {
 
   // Session duration: 7 days (reduced from 30 days for better security)
   private static final long SESSION_DURATION_MS = 7L * 24 * 60 * 60 * 1000;
+  
+  // Magic number constants
+  private static final long MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000L;
+  private static final int HASH_MULTIPLIER = 7;
+  private static final long ONE_SECOND_MS = 1000L;
 
   private static SharedPreferences securePrefs;
 
@@ -138,9 +143,11 @@ public final class SecureAuthenticationManager {
     }
   }
 
-  /** Generate a secure session token */
+  /** 
+   * Generate a secure session token.
+   * Uses UUID for session identification.
+   */
   private static String generateSessionToken() {
-    // In a real app, this should use a cryptographically secure random generator
     return java.util.UUID.randomUUID().toString();
   }
 
@@ -265,7 +272,8 @@ public final class SecureAuthenticationManager {
       // Check if we need to lock out the user
       if (attempts >= AppConstants.Security.MAX_LOGIN_ATTEMPTS) {
         long lockoutUntil = System.currentTimeMillis() + AppConstants.Security.LOCKOUT_DURATION_MS;
-        prefs.edit().putLong(KEY_LOCKOUT_UNTIL + "_" + email.hashCode(), lockoutUntil).apply();
+        String lockoutKey = generateLockoutKey(email);
+        prefs.edit().putLong(lockoutKey, lockoutUntil).apply();
 
         Log.w(TAG, "User locked out due to too many failed attempts: " + email);
       }
@@ -284,10 +292,10 @@ public final class SecureAuthenticationManager {
 
     try {
       SharedPreferences prefs = getSecurePrefs(context);
-      String key = KEY_FAILED_ATTEMPTS + "_" + email.hashCode();
-      String lockoutKey = KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+      String failedAttemptsKey = generateFailedAttemptsKey(email);
+      String lockoutKey = generateLockoutKey(email);
 
-      prefs.edit().remove(key).remove(lockoutKey).apply();
+      prefs.edit().remove(failedAttemptsKey).remove(lockoutKey).apply();
 
       Log.d(TAG, "Cleared failed attempts for user: " + email);
     } catch (Exception e) {
@@ -303,10 +311,10 @@ public final class SecureAuthenticationManager {
 
     try {
       SharedPreferences prefs = getSecurePrefs(context);
-      String lockoutKey = KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+      String lockoutKey = generateLockoutKey(email);
       long lockoutUntil = prefs.getLong(lockoutKey, 0);
 
-      if (lockoutUntil > 0 && System.currentTimeMillis() < lockoutUntil) {
+      if (isLockoutActive(lockoutUntil)) {
         Log.w(TAG, "User is locked out: " + email);
         return true;
       } else if (lockoutUntil > 0) {
@@ -329,7 +337,7 @@ public final class SecureAuthenticationManager {
 
     try {
       SharedPreferences prefs = getSecurePrefs(context);
-      String lockoutKey = KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+      String lockoutKey = generateLockoutKey(email);
       long lockoutUntil = prefs.getLong(lockoutKey, 0);
 
       if (lockoutUntil > 0) {
@@ -342,6 +350,29 @@ public final class SecureAuthenticationManager {
       Log.e(TAG, "Error getting remaining lockout time", e);
       return 0;
     }
+  }
+  
+  // Helper methods for key generation and validation
+  
+  /**
+   * Generates a consistent key for failed attempts storage.
+   */
+  private static String generateFailedAttemptsKey(String email) {
+    return KEY_FAILED_ATTEMPTS + "_" + email.hashCode();
+  }
+  
+  /**
+   * Generates a consistent key for lockout storage.
+   */
+  private static String generateLockoutKey(String email) {
+    return KEY_LOCKOUT_UNTIL + "_" + email.hashCode();
+  }
+  
+  /**
+   * Checks if a lockout is currently active.
+   */
+  private static boolean isLockoutActive(long lockoutUntil) {
+    return lockoutUntil > 0 && System.currentTimeMillis() < lockoutUntil;
   }
 
   /** Logout the current user */

@@ -9,12 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Type converters for Room database. These converters allow Room to store complex types in the
- * database.
+ * Type converters for Room database. These converters allow Room to store complex types
+ * such as Date objects and Maps in the SQLite database by converting them to/from
+ * primitive types that SQLite can handle.
  */
 public class Converters {
-
+  
+  // JSON serialization instance
   private static final Gson gson = new Gson();
+  
+  // Prevent instantiation
+  private Converters() {
+    // Utility class for Room type converters
+  }
 
   /**
    * Converts a timestamp to a Date object.
@@ -39,13 +46,13 @@ public class Converters {
   }
 
   /**
-   * Converts a JSON string to a Map.
+   * Converts a JSON string to a HashMap for Room database storage.
    *
-   * @param value The JSON string
-   * @return The Map object
+   * @param value The JSON string representation
+   * @return The HashMap object, or empty map if value is null
    */
   @TypeConverter
-  public static HashMap<String, Object> fromString(String value) {
+  public static HashMap<String, Object> fromJsonString(String value) {
     if (value == null) {
       return new HashMap<>();
     }
@@ -54,13 +61,13 @@ public class Converters {
   }
 
   /**
-   * Converts a Map to a JSON string.
+   * Converts a HashMap to a JSON string for Room database storage.
    *
-   * @param map The Map object
-   * @return The JSON string
+   * @param map The Map object to serialize
+   * @return The JSON string representation, or null if map is null
    */
   @TypeConverter
-  public static String mapToString(Map<String, Object> map) {
+  public static String mapToJsonString(Map<String, Object> map) {
     if (map == null) {
       return null;
     }
@@ -68,13 +75,13 @@ public class Converters {
   }
 
   /**
-   * Converts a JSON string to a Map<String, Boolean>.
+   * Converts a JSON string to a Boolean HashMap for Room database storage.
    *
-   * @param value The JSON string
-   * @return The Map object
+   * @param value The JSON string representation
+   * @return The Boolean HashMap object, or empty map if value is null
    */
   @TypeConverter
-  public static Map<String, Boolean> fromStringToBoolean(String value) {
+  public static Map<String, Boolean> fromJsonStringToBoolean(String value) {
     if (value == null) {
       return new HashMap<>();
     }
@@ -83,13 +90,13 @@ public class Converters {
   }
 
   /**
-   * Converts a Map<String, Boolean> to a JSON string.
+   * Converts a Boolean HashMap to a JSON string for Room database storage.
    *
-   * @param map The Map object
-   * @return The JSON string
+   * @param map The Boolean Map object to serialize
+   * @return The JSON string representation, or null if map is null
    */
   @TypeConverter
-  public static String booleanMapToString(Map<String, Boolean> map) {
+  public static String booleanMapToJsonString(Map<String, Boolean> map) {
     if (map == null) {
       return null;
     }

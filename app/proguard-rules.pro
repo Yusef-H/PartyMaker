@@ -28,6 +28,12 @@
 -keep class androidx.security.crypto.** { *; }
 -keep class com.google.crypto.tink.** { *; }
 
+# Keep Google API Client (for Tink)
+-keep class com.google.api.client.** { *; }
+-dontwarn com.google.api.client.**
+-keep class org.joda.time.** { *; }
+-dontwarn org.joda.time.**
+
 # Security: Remove sensitive log statements
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

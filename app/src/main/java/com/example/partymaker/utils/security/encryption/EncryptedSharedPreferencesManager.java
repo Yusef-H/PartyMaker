@@ -21,6 +21,11 @@ public class EncryptedSharedPreferencesManager {
   private static final String TAG = "EncryptedPrefsManager";
   private static final String PREFS_FILE_NAME = "encrypted_shared_prefs";
   private static final String FALLBACK_PREFS_NAME = "fallback_prefs";
+  
+  // Encryption constants
+  private static final int AES_KEY_SIZE = 256;
+  private static final boolean REQUIRE_USER_AUTH = false;
+  private static final boolean USE_STRONGBOX = true;
 
   private static EncryptedSharedPreferencesManager instance;
   private SharedPreferences encryptedPrefs;
@@ -76,13 +81,13 @@ public class EncryptedSharedPreferencesManager {
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256)
-            .setUserAuthenticationRequired(false) // Set to true if you want user auth
+            .setKeySize(AES_KEY_SIZE)
+            .setUserAuthenticationRequired(REQUIRE_USER_AUTH) // Set to true if you want user auth
             .build();
 
     return new MasterKey.Builder(context)
         .setKeyGenParameterSpec(spec)
-        .setRequestStrongBoxBacked(true) // Use hardware security module if available
+        .setRequestStrongBoxBacked(USE_STRONGBOX) // Use hardware security module if available
         .build();
   }
 

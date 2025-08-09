@@ -24,8 +24,16 @@ import java.util.Map;
 public class MembersInvitedActivity extends AppCompatActivity {
 
   private static final String TAG = "MembersInvitedActivity";
-  private ListView lv2;
-  private HashMap<String, Object> FriendKeys;
+  
+  // UI constants
+  private static final String ACTIVITY_TITLE = "Invited Members";
+  private static final String ACTION_BAR_COLOR = "#0081d1";
+  private static final String LOADING_MESSAGE = "Loading invited members...";
+  private static final String NO_MEMBERS_MESSAGE = "No invited members found";
+  
+  // UI Components
+  private ListView membersList;
+  private HashMap<String, Object> friendKeys;
   private String adminKey;
 
   @Override
@@ -33,25 +41,19 @@ public class MembersInvitedActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_party_invited);
 
-    // Set up the toolbar/action bar
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle("Invited Members");
-      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
-      actionBar.setDisplayHomeAsUpEnabled(true);
-    }
+    setupActionBar();
 
     // Get extras from intent
     Intent intent = getIntent();
     ExtrasMetadata extras = IntentExtrasManager.getExtrasMetadataFromIntent(intent);
     if (extras != null) {
-      FriendKeys = extras.getFriendKeys();
+      friendKeys = extras.getFriendKeys();
       adminKey = extras.getAdminKey();
       String groupKey = extras.getGroupKey();
 
       Log.d(
           TAG,
-          "Received extras - FriendKeys: " + (FriendKeys != null ? FriendKeys.size() : "null"));
+          "Received extras - FriendKeys: " + (friendKeys != null ? friendKeys.size() : "null"));
       Log.d(TAG, "AdminKey: " + adminKey);
       Log.d(TAG, "GroupKey: " + groupKey);
     } else {
@@ -71,11 +73,11 @@ public class MembersInvitedActivity extends AppCompatActivity {
       Log.d(TAG, "UserKey from Intent: " + userKey);
     }
 
-    lv2 = findViewById(R.id.lv2);
+    membersList = findViewById(R.id.lv2);
 
-    // Show data directly without admin verification
-    ShowData();
-    EventHandler();
+    // Show data and setup event handlers
+    showInvitedMembersData();
+    setupEventHandlers();
   }
 
   @Override
@@ -87,16 +89,25 @@ public class MembersInvitedActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private void EventHandler() {
-    lv2.setOnItemClickListener((parent, view, position, id) -> {});
-    lv2.setOnItemLongClickListener((parent, view, position, id) -> false);
+  private void setupActionBar() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setTitle(ACTIVITY_TITLE);
+      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(ACTION_BAR_COLOR)));
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+  }
+  
+  private void setupEventHandlers() {
+    membersList.setOnItemClickListener((parent, view, position, id) -> {});
+    membersList.setOnItemLongClickListener((parent, view, position, id) -> false);
   }
 
-  private void ShowData() {
+  private void showInvitedMembersData() {
     Log.d(TAG, "Starting to load users data");
 
     // Show loading message
-    Toast.makeText(this, "Loading invited members...", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, LOADING_MESSAGE, Toast.LENGTH_SHORT).show();
 
     // Use server mode to get users - same as MembersComingActivity
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
@@ -107,11 +118,8 @@ public class MembersInvitedActivity extends AppCompatActivity {
             Log.d(TAG, "Received " + users.size() + " users from server");
 
             // Debug: Print FriendKeys
-            if (FriendKeys != null) {
-              Log.d(TAG, "FriendKeys contents:");
-              for (String key : FriendKeys.keySet()) {
-                Log.d(TAG, "  FriendKey: '" + key + "' -> " + FriendKeys.get(key));
-              }
+            if (friendKeys != null) {
+              logFriendKeysContents();
             } else {
               Log.e(TAG, "FriendKeys is null!");
             }
@@ -138,48 +146,33 @@ public class MembersInvitedActivity extends AppCompatActivity {
               }
             }
 
-            ArrayList<User> ArrUsers = new ArrayList<>();
-            HashMap<String, Object> GroupFriends;
+            ArrayList<User> invitedUsers = new ArrayList<>();
+            HashMap<String, Object> groupFriends = friendKeys;
 
-            for (User p : users.values()) {
-              if (p != null && p.getEmail() != null) {
-                String UserMail = p.getEmail().replace('.', ' ');
-                Log.d(
-                    TAG,
-                    "Processing user: '" + p.getEmail() + "' -> normalized: '" + UserMail + "'");
+            for (User user : users.values()) {
+              if (isValidUser(user)) {
+                String normalizedEmail = user.getEmail().replace('.', ' ');
+                Log.d(TAG, "Processing user: '" + user.getEmail() + "' -> normalized: '" + normalizedEmail + "'");
 
-                GroupFriends = FriendKeys;
-                if (GroupFriends != null) {
-                  boolean foundMatch = false;
-                  for (String GroupFriend : GroupFriends.keySet()) {
-                    Log.d(TAG, "  Comparing '" + UserMail + "' with '" + GroupFriend + "'");
-                    if (GroupFriend != null && GroupFriend.equals(UserMail)) {
-                      Log.d(TAG, "Found matching user: " + UserMail);
-                      ArrUsers.add(p);
-                      foundMatch = true;
-                      break;
-                    }
-                  }
-                  if (!foundMatch) {
-                    Log.d(TAG, "  No match found for user: " + UserMail);
-                  }
+                if (groupFriends != null && isUserInvited(normalizedEmail, groupFriends)) {
+                  Log.d(TAG, "Found matching user: " + normalizedEmail);
+                  invitedUsers.add(user);
                 }
               } else {
-                Log.w(TAG, "Skipping user with null email: " + p);
+                Log.w(TAG, "Skipping invalid user: " + user);
               }
             }
 
-            Log.d(TAG, "Found " + ArrUsers.size() + " invited users");
+            Log.d(TAG, "Found " + invitedUsers.size() + " invited users");
 
-            if (ArrUsers.isEmpty()) {
-              Toast.makeText(
-                      MembersInvitedActivity.this, "No invited members found", Toast.LENGTH_SHORT)
+            if (invitedUsers.isEmpty()) {
+              Toast.makeText(MembersInvitedActivity.this, NO_MEMBERS_MESSAGE, Toast.LENGTH_SHORT)
                   .show();
             }
 
-            InvitedAdapter adapt =
-                new InvitedAdapter(MembersInvitedActivity.this, 0, 0, ArrUsers, adminKey);
-            lv2.setAdapter(adapt);
+            InvitedAdapter adapter =
+                new InvitedAdapter(MembersInvitedActivity.this, 0, 0, invitedUsers, adminKey);
+            membersList.setAdapter(adapter);
           }
 
           @Override
@@ -192,6 +185,28 @@ public class MembersInvitedActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+  
+  private void logFriendKeysContents() {
+    Log.d(TAG, "FriendKeys contents:");
+    for (String key : friendKeys.keySet()) {
+      Log.d(TAG, "  FriendKey: '" + key + "' -> " + friendKeys.get(key));
+    }
+  }
+  
+  private boolean isValidUser(User user) {
+    return user != null && user.getEmail() != null;
+  }
+  
+  private boolean isUserInvited(String normalizedEmail, HashMap<String, Object> groupFriends) {
+    for (String friendKey : groupFriends.keySet()) {
+      Log.d(TAG, "  Comparing '" + normalizedEmail + "' with '" + friendKey + "'");
+      if (friendKey != null && friendKey.equals(normalizedEmail)) {
+        return true;
+      }
+    }
+    Log.d(TAG, "  No match found for user: " + normalizedEmail);
+    return false;
   }
 
   private void showUserInfo(User user) {
