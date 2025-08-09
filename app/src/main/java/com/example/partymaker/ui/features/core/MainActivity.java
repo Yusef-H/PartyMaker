@@ -7,11 +7,15 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
@@ -40,6 +44,7 @@ import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,11 +78,15 @@ public class MainActivity extends AppCompatActivity {
   private FloatingActionButton chatFloatingActionButton;
   private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
   private View rootView;
+  private EditText searchEditText;
+  private ImageView clearSearchButton;
 
   // Data Components
   private MainActivityViewModel viewModel;
   private String currentUserKey;
   private GroupAdapter groupAdapter;
+  private List<Group> allGroups = new ArrayList<>();
+  private List<Group> filteredGroups = new ArrayList<>();
 
   // UI State Management
   private LoadingStateManager loadingStateManager;
@@ -120,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
   private void setupUserInterface() {
     setupActionBar();
     setupEventHandlers();
+    setupSearchBar();
     setupFloatingChatButton();
     setupBottomNavigation();
     observeViewModel();
@@ -250,6 +260,8 @@ public class MainActivity extends AppCompatActivity {
     groupsRecyclerView = findViewById(R.id.lv1);
     chatFloatingActionButton = findViewById(R.id.fabChat);
     swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+    searchEditText = findViewById(R.id.etSearchGroups);
+    clearSearchButton = findViewById(R.id.clearSearch);
   }
 
   private void validateCriticalViews() {
@@ -440,6 +452,57 @@ public class MainActivity extends AppCompatActivity {
     actionBar.setDisplayHomeAsUpEnabled(false);
   }
 
+  private void setupSearchBar() {
+    if (searchEditText == null || clearSearchButton == null) {
+      Log.w(TAG, "Search components not found");
+      return;
+    }
+
+    // Setup text change listener for search
+    searchEditText.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        filterGroups(s.toString());
+        // Show/hide clear button based on text
+        clearSearchButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {}
+    });
+
+    // Setup clear button click listener
+    clearSearchButton.setOnClickListener(v -> {
+      searchEditText.setText("");
+      clearSearchButton.setVisibility(View.GONE);
+    });
+  }
+
+  private void filterGroups(String searchText) {
+    if (searchText.isEmpty()) {
+      // Show all groups
+      filteredGroups.clear();
+      filteredGroups.addAll(allGroups);
+    } else {
+      // Filter groups by name (case-insensitive)
+      filteredGroups.clear();
+      String lowerSearchText = searchText.toLowerCase();
+      for (Group group : allGroups) {
+        if (group.getGroupName() != null && 
+            group.getGroupName().toLowerCase().contains(lowerSearchText)) {
+          filteredGroups.add(group);
+        }
+      }
+    }
+    // Update the adapter with filtered groups
+    if (groupAdapter != null) {
+      groupAdapter.updateItems(filteredGroups);
+    }
+  }
+
   private void observeViewModel() {
     try {
       observeGroupsData();
@@ -468,8 +531,21 @@ public class MainActivity extends AppCompatActivity {
       logGroupsDataReceived(groups);
 
       if (groups != null) {
-        updateGroupsDisplay(groups);
-        updateUiStateBasedOnGroups(groups);
+        // Store all groups for filtering
+        allGroups.clear();
+        allGroups.addAll(groups);
+        
+        // Apply current search filter if any
+        String currentSearchText = searchEditText != null ? searchEditText.getText().toString() : "";
+        if (currentSearchText.isEmpty()) {
+          filteredGroups.clear();
+          filteredGroups.addAll(allGroups);
+        } else {
+          filterGroups(currentSearchText);
+        }
+        
+        updateGroupsDisplay(filteredGroups);
+        updateUiStateBasedOnGroups(filteredGroups);
       } else {
         handleNullGroupsData();
       }
