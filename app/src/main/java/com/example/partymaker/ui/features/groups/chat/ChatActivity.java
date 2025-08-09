@@ -9,20 +9,24 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.FirebaseServerClient.OperationCallback;
 import com.example.partymaker.data.api.OpenAiApi;
 import com.example.partymaker.data.model.ChatMessage;
 import com.example.partymaker.data.model.Group;
-import com.example.partymaker.ui.adapters.ChatAdapter;
+import com.example.partymaker.ui.adapters.ChatRecyclerAdapter;
+import com.example.partymaker.ui.features.auxiliary.chatbot.GptChatActivity;
 import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.core.IntentExtrasManager;
@@ -47,14 +51,16 @@ public class ChatActivity extends AppCompatActivity {
   private static final long ANIMATION_HIDE_DELAY_MS = 3000L;
   private static final long SUCCESS_ANIMATION_DELAY_MS = 2500L;
   private final Handler retryHandler = new Handler(Looper.getMainLooper());
-  private ListView messageListView;
-  private EditText messageEditText;
-  private ImageButton sendButton;
-  private ImageButton gptButton;
+  private RecyclerView recyclerView;
+  private TextInputEditText messageEditText;
+  private FloatingActionButton sendButton;
+  private ImageButton attachButton;
+  private TextView tvPartyName;
+  private TextView tvPartyMembers;
   private String groupKey;
   private HashMap<String, Object> messageKeys;
   private FirebaseServerClient serverClient;
-  private ChatAdapter adapter;
+  private ChatRecyclerAdapter adapter;
   private String userKey;
   private GroupChatViewModel viewModel;
   private GroupKeyManager groupKeyManager;
@@ -133,20 +139,30 @@ public class ChatActivity extends AppCompatActivity {
 
     // Initialize UI components
     Log.d(TAG, "Initializing UI components");
-    messageListView = findViewById(R.id.lv4);
+    recyclerView = findViewById(R.id.recyclerViewMessages);
     messageEditText = findViewById(R.id.etMessage);
-    sendButton = findViewById(R.id.btnSend);
-    gptButton = findViewById(R.id.btnGpt);
+    sendButton = findViewById(R.id.fabSend);
+    attachButton = findViewById(R.id.btnAttach);
+    tvPartyName = findViewById(R.id.tvPartyName);
+    tvPartyMembers = findViewById(R.id.tvPartyMembers);
+    
+    // Setup RecyclerView
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    layoutManager.setStackFromEnd(false); // Start from top, oldest messages first
+    recyclerView.setLayoutManager(layoutManager);
 
     ShowData();
     eventHandler();
-    setupGptButton();
+    setupAttachButton();
 
     // Set the group key in ViewModel
     viewModel.setGroupKey(groupKey);
 
     // Initialize encryption for this group
     initializeGroupEncryption();
+    
+    // Load group info for toolbar
+    loadGroupInfo();
   }
 
   /** Initialize group encryption for secure messaging */
@@ -230,8 +246,6 @@ public class ChatActivity extends AppCompatActivity {
 
   private void eventHandler() {
     Log.d(TAG, "Setting up event handlers");
-    messageListView.setOnItemClickListener((parent, view, position, id) -> {});
-    messageListView.setOnItemLongClickListener((parent, view, position, id) -> false);
 
     Log.d(TAG, "Setting up send button click listener");
     sendButton.setOnClickListener(
@@ -297,41 +311,14 @@ public class ChatActivity extends AppCompatActivity {
         });
   }
 
-  private void setupGptButton() {
-    gptButton.setOnClickListener(
+  private void setupAttachButton() {
+    attachButton.setOnClickListener(
         v -> {
-          android.app.AlertDialog.Builder builder =
-              new android.app.AlertDialog.Builder(ChatActivity.this);
-          builder.setTitle("Ask GPT");
-          final EditText input = new EditText(ChatActivity.this);
-          input.setHint("Type your question here...");
-          builder.setView(input);
-          builder.setPositiveButton(
-              "Send",
-              (dialog, which) -> {
-                String gptQuestion = input.getText().toString();
-                if (!gptQuestion.isEmpty()) {
-                  // Show loading message
-                  ThreadUtils.runOnMainThread(
-                      () ->
-                          Toast.makeText(
-                                  ChatActivity.this,
-                                  "Sending question to ChatGPT",
-                                  Toast.LENGTH_SHORT)
-                              .show());
-
-                  ThreadUtils.runInBackground(
-                      () -> {
-                        try {
-                          processGptRequest(gptQuestion);
-                        } catch (Exception e) {
-                          handleGptError(e);
-                        }
-                      });
-                }
-              });
-          builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-          builder.show();
+          // Open the GptChatActivity instead of showing dialog
+          Intent intent = new Intent(ChatActivity.this, GptChatActivity.class);
+          intent.putExtra("groupKey", groupKey);
+          intent.putExtra("groupDetails", getGroupDetails());
+          startActivity(intent);
         });
   }
 
@@ -376,15 +363,15 @@ public class ChatActivity extends AppCompatActivity {
     // Initialize adapter if it's null
     if (adapter == null) {
       Log.d(TAG, "ShowData: Adapter is null, initializing new adapter");
-      adapter = new ChatAdapter(this, R.layout.item_chat_message, new ArrayList<>());
-      messageListView.setAdapter(adapter);
-      Log.d(TAG, "ShowData: Adapter set on ListView");
+      adapter = new ChatRecyclerAdapter(this);
+      recyclerView.setAdapter(adapter);
+      Log.d(TAG, "ShowData: Adapter set on RecyclerView");
     } else {
       Log.d(TAG, "ShowData: Adapter already initialized");
     }
 
-    // We can't cast ListView to ProgressBar, so let's use the ListView directly
-    messageListView.setVisibility(View.VISIBLE);
+    // Show the RecyclerView
+    recyclerView.setVisibility(View.VISIBLE);
 
     // Add debug logging for groupKey
     Log.d(TAG, "ShowData: Fetching messages for group: " + groupKey);
@@ -394,8 +381,8 @@ public class ChatActivity extends AppCompatActivity {
         new FirebaseServerClient.DataCallback<>() {
           @Override
           public void onSuccess(List<ChatMessage> messages) {
-            // Show the ListView
-            ThreadUtils.runOnMainThread(() -> messageListView.setVisibility(View.VISIBLE));
+            // Show the RecyclerView
+            ThreadUtils.runOnMainThread(() -> recyclerView.setVisibility(View.VISIBLE));
 
             if (messages != null && !messages.isEmpty()) {
               Log.d(TAG, "ShowData: Received " + messages.size() + " messages from server");
@@ -434,13 +421,13 @@ public class ChatActivity extends AppCompatActivity {
                 Log.d(TAG, "ShowData: Group encryption not available, displaying messages as-is");
               }
 
-              // Sort messages by timestamp (oldest first, newest last)
+              // Sort messages by timestamp (oldest first at top, newest at bottom)
               messages.sort(
                   (m1, m2) -> {
                     // Use timestamp for reliable sorting
                     long t1 = m1.getTimestamp();
                     long t2 = m2.getTimestamp();
-                    return Long.compare(t1, t2); // Oldest first (ascending order)
+                    return Long.compare(t1, t2); // Ascending order - oldest at top
                   });
 
               // Debug: Log message order
@@ -463,19 +450,17 @@ public class ChatActivity extends AppCompatActivity {
               ThreadUtils.runOnMainThread(
                   () -> {
                     Log.d(TAG, "ShowData: Updating adapter with " + messages.size() + " messages");
-                    adapter.clear();
-                    adapter.addAll(messages);
-                    adapter.notifyDataSetChanged();
+                    adapter.setMessages(messages);
 
                     // Scroll to the bottom (newest message)
-                    if (adapter.getCount() > 0) {
-                      int lastPosition = adapter.getCount() - 1;
+                    if (messages.size() > 0) {
+                      int lastPosition = messages.size() - 1;
                       Log.d(
                           TAG,
                           "ShowData: Scrolling to position "
                               + lastPosition
                               + " out of "
-                              + adapter.getCount()
+                              + messages.size()
                               + " messages");
 
                       // Check what's the last message
@@ -493,10 +478,10 @@ public class ChatActivity extends AppCompatActivity {
                                       .substring(0, Math.min(20, lastMessage.getMessage().length()))
                                   : "null"));
 
-                      messageListView.post(
+                      // Scroll to bottom to show newest message
+                      recyclerView.post(
                           () -> {
-                            messageListView.setSelection(lastPosition);
-                            messageListView.smoothScrollToPosition(lastPosition);
+                            recyclerView.smoothScrollToPosition(lastPosition);
                           });
                     }
                     Log.d(TAG, "ShowData: Adapter updated successfully");
@@ -507,7 +492,6 @@ public class ChatActivity extends AppCompatActivity {
               ThreadUtils.runOnMainThread(
                   () -> {
                     adapter.clear();
-                    adapter.notifyDataSetChanged();
                     Log.d(TAG, "ShowData: Cleared adapter as no messages were found");
                   });
             }
@@ -523,7 +507,7 @@ public class ChatActivity extends AppCompatActivity {
                           "Error loading messages: " + errorMessage,
                           Toast.LENGTH_SHORT)
                       .show();
-                  messageListView.setVisibility(View.VISIBLE);
+                  recyclerView.setVisibility(View.VISIBLE);
                 });
           }
         });
@@ -639,8 +623,15 @@ public class ChatActivity extends AppCompatActivity {
             public void onSuccess(Boolean success) {
               Log.d(TAG, "Message saved successfully: " + success);
               if (success) {
-                // Refresh messages
+                // Refresh messages and scroll to bottom
                 ShowData();
+                // Scroll to bottom after sending
+                recyclerView.postDelayed(
+                    () -> {
+                      if (adapter != null && adapter.getItemCount() > 0) {
+                        recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                      }
+                    }, 200);
               } else {
                 Log.e(TAG, "Failed to save message (success=false)");
                 Toast.makeText(ChatActivity.this, "Failed to send message", Toast.LENGTH_SHORT)
@@ -711,15 +702,9 @@ public class ChatActivity extends AppCompatActivity {
 
               // Update the message in the UI to remove "Sending..." text
               if (adapter != null) {
-                for (int i = 0; i < adapter.getCount(); i++) {
-                  ChatMessage msg = adapter.getItem(i);
-                  if (msg != null && messageId.equals(msg.getMessageKey())) {
-                    Log.d(TAG, "AUTO TEST: Found message in adapter, updating text");
-                    msg.setMessageText(message.getMessageText());
-                    ThreadUtils.runOnMainThread(() -> adapter.notifyDataSetChanged());
-                    break;
-                  }
-                }
+                // For RecyclerView adapter, we need to refresh the data
+                Log.d(TAG, "AUTO TEST: Message sent successfully, refreshing data");
+                ShowData();
               } else {
                 Log.e(TAG, "AUTO TEST: adapter is null, cannot update message in UI");
               }
@@ -761,17 +746,8 @@ public class ChatActivity extends AppCompatActivity {
 
                       // Update the message in the UI to show error
                       if (adapter != null) {
-                        for (int i = 0; i < adapter.getCount(); i++) {
-                          ChatMessage msg = adapter.getItem(i);
-                          if (msg != null && messageId.equals(msg.getMessageKey())) {
-                            Log.d(
-                                TAG,
-                                "AUTO TEST: Found message in adapter, updating text to show error");
-                            msg.setMessageText(message.getMessageText() + " (Failed to send)");
-                            adapter.notifyDataSetChanged();
-                            break;
-                          }
-                        }
+                        Log.d(TAG, "AUTO TEST: Message failed to send, refreshing data");
+                        ShowData();
                       } else {
                         Log.e(TAG, "AUTO TEST: adapter is null, cannot update message in UI");
                       }
@@ -946,6 +922,47 @@ public class ChatActivity extends AppCompatActivity {
                   Toast.LENGTH_LONG)
               .show();
           Log.e(TAG, "GPT request processing failed", exception);
+        });
+  }
+  
+  private void loadGroupInfo() {
+    if (groupKey == null) return;
+    
+    serverClient.getGroup(
+        groupKey,
+        new FirebaseServerClient.DataCallback<Group>() {
+          @Override
+          public void onSuccess(Group group) {
+            if (group != null) {
+              ThreadUtils.runOnMainThread(() -> {
+                // Update party name in toolbar
+                if (tvPartyName != null) {
+                  tvPartyName.setText(group.getGroupName());
+                }
+                
+                // Update member count
+                if (tvPartyMembers != null) {
+                  int memberCount = 1; // At least the current user
+                  // Count members from the FriendKeys map if available
+                  if (group.getFriendKeys() != null) {
+                    memberCount = group.getFriendKeys().size();
+                  }
+                  tvPartyMembers.setText(memberCount + " members");
+                }
+                
+                // Update action bar title
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                  actionBar.setTitle(group.getGroupName());
+                }
+              });
+            }
+          }
+          
+          @Override
+          public void onError(String errorMessage) {
+            Log.e(TAG, "Failed to load group info: " + errorMessage);
+          }
         });
   }
 }
