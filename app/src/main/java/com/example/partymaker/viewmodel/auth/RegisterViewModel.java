@@ -122,7 +122,7 @@ public class RegisterViewModel extends BaseViewModel {
    * @param email The email to validate
    */
   public void validateEmail(@NonNull String email) {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             boolean valid = isValidEmail(email);
@@ -150,7 +150,7 @@ public class RegisterViewModel extends BaseViewModel {
    * @param password The password to validate
    */
   public void validatePassword(@NonNull String password) {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             PasswordValidator.ValidationResult result =
@@ -181,7 +181,7 @@ public class RegisterViewModel extends BaseViewModel {
    * @param username The username to validate
    */
   public void validateUsername(@NonNull String username) {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             boolean valid = isValidUsername(username);
@@ -227,7 +227,7 @@ public class RegisterViewModel extends BaseViewModel {
 
           Log.d(TAG, "Starting user registration for email: " + email);
 
-          ThreadUtils.runOnBackground(
+          ThreadUtils.runInBackground(
               () -> {
                 try {
                   // Final validation before registration

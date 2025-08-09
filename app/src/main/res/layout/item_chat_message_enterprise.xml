@@ -41,39 +41,24 @@
                     android:id="@+id/tvSentMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="This is a sent message example"
+                    android:text="@string/sample_sent_message"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnPrimary"
                     tools:text="This is a sent message" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tvSentTime"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:gravity="end"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvSentTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:text="12:34"
-                        android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?attr/colorOnPrimary"
-                        android:alpha="0.7" />
-
-                    <!-- Message Status (Read, Delivered, etc.) -->
-                    <ImageView
-                        android:id="@+id/imgMessageStatus"
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:contentDescription="Message status"
-                        android:src="@drawable/ic_check"
-                        app:tint="?attr/colorOnPrimary"
-                        android:alpha="0.7" />
-
-                </LinearLayout>
+                    android:layout_gravity="end"
+                    android:text="@string/sample_time_1"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.7"
+                    android:drawableEnd="@drawable/ic_check"
+                    android:drawablePadding="4dp"
+                    app:drawableTint="?attr/colorOnPrimary" />
 
             </LinearLayout>
 
@@ -103,7 +88,7 @@
                 android:id="@+id/imgUserAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="User avatar"
+                android:contentDescription="@string/user_avatar"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_person"
                 app:tint="?attr/colorOnSurfaceVariant" />
@@ -131,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:text="John Doe"
+                    android:text="@string/sample_username"
                     android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
@@ -142,7 +127,7 @@
                     android:id="@+id/tvReceivedMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="This is a received message example"
+                    android:text="@string/sample_received_message"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     tools:text="This is a received message" />
@@ -152,7 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="12:30"
+                    android:text="@string/sample_time_2"
                     android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:alpha="0.7" />
@@ -199,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
-                android:text="Today"
+                android:text="@string/today"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 

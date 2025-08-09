@@ -178,7 +178,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
     Log.d(TAG, "Starting comprehensive security scan");
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             performSecurityScan();
@@ -202,7 +202,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
     Log.d(TAG, "Starting quick security scan");
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             performQuickScan();
@@ -239,7 +239,7 @@ public class SecurityScanViewModel extends BaseViewModel {
   public void resolveSecurityIssue(@NonNull SecurityIssue issue) {
     Log.d(TAG, "Resolving security issue: " + issue.getType());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             // Simulate issue resolution
@@ -286,7 +286,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
     Log.d(TAG, "Applying automatic security fixes");
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             // Simulate auto-fix process
@@ -349,7 +349,7 @@ public class SecurityScanViewModel extends BaseViewModel {
 
     Log.d(TAG, "Generating security report");
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             // Create comprehensive security report

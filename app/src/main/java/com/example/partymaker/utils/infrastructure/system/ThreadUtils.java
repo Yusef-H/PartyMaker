@@ -151,17 +151,6 @@ public class ThreadUtils {
   }
 
   /**
-   * Runs a task on a background thread (alternative method name).
-   *
-   * @param runnable The task to run
-   * @deprecated Use runInBackground() for consistency
-   */
-  @Deprecated
-  public static void runOnBackground(Runnable runnable) {
-    runInBackground(runnable);
-  }
-
-  /**
    * Runs a task on the network thread.
    *
    * @param runnable The task to run

@@ -165,7 +165,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
 
     Log.d(TAG, "Loading public groups, forceRefresh: " + forceRefresh);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.getPublicGroups(
                 forceRefresh,
@@ -201,7 +201,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
 
     Log.d(TAG, "Loading more groups, page: " + nextPage);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           // Simulate pagination (in real implementation, pass page parameter to repository)
           ThreadUtils.runOnMainThreadDelayed(
@@ -300,7 +300,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
 
     Log.d(TAG, "Joining group: " + group.getGroupName());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.joinGroup(
                 group.getGroupKey(),
@@ -339,7 +339,7 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
 
     Log.d(TAG, "Leaving group: " + group.getGroupName());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.leaveGroup(
                 group.getGroupKey(),
@@ -387,16 +387,14 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
       return false;
     }
 
-    // Check if group allows new members
-
-    // Check if group is public
-    return false;
+    // Check if group allows new members and is public
+    return group.isCanAdd() && group.getGroupType() == Group.GROUP_TYPE_PUBLIC;
   }
 
   // Private helper methods
 
   private void applyFilters() {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             List<Group> filtered = new ArrayList<>(allPublicGroups);

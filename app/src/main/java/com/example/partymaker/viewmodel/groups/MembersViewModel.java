@@ -226,7 +226,7 @@ public class MembersViewModel extends BaseViewModel {
 
     Log.d(TAG, "Loading group data and members for: " + currentGroupKey);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.getGroup(
                 currentGroupKey,
@@ -310,7 +310,7 @@ public class MembersViewModel extends BaseViewModel {
 
     Log.d(TAG, "Inviting member: " + user.getUsername());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.inviteMemberToGroup(
                 currentGroupKey,
@@ -355,7 +355,7 @@ public class MembersViewModel extends BaseViewModel {
 
     Log.d(TAG, "Removing member: " + member.getUsername());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.removeMemberFromGroup(
                 currentGroupKey,
@@ -392,7 +392,7 @@ public class MembersViewModel extends BaseViewModel {
 
     Log.d(TAG, "Updating attendance for: " + member.getUsername() + " to: " + isComing);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.updateAttendanceStatus(
                 currentGroupKey,
@@ -491,7 +491,7 @@ public class MembersViewModel extends BaseViewModel {
   }
 
   private void loadMemberDetails(Group group) {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           // Load all members
           loadUsersFromKeys(
@@ -580,7 +580,7 @@ public class MembersViewModel extends BaseViewModel {
   }
 
   private void applyFilters() {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             MemberType viewType = currentViewType.getValue();

@@ -25,7 +25,6 @@ import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkManager;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.ui.features.core.MainActivity;
-import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.viewmodel.auth.AuthViewModel;
@@ -386,7 +385,7 @@ public class LoginActivity extends AppCompatActivity {
 
   private void performEmailLogin(@NonNull LoginCredentials credentials) {
     authViewModel.loginWithEmail(credentials.email, credentials.password);
-    AuthenticationManager.setCurrentUserSession(this, credentials.email);
+    // Session management is handled automatically by AuthenticationManager
   }
 
   private void handleGoogleSignInClick(@NonNull View view) {

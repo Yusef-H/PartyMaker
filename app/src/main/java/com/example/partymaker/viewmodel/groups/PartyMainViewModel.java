@@ -194,7 +194,7 @@ public class PartyMainViewModel extends BaseViewModel {
 
     Log.d(TAG, "Loading group data for: " + currentGroupKey);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.getGroup(
                 currentGroupKey,
@@ -218,7 +218,7 @@ public class PartyMainViewModel extends BaseViewModel {
       return;
     }
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             userRepository.getUser(
                 currentUserKey,
@@ -256,7 +256,7 @@ public class PartyMainViewModel extends BaseViewModel {
 
     Log.d(TAG, "Joining group: " + currentGroupKey);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.joinGroup(
                 currentGroupKey,
@@ -291,7 +291,7 @@ public class PartyMainViewModel extends BaseViewModel {
 
     Log.d(TAG, "Leaving group: " + currentGroupKey);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.leaveGroup(
                 currentGroupKey,
@@ -336,7 +336,7 @@ public class PartyMainViewModel extends BaseViewModel {
 
     Log.d(TAG, "Updating attendance status to: " + isComing);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.updateAttendanceStatus(
                 currentGroupKey,
@@ -500,7 +500,7 @@ public class PartyMainViewModel extends BaseViewModel {
   }
 
   private void loadMemberDetails(Group group) {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           // Load regular members
           loadUsersFromKeys(

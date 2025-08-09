@@ -131,7 +131,7 @@ public class SecurityScanActivity extends AppCompatActivity {
   private void handleScanFailure(Throwable throwable) {
     progressBar.setVisibility(View.GONE);
     runScanButton.setEnabled(true);
-    scanStatusText.setText(String.format(SCAN_FAILED_TEXT, throwable.getMessage()));
+    scanStatusText.setText(String.format(Locale.US, SCAN_FAILED_TEXT, throwable.getMessage()));
     Toast.makeText(this, "Security scan failed", Toast.LENGTH_LONG).show();
   }
 
@@ -151,12 +151,11 @@ public class SecurityScanActivity extends AppCompatActivity {
   }
 
   private void displaySecurityScore(SecurityReport report) {
-    securityScoreText.setText(
-        String.format(Locale.getDefault(), SCORE_FORMAT, report.getOverallScore()));
+    securityScoreText.setText(String.format(Locale.US, SCORE_FORMAT, report.getOverallScore()));
   }
 
   private void displaySecurityGrade(SecurityReport report) {
-    securityGradeText.setText(String.format(GRADE_FORMAT, report.getSecurityGrade()));
+    securityGradeText.setText(String.format(Locale.US, GRADE_FORMAT, report.getSecurityGrade()));
   }
 
   private void displayIssuesSummary(SecurityReport report) {
@@ -165,8 +164,7 @@ public class SecurityScanActivity extends AppCompatActivity {
       issuesFoundText.setText(NO_SECURITY_ISSUES_TEXT);
       issuesFoundText.setTextColor(getColor(android.R.color.holo_green_dark));
     } else {
-      issuesFoundText.setText(
-          String.format(Locale.getDefault(), SECURITY_ISSUES_FORMAT, totalIssues));
+      issuesFoundText.setText(String.format(Locale.US, SECURITY_ISSUES_FORMAT, totalIssues));
       issuesFoundText.setTextColor(getColor(android.R.color.holo_red_dark));
     }
   }
@@ -190,14 +188,19 @@ public class SecurityScanActivity extends AppCompatActivity {
       exportJsonReport(reportsDir, timestamp);
 
       Toast.makeText(
-              this, String.format(EXPORT_SUCCESS_FORMAT, reportsDir.getPath()), Toast.LENGTH_LONG)
+              this,
+              String.format(Locale.US, EXPORT_SUCCESS_FORMAT, reportsDir.getPath()),
+              Toast.LENGTH_LONG)
           .show();
 
       // Also upload to Firebase
       securityAgent.uploadReportToFirebase(currentReport);
 
     } catch (Exception e) {
-      Toast.makeText(this, String.format(EXPORT_FAILED_FORMAT, e.getMessage()), Toast.LENGTH_LONG)
+      Toast.makeText(
+              this,
+              String.format(Locale.US, EXPORT_FAILED_FORMAT, e.getMessage()),
+              Toast.LENGTH_LONG)
           .show();
     }
   }
@@ -213,7 +216,7 @@ public class SecurityScanActivity extends AppCompatActivity {
   }
 
   private String generateTimestamp() {
-    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault());
+    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.US);
     return sdf.format(new Date());
   }
 
@@ -244,7 +247,10 @@ public class SecurityScanActivity extends AppCompatActivity {
       startActivity(Intent.createChooser(shareIntent, SHARE_CHOOSER_TITLE));
 
     } catch (Exception e) {
-      Toast.makeText(this, String.format(SHARE_FAILED_FORMAT, e.getMessage()), Toast.LENGTH_LONG)
+      Toast.makeText(
+              this,
+              String.format(Locale.US, SHARE_FAILED_FORMAT, e.getMessage()),
+              Toast.LENGTH_LONG)
           .show();
     }
   }
@@ -280,6 +286,9 @@ public class SecurityScanActivity extends AppCompatActivity {
 
   private String createShareText() {
     return String.format(
-        SECURITY_SCORE_TEXT, currentReport.getOverallScore(), currentReport.getSecurityGrade());
+        Locale.US,
+        SECURITY_SCORE_TEXT,
+        currentReport.getOverallScore(),
+        currentReport.getSecurityGrade());
   }
 }

@@ -260,6 +260,7 @@
     <string name="search_parties">Search parties...</string>
     <string name="voice_search">Voice search</string>
     <string name="filter_parties">Filter parties</string>
+    <string name="clear_search">Clear search</string>
     <string name="all">All</string>
     <string name="today">Today</string>
     <string name="this_week">This Week</string>
@@ -276,6 +277,20 @@
     <string name="chat_options">Chat options</string>
     <string name="attachment_options">Attachment options</string>
     <string name="ai_thinking">AI is thinking...</string>
+    <string name="party_avatar">Party avatar</string>
+    <string name="party_name">Party Name</string>
+    <string name="members_count">5 members</string>
+    <string name="attach_file">Attach file</string>
+    <string name="type_message_hint">Type a message...</string>
+    <string name="send_message">Send message</string>
+    <string name="someone_typing">Someone is typing...</string>
+    <string name="message_status">Message status</string>
+    <string name="user_avatar">User avatar</string>
+    <string name="sample_username">John Doe</string>
+    <string name="sample_sent_message">This is a sent message example</string>
+    <string name="sample_received_message">This is a received message example</string>
+    <string name="sample_time_1">12:34</string>
+    <string name="sample_time_2">12:30</string>
 
     <!-- Profile -->
     <string name="edit_profile_picture">Edit profile picture</string>
@@ -287,4 +302,18 @@
     <string name="no_public_parties">No Public Parties</string>
     <string name="no_public_parties_message">There are no public parties available right now.\nCheck back later or create your own!</string>
     <string name="success">Success!</string>
+
+    <!-- Party Creation -->
+    <string name="party_creation_title">Party creation</string>
+    <string name="basic_information">Basic Information</string>
+    <string name="description_optional">Description (Optional)</string>
+    <string name="date_and_time">Date &amp; Time</string>
+    <string name="tap_to_select_time">Tap to select time</string>
+    <string name="party_location">Party Location</string>
+    <string name="party_settings">Party Settings</string>
+    <string name="privacy">Privacy</string>
+    <string name="make_public">Make Public</string>
+    <string name="allow_anyone_to_join">Allow anyone to find and join</string>
+    <string name="entry_price_optional">Entry Price (Optional)</string>
+    <string name="create_party_button">Create party</string>
 </resources>

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.drawable.RippleDrawable;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Property;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -93,9 +94,23 @@ public class ButtonAnimationHelper {
     // Elevation animation for cards and buttons
     ObjectAnimator elevation = null;
     if (view instanceof CardView) {
+      final CardView cardView = (CardView) view;
       elevation =
           ObjectAnimator.ofFloat(
-              view, "cardElevation", ((CardView) view).getCardElevation(), ELEVATION_PRESSED);
+              cardView,
+              new Property<CardView, Float>(Float.class, "cardElevation") {
+                @Override
+                public Float get(CardView object) {
+                  return object.getCardElevation();
+                }
+
+                @Override
+                public void set(CardView object, Float value) {
+                  object.setCardElevation(value);
+                }
+              },
+              cardView.getCardElevation(),
+              ELEVATION_PRESSED);
     } else if (view instanceof MaterialButton || view instanceof FloatingActionButton) {
       elevation = ObjectAnimator.ofFloat(view, "elevation", view.getElevation(), ELEVATION_PRESSED);
     }
@@ -126,9 +141,23 @@ public class ButtonAnimationHelper {
     // Elevation animation back to normal
     ObjectAnimator elevation = null;
     if (view instanceof CardView) {
+      final CardView cardView = (CardView) view;
       elevation =
           ObjectAnimator.ofFloat(
-              view, "cardElevation", ((CardView) view).getCardElevation(), ELEVATION_NORMAL);
+              cardView,
+              new Property<CardView, Float>(Float.class, "cardElevation") {
+                @Override
+                public Float get(CardView object) {
+                  return object.getCardElevation();
+                }
+
+                @Override
+                public void set(CardView object, Float value) {
+                  object.setCardElevation(value);
+                }
+              },
+              cardView.getCardElevation(),
+              ELEVATION_NORMAL);
     } else if (view instanceof MaterialButton || view instanceof FloatingActionButton) {
       elevation = ObjectAnimator.ofFloat(view, "elevation", view.getElevation(), ELEVATION_NORMAL);
     }

@@ -1,6 +1,7 @@
 package com.example.partymaker.utils.security.network;
 
 import android.util.Log;
+import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -9,13 +10,12 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import javax.net.ssl.TrustManagerFactory;
-import java.security.KeyStore;
 
 /**
  * Enhanced SSL Certificate Pinning Manager for secure network connections. Implements certificate
@@ -118,16 +118,18 @@ public class SSLPinningManager {
         + android.util.Base64.encodeToString(hash, android.util.Base64.NO_WRAP);
   }
 
-  /** Custom Trust Manager that delegates to system trust manager with additional pinning validation */
+  /**
+   * Custom Trust Manager that delegates to system trust manager with additional pinning validation
+   */
   private class CustomTrustManager implements X509TrustManager {
     private final X509TrustManager systemTrustManager;
 
     public CustomTrustManager() throws Exception {
       // Initialize with system's default trust manager
-      TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-          TrustManagerFactory.getDefaultAlgorithm());
+      TrustManagerFactory tmf =
+          TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       tmf.init((KeyStore) null); // Use system's default trust store
-      
+
       X509TrustManager defaultTm = null;
       for (javax.net.ssl.TrustManager tm : tmf.getTrustManagers()) {
         if (tm instanceof X509TrustManager) {
@@ -135,11 +137,11 @@ public class SSLPinningManager {
           break;
         }
       }
-      
+
       if (defaultTm == null) {
         throw new Exception("Could not find system trust manager");
       }
-      
+
       this.systemTrustManager = defaultTm;
     }
 
@@ -155,7 +157,7 @@ public class SSLPinningManager {
         throws CertificateException {
       // First, let the system trust manager perform standard validation
       systemTrustManager.checkServerTrusted(chain, authType);
-      
+
       // Then perform our additional pinning validation
       if (chain == null || chain.length == 0) {
         throw new CertificateException("No certificate chain provided");
