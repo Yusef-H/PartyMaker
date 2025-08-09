@@ -497,9 +497,20 @@ public class MainActivity extends AppCompatActivity {
         }
       }
     }
-    // Update the adapter with filtered groups
+    // Update the adapter with filtered groups without triggering loading state
     if (groupAdapter != null) {
+      // Directly update items without going through ViewModel to avoid loading state
       groupAdapter.updateItems(filteredGroups);
+      
+      // Ensure the RecyclerView stays visible
+      if (groupsRecyclerView != null) {
+        groupsRecyclerView.setVisibility(View.VISIBLE);
+      }
+      
+      // Hide any loading overlays that might be showing
+      if (loadingStateManager != null) {
+        loadingStateManager.showContent();
+      }
     }
   }
 

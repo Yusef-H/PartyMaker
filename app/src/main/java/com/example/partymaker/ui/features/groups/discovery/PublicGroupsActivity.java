@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -54,8 +57,12 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private String userKey;
   private Object groupsRef;
   private GroupAdapter allGroupsAdapter;
-  private ArrayList<Group> allGroups;
+  private ArrayList<Group> allGroups = new ArrayList<>();
+  private ArrayList<Group> filteredGroups = new ArrayList<>();
   private ChipGroup chipGroupFilters;
+  private EditText searchEditText;
+  private String currentSearchText = "";
+  private int currentFilterChipId = R.id.chipAll;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +143,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
 
     // Initialize chip filter
     chipGroupFilters = findViewById(R.id.chipGroupFilters);
+    
+    // Initialize search
+    searchEditText = findViewById(R.id.etSearch);
   }
 
   private void setupEventHandlers() {
@@ -144,10 +154,27 @@ public class PublicGroupsActivity extends AppCompatActivity {
       chipGroupFilters.setOnCheckedStateChangeListener(
           (group, checkedIds) -> {
             if (!checkedIds.isEmpty()) {
-              int selectedChipId = checkedIds.get(0);
-              applyFilter(selectedChipId);
+              currentFilterChipId = checkedIds.get(0);
+              applyFilterAndSearch();
             }
           });
+    }
+    
+    // Setup search
+    if (searchEditText != null) {
+      searchEditText.addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+          currentSearchText = s.toString();
+          applyFilterAndSearch();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
+      });
     }
   }
 
@@ -211,10 +238,10 @@ public class PublicGroupsActivity extends AppCompatActivity {
     ArrayList<Group> groupList = filterPublicGroups(groupData);
     allGroups = new ArrayList<>(groupList);
 
-    if (allGroupsAdapter != null) {
-      allGroupsAdapter.updateItems(groupList);
-    }
-    if (groupList.isEmpty()) {
+    if (!allGroups.isEmpty()) {
+      // Apply initial filter and search
+      applyFilterAndSearch();
+    } else {
       Toast.makeText(this, NO_PUBLIC_PARTIES_MESSAGE, Toast.LENGTH_SHORT).show();
     }
   }
@@ -245,26 +272,53 @@ public class PublicGroupsActivity extends AppCompatActivity {
     return true;
   }
 
-  private void applyFilter(int chipId) {
-    if (allGroups == null) return;
-
-    ArrayList<Group> filteredList = new ArrayList<>();
-
-    if (chipId == R.id.chipAll) {
-      filteredList = new ArrayList<>(allGroups);
-    } else if (chipId == R.id.chipToday) {
-      filteredList = filterGroupsByDate(allGroups, TODAY_FILTER);
-    } else if (chipId == R.id.chipThisWeek) {
-      filteredList = filterGroupsByDate(allGroups, WEEK_FILTER);
-    } else if (chipId == R.id.chipFree) {
-      filteredList = filterGroupsByPrice(allGroups);
+  private void applyFilterAndSearch() {
+    if (allGroups == null || allGroups.isEmpty()) {
+      Log.w(TAG, "No groups to filter");
+      if (allGroupsAdapter != null) {
+        allGroupsAdapter.updateItems(new ArrayList<>());
+      }
+      return;
     }
 
+    // First apply chip filter
+    ArrayList<Group> chipFiltered = new ArrayList<>();
+    
+    if (currentFilterChipId == R.id.chipAll) {
+      chipFiltered = new ArrayList<>(allGroups);
+    } else if (currentFilterChipId == R.id.chipToday) {
+      chipFiltered = filterGroupsByDate(allGroups, TODAY_FILTER);
+    } else if (currentFilterChipId == R.id.chipThisWeek) {
+      chipFiltered = filterGroupsByDate(allGroups, WEEK_FILTER);
+    } else if (currentFilterChipId == R.id.chipFree) {
+      chipFiltered = filterGroupsByPrice(allGroups);
+    }
+
+    // Then apply search filter
+    filteredGroups.clear();
+    if (currentSearchText.isEmpty()) {
+      filteredGroups.addAll(chipFiltered);
+    } else {
+      String lowerSearchText = currentSearchText.toLowerCase();
+      for (Group group : chipFiltered) {
+        if (group.getGroupName() != null && 
+            group.getGroupName().toLowerCase().contains(lowerSearchText)) {
+          filteredGroups.add(group);
+        }
+      }
+    }
+
+    // Update adapter
     if (allGroupsAdapter != null) {
-      allGroupsAdapter.updateItems(filteredList);
+      allGroupsAdapter.updateItems(filteredGroups);
     }
 
-    Log.d(TAG, "Filter applied, showing " + filteredList.size() + " groups");
+    Log.d(TAG, "Filter and search applied, showing " + filteredGroups.size() + " groups");
+  }
+  
+  private void applyFilter(int chipId) {
+    currentFilterChipId = chipId;
+    applyFilterAndSearch();
   }
 
   private ArrayList<Group> filterGroupsByDate(ArrayList<Group> groups, int daysFromNow) {
