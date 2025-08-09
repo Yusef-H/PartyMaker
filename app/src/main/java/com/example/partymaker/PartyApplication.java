@@ -9,6 +9,7 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.infrastructure.system.MemoryManager;
+import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.google.firebase.FirebaseApp;
 
@@ -19,6 +20,10 @@ public class PartyApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
+
+    // Apply saved theme preference
+    ServerSettingsActivity.applyThemeFromPreferences(this);
+    Log.d(TAG, "Theme preference applied");
 
     // Initialize Firebase
     try {
