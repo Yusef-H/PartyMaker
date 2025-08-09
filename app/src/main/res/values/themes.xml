@@ -1,12 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Main application theme -->
-    <style name="Theme.PartyMaker" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/white</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/colorBackground</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    <!-- Main application theme - Material 3 with original PartyMaker colors -->
+    <style name="Theme.PartyMaker" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Use original PartyMaker colors as primary -->
+        <item name="colorPrimary">@color/primaryBlue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primaryBlue</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
+
+        <!-- Secondary colors using original gray -->
+        <item name="colorSecondary">@color/primaryGray</item>
+        <item name="colorOnSecondary">@color/primaryBlue</item>
+        <item name="colorSecondaryContainer">@color/primaryGray</item>
+        <item name="colorOnSecondaryContainer">@color/primaryBlue</item>
+
+        <!-- Keep nice accent colors -->
+        <item name="colorTertiary">@color/modern_accent_teal</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorTertiaryContainer">@color/modern_accent_teal</item>
+        <item name="colorOnTertiaryContainer">@color/white</item>
+
+        <!-- Error colors -->
+        <item name="colorError">@color/error_red</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">@color/error_red</item>
+        <item name="colorOnErrorContainer">@color/white</item>
+
+        <!-- Background - keep light -->
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorOnBackground">@color/black</item>
+
+        <!-- Surface - use light gray -->
+        <item name="colorSurface">@color/primaryGray</item>
+        <item name="colorOnSurface">@color/primaryBlue</item>
+        <item name="colorSurfaceVariant">@color/primaryGray</item>
+        <item name="colorOnSurfaceVariant">@color/primaryBlue</item>
+
+        <!-- Outlines -->
+        <item name="colorOutline">@color/gray</item>
+        <item name="colorOutlineVariant">@color/primaryGray</item>
+
+        <!-- Material 3 specific attributes -->
+        <item name="android:colorControlHighlight">@color/primaryBlue</item>
+
+        <!-- Enhanced elevation and corner radius for Material You -->
+        <item name="elevationOverlayEnabled">true</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material3.Corner.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Material3.Corner.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material3.Corner.Large</item>
+
+        <!-- Surface container colors for Material 3 -->
+        <item name="colorSurfaceContainerLowest">@color/white</item>
+        <item name="colorSurfaceContainerLow">@color/primaryGray</item>
+        <item name="colorSurfaceContainer">@color/primaryGray</item>
+        <item name="colorSurfaceContainerHigh">@color/primaryGray</item>
+        <item name="colorSurfaceContainerHighest">@color/primaryGray</item>
     </style>
 
     <style name="Theme.Material3.Register" parent="Theme.Material3.DayNight.NoActionBar">

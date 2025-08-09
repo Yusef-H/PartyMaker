@@ -58,7 +58,9 @@ public class JoinGroupActivity extends AppCompatActivity {
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar).hide();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     // Get Values from PublicGroups By intent + connection between intent and
     // current activity objects

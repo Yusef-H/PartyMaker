@@ -23,14 +23,14 @@ public class GroupKeyManager {
   private static final String TAG = "GroupKeyManager";
   private static final String FIREBASE_GROUP_KEYS_PATH = "group_keys";
 
-    private final String currentUserId;
+  private final String currentUserId;
   private final GroupMessageEncryption groupEncryption;
-    private final DatabaseReference firebaseRef;
+  private final DatabaseReference firebaseRef;
 
   public GroupKeyManager(Context context, String userId) {
-      this.currentUserId = userId;
+    this.currentUserId = userId;
     this.groupEncryption = new GroupMessageEncryption(context, userId);
-      EnhancedSecureStorage userStorage = new EnhancedSecureStorage(context, userId);
+    EnhancedSecureStorage userStorage = new EnhancedSecureStorage(context, userId);
     this.firebaseRef = FirebaseDatabase.getInstance().getReference(FIREBASE_GROUP_KEYS_PATH);
   }
 
@@ -290,7 +290,7 @@ public class GroupKeyManager {
                     // Use key directly (simplified approach)
                     // In production, this would be decrypted with user's private key
 
-                      // Store group key locally
+                    // Store group key locally
                     boolean stored = groupEncryption.storeGroupKey(groupId, encryptedGroupKey);
 
                     if (stored) {

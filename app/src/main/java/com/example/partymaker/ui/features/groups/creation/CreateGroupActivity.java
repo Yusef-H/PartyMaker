@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
@@ -50,6 +51,8 @@ import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.media.ImageCompressor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
+import com.example.partymaker.utils.ui.animation.ButtonAnimationHelper;
+import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
@@ -93,6 +96,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private GoogleMap map;
   private LatLng chosenLatLng;
   private FusedLocationProviderClient locationClient;
+  private LoadingStateManager loadingStateManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +220,12 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     // Initialize calendar
     selectedDate = Calendar.getInstance();
 
+    // Setup loading state manager for animations
+    setupLoadingStateManager();
+
+    // Setup button animations
+    setupButtonAnimations();
+
     // Setup hours spinner
     setupHoursSpinner();
   }
@@ -226,6 +236,50 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         ArrayAdapter.createFromResource(
             this, R.array.array_hours, android.R.layout.simple_spinner_item);
     hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+  }
+
+  // Setup loading state manager for success/error animations
+  private void setupLoadingStateManager() {
+    // Find views for loading state management
+    View animationOverlay = findViewById(R.id.animation_overlay);
+    LottieAnimationView lottieView = findViewById(R.id.lottie_feedback);
+    TextView feedbackText = findViewById(R.id.feedback_text);
+
+    if (animationOverlay != null && lottieView != null) {
+      // Create a simple progress bar as fallback
+      android.widget.ProgressBar progressBar = new android.widget.ProgressBar(this);
+
+      loadingStateManager =
+          new LoadingStateManager.Builder()
+              .contentView(findViewById(android.R.id.content)) // Use root content view
+              .progressBar(progressBar)
+              .loadingText(feedbackText)
+              .errorView(null)
+              .lottieAnimation(lottieView)
+              .build();
+    }
+  }
+
+  // Setup professional animations for all buttons
+  private void setupButtonAnimations() {
+    // Apply animations to all navigation buttons
+    if (btnNext1 != null) ButtonAnimationHelper.enhanceButton(btnNext1);
+    if (btnNext2 != null) ButtonAnimationHelper.enhanceButton(btnNext2);
+    if (btnBack1 != null) ButtonAnimationHelper.enhanceButton(btnBack1);
+    if (btnBack2 != null) ButtonAnimationHelper.enhanceButton(btnBack2);
+    if (btnDone != null) ButtonAnimationHelper.enhanceButton(btnDone);
+    if (btnAddGroup != null) ButtonAnimationHelper.enhanceButton(btnAddGroup);
+
+    // Apply special animation to FAB chat button
+    if (fabChat != null) {
+      ButtonAnimationHelper.applyPressAnimation(fabChat, true);
+      ButtonAnimationHelper.applyEntranceAnimation(fabChat, 800);
+    }
+
+    // Add entrance animations for UI elements with stagger effect
+    if (imgLogin != null) ButtonAnimationHelper.applyEntranceAnimation(imgLogin, 100);
+    if (tvPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(tvPartyName, 200);
+    if (etPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(etPartyName, 300);
   }
 
   // Initialize map fragment and location services
@@ -289,9 +343,34 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     showErrorMessage(errorMessage);
   }
 
-  // Display error message to user
+  // Display error message to user with animation
   private void showErrorMessage(String message) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    // Show error animation with animation overlay
+    View animationOverlay = findViewById(R.id.animation_overlay);
+    com.airbnb.lottie.LottieAnimationView lottieView = findViewById(R.id.lottie_feedback);
+    TextView feedbackText = findViewById(R.id.feedback_text);
+
+    if (animationOverlay != null && lottieView != null && feedbackText != null) {
+      // Setup and show error animation
+      animationOverlay.setVisibility(View.VISIBLE);
+      feedbackText.setText(message);
+
+      lottieView.setAnimation("error_warning.json");
+      lottieView.setRepeatCount(0); // Play once
+      lottieView.playAnimation();
+
+      // Auto-hide after animation completes
+      ThreadUtils.runOnMainThreadDelayed(
+          () -> {
+            if (animationOverlay != null) {
+              animationOverlay.setVisibility(View.GONE);
+            }
+          },
+          3000);
+    } else {
+      // Fallback to toast if overlay not available
+      Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
   }
 
   // Validate next-button if name is empty
@@ -529,14 +608,10 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
           public void onError(String errorMessage) {
             Log.e(TAG, "Error saving group via server client: " + errorMessage);
 
-            // Show error message on the UI thread
+            // Show error message with animation on the UI thread
             ThreadUtils.runOnMainThread(
                 () -> {
-                  Toast.makeText(
-                          CreateGroupActivity.this,
-                          "Error creating group: " + errorMessage,
-                          Toast.LENGTH_LONG)
-                      .show();
+                  showErrorMessage("Error creating group: " + errorMessage);
                   btnAddGroup.setEnabled(true);
                 });
           }
@@ -707,7 +782,7 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     try {
       String currentUserId = AuthenticationManager.getCurrentUserKey(this);
 
-        GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
+      GroupKeyManager groupKeyManager = new GroupKeyManager(this, currentUserId);
 
       // Create encryption for new group
       groupKeyManager
@@ -727,7 +802,32 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   }
 
   private void showSuccessMessage() {
-    Toast.makeText(this, "Group successfully created", Toast.LENGTH_SHORT).show();
+    // Show success animation with animation overlay
+    View animationOverlay = findViewById(R.id.animation_overlay);
+    com.airbnb.lottie.LottieAnimationView lottieView = findViewById(R.id.lottie_feedback);
+    TextView feedbackText = findViewById(R.id.feedback_text);
+
+    if (animationOverlay != null && lottieView != null && feedbackText != null) {
+      // Setup and show success animation
+      animationOverlay.setVisibility(View.VISIBLE);
+      feedbackText.setText("🎉 Party created successfully!");
+
+      lottieView.setAnimation("success_checkmark.json");
+      lottieView.setRepeatCount(0); // Play once
+      lottieView.playAnimation();
+
+      // Auto-hide after animation completes
+      ThreadUtils.runOnMainThreadDelayed(
+          () -> {
+            if (animationOverlay != null) {
+              animationOverlay.setVisibility(View.GONE);
+            }
+          },
+          2500);
+    } else {
+      // Fallback to toast if overlay not available
+      Toast.makeText(this, "🎉 Party created successfully!", Toast.LENGTH_SHORT).show();
+    }
   }
 
   private void showLocationWarning() {
@@ -824,12 +924,32 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
         new DatePickerDialog(
             this,
             (view, year, month, dayOfMonth) -> {
+              Calendar pickedDate = Calendar.getInstance();
+              pickedDate.set(year, month, dayOfMonth);
+              
+              // Check if picked date is in the past
+              Calendar today = Calendar.getInstance();
+              today.set(Calendar.HOUR_OF_DAY, 0);
+              today.set(Calendar.MINUTE, 0);
+              today.set(Calendar.SECOND, 0);
+              today.set(Calendar.MILLISECOND, 0);
+              
+              if (pickedDate.before(today)) {
+                Toast.makeText(this, "Cannot select a date in the past. Please choose today or a future date.", Toast.LENGTH_LONG).show();
+                return;
+              }
+              
               selectedDate.set(year, month, dayOfMonth);
               updateSelectedDate();
             },
             selectedDate.get(Calendar.YEAR),
             selectedDate.get(Calendar.MONTH),
             selectedDate.get(Calendar.DAY_OF_MONTH));
+    
+    // Set minimum date to today to prevent past date selection
+    Calendar today = Calendar.getInstance();
+    datePickerDialog.getDatePicker().setMinDate(today.getTimeInMillis());
+    
     datePickerDialog.show();
   }
 

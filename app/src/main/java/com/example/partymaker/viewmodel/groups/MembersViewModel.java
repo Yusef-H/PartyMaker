@@ -227,18 +227,19 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Loading group data and members for: " + currentGroupKey);
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.getGroup(
-            currentGroupKey,
+        () ->
+            groupRepository.getGroup(
+                currentGroupKey,
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Group group) {
-                        handleGroupLoaded(group);
-                    }
+                  @Override
+                  public void onSuccess(Group group) {
+                    handleGroupLoaded(group);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleGroupLoadError(error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleGroupLoadError(error);
+                  }
                 }));
   }
 
@@ -310,19 +311,20 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Inviting member: " + user.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.inviteMemberToGroup(
-            currentGroupKey,
-            user.getUserKey(),
+        () ->
+            groupRepository.inviteMemberToGroup(
+                currentGroupKey,
+                user.getUserKey(),
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        handleInviteSuccess(user);
-                    }
+                  @Override
+                  public void onSuccess(Boolean result) {
+                    handleInviteSuccess(user);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleMemberOperationError("invite", user, error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleMemberOperationError("invite", user, error);
+                  }
                 }));
   }
 
@@ -354,19 +356,20 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Removing member: " + member.getUsername());
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.removeMemberFromGroup(
-            currentGroupKey,
-            member.getUserKey(),
+        () ->
+            groupRepository.removeMemberFromGroup(
+                currentGroupKey,
+                member.getUserKey(),
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        handleRemoveSuccess(member);
-                    }
+                  @Override
+                  public void onSuccess(Boolean result) {
+                    handleRemoveSuccess(member);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleMemberOperationError("remove", member, error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleMemberOperationError("remove", member, error);
+                  }
                 }));
   }
 
@@ -390,20 +393,21 @@ public class MembersViewModel extends BaseViewModel {
     Log.d(TAG, "Updating attendance for: " + member.getUsername() + " to: " + isComing);
 
     ThreadUtils.runOnBackground(
-        () -> groupRepository.updateAttendanceStatus(
-            currentGroupKey,
-            member.getUserKey(),
-            isComing,
+        () ->
+            groupRepository.updateAttendanceStatus(
+                currentGroupKey,
+                member.getUserKey(),
+                isComing,
                 new GroupRepository.Callback<>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        handleAttendanceUpdateSuccess(member, isComing);
-                    }
+                  @Override
+                  public void onSuccess(Boolean result) {
+                    handleAttendanceUpdateSuccess(member, isComing);
+                  }
 
-                    @Override
-                    public void onError(Exception error) {
-                        handleMemberOperationError("update attendance for", member, error);
-                    }
+                  @Override
+                  public void onError(Exception error) {
+                    handleMemberOperationError("update attendance for", member, error);
+                  }
                 }));
   }
 
@@ -492,22 +496,24 @@ public class MembersViewModel extends BaseViewModel {
           // Load all members
           loadUsersFromKeys(
               group.getFriendKeys(),
-              users -> ThreadUtils.runOnMainThread(
-                  () -> {
-                    allMembers.setValue(users);
-                    updateStatistics();
-                    applyFilters();
-                  }));
+              users ->
+                  ThreadUtils.runOnMainThread(
+                      () -> {
+                        allMembers.setValue(users);
+                        updateStatistics();
+                        applyFilters();
+                      }));
 
           // Load coming members
           loadUsersFromKeys(
               group.getComingKeys(),
-              users -> ThreadUtils.runOnMainThread(
-                  () -> {
-                    comingMembers.setValue(users);
-                    updateStatistics();
-                    applyFilters();
-                  }));
+              users ->
+                  ThreadUtils.runOnMainThread(
+                      () -> {
+                        comingMembers.setValue(users);
+                        updateStatistics();
+                        applyFilters();
+                      }));
 
           // Invited members would be loaded separately if we had invitation tracking
           ThreadUtils.runOnMainThread(
@@ -535,31 +541,31 @@ public class MembersViewModel extends BaseViewModel {
     for (String userKey : userKeys.keySet()) {
       userRepository.getUser(
           userKey,
-              new UserRepository.Callback<>() {
-                  @Override
-                  public void onSuccess(User user) {
-                      synchronized (users) {
-                          users.add(user);
-                          loadedCount[0]++;
+          new UserRepository.Callback<>() {
+            @Override
+            public void onSuccess(User user) {
+              synchronized (users) {
+                users.add(user);
+                loadedCount[0]++;
 
-                          if (loadedCount[0] == totalUsers) {
-                              callback.onUsersLoaded(users);
-                          }
-                      }
-                  }
+                if (loadedCount[0] == totalUsers) {
+                  callback.onUsersLoaded(users);
+                }
+              }
+            }
 
-                  @Override
-                  public void onError(Exception error) {
-                      Log.w(TAG, "Failed to load user: " + userKey, error);
-                      synchronized (users) {
-                          loadedCount[0]++;
+            @Override
+            public void onError(Exception error) {
+              Log.w(TAG, "Failed to load user: " + userKey, error);
+              synchronized (users) {
+                loadedCount[0]++;
 
-                          if (loadedCount[0] == totalUsers) {
-                              callback.onUsersLoaded(users);
-                          }
-                      }
-                  }
-              });
+                if (loadedCount[0] == totalUsers) {
+                  callback.onUsersLoaded(users);
+                }
+              }
+            }
+          });
     }
   }
 
@@ -611,8 +617,7 @@ public class MembersViewModel extends BaseViewModel {
             }
 
             final List<User> finalFiltered = filtered;
-            ThreadUtils.runOnMainThread(
-                () -> filteredMembers.setValue(finalFiltered));
+            ThreadUtils.runOnMainThread(() -> filteredMembers.setValue(finalFiltered));
 
           } catch (Exception e) {
             Log.e(TAG, "Error applying filters", e);

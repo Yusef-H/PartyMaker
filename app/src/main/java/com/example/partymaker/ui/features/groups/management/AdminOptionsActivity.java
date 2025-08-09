@@ -40,7 +40,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class AdminOptionsActivity extends AppCompatActivity implements OnMapReadyCallback {
   private static final String TAG = "AdminOptionsActivity";
@@ -109,7 +108,9 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
 
     // this 2 lines disables the action bar only in this activity
     ActionBar actionBar = getSupportActionBar();
-    Objects.requireNonNull(actionBar).hide();
+    if (actionBar != null) {
+      actionBar.hide();
+    }
 
     // Get current user key for admin verification
     try {

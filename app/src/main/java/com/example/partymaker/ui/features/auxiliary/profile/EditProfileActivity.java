@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
@@ -51,6 +49,7 @@ public class EditProfileActivity extends AppCompatActivity {
   private ImageView imgProfile;
   private EditText etUsername;
   private Button btnSaveProfile;
+  private Button btnSignOut;
   private ProgressBar progressBar;
   private ProfileViewModel profileViewModel;
   private View rootLayout;
@@ -71,13 +70,7 @@ public class EditProfileActivity extends AppCompatActivity {
     profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
     profileViewModel.setAppContext(getApplicationContext());
 
-    // Hide action bar to remove black bar at top
-    androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
-    }
-
-    setupActionBar();
+    setupToolbar();
     initViews();
     setupObservers();
     setListeners();
@@ -87,27 +80,18 @@ public class EditProfileActivity extends AppCompatActivity {
     loadUserData();
   }
 
-  // Sets up the action bar with custom gradient background and styling.
-  private void setupActionBar() {
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar == null) {
-      Log.w(TAG, "ActionBar not available");
-      return;
-    }
+  // Sets up the toolbar with navigation and title
+  private void setupToolbar() {
+    androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+    if (toolbar != null) {
+      setSupportActionBar(toolbar);
 
-    try {
-      GradientDrawable gradient = createActionBarGradient();
-      actionBar.setBackgroundDrawable(gradient);
+      // Enable back button
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+      getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-      String styledTitle = createStyledTitle();
-      actionBar.setTitle(Html.fromHtml(styledTitle, Html.FROM_HTML_MODE_LEGACY));
-
-      configureActionBarProperties(actionBar);
-
-      Log.d(TAG, "ActionBar setup completed");
-
-    } catch (Exception e) {
-      Log.e(TAG, "Error setting up ActionBar", e);
+      // Set custom back arrow
+      getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
     }
   }
 
@@ -123,24 +107,11 @@ public class EditProfileActivity extends AppCompatActivity {
     return gradient;
   }
 
-  // Creates a styled HTML title string.
-  private String createStyledTitle() {
-    return String.format(
-        "<font color='%s'><b>%s</b></font>",
-        EditProfileActivity.ACTION_BAR_TITLE_COLOR, "Edit Profile");
-  }
-
-  // Configures action bar properties.
-  private void configureActionBarProperties(ActionBar actionBar) {
-    actionBar.setElevation(ACTION_BAR_ELEVATION);
-    actionBar.setDisplayShowHomeEnabled(true);
-    actionBar.setDisplayHomeAsUpEnabled(false);
-  }
-
   private void initViews() {
     imgProfile = findViewById(R.id.imgProfile);
     etUsername = findViewById(R.id.etUsername);
     btnSaveProfile = findViewById(R.id.btnSaveProfile);
+    btnSignOut = findViewById(R.id.btnSignOut);
     progressBar = findViewById(R.id.progressBar);
     rootLayout = findViewById(R.id.rootLayout);
   }
@@ -228,8 +199,7 @@ public class EditProfileActivity extends AppCompatActivity {
           // Check network availability before launching image picker
           if (Boolean.FALSE.equals(
               ConnectivityManager.getInstance().getNetworkAvailability().getValue())) {
-            AppNetworkError.showErrorMessage(
-                this, NetworkUtils.ErrorType.NO_NETWORK, false);
+            AppNetworkError.showErrorMessage(this, NetworkUtils.ErrorType.NO_NETWORK, false);
             return;
           }
 
@@ -237,6 +207,8 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
     btnSaveProfile.setOnClickListener(v -> saveUserProfile());
+    
+    btnSignOut.setOnClickListener(v -> handleSignOut());
   }
 
   private void loadUserData() {
@@ -559,10 +531,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ConnectivityManager.getInstance().getNetworkAvailability().getValue() != null
             && ConnectivityManager.getInstance().getNetworkAvailability().getValue();
     if (!isNetworkAvailable) {
-      AppNetworkError.showErrorMessage(
-          this,
-          NetworkUtils.ErrorType.NO_NETWORK,
-          false);
+      AppNetworkError.showErrorMessage(this, NetworkUtils.ErrorType.NO_NETWORK, false);
       return;
     }
 
@@ -777,7 +746,14 @@ public class EditProfileActivity extends AppCompatActivity {
   }
 
   private void setupBottomNavigation() {
-    NavigationManager.setupBottomNavigation(this);
+    Log.d("EditProfileActivity", "Setting up bottom navigation...");
+
+    // Delay setup to ensure layout is fully loaded
+    rootLayout.post(
+        () -> {
+          Log.d("EditProfileActivity", "Delayed bottom navigation setup");
+          NavigationManager.setupBottomNavigation(this, "profile");
+        });
   }
 
   private void showError(String message) {
@@ -823,6 +799,14 @@ public class EditProfileActivity extends AppCompatActivity {
     }
   }
 
+  private void handleSignOut() {
+    // Use the same logic as toolbar logout
+    AuthenticationManager.logout(this);
+    Intent intent = new Intent(this, LoginActivity.class);
+    startActivity(intent);
+    finish();
+  }
+
   @Override
   protected void onResume() {
     super.onResume();
@@ -858,7 +842,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == R.id.settings) {
+    if (item.getItemId() == android.R.id.home) {
+      // Handle toolbar back button press
+      finish();
+      return true;
+    } else if (item.getItemId() == R.id.settings) {
       Intent intent = new Intent(EditProfileActivity.this, ServerSettingsActivity.class);
       startActivity(intent);
       return true;

@@ -2,16 +2,17 @@ package com.example.partymaker.utils.ui.navigation;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.util.Log;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.features.auxiliary.profile.EditProfileActivity;
 import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.ui.features.groups.creation.CreateGroupActivity;
 import com.example.partymaker.ui.features.groups.discovery.PublicGroupsActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class NavigationManager {
+
+  private static final String TAG = "NavigationManager";
 
   /**
    * Sets up the bottom navigation with the current page highlighted
@@ -20,29 +21,43 @@ public class NavigationManager {
    * @param currentPage The current page identifier
    */
   public static void setupBottomNavigation(Activity activity, String currentPage) {
-    LinearLayout navProfile = activity.findViewById(R.id.navProfile);
-    LinearLayout navMyParties = activity.findViewById(R.id.navMyParties);
-    LinearLayout navPublicParties = activity.findViewById(R.id.navPublicParties);
-    LinearLayout navCreateGroup = activity.findViewById(R.id.navCreateGroup);
+    Log.d(TAG, "Setting up bottom navigation for activity: " + activity.getClass().getSimpleName());
+    BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottom_navigation);
 
-    // Set current page highlighting
-    highlightCurrentPage(activity, currentPage);
+    if (bottomNavigationView != null) {
+      Log.d(TAG, "BottomNavigationView found, setting up listener");
+      // Set current page highlighting
+      setSelectedItem(bottomNavigationView, currentPage);
 
-    // Set click listeners
-    if (navProfile != null) {
-      navProfile.setOnClickListener(v -> navigateToProfile(activity));
-    }
+      // Set up navigation listener
+      bottomNavigationView.setOnItemSelectedListener(
+          item -> {
+            int itemId = item.getItemId();
+            Log.d(TAG, "Bottom navigation item selected: " + itemId);
 
-    if (navMyParties != null) {
-      navMyParties.setOnClickListener(v -> navigateToMyParties(activity));
-    }
+            if (itemId == R.id.nav_profile) {
+              Log.d(TAG, "Navigating to profile");
+              navigateToProfile(activity);
+              return true;
+            } else if (itemId == R.id.nav_my_parties) {
+              Log.d(TAG, "Navigating to my parties");
+              navigateToMyParties(activity);
+              return true;
+            } else if (itemId == R.id.nav_public_parties) {
+              Log.d(TAG, "Navigating to public parties");
+              navigateToPublicParties(activity);
+              return true;
+            } else if (itemId == R.id.nav_create_group) {
+              Log.d(TAG, "Navigating to create group");
+              navigateToCreateGroup(activity);
+              return true;
+            }
 
-    if (navPublicParties != null) {
-      navPublicParties.setOnClickListener(v -> navigateToPublicParties(activity));
-    }
-
-    if (navCreateGroup != null) {
-      navCreateGroup.setOnClickListener(v -> navigateToCreateGroup(activity));
+            Log.d(TAG, "Unknown navigation item: " + itemId);
+            return false;
+          });
+    } else {
+      Log.e(TAG, "BottomNavigationView not found!");
     }
   }
 
@@ -55,84 +70,64 @@ public class NavigationManager {
     setupBottomNavigation(activity, "none");
   }
 
-  private static void highlightCurrentPage(Activity activity, String currentPage) {
-    // Reset all to default colors
-    resetNavColors(activity);
-
-    // Highlight current page
+  private static void setSelectedItem(
+      BottomNavigationView bottomNavigationView, String currentPage) {
     switch (currentPage) {
       case "profile":
-        highlightNavItem(activity, R.id.navProfile);
+        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
         break;
       case "myparties":
-        highlightNavItem(activity, R.id.navMyParties);
+        bottomNavigationView.setSelectedItemId(R.id.nav_my_parties);
         break;
       case "publicparties":
-        highlightNavItem(activity, R.id.navPublicParties);
+        bottomNavigationView.setSelectedItemId(R.id.nav_public_parties);
         break;
       case "creategroup":
-        highlightNavItem(activity, R.id.navCreateGroup);
+        bottomNavigationView.setSelectedItemId(R.id.nav_create_group);
         break;
       case "none":
       default:
-        // Don't highlight any item
+        // Don't select any item
         break;
-    }
-  }
-
-  private static void resetNavColors(Activity activity) {
-    resetNavItem(activity, R.id.navProfile);
-    resetNavItem(activity, R.id.navMyParties);
-    resetNavItem(activity, R.id.navPublicParties);
-    resetNavItem(activity, R.id.navCreateGroup);
-  }
-
-  private static void resetNavItem(Activity activity, int navItemId) {
-    LinearLayout navItem = activity.findViewById(navItemId);
-    if (navItem != null) {
-      ImageView icon = (ImageView) navItem.getChildAt(0);
-      TextView text = (TextView) navItem.getChildAt(1);
-
-      if (icon != null) {
-        icon.setColorFilter(activity.getResources().getColor(R.color.gray_medium));
-      }
-      if (text != null) {
-        text.setTextColor(activity.getResources().getColor(R.color.gray_medium));
-      }
-    }
-  }
-
-  private static void highlightNavItem(Activity activity, int navItemId) {
-    LinearLayout navItem = activity.findViewById(navItemId);
-    if (navItem != null) {
-      ImageView icon = (ImageView) navItem.getChildAt(0);
-      TextView text = (TextView) navItem.getChildAt(1);
-
-      if (icon != null) {
-        icon.setColorFilter(activity.getResources().getColor(R.color.blue_primary));
-      }
-      if (text != null) {
-        text.setTextColor(activity.getResources().getColor(R.color.blue_primary));
-      }
     }
   }
 
   private static void navigateToProfile(Activity activity) {
+    if (activity instanceof EditProfileActivity) {
+      Log.d(TAG, "Already in EditProfileActivity, not navigating");
+      return;
+    }
+    Log.d(TAG, "Starting EditProfileActivity");
     Intent intent = new Intent(activity, EditProfileActivity.class);
     activity.startActivity(intent);
   }
 
   private static void navigateToMyParties(Activity activity) {
+    if (activity instanceof MainActivity) {
+      Log.d(TAG, "Already in MainActivity, not navigating");
+      return;
+    }
+    Log.d(TAG, "Starting MainActivity");
     Intent intent = new Intent(activity, MainActivity.class);
     activity.startActivity(intent);
   }
 
   private static void navigateToPublicParties(Activity activity) {
+    if (activity instanceof PublicGroupsActivity) {
+      Log.d(TAG, "Already in PublicGroupsActivity, not navigating");
+      return;
+    }
+    Log.d(TAG, "Starting PublicGroupsActivity");
     Intent intent = new Intent(activity, PublicGroupsActivity.class);
     activity.startActivity(intent);
   }
 
   private static void navigateToCreateGroup(Activity activity) {
+    if (activity instanceof CreateGroupActivity) {
+      Log.d(TAG, "Already in CreateGroupActivity, not navigating");
+      return;
+    }
+    Log.d(TAG, "Starting CreateGroupActivity");
     Intent intent = new Intent(activity, CreateGroupActivity.class);
     activity.startActivity(intent);
   }

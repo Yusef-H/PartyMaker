@@ -88,17 +88,17 @@ public class AsyncTaskReplacement {
 
     return execute(
         backgroundTask,
-            new SimpleUICallback<>() {
-                @Override
-                public void onPostExecute(T result) {
-                    resultCallback.onResult(result);
-                }
+        new SimpleUICallback<>() {
+          @Override
+          public void onPostExecute(T result) {
+            resultCallback.onResult(result);
+          }
 
-                @Override
-                public void onError(Exception error) {
-                    resultCallback.onError(error);
-                }
-            });
+          @Override
+          public void onError(Exception error) {
+            resultCallback.onError(error);
+          }
+        });
   }
 
   /** Execute a background task without UI callbacks */
@@ -133,21 +133,21 @@ public class AsyncTaskReplacement {
               throw new NetworkException("Network request failed", e);
             }
           },
-              new SimpleUICallback<>() {
-                  @Override
-                  public void onPostExecute(String result) {
-                      networkCallback.onSuccess(result);
-                  }
+          new SimpleUICallback<>() {
+            @Override
+            public void onPostExecute(String result) {
+              networkCallback.onSuccess(result);
+            }
 
-                  @Override
-                  public void onError(Exception error) {
-                      if (error instanceof NetworkException) {
-                          networkCallback.onError((NetworkException) error);
-                      } else {
-                          networkCallback.onError(new NetworkException("Unexpected error", error));
-                      }
-                  }
-              });
+            @Override
+            public void onError(Exception error) {
+              if (error instanceof NetworkException) {
+                networkCallback.onError((NetworkException) error);
+              } else {
+                networkCallback.onError(new NetworkException("Unexpected error", error));
+              }
+            }
+          });
     }
 
     /** Interface for HTTP request implementations */
@@ -189,21 +189,21 @@ public class AsyncTaskReplacement {
               throw new DatabaseException("Database operation failed", e);
             }
           },
-              new SimpleUICallback<>() {
-                  @Override
-                  public void onPostExecute(T result) {
-                      dbCallback.onSuccess(result);
-                  }
+          new SimpleUICallback<>() {
+            @Override
+            public void onPostExecute(T result) {
+              dbCallback.onSuccess(result);
+            }
 
-                  @Override
-                  public void onError(Exception error) {
-                      if (error instanceof DatabaseException) {
-                          dbCallback.onError((DatabaseException) error);
-                      } else {
-                          dbCallback.onError(new DatabaseException("Unexpected database error", error));
-                      }
-                  }
-              });
+            @Override
+            public void onError(Exception error) {
+              if (error instanceof DatabaseException) {
+                dbCallback.onError((DatabaseException) error);
+              } else {
+                dbCallback.onError(new DatabaseException("Unexpected database error", error));
+              }
+            }
+          });
     }
 
     /** Interface for database operations */

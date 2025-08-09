@@ -50,7 +50,7 @@ public class RegisterViewModel extends BaseViewModel {
   private final FirebaseAuth firebaseAuth;
   private final UserRepository userRepository;
 
-    // LiveData for registration state
+  // LiveData for registration state
   private final MutableLiveData<Boolean> registrationSuccess = new MutableLiveData<>();
   private final MutableLiveData<String> validationError = new MutableLiveData<>();
   private final MutableLiveData<User> registeredUser = new MutableLiveData<>();
@@ -71,7 +71,7 @@ public class RegisterViewModel extends BaseViewModel {
     super(application);
     this.firebaseAuth = FirebaseAuth.getInstance();
     this.userRepository = UserRepository.getInstance();
-      FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
+    FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
     // Initialize form validation state
     isEmailValid.setValue(false);
@@ -392,41 +392,41 @@ public class RegisterViewModel extends BaseViewModel {
 
     userRepository.createUser(
         newUser,
-            new UserRepository.Callback<>() {
-                @Override
-                public void onSuccess(User result) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+        new UserRepository.Callback<>() {
+          @Override
+          public void onSuccess(User result) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.d(TAG, "User profile created successfully");
+            Log.d(TAG, "User profile created successfully");
 
-                    ThreadUtils.runOnMainThread(
-                            () -> {
-                                setLoading(false);
-                                registrationSuccess.setValue(true);
-                                registeredUser.setValue(result);
-                                setSuccess("Registration successful! Welcome to PartyMaker!");
-                            });
-                }
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  setLoading(false);
+                  registrationSuccess.setValue(true);
+                  registeredUser.setValue(result);
+                  setSuccess("Registration successful! Welcome to PartyMaker!");
+                });
+          }
 
-                @Override
-                public void onError(Exception error) {
-                    if (isCompleted[0]) return;
-                    isCompleted[0] = true;
+          @Override
+          public void onError(Exception error) {
+            if (isCompleted[0]) return;
+            isCompleted[0] = true;
 
-                    Log.e(TAG, "Failed to create user profile, using offline mode", error);
+            Log.e(TAG, "Failed to create user profile, using offline mode", error);
 
-                    // Registration succeeded but profile creation failed
-                    // Still consider it a success but show warning
-                    ThreadUtils.runOnMainThread(
-                            () -> {
-                                setLoading(false);
-                                registrationSuccess.setValue(true);
-                                registeredUser.setValue(newUser);
-                                setInfo("Registration successful! (Offline mode - server unavailable)");
-                            });
-                }
-            });
+            // Registration succeeded but profile creation failed
+            // Still consider it a success but show warning
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  setLoading(false);
+                  registrationSuccess.setValue(true);
+                  registeredUser.setValue(newUser);
+                  setInfo("Registration successful! (Offline mode - server unavailable)");
+                });
+          }
+        });
   }
 
   private void handleRegistrationError(String errorMessage) {

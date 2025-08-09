@@ -225,6 +225,9 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.compiler)
 
+    // --- Animations ---
+    implementation(libs.lottie)
+
     // --- OpenAI & Networking ---
     implementation(libs.openai.client)
     implementation(libs.ktor.client.android)

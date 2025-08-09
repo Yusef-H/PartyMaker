@@ -18,7 +18,6 @@ public final class AppConstants {
 
     public static final int DEFAULT_TIMEOUT_MS = 10000;
 
-
     private Network() {}
   }
 
@@ -53,7 +52,6 @@ public final class AppConstants {
     private Extras() {}
   }
 
-
   // Security Configuration
   public static final class Security {
     public static final int MIN_PASSWORD_LENGTH = 6;
@@ -62,5 +60,4 @@ public final class AppConstants {
 
     private Security() {}
   }
-
 }

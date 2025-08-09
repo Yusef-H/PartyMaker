@@ -93,4 +93,31 @@
     <color name="md_theme_surfaceContainer">#EBEEF4</color>
     <color name="md_theme_surfaceContainerHigh">#E5E8EF</color>
     <color name="md_theme_surfaceContainerHighest">#E0E2E9</color>
+
+    <!-- Material You Dynamic Color Additions -->
+    <color name="md_theme_surfaceTint">#006099</color>
+    <color name="md_theme_scrim">#000000</color>
+
+    <!-- Enhanced PartyMaker Colors with Material You -->
+    <color name="party_primary">#1E88E5</color>
+    <color name="party_primary_variant">#1565C0</color>
+    <color name="party_secondary">#FF7043</color>
+    <color name="party_secondary_variant">#F4511E</color>
+    <color name="party_surface_elevated">#FFFFFF</color>
+    <color name="party_background_gradient_start">#E3F2FD</color>
+    <color name="party_background_gradient_end">#BBDEFB</color>
+
+    <!-- Modern accent colors for various UI states -->
+    <color name="modern_accent_blue">#2196F3</color>
+    <color name="modern_accent_teal">#00BCD4</color>
+    <color name="modern_accent_purple">#9C27B0</color>
+    <color name="modern_accent_green">#4CAF50</color>
+    <color name="modern_accent_orange">#FF9800</color>
+
+    <!-- Contextual colors for different party types -->
+    <color name="party_type_birthday">#E91E63</color>
+    <color name="party_type_wedding">#F8BBD9</color>
+    <color name="party_type_corporate">#607D8B</color>
+    <color name="party_type_casual">#4CAF50</color>
+    <color name="party_type_celebration">#FF9800</color>
 </resources>

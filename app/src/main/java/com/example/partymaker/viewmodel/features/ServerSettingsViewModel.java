@@ -123,8 +123,8 @@ public class ServerSettingsViewModel extends BaseViewModel {
 
   private boolean isValidUrl(String url) {
     return url == null
-            || (!url.startsWith("http://") && !url.startsWith("https://"))
-            || !android.util.Patterns.WEB_URL.matcher(url).matches();
+        || (!url.startsWith("http://") && !url.startsWith("https://"))
+        || !android.util.Patterns.WEB_URL.matcher(url).matches();
   }
 
   public void resetSavedStatus() {

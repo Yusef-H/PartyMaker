@@ -190,70 +190,70 @@ public class PartyMainActivity extends AppCompatActivity {
 
       groupRepository.getGroup(
           GroupKey,
-              new GroupRepository.DataCallback<>() {
-                  @Override
-                  public void onDataLoaded(Group group) {
+          new GroupRepository.DataCallback<>() {
+            @Override
+            public void onDataLoaded(Group group) {
+              try {
+                if (group == null) {
+                  Log.e(TAG, "Group data is null");
+                  showErrorAndFinish("Failed to load group data");
+                  return;
+                }
+
+                currentGroup = group;
+                Log.d(
+                    TAG,
+                    "Loaded group data from server: "
+                        + group.getGroupName()
+                        + ", key: "
+                        + GroupKey);
+                Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+
+                // Debug: Log ComingKeys data from server
+                if (group.getComingKeys() != null) {
+                  Log.d(
+                      TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
+                  Log.d(TAG, "ComingKeys details from server:");
+                  for (String key : group.getComingKeys().keySet()) {
+                    Log.d(
+                        TAG,
+                        "  ComingKey from server: '"
+                            + key
+                            + "' -> "
+                            + group.getComingKeys().get(key));
+                  }
+                } else {
+                  Log.e(TAG, "ComingKeys is null in group data from server!");
+                }
+
+                // Update UI with group data
+                ThreadUtils.runOnMainThread(
+                    () -> {
                       try {
-                          if (group == null) {
-                              Log.e(TAG, "Group data is null");
-                              showErrorAndFinish("Failed to load group data");
-                              return;
-                          }
+                        updateGroupUI(group);
+                        setupClickListeners();
 
-                          currentGroup = group;
-                          Log.d(
-                                  TAG,
-                                  "Loaded group data from server: "
-                                          + group.getGroupName()
-                                          + ", key: "
-                                          + GroupKey);
-                          Log.d(TAG, "Current user: " + UserKey + ", Admin key: " + group.getAdminKey());
+                        // Initialize group encryption proactively
+                        initializeGroupEncryption();
 
-                          // Debug: Log ComingKeys data from server
-                          if (group.getComingKeys() != null) {
-                              Log.d(
-                                      TAG, "ComingKeys loaded from server - size: " + group.getComingKeys().size());
-                              Log.d(TAG, "ComingKeys details from server:");
-                              for (String key : group.getComingKeys().keySet()) {
-                                  Log.d(
-                                          TAG,
-                                          "  ComingKey from server: '"
-                                                  + key
-                                                  + "' -> "
-                                                  + group.getComingKeys().get(key));
-                              }
-                          } else {
-                              Log.e(TAG, "ComingKeys is null in group data from server!");
-                          }
-
-                          // Update UI with group data
-                          ThreadUtils.runOnMainThread(
-                                  () -> {
-                                      try {
-                                          updateGroupUI(group);
-                                          setupClickListeners();
-
-                                          // Initialize group encryption proactively
-                                          initializeGroupEncryption();
-
-                                          showLoading(false);
-                                      } catch (Exception e) {
-                                          Log.e(TAG, "Error updating UI with group data", e);
-                                          showError("Error displaying group data");
-                                      }
-                                  });
+                        showLoading(false);
                       } catch (Exception e) {
-                          Log.e(TAG, "Error processing group data", e);
-                          showError("Error processing group data");
+                        Log.e(TAG, "Error updating UI with group data", e);
+                        showError("Error displaying group data");
                       }
-                  }
+                    });
+              } catch (Exception e) {
+                Log.e(TAG, "Error processing group data", e);
+                showError("Error processing group data");
+              }
+            }
 
-                  @Override
-                  public void onError(String errorMessage) {
-                      Log.e(TAG, "Failed to get group details: " + errorMessage);
-                      showError("Failed to load group details: " + errorMessage);
-                  }
-              },
+            @Override
+            public void onError(String errorMessage) {
+              Log.e(TAG, "Failed to get group details: " + errorMessage);
+              showError("Failed to load group details: " + errorMessage);
+            }
+          },
           forceRefresh);
 
       // Load messages with error handling

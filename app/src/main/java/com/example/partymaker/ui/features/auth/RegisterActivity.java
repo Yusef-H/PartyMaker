@@ -743,9 +743,9 @@ public class RegisterActivity extends AppCompatActivity {
     final String email = Objects.requireNonNull(etEmail.getText()).toString().trim().toLowerCase();
     final String username = Objects.requireNonNull(etUsername.getText()).toString().trim();
     String password = Objects.requireNonNull(etPassword.getText()).toString();
-      // In this case, we don't have a separate confirm field
+    // In this case, we don't have a separate confirm field
 
-      // Use AuthViewModel for registration
+    // Use AuthViewModel for registration
     authViewModel.registerWithEmail(email, password, password, username);
   }
 

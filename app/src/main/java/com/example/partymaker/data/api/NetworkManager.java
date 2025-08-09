@@ -5,8 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -16,8 +14,6 @@ import com.example.partymaker.utils.security.network.SSLPinningManager;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,7 +27,7 @@ public class NetworkManager {
   private static NetworkManager instance;
 
   private final MutableLiveData<Boolean> isNetworkAvailable = new MutableLiveData<>();
-    private ConnectivityManager connectivityManager;
+  private ConnectivityManager connectivityManager;
   private ConnectivityManager.NetworkCallback networkCallback;
   private SSLPinningManager sslPinningManager;
 

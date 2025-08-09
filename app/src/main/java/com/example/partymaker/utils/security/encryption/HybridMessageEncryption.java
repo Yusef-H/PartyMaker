@@ -5,7 +5,6 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.util.Log;
-
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -45,12 +44,12 @@ public class HybridMessageEncryption {
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
 
-    private final String currentUserId;
+  private final String currentUserId;
   private final SecureRandom secureRandom;
   private final KeyStore keyStore;
 
   public HybridMessageEncryption(Context context, String userId) {
-      this.currentUserId = userId;
+    this.currentUserId = userId;
     this.secureRandom = new SecureRandom();
 
     try {

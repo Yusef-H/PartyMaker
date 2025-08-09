@@ -49,8 +49,23 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
   public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
     Group group = getItem(position);
     if (group != null) {
+      // Ensure view is in normal state to prevent spacing issues
+      resetViewState(holder.itemView);
       holder.bind(group);
+
+      // No entrance animations to prevent spacing issues
+      // Items will appear immediately without animation interference
     }
+  }
+
+  /** Ensures view is in completely normal state to prevent spacing issues */
+  private void resetViewState(View view) {
+    view.setAlpha(1.0f);
+    view.setScaleX(1.0f);
+    view.setScaleY(1.0f);
+    view.setTranslationX(0f);
+    view.setTranslationY(0f);
+    view.setRotation(0f);
   }
 
   @Override
@@ -58,6 +73,8 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
     super.onViewRecycled(holder);
     // Clear the ViewHolder when it's recycled to prevent image loading issues
     holder.clear();
+    // Reset view state to prevent spacing issues from animations
+    resetViewState(holder.itemView);
     // Also clear any pending Glide requests
     GlideImageLoader.clearImageView(context, holder.groupImageView);
   }
@@ -100,20 +117,26 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       groupDateTextView = itemView.findViewById(R.id.tvGroupDate);
       groupImageView = itemView.findViewById(R.id.imgGroupPicture);
 
+      // Removed press animations to prevent spacing issues
+      // Keep cards at consistent elevation and spacing
+
       itemView.setOnClickListener(
           v -> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION && listener != null) {
+              // Immediate navigation without animation to prevent spacing issues
               listener.onGroupClick(getItem(position));
             }
           });
 
-      // Add long click for share functionality
+      // Add long click for share functionality with subtle haptic feedback only
       itemView.setOnLongClickListener(
           v -> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
               Group group = getItem(position);
+              // Only haptic feedback, no visual animation to prevent layout issues
+              v.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
               ContentSharingManager.sharePartyText(context, group);
             }
             return true;
@@ -129,9 +152,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
     }
 
     void bind(Group group) {
-      // Clear previous content first to prevent flickering
-      clear();
-
+      // Set content immediately for text to prevent layout shifts
       groupNameTextView.setText(group.getGroupName());
 
       // Format date
@@ -144,20 +165,24 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
               group.getGroupHours());
       groupDateTextView.setText(date);
 
-      // Load group image from Firebase Storage with proper placeholder handling
-      String groupKey = group.getGroupKey();
+      // Handle image loading separately to avoid blocking text display
+      loadGroupImage(group.getGroupKey());
+    }
 
-      // First, set placeholder immediately to prevent flickering
+    /** Improved image loading that doesn't interfere with text display */
+    private void loadGroupImage(String groupKey) {
+      // Set default image first
       groupImageView.setImageResource(R.drawable.default_group_image);
 
-      if (!groupKey.isEmpty()) {
-        // Store the group key as tag to prevent loading wrong images during recycling
-        groupImageView.setTag(groupKey);
-
-        // Load image with timeout and enhanced error handling
-        loadGroupImageWithTimeout(groupKey, groupImageView);
+      if (groupKey == null || groupKey.isEmpty()) {
+        return;
       }
-      // If no group key, default image is already set above
+
+      // Store group key as tag for recycling check
+      groupImageView.setTag(groupKey);
+
+      // Load image with shorter timeout to prevent delays
+      loadGroupImageWithTimeout(groupKey, groupImageView);
     }
 
     /**
@@ -165,8 +190,8 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
      * paths with fallback mechanism.
      */
     private void loadGroupImageWithTimeout(String groupKey, ImageView imageView) {
-      // Timeout for Firebase Storage requests (5 seconds)
-      final long TIMEOUT_MS = 5000;
+      // Shorter timeout for Firebase Storage requests to prevent delays (3 seconds)
+      final long TIMEOUT_MS = 3000;
 
       // Try primary path with timeout
       Task<android.net.Uri> primaryTask =
@@ -208,7 +233,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /** Tries the fallback Firebase Storage path for group images. */
     private void tryFallbackImagePath(String groupKey, ImageView imageView) {
-      final long TIMEOUT_MS = 5000;
+      final long TIMEOUT_MS = 3000;
 
       Task<android.net.Uri> fallbackTask =
           com.example.partymaker.data.firebase.DBRef.refStorage
