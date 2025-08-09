@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
@@ -63,6 +64,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private EditText searchEditText;
   private String currentSearchText = "";
   private int currentFilterChipId = R.id.chipAll;
+  private SwipeRefreshLayout swipeRefreshLayout;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +148,10 @@ public class PublicGroupsActivity extends AppCompatActivity {
     
     // Initialize search
     searchEditText = findViewById(R.id.etSearch);
+    
+    // Initialize SwipeRefreshLayout
+    swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+    setupSwipeRefresh();
   }
 
   private void setupEventHandlers() {
@@ -176,6 +182,32 @@ public class PublicGroupsActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {}
       });
     }
+  }
+  
+  private void setupSwipeRefresh() {
+    if (swipeRefreshLayout != null) {
+      // Set refresh colors to match app theme
+      swipeRefreshLayout.setColorSchemeResources(
+          R.color.colorPrimary,
+          R.color.colorAccent,
+          R.color.blue_primary
+      );
+      
+      // Set refresh listener
+      swipeRefreshLayout.setOnRefreshListener(this::refreshPublicGroups);
+    }
+  }
+  
+  private void refreshPublicGroups() {
+    Log.d(TAG, "Refreshing public groups...");
+    // Clear search when refreshing
+    if (searchEditText != null) {
+      searchEditText.setText("");
+    }
+    currentSearchText = "";
+    
+    // Reload groups from server
+    loadPublicGroups();
   }
 
   private void setupBottomNavigation() {
@@ -216,6 +248,10 @@ public class PublicGroupsActivity extends AppCompatActivity {
           @Override
           public void onSuccess(Map<String, Group> data) {
             processServerGroupData(data);
+            // Stop refresh animation
+            if (swipeRefreshLayout != null) {
+              swipeRefreshLayout.setRefreshing(false);
+            }
           }
 
           @Override
@@ -223,6 +259,10 @@ public class PublicGroupsActivity extends AppCompatActivity {
             Toast.makeText(
                     PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
                 .show();
+            // Stop refresh animation even on error
+            if (swipeRefreshLayout != null) {
+              swipeRefreshLayout.setRefreshing(false);
+            }
           }
         });
   }
