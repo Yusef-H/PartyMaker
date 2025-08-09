@@ -90,6 +90,8 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Chat Messages -->
+
+    <!-- Message Input Container -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMessages"
         android:layout_width="match_parent"
@@ -103,7 +105,6 @@
         app:stackFromEnd="false"
         tools:listitem="@layout/item_chat_message" />
 
-    <!-- Message Input Container -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/messageInputContainer"
         android:layout_width="match_parent"
