@@ -505,6 +505,18 @@ public class LoginActivity extends AppCompatActivity {
     clearPreviousAuthState();
     setupDebugTestUser();
     checkServerConnectivity();
+    restoreCheckboxState();
+  }
+
+  private void restoreCheckboxState() {
+    try {
+      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+      boolean isChecked = settings.getBoolean(IS_CHECKED, false);
+      rememberMeCheckbox.setChecked(isChecked);
+      Log.d(Config.LOG_TAG, "Restored checkbox state: " + isChecked);
+    } catch (Exception e) {
+      Log.w(Config.LOG_TAG, "Error restoring checkbox state", e);
+    }
   }
 
   private void startInitialAnimations() {
