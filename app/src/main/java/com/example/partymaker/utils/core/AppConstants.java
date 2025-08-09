@@ -19,7 +19,8 @@ public final class AppConstants {
     public static final int DEFAULT_TIMEOUT_MS = 10_000; // 10 seconds
 
     private Network() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -30,7 +31,8 @@ public final class AppConstants {
     public static final String SERVER_URL = "server_url";
 
     private Preferences() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -54,7 +56,8 @@ public final class AppConstants {
     public static final String DEFAULT_KEY = "defaultKey";
 
     private Extras() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -65,7 +68,8 @@ public final class AppConstants {
     public static final long LOCKOUT_DURATION_MS = 300_000L; // 5 minutes
 
     private Security() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -90,7 +94,8 @@ public final class AppConstants {
     public static final int MESSAGE_PADDING_DIFFERENT_USER = 8;
 
     private UI() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -103,7 +108,8 @@ public final class AppConstants {
     public static final int TIME_SUBSTRING_END = 16;
 
     private Validation() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -114,7 +120,8 @@ public final class AppConstants {
     public static final String PROFILE_IMAGE_TEMPLATE = "profile_%s.jpg";
 
     private FirebasePaths() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 
@@ -127,7 +134,8 @@ public final class AppConstants {
     public static final String PROFILE_IMAGE_URL = "profileImageUrl";
 
     private DatabaseFields() {
-      throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
+      throw new UnsupportedOperationException(
+          "This is a constants class and cannot be instantiated");
     }
   }
 }

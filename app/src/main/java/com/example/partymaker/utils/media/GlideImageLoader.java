@@ -21,13 +21,13 @@ import com.example.partymaker.R;
  * consistent caching and error handling.
  */
 public class GlideImageLoader {
-  
+
   // Animation constants
   private static final int CROSSFADE_DURATION_MS = 200;
-  
+
   // Timeout constants
   private static final int NETWORK_TIMEOUT_MS = 10000; // 10 seconds
-  
+
   // Default placeholder
   private static final int DEFAULT_PLACEHOLDER = R.drawable.default_profile_image;
 
@@ -65,7 +65,8 @@ public class GlideImageLoader {
             .load(imageUrl)
             .apply(getRecyclerViewRequestOptions(placeholderResId))
             .transition(
-                DrawableTransitionOptions.withCrossFade(CROSSFADE_DURATION_MS)) // Shorter crossfade for better UX
+                DrawableTransitionOptions.withCrossFade(
+                    CROSSFADE_DURATION_MS)) // Shorter crossfade for better UX
             .listener(
                 new RequestListener<>() {
                   @Override
@@ -124,10 +125,7 @@ public class GlideImageLoader {
       return;
     }
 
-    Glide.with(context)
-        .load(imageUrl)
-        .apply(createPreloadRequestOptions())
-        .preload();
+    Glide.with(context).load(imageUrl).apply(createPreloadRequestOptions()).preload();
   }
 
   /**
@@ -224,7 +222,7 @@ public class GlideImageLoader {
         .timeout(NETWORK_TIMEOUT_MS) // 10 second timeout for network requests
         .dontTransform(); // Prevent unnecessary transformations for better performance
   }
-  
+
   /** Create request options for preloading */
   private static RequestOptions createPreloadRequestOptions() {
     return new RequestOptions()

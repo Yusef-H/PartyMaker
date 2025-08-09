@@ -66,7 +66,7 @@
                         android:id="@+id/statusText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Online"
+                        android:text="@string/online"
                         android:textAppearance="@style/TextAppearance.PartyMaker.BodySmall"
                         android:textColor="@color/white"
                         android:alpha="0.8" />
@@ -80,7 +80,7 @@
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Chat options"
+                    android:contentDescription="@string/chat_options"
                     android:src="@drawable/ic_more_vert"
                     app:tint="@color/white" />
 
@@ -126,7 +126,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Attachment options"
+                android:contentDescription="@string/attachment_options"
                 android:src="@drawable/ic_add"
                 app:tint="?attr/colorOnSurfaceVariant" />
 
@@ -197,7 +197,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AI is thinking..."
+                android:text="@string/ai_thinking"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 

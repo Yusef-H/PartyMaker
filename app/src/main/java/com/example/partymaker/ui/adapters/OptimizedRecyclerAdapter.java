@@ -35,7 +35,7 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
     }
     return null;
   }
-  
+
   /**
    * Checks if the position is valid for the current items list.
    *
@@ -67,7 +67,7 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
     this.items = new ArrayList<>(newItems);
     diffResult.dispatchUpdatesTo(this);
   }
-  
+
   /**
    * Calculates the difference between current items and new items using DiffUtil.
    *
@@ -77,19 +77,17 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   private DiffUtil.DiffResult calculateDiff(@NonNull List<T> newItems) {
     return DiffUtil.calculateDiff(new ItemDiffCallback(items, newItems));
   }
-  
-  /**
-   * DiffUtil callback for comparing items efficiently.
-   */
+
+  /** DiffUtil callback for comparing items efficiently. */
   private class ItemDiffCallback extends DiffUtil.Callback {
     private final List<T> oldList;
     private final List<T> newList;
-    
+
     ItemDiffCallback(List<T> oldList, List<T> newList) {
       this.oldList = oldList;
       this.newList = newList;
     }
-    
+
     @Override
     public int getOldListSize() {
       return oldList.size();
@@ -121,7 +119,7 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
   public void addItem(T item) {
     addItem(item, items.size());
   }
-  
+
   /**
    * Adds an item to the adapter at the specified position with validation.
    *
@@ -155,7 +153,7 @@ public abstract class OptimizedRecyclerAdapter<T, VH extends RecyclerView.ViewHo
       notifyItemRangeRemoved(0, size);
     }
   }
-  
+
   /**
    * Checks if the adapter has any items.
    *

@@ -38,13 +38,13 @@ public class MainActivityViewModel extends BaseViewModel {
 
   /** Tag for logging specific to MainActivityViewModel */
   private static final String TAG = "MainActivityViewModel";
-  
+
   // Error messages
   private static final String ERROR_EMPTY_USER_KEY = "User key cannot be empty";
   private static final String ERROR_EMPTY_GROUP_ID = "Group ID cannot be empty";
   private static final String ERROR_EMPTY_UPDATES = "Updates cannot be empty";
   private static final String ERROR_GROUP_NOT_FOUND = "Group not found";
-  
+
   // Success messages
   private static final String MSG_GROUP_CREATED = "Group created successfully";
   private static final String MSG_GROUP_UPDATED = "Group updated successfully";

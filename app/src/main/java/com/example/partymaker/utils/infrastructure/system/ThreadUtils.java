@@ -19,12 +19,13 @@ public class ThreadUtils {
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
   private static final int MIN_CORE_THREADS = 2;
   private static final int MAX_CORE_THREADS = 4;
-  private static final int CORE_POOL_SIZE = Math.max(MIN_CORE_THREADS, Math.min(CPU_COUNT - 1, MAX_CORE_THREADS));
+  private static final int CORE_POOL_SIZE =
+      Math.max(MIN_CORE_THREADS, Math.min(CPU_COUNT - 1, MAX_CORE_THREADS));
   private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
   private static final int KEEP_ALIVE_SECONDS = 30;
   private static final int QUEUE_CAPACITY = 128;
   private static final int NETWORK_THREAD_DIVISOR = 2;
-  
+
   // Thread priority constants
   private static final int BACKGROUND_THREAD_PRIORITY = Thread.MIN_PRIORITY;
   private static final int LIGHTWEIGHT_THREAD_PRIORITY = Thread.NORM_PRIORITY;
@@ -66,7 +67,8 @@ public class ThreadUtils {
           new ThreadPoolExecutor.DiscardOldestPolicy());
 
   private static final Executor NETWORK_EXECUTOR =
-      Executors.newFixedThreadPool(Math.max(MIN_CORE_THREADS, CPU_COUNT / NETWORK_THREAD_DIVISOR), NETWORK_THREAD_FACTORY);
+      Executors.newFixedThreadPool(
+          Math.max(MIN_CORE_THREADS, CPU_COUNT / NETWORK_THREAD_DIVISOR), NETWORK_THREAD_FACTORY);
 
   private static final Executor LIGHTWEIGHT_EXECUTOR =
       Executors.newSingleThreadExecutor(

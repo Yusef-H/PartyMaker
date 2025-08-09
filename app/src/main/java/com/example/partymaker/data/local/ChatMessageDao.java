@@ -15,13 +15,13 @@ import java.util.List;
  */
 @Dao
 public interface ChatMessageDao {
-  
+
   // Table and column constants
   String TABLE_NAME = "chat_messages";
   String COLUMN_MESSAGE_KEY = "messageKey";
   String COLUMN_GROUP_KEY = "groupKey";
   String COLUMN_TIMESTAMP = "timestamp";
-  
+
   // SQL Query constants
   String SELECT_ALL_COLUMNS = "SELECT * FROM " + TABLE_NAME;
   String WHERE_MESSAGE_KEY = " WHERE " + COLUMN_MESSAGE_KEY + " = :messageKey";

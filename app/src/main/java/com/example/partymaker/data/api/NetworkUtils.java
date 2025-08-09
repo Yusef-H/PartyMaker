@@ -27,20 +27,20 @@ public class NetworkUtils {
   private static final int DEFAULT_RETRY_DELAY_MS = 1000;
   private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
   private static final int DEFAULT_READ_TIMEOUT = 15000;
-  
+
   // HTTP method constants
   private static final String HTTP_HEAD_METHOD = "HEAD";
-  
+
   // Error detection constants
   private static final String HTTP_4XX_ERROR_PATTERN = "4";
   private static final String HTTP_5XX_ERROR_PATTERN = "5";
-  
+
   // Shutdown timeout
   private static final int SHUTDOWN_TIMEOUT_MS = 500;
 
   private static final ExecutorService executor = Executors.newCachedThreadPool();
   private static final Handler mainHandler = new Handler(Looper.getMainLooper());
-  
+
   // Prevent instantiation
   private NetworkUtils() {
     // Utility class
@@ -118,7 +118,9 @@ public class NetworkUtils {
       int retryDelayMs)
       throws Exception {
 
-    while (true) {
+    Exception lastException = null;
+
+    for (int i = 0; i < maxRetries; i++) {
       int currentAttempt = attempts.incrementAndGet();
 
       try {
@@ -130,6 +132,7 @@ public class NetworkUtils {
         }
       } catch (Exception e) {
         Log.w(TAG, "Attempt " + currentAttempt + " failed: " + e.getMessage());
+        lastException = e;
 
         if (currentAttempt >= maxRetries) {
           throw e;
@@ -140,9 +143,16 @@ public class NetworkUtils {
 
         // Exponential backoff
         long delay = retryDelayMs * (long) Math.pow(2, currentAttempt - 1);
-        Thread.sleep(delay);
+        try {
+          Thread.sleep(delay);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+          throw new IOException("Retry interrupted", ie);
+        }
       }
     }
+
+    throw lastException != null ? lastException : new IOException("Operation failed");
   }
 
   /**

@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.RippleDrawable;
-import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.MotionEvent;
@@ -34,17 +33,17 @@ public class ButtonAnimationHelper {
   private static final int FAB_MORPH_SCALE_UP_MS = 200;
   private static final int ENTRANCE_ANIMATION_MS = 300;
   private static final int STAGGER_DELAY_MS = 50;
-  
+
   // Scale constants
   private static final float PRESS_SCALE = 0.95f;
   private static final float BOUNCE_SCALE_MAX = 1.15f;
   private static final float PULSE_SCALE_MAX = 1.08f;
   private static final float ENTRANCE_SCALE_MIN = 0.8f;
-  
-  // Elevation constants  
+
+  // Elevation constants
   private static final float ELEVATION_PRESSED = 8f;
   private static final float ELEVATION_NORMAL = 4f;
-  
+
   // Animation values
   private static final float SHAKE_TRANSLATION = 15f;
   private static final float ENTRANCE_TRANSLATION_Y = 50f;
@@ -163,9 +162,17 @@ public class ButtonAnimationHelper {
   /** Applies shake animation for error states */
   public static void applyErrorShake(@NonNull View view) {
     ObjectAnimator shake =
-        ObjectAnimator.ofFloat(view, "translationX", 0, -SHAKE_TRANSLATION, SHAKE_TRANSLATION, 
-                              -SHAKE_TRANSLATION * 0.67f, SHAKE_TRANSLATION * 0.67f, 
-                              -SHAKE_TRANSLATION * 0.33f, SHAKE_TRANSLATION * 0.33f, 0);
+        ObjectAnimator.ofFloat(
+            view,
+            "translationX",
+            0,
+            -SHAKE_TRANSLATION,
+            SHAKE_TRANSLATION,
+            -SHAKE_TRANSLATION * 0.67f,
+            SHAKE_TRANSLATION * 0.67f,
+            -SHAKE_TRANSLATION * 0.33f,
+            SHAKE_TRANSLATION * 0.33f,
+            0);
     shake.setDuration(SHAKE_DURATION_MS);
     shake.setInterpolator(new DecelerateInterpolator());
     shake.start();
@@ -226,12 +233,10 @@ public class ButtonAnimationHelper {
 
   /** Creates ripple effect for custom views that don't have built-in ripples */
   public static void applyCustomRipple(@NonNull View view, int rippleColor) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      RippleDrawable rippleDrawable =
-          new RippleDrawable(
-              android.content.res.ColorStateList.valueOf(rippleColor), view.getBackground(), null);
-      view.setBackground(rippleDrawable);
-    }
+    RippleDrawable rippleDrawable =
+        new RippleDrawable(
+            android.content.res.ColorStateList.valueOf(rippleColor), view.getBackground(), null);
+    view.setBackground(rippleDrawable);
   }
 
   /** Applies entrance animation for views appearing on screen */
@@ -259,11 +264,9 @@ public class ButtonAnimationHelper {
       Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
       if (vibrator != null && vibrator.hasVibrator()) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-          vibrator.vibrate(VibrationEffect.createOneShot(VIBRATION_DURATION_MS, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-          vibrator.vibrate(VIBRATION_DURATION_MS);
-        }
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(
+                VIBRATION_DURATION_MS, VibrationEffect.DEFAULT_AMPLITUDE));
       }
     } catch (SecurityException e) {
       // Silently fail if vibrate permission is not granted
@@ -279,12 +282,15 @@ public class ButtonAnimationHelper {
     Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
     if (vibrator != null && vibrator.hasVibrator()) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        vibrator.vibrate(VibrationEffect.createWaveform(
-            new long[] {0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1));
-      } else {
-        vibrator.vibrate(new long[] {0, ERROR_VIBRATION_DURATION_MS, ERROR_VIBRATION_PAUSE_MS, ERROR_VIBRATION_DURATION_MS}, -1);
-      }
+      vibrator.vibrate(
+          VibrationEffect.createWaveform(
+              new long[] {
+                0,
+                ERROR_VIBRATION_DURATION_MS,
+                ERROR_VIBRATION_PAUSE_MS,
+                ERROR_VIBRATION_DURATION_MS
+              },
+              -1));
     }
   }
 

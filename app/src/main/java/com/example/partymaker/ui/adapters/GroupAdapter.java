@@ -70,6 +70,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
   /**
    * Ensures view is in completely normal state to prevent spacing issues
+   *
    * @param view the view to reset to normal state
    */
   private void resetViewState(View view) {
@@ -113,20 +114,17 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
         && oldItem.getGroupType() == newItem.getGroupType();
   }
 
-  /**
-   * Interface for handling group click events
-   */
+  /** Interface for handling group click events */
   public interface OnGroupClickListener {
     /**
      * Called when a group item is clicked
+     *
      * @param group the clicked group
      */
     void onGroupClick(Group group);
   }
 
-  /**
-   * ViewHolder for group items
-   */
+  /** ViewHolder for group items */
   class GroupViewHolder extends RecyclerView.ViewHolder {
     private final TextView groupNameTextView;
     private final TextView groupDateTextView;
@@ -140,9 +138,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       setupClickListeners();
     }
 
-    /**
-     * Sets up click and long click listeners
-     */
+    /** Sets up click and long click listeners */
     private void setupClickListeners() {
       itemView.setOnClickListener(this::handleItemClick);
       itemView.setOnLongClickListener(this::handleItemLongClick);
@@ -150,6 +146,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Handles regular click events on group items
+     *
      * @param view the clicked view
      */
     private void handleItemClick(View view) {
@@ -161,6 +158,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Handles long click events for sharing functionality
+     *
      * @param view the long-clicked view
      * @return true if the event was handled
      */
@@ -174,9 +172,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       return true;
     }
 
-    /**
-     * Clears the ViewHolder content to prevent showing old data during recycling
-     */
+    /** Clears the ViewHolder content to prevent showing old data during recycling */
     void clear() {
       groupNameTextView.setText("");
       groupDateTextView.setText("");
@@ -186,6 +182,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Binds group data to the view holder
+     *
      * @param group the group data to display
      */
     void bind(Group group) {
@@ -196,6 +193,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Sets the group name in the text view
+     *
      * @param group the group containing the name
      */
     private void setGroupName(Group group) {
@@ -204,40 +202,42 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Formats and sets the group date in the text view
+     *
      * @param group the group containing date information
      */
     private void setGroupDate(Group group) {
-      String formattedDate = String.format(
-          DATE_FORMAT,
-          group.getGroupDays(),
-          group.getGroupMonths(),
-          group.getGroupYears(),
-          group.getGroupHours());
+      String formattedDate =
+          String.format(
+              DATE_FORMAT,
+              group.getGroupDays(),
+              group.getGroupMonths(),
+              group.getGroupYears(),
+              group.getGroupHours());
       groupDateTextView.setText(formattedDate);
     }
 
     /**
      * Improved image loading that doesn't interfere with text display
+     *
      * @param groupKey the key of the group to load image for
      */
     private void loadGroupImage(String groupKey) {
       setDefaultImage();
-      
+
       if (isGroupKeyValid(groupKey)) {
         prepareImageViewForLoading(groupKey);
         loadGroupImageWithTimeout(groupKey, groupImageView);
       }
     }
 
-    /**
-     * Sets the default image in the image view
-     */
+    /** Sets the default image in the image view */
     private void setDefaultImage() {
       groupImageView.setImageResource(R.drawable.default_group_image);
     }
 
     /**
      * Checks if the group key is valid for image loading
+     *
      * @param groupKey the group key to validate
      * @return true if key is valid, false otherwise
      */
@@ -247,6 +247,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Prepares the image view for loading by setting the group key as tag
+     *
      * @param groupKey the group key to store as tag
      */
     private void prepareImageViewForLoading(String groupKey) {
@@ -256,12 +257,14 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
     /**
      * Loads group image with timeout and enhanced error handling. Tries multiple Firebase Storage
      * paths with fallback mechanism.
+     *
      * @param groupKey the key of the group to load image for
      * @param imageView the image view to load the image into
      */
     private void loadGroupImageWithTimeout(String groupKey, ImageView imageView) {
       Task<android.net.Uri> primaryTask = createPrimaryImageTask(groupKey);
-      Task<android.net.Uri> timedPrimaryTask = Tasks.withTimeout(primaryTask, FIREBASE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+      Task<android.net.Uri> timedPrimaryTask =
+          Tasks.withTimeout(primaryTask, FIREBASE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
       timedPrimaryTask
           .addOnSuccessListener(uri -> handlePrimaryImageSuccess(groupKey, imageView, uri))
@@ -270,6 +273,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Creates the primary image loading task
+     *
      * @param groupKey the group key for the image
      * @return the Firebase task for loading the image
      */
@@ -281,26 +285,30 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Handles successful loading of image from primary path
+     *
      * @param groupKey the group key
      * @param imageView the image view to load into
      * @param uri the image URI
      */
-    private void handlePrimaryImageSuccess(String groupKey, ImageView imageView, android.net.Uri uri) {
+    private void handlePrimaryImageSuccess(
+        String groupKey, ImageView imageView, android.net.Uri uri) {
       if (isImageViewStillValid(groupKey, imageView)) {
         Log.d(TAG, "Successfully loaded image from primary path for group: " + groupKey);
-        GlideImageLoader.loadImage(context, uri.toString(), imageView, R.drawable.default_group_image);
+        GlideImageLoader.loadImage(
+            context, uri.toString(), imageView, R.drawable.default_group_image);
       }
     }
 
     /**
      * Handles failure to load image from primary path
+     *
      * @param groupKey the group key
      * @param imageView the image view
      * @param error the error that occurred
      */
     private void handlePrimaryImageFailure(String groupKey, ImageView imageView, Exception error) {
       logPrimaryImageError(groupKey, error);
-      
+
       if (isImageViewStillValid(groupKey, imageView)) {
         tryFallbackImagePath(groupKey, imageView);
       }
@@ -308,26 +316,29 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Logs errors from primary image loading, filtering out common "not found" errors
+     *
      * @param groupKey the group key
      * @param error the error to log
      */
     private void logPrimaryImageError(String groupKey, Exception error) {
-      if (!isObjectNotExistError(error)) {
+      if (isObjectNotExistError(error)) {
         Log.w(TAG, "Primary path failed for group " + groupKey + ": " + error.getMessage());
       }
     }
 
     /**
      * Checks if the error is a common "object does not exist" error
+     *
      * @param error the error to check
      * @return true if it's an object not exist error
      */
     private boolean isObjectNotExistError(Exception error) {
-      return error.getMessage() != null && error.getMessage().contains(OBJECT_NOT_EXIST_ERROR);
+      return error.getMessage() == null || !error.getMessage().contains(OBJECT_NOT_EXIST_ERROR);
     }
 
     /**
      * Checks if the image view is still valid for the given group key
+     *
      * @param groupKey the group key to check
      * @param imageView the image view to validate
      * @return true if the image view still corresponds to the group key
@@ -338,12 +349,14 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Tries the fallback Firebase Storage path for group images
+     *
      * @param groupKey the group key
      * @param imageView the image view to load into
      */
     private void tryFallbackImagePath(String groupKey, ImageView imageView) {
       Task<android.net.Uri> fallbackTask = createFallbackImageTask(groupKey);
-      Task<android.net.Uri> timedFallbackTask = Tasks.withTimeout(fallbackTask, FIREBASE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+      Task<android.net.Uri> timedFallbackTask =
+          Tasks.withTimeout(fallbackTask, FIREBASE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
       timedFallbackTask
           .addOnSuccessListener(uri -> handleFallbackImageSuccess(groupKey, imageView, uri))
@@ -352,6 +365,7 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Creates the fallback image loading task
+     *
      * @param groupKey the group key for the image
      * @return the Firebase task for loading the fallback image
      */
@@ -363,19 +377,23 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Handles successful loading of image from fallback path
+     *
      * @param groupKey the group key
      * @param imageView the image view to load into
      * @param uri the image URI
      */
-    private void handleFallbackImageSuccess(String groupKey, ImageView imageView, android.net.Uri uri) {
+    private void handleFallbackImageSuccess(
+        String groupKey, ImageView imageView, android.net.Uri uri) {
       if (isImageViewStillValid(groupKey, imageView)) {
         Log.d(TAG, "Successfully loaded image from fallback path for group: " + groupKey);
-        GlideImageLoader.loadImage(context, uri.toString(), imageView, R.drawable.default_group_image);
+        GlideImageLoader.loadImage(
+            context, uri.toString(), imageView, R.drawable.default_group_image);
       }
     }
 
     /**
      * Handles failure to load image from fallback path
+     *
      * @param groupKey the group key
      * @param imageView the image view
      * @param error the error that occurred
@@ -387,17 +405,19 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
     /**
      * Logs errors from fallback image loading
+     *
      * @param groupKey the group key
      * @param error the error to log
      */
     private void logFallbackImageError(String groupKey, Exception error) {
-      if (!isObjectNotExistError(error)) {
+      if (isObjectNotExistError(error)) {
         Log.w(TAG, "Fallback path also failed for group " + groupKey + ": " + error.getMessage());
       }
     }
 
     /**
      * Logs that default image is being used
+     *
      * @param groupKey the group key
      * @param imageView the image view
      */

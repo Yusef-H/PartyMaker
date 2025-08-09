@@ -21,7 +21,7 @@ public class EncryptedSharedPreferencesManager {
   private static final String TAG = "EncryptedPrefsManager";
   private static final String PREFS_FILE_NAME = "encrypted_shared_prefs";
   private static final String FALLBACK_PREFS_NAME = "fallback_prefs";
-  
+
   // Encryption constants
   private static final int AES_KEY_SIZE = 256;
   private static final boolean REQUIRE_USER_AUTH = false;

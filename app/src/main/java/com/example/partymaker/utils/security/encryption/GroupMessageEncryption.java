@@ -32,16 +32,16 @@ public class GroupMessageEncryption {
   private static final int AES_KEY_SIZE = 256;
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
-  
+
   // Validation constants
   private static final int MIN_ENCRYPTED_MESSAGE_LENGTH = 20;
   private static final int MIN_ENCRYPTED_DATA_LENGTH = GCM_IV_LENGTH + GCM_TAG_LENGTH;
   private static final int TAG_LENGTH_BITS = GCM_TAG_LENGTH * 8;
   private static final int AES_KEY_BYTES = AES_KEY_SIZE / 8;
-  
+
   // Storage constants
   private static final String GROUP_KEY_PREFIX = "group_";
-  
+
   // Regex patterns
   private static final String BASE64_PATTERN = "^[A-Za-z0-9+/]*={0,2}$";
 

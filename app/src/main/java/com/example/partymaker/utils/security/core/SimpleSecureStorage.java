@@ -20,7 +20,7 @@ public class SimpleSecureStorage {
   private static final String PREFS_NAME = "secure_prefs";
   private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
   private static final String KEY_ALGORITHM = "AES";
-  
+
   // Security constants
   private static final int AES_KEY_SIZE = 256;
   private static final int IV_SIZE = 16;
@@ -123,7 +123,7 @@ public class SimpleSecureStorage {
       return generateFallbackKey(source);
     }
   }
-  
+
   /** Generate fallback key when SHA-256 is not available */
   private byte[] generateFallbackKey(String source) {
     byte[] key = new byte[AES_KEY_SIZE / 8]; // 32 bytes for 256-bit key

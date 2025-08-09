@@ -6,10 +6,10 @@ import android.util.Log;
 import com.example.partymaker.BuildConfig;
 
 /** Secure configuration manager for API keys and sensitive configuration */
-public class SecureConfigManager {
+public final class SecureConfigManager {
   private static final String TAG = "SecureConfig";
   private static final String PREFS_FILE_NAME = "secure_prefs";
-  
+
   // Configuration constants
   private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
   private static final String DEFAULT_API_KEY_PLACEHOLDER = "YOUR_API_KEY_HERE";
@@ -59,8 +59,7 @@ public class SecureConfigManager {
   public String getOpenAiApiKey() {
     try {
       // First check BuildConfig (from local.properties or CI secrets)
-      String apiKey = BuildConfig.OPENAI_API_KEY;
-      return apiKey;
+      return BuildConfig.OPENAI_API_KEY;
     } catch (Exception e) {
       // BuildConfig field might not exist yet
       Log.d(TAG, "BuildConfig.OPENAI_API_KEY not available");
@@ -83,10 +82,11 @@ public class SecureConfigManager {
    */
   public String getGoogleMapsApiKey() {
     try {
-      // First check BuildConfig
-      String apiKey = BuildConfig.MAPS_API_KEY;
-      if (apiKey != null && !apiKey.isEmpty() && !apiKey.equals(DEFAULT_API_KEY_PLACEHOLDER)) {
-        return apiKey;
+      // First check BuildConfig - BuildConfig values are constants
+      String buildConfigKey = BuildConfig.MAPS_API_KEY;
+      // Check if the BuildConfig key is valid (not the placeholder)
+      if (!buildConfigKey.equals(DEFAULT_API_KEY_PLACEHOLDER)) {
+        return buildConfigKey;
       }
     } catch (Exception e) {
       // BuildConfig field might not exist yet
@@ -138,7 +138,7 @@ public class SecureConfigManager {
     prefs.edit().clear().apply();
     initializeDefaults();
   }
-  
+
   /** Check if API key is valid (not null, empty, or placeholder) */
   private boolean isValidApiKey(String apiKey) {
     return apiKey != null && !apiKey.isEmpty() && !apiKey.equals(DEFAULT_API_KEY_PLACEHOLDER);

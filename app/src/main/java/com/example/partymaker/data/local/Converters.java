@@ -9,15 +9,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Type converters for Room database. These converters allow Room to store complex types
- * such as Date objects and Maps in the SQLite database by converting them to/from
- * primitive types that SQLite can handle.
+ * Type converters for Room database. These converters allow Room to store complex types such as
+ * Date objects and Maps in the SQLite database by converting them to/from primitive types that
+ * SQLite can handle.
  */
 public class Converters {
-  
+
   // JSON serialization instance
   private static final Gson gson = new Gson();
-  
+
   // Prevent instantiation
   private Converters() {
     // Utility class for Room type converters

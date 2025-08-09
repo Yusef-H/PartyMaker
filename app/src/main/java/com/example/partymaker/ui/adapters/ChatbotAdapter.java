@@ -15,10 +15,10 @@ import java.util.List;
  * styling.
  */
 public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageViewHolder> {
-  
+
   // UI Constants
   private static final int MESSAGE_PADDING = 32;
-  
+
   /** The list of chatbot messages to display. */
   private final List<ChatMessageGpt> messages;
 
@@ -48,19 +48,18 @@ public class ChatbotAdapter extends RecyclerView.Adapter<ChatbotAdapter.MessageV
     setupMessageContent(holder, message);
     setupMessageStyling(holder, message);
   }
-  
-  /**
-   * Sets up the message content in the view holder.
-   */
-  private void setupMessageContent(@NonNull MessageViewHolder holder, @NonNull ChatMessageGpt message) {
+
+  /** Sets up the message content in the view holder. */
+  private void setupMessageContent(
+      @NonNull MessageViewHolder holder, @NonNull ChatMessageGpt message) {
     holder.messageText.setText(message.content);
-    holder.messageText.setPadding(MESSAGE_PADDING, MESSAGE_PADDING, MESSAGE_PADDING, MESSAGE_PADDING);
+    holder.messageText.setPadding(
+        MESSAGE_PADDING, MESSAGE_PADDING, MESSAGE_PADDING, MESSAGE_PADDING);
   }
-  
-  /**
-   * Sets up the message styling based on role.
-   */
-  private void setupMessageStyling(@NonNull MessageViewHolder holder, @NonNull ChatMessageGpt message) {
+
+  /** Sets up the message styling based on role. */
+  private void setupMessageStyling(
+      @NonNull MessageViewHolder holder, @NonNull ChatMessageGpt message) {
     if (ChatMessageGpt.ROLE_USER.equals(message.role)) {
       holder.messageText.setBackgroundResource(R.drawable.msg_user_bg);
     } else if (ChatMessageGpt.ROLE_ASSISTANT.equals(message.role)) {

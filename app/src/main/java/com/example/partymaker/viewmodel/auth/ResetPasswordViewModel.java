@@ -9,6 +9,10 @@ import com.example.partymaker.data.api.NetworkUtils;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.viewmodel.BaseViewModel;
 import com.google.firebase.auth.FirebaseAuth;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ViewModel for password reset functionality.
@@ -49,6 +53,8 @@ public class ResetPasswordViewModel extends BaseViewModel {
 
   // Internal state
   private long lastResetRequestTime = 0;
+  private ScheduledExecutorService scheduler;
+  private ScheduledFuture<?> countdownTask;
 
   /**
    * Constructor for ResetPasswordViewModel.
@@ -222,27 +228,36 @@ public class ResetPasswordViewModel extends BaseViewModel {
   /** Starts a countdown for when the next reset email can be sent. */
   public void startCooldownCountdown() {
     if (!canSendResetEmail()) {
-      ThreadUtils.runOnBackground(
+      // Cancel any existing countdown
+      if (countdownTask != null && !countdownTask.isDone()) {
+        countdownTask.cancel(false);
+      }
+      
+      // Create scheduler if needed
+      if (scheduler == null || scheduler.isShutdown()) {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+      }
+      
+      // Schedule periodic updates every second
+      countdownTask = scheduler.scheduleAtFixedRate(
           () -> {
-            while (!canSendResetEmail()) {
-              try {
-                Thread.sleep(1000); // Update every second
-
-                ThreadUtils.runOnMainThread(
-                    () -> {
-                      canSendReset.setValue(canSendResetEmail());
-
-                      if (canSendResetEmail()) {
-                        setInfo("You can now request another password reset");
-                      }
-                    });
-
-              } catch (InterruptedException e) {
-                Log.d(TAG, "Cooldown countdown interrupted");
-                break;
-              }
-            }
-          });
+            ThreadUtils.runOnMainThread(
+                () -> {
+                  boolean canSend = canSendResetEmail();
+                  canSendReset.setValue(canSend);
+                  
+                  if (canSend) {
+                    setInfo("You can now request another password reset");
+                    // Cancel the task once we can send again
+                    if (countdownTask != null) {
+                      countdownTask.cancel(false);
+                    }
+                  }
+                });
+          },
+          0, // Initial delay
+          1, // Period
+          TimeUnit.SECONDS);
     }
   }
 
@@ -329,6 +344,13 @@ public class ResetPasswordViewModel extends BaseViewModel {
   protected void onCleared() {
     super.onCleared();
     clearResetData();
+    // Cleanup scheduler
+    if (countdownTask != null) {
+      countdownTask.cancel(false);
+    }
+    if (scheduler != null && !scheduler.isShutdown()) {
+      scheduler.shutdown();
+    }
     Log.d(TAG, "ResetPasswordViewModel cleared");
   }
 }

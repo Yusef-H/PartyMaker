@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.partymaker.R;
 import com.example.partymaker.data.model.Group;
 import com.example.partymaker.ui.adapters.GroupAdapter;
@@ -323,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
     if (lottieAnimation != null) {
       lottieAnimation.setAnimation("party_loading.json");
       lottieAnimation.setRepeatCount(-1); // Loop indefinitely
-      lottieAnimation.setRepeatMode(android.animation.ValueAnimator.RESTART);
+      lottieAnimation.setRepeatMode(LottieDrawable.RESTART);
     }
 
     return new LoadingStateManager.Builder()
@@ -564,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void showEmptyGroupsState() {
     Log.d(TAG, "Displaying empty groups state with animation");
-    loadingStateManager.showEmptyWithAnimation("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+    loadingStateManager.showEmptyWithAnimation("No groups found. Tap + to create a new group");
     showEmptyState();
   }
 
@@ -839,11 +840,11 @@ public class MainActivity extends AppCompatActivity {
 
   private void showEmptyViewMessage(TextView emptyView) {
     emptyView.setVisibility(View.VISIBLE);
-    emptyView.setText("לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+    emptyView.setText("No groups found. Tap + to create a new group");
   }
 
   private void showEmptyStateFallback() {
-    UiStateManager.showInfo(rootView, "לא נמצאו קבוצות. לחץ על + ליצירת קבוצה חדשה");
+    UiStateManager.showInfo(rootView, "No groups found. Tap + to create a new group");
   }
 
   private void hideEmptyState() {

@@ -22,19 +22,19 @@ import java.util.concurrent.CompletableFuture;
  */
 public class SecurityAgent {
   private static final String TAG = "SecurityAgent";
-  
+
   // Security severity score deductions
   private static final int HIGH_SEVERITY_DEDUCTION = 20;
   private static final int MEDIUM_SEVERITY_DEDUCTION = 10;
   private static final int LOW_SEVERITY_DEDUCTION = 5;
-  
+
   // Security thresholds and limits
   private static final int MAX_SECURITY_SCORE = 100;
   private static final int MIN_SECURITY_SCORE = 0;
-  
+
   // Default timeout values
   private static final int DEFAULT_TIMEOUT_MS = 5000;
-  
+
   // Root detection paths
   private static final String[] ROOT_DETECTION_PATHS = {
     "/system/app/Superuser.apk",
@@ -47,7 +47,7 @@ public class SecurityAgent {
     "/system/bin/failsafe/su",
     "/data/local/su"
   };
-  
+
   // Dangerous permissions list
   private static final String[] DANGEROUS_PERMISSIONS = {
     "android.permission.READ_CONTACTS",
@@ -57,7 +57,7 @@ public class SecurityAgent {
     "android.permission.READ_SMS",
     "android.permission.READ_PHONE_STATE"
   };
-  
+
   private static SecurityAgent instance;
   private final Context context;
   private final List<SecurityIssue> securityIssues;
@@ -298,7 +298,7 @@ public class SecurityAgent {
   private boolean isDeviceRooted() {
     return checkRootPaths() || checkRootBinaries() || checkRootProperties();
   }
-  
+
   private boolean checkRootPaths() {
     for (String path : ROOT_DETECTION_PATHS) {
       if (new File(path).exists()) {
@@ -308,7 +308,7 @@ public class SecurityAgent {
     }
     return false;
   }
-  
+
   private boolean checkRootBinaries() {
     try {
       Process process = Runtime.getRuntime().exec("which su");
@@ -319,7 +319,7 @@ public class SecurityAgent {
       return false;
     }
   }
-  
+
   private boolean checkRootProperties() {
     String buildTags = android.os.Build.TAGS;
     return buildTags != null && buildTags.contains("test-keys");
@@ -454,7 +454,7 @@ public class SecurityAgent {
 
     return Math.max(MIN_SECURITY_SCORE, MAX_SECURITY_SCORE - totalDeductions);
   }
-  
+
   private int getDeductionForSeverity(SecurityIssue.Severity severity) {
     switch (severity) {
       case CRITICAL:
@@ -464,7 +464,6 @@ public class SecurityAgent {
       case MEDIUM:
         return MEDIUM_SEVERITY_DEDUCTION;
       case LOW:
-        return LOW_SEVERITY_DEDUCTION;
       default:
         return LOW_SEVERITY_DEDUCTION;
     }

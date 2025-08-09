@@ -26,15 +26,15 @@ import java.util.List;
  * bubble style, and user identification.
  */
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
-  
+
   private static final String TAG = "ChatAdapter";
-  
+
   // Message content constants
   private static final String DEFAULT_SENDER_NAME = "Unknown";
   private static final String COMPLEX_MESSAGE_PLACEHOLDER = "[Complex message content]";
   private static final String EMPTY_MESSAGE_PLACEHOLDER = "[No message content]";
   private static final String MESSAGE_CONTENT_KEY = "text";
-  
+
   /** The context in which the adapter is used. */
   final Context context;
 
@@ -105,7 +105,8 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     String currentUser = AuthenticationManager.getCurrentUserEmail(context);
     // Convert to the same format as messageUser (dots replaced with spaces)
     String currentUserKey = currentUser != null ? currentUser.replace('.', ' ') : null;
-    boolean isMine = message.getMessageUser() != null && message.getMessageUser().equals(currentUserKey);
+    boolean isMine =
+        message.getMessageUser() != null && message.getMessageUser().equals(currentUserKey);
 
     LinearLayout bubbleLayout = view.findViewById(R.id.bubbleLayout);
     TextView tvSender = view.findViewById(R.id.tvSender);
@@ -122,7 +123,8 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     displayMessageTime(message, tvTime);
 
     // Style message bubble based on sender
-    styleMessageBubble(isMine, bubbleLayout, tvSender, spaceLeft, spaceRight, tvMessage, tvTime, message);
+    styleMessageBubble(
+        isMine, bubbleLayout, tvSender, spaceLeft, spaceRight, tvMessage, tvTime, message);
 
     // Add spaces between messages
     setMessagePadding(position, view, message);
@@ -144,7 +146,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     }
     return messageText;
   }
-  
+
   /**
    * Extracts message text from message content HashMap.
    *
@@ -164,7 +166,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
       return EMPTY_MESSAGE_PLACEHOLDER;
     }
   }
-  
+
   /**
    * Displays the message time with proper formatting.
    *
@@ -172,15 +174,19 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
    * @param tvTime The TextView to display the time
    */
   private void displayMessageTime(ChatMessage message, TextView tvTime) {
-    if (message.getMessageTime() != null && message.getMessageTime().length() >= AppConstants.Validation.TIME_SUBSTRING_END) {
-      tvTime.setText(message.getMessageTime().substring(
-          AppConstants.Validation.TIME_SUBSTRING_START, 
-          AppConstants.Validation.TIME_SUBSTRING_END)); // show only HH:mm
+    if (message.getMessageTime() != null
+        && message.getMessageTime().length() >= AppConstants.Validation.TIME_SUBSTRING_END) {
+      tvTime.setText(
+          message
+              .getMessageTime()
+              .substring(
+                  AppConstants.Validation.TIME_SUBSTRING_START,
+                  AppConstants.Validation.TIME_SUBSTRING_END)); // show only HH:mm
     } else {
       tvTime.setText("");
     }
   }
-  
+
   /**
    * Styles the message bubble based on whether it's from current user.
    *
@@ -193,20 +199,30 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
    * @param tvTime Time text view
    * @param message The ChatMessage object
    */
-  private void styleMessageBubble(boolean isMine, LinearLayout bubbleLayout, TextView tvSender, 
-      Space spaceLeft, Space spaceRight, TextView tvMessage, TextView tvTime, ChatMessage message) {
+  private void styleMessageBubble(
+      boolean isMine,
+      LinearLayout bubbleLayout,
+      TextView tvSender,
+      Space spaceLeft,
+      Space spaceRight,
+      TextView tvMessage,
+      TextView tvTime,
+      ChatMessage message) {
     if (isMine) {
       styleMyMessage(bubbleLayout, tvSender, spaceLeft, spaceRight, tvMessage, tvTime);
     } else {
       styleOtherMessage(bubbleLayout, tvSender, spaceLeft, spaceRight, tvMessage, tvTime, message);
     }
   }
-  
-  /**
-   * Styles messages from current user.
-   */
-  private void styleMyMessage(LinearLayout bubbleLayout, TextView tvSender, 
-      Space spaceLeft, Space spaceRight, TextView tvMessage, TextView tvTime) {
+
+  /** Styles messages from current user. */
+  private void styleMyMessage(
+      LinearLayout bubbleLayout,
+      TextView tvSender,
+      Space spaceLeft,
+      Space spaceRight,
+      TextView tvMessage,
+      TextView tvTime) {
     // My messages: right alignment, green bubble, no name
     bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble_mine);
     tvSender.setVisibility(View.GONE);
@@ -215,22 +231,27 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
     tvTime.setTextColor(ContextCompat.getColor(context, R.color.gray));
   }
-  
-  /**
-   * Styles messages from other users.
-   */
-  private void styleOtherMessage(LinearLayout bubbleLayout, TextView tvSender, 
-      Space spaceLeft, Space spaceRight, TextView tvMessage, TextView tvTime, ChatMessage message) {
+
+  /** Styles messages from other users. */
+  private void styleOtherMessage(
+      LinearLayout bubbleLayout,
+      TextView tvSender,
+      Space spaceLeft,
+      Space spaceRight,
+      TextView tvMessage,
+      TextView tvTime,
+      ChatMessage message) {
     // Messages from others: left alignment, gray bubble, with name
     bubbleLayout.setBackgroundResource(R.drawable.msg_bg_bubble);
-    tvSender.setText(message.getMessageUser() != null ? message.getMessageUser() : DEFAULT_SENDER_NAME);
+    tvSender.setText(
+        message.getMessageUser() != null ? message.getMessageUser() : DEFAULT_SENDER_NAME);
     tvSender.setVisibility(View.VISIBLE);
     spaceLeft.setVisibility(View.GONE);
     spaceRight.setVisibility(View.VISIBLE);
     tvMessage.setTextColor(ContextCompat.getColor(context, R.color.black));
     tvTime.setTextColor(ContextCompat.getColor(context, R.color.gray));
   }
-  
+
   /**
    * Sets appropriate padding between messages based on sender.
    *
@@ -241,10 +262,11 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
   private void setMessagePadding(int position, View view, ChatMessage currentMessage) {
     if (position > 0) {
       ChatMessage prevMessage = messageList.get(position - 1);
-      boolean isSameSender = prevMessage.getMessageUser() != null
-          && currentMessage.getMessageUser() != null
-          && prevMessage.getMessageUser().equals(currentMessage.getMessageUser());
-      
+      boolean isSameSender =
+          prevMessage.getMessageUser() != null
+              && currentMessage.getMessageUser() != null
+              && prevMessage.getMessageUser().equals(currentMessage.getMessageUser());
+
       if (isSameSender) {
         // If it's the same user, reduce the interval
         view.setPadding(0, AppConstants.UI.MESSAGE_PADDING_SAME_USER, 0, 0);

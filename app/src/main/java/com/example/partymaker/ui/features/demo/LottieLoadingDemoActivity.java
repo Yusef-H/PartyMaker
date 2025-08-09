@@ -23,7 +23,7 @@ public class LottieLoadingDemoActivity extends AppCompatActivity {
   private static final long DEMO_CREATION_DELAY_MS = 2500L;
   private static final long DEMO_ERROR_AUTO_HIDE_MS = 3000L;
   private static final long DEMO_INITIALIZATION_DELAY_MS = 2000L;
-  
+
   private LoadingStateManager loadingStateManager;
   private Handler handler;
 

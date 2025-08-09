@@ -43,13 +43,13 @@ public class HybridMessageEncryption {
   private static final int AES_KEY_SIZE = 256;
   private static final int GCM_IV_LENGTH = 12;
   private static final int GCM_TAG_LENGTH = 16;
-  
+
   // System constants
   private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
   private static final String RSA_KEY_FACTORY_ALGORITHM = "RSA";
   private static final String AES_KEY_GENERATOR_ALGORITHM = "AES";
   private static final int TAG_LENGTH_BITS = GCM_TAG_LENGTH * 8;
-  
+
   // JSON keys
   private static final String JSON_ENCRYPTED_MESSAGE = "encryptedMessage";
   private static final String JSON_ALGORITHM = "algorithm";
@@ -300,7 +300,7 @@ public class HybridMessageEncryption {
       return "Status check failed: " + e.getMessage();
     }
   }
-  
+
   /** Create JSON result object for encrypted message */
   private JSONObject createResultObject(String encryptedMessage) throws Exception {
     JSONObject result = new JSONObject();

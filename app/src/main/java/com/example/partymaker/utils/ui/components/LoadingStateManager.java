@@ -20,7 +20,7 @@ public class LoadingStateManager {
   // Animation constants
   private static final int FADE_ANIMATION_DURATION_MS = 300;
   private static final int CELEBRATION_AUTO_TRANSITION_DELAY_MS = 1000;
-  
+
   // Default messages
   private static final String DEFAULT_LOADING_MESSAGE = "Loading...";
   private static final String DEFAULT_ERROR_MESSAGE = "An error occurred";
@@ -28,7 +28,7 @@ public class LoadingStateManager {
   private static final String DEFAULT_CELEBRATION_MESSAGE = "Congratulations!";
   private static final String DEFAULT_EMPTY_MESSAGE = "No parties found";
   private static final String DEFAULT_SYNC_MESSAGE = "Syncing...";
-  
+
   // Lottie animation file names
   private static final String LOTTIE_SUCCESS_ANIMATION = "success_checkmark.json";
   private static final String LOTTIE_ERROR_ANIMATION = "error_warning.json";
@@ -36,7 +36,7 @@ public class LoadingStateManager {
   private static final String LOTTIE_EMPTY_ANIMATION = "empty_no_parties.json";
   private static final String LOTTIE_NETWORK_SYNC_ANIMATION = "network_sync.json";
   private static final String LOTTIE_USER_SWITCH_ANIMATION = "user_switch.json";
-  
+
   // Lottie repeat counts
   private static final int LOTTIE_PLAY_ONCE = 0;
   private static final int LOTTIE_PLAY_TWICE = 1;
@@ -150,7 +150,10 @@ public class LoadingStateManager {
 
     // Update error message if error view has a TextView
     if (errorView instanceof ViewGroup) {
-      TextView errorText = null; // Optional error text view
+      TextView errorText = findTextViewInViewGroup((ViewGroup) errorView);
+      if (errorText != null) {
+        errorText.setText(errorMessage);
+      }
     }
 
     // Animate transitions
@@ -223,6 +226,23 @@ public class LoadingStateManager {
   /** Checks if currently syncing */
   public boolean isNetworkSyncing() {
     return currentState == LoadingState.NETWORK_SYNC;
+  }
+
+  /** Helper method to find a TextView within a ViewGroup */
+  @Nullable
+  private TextView findTextViewInViewGroup(@NonNull ViewGroup viewGroup) {
+    for (int i = 0; i < viewGroup.getChildCount(); i++) {
+      View child = viewGroup.getChildAt(i);
+      if (child instanceof TextView) {
+        return (TextView) child;
+      } else if (child instanceof ViewGroup) {
+        TextView foundTextView = findTextViewInViewGroup((ViewGroup) child);
+        if (foundTextView != null) {
+          return foundTextView;
+        }
+      }
+    }
+    return null;
   }
 
   /** Animates view visibility changes */

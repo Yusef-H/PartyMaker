@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Creating your amazing party..."
+        android:text="@string/creating_your_amazing_party"
         android:textAppearance="@style/TextAppearance.PartyMaker.BodyLarge"
         android:textColor="@color/white"
         android:textAlignment="center" />

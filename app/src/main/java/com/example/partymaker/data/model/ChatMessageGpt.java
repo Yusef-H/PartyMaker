@@ -2,12 +2,12 @@ package com.example.partymaker.data.model;
 
 /** Represents a message for GPT-based chat (role + content). */
 public class ChatMessageGpt {
-  
+
   // Role Constants
   public static final String ROLE_USER = "user";
   public static final String ROLE_ASSISTANT = "assistant";
   public static final String ROLE_SYSTEM = "system";
-  
+
   /** The role of the message (e.g., user, assistant). */
   public final String role;
 
@@ -28,11 +28,11 @@ public class ChatMessageGpt {
     if (content == null || content.trim().isEmpty()) {
       throw new IllegalArgumentException("Content cannot be null or empty");
     }
-    
+
     this.role = role.trim();
     this.content = content.trim();
   }
-  
+
   /**
    * Creates a user message.
    *
@@ -42,7 +42,7 @@ public class ChatMessageGpt {
   public static ChatMessageGpt createUserMessage(String content) {
     return new ChatMessageGpt(ROLE_USER, content);
   }
-  
+
   /**
    * Creates an assistant message.
    *
@@ -52,7 +52,7 @@ public class ChatMessageGpt {
   public static ChatMessageGpt createAssistantMessage(String content) {
     return new ChatMessageGpt(ROLE_ASSISTANT, content);
   }
-  
+
   /**
    * Creates a system message.
    *
@@ -62,7 +62,7 @@ public class ChatMessageGpt {
   public static ChatMessageGpt createSystemMessage(String content) {
     return new ChatMessageGpt(ROLE_SYSTEM, content);
   }
-  
+
   /**
    * Checks if this is a user message.
    *
@@ -71,7 +71,7 @@ public class ChatMessageGpt {
   public boolean isUserMessage() {
     return ROLE_USER.equals(role);
   }
-  
+
   /**
    * Checks if this is an assistant message.
    *
@@ -80,7 +80,7 @@ public class ChatMessageGpt {
   public boolean isAssistantMessage() {
     return ROLE_ASSISTANT.equals(role);
   }
-  
+
   /**
    * Checks if this is a system message.
    *

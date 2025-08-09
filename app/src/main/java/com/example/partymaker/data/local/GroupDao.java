@@ -15,11 +15,11 @@ import java.util.List;
  */
 @Dao
 public interface GroupDao {
-  
+
   // Table and column constants
   String TABLE_NAME = "groups";
   String COLUMN_GROUP_KEY = "groupKey";
-  
+
   // SQL Query constants
   String SELECT_ALL_COLUMNS = "SELECT * FROM `" + TABLE_NAME + "`";
   String WHERE_GROUP_KEY = " WHERE " + COLUMN_GROUP_KEY + " = :groupKey";

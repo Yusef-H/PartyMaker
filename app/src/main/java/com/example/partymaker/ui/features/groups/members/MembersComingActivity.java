@@ -22,13 +22,13 @@ import java.util.Map;
 public class MembersComingActivity extends AppCompatActivity {
 
   private static final String TAG = "MembersComingActivity";
-  
+
   // UI constants
   private static final String ACTIVITY_TITLE = "Coming to party";
   private static final String ACTION_BAR_COLOR = "#0081d1";
   private static final String LOADING_MESSAGE = "Loading coming members...";
   private static final String NO_MEMBERS_MESSAGE = "No members coming";
-  
+
   // UI Components
   private ListView membersList;
   private HashMap<String, Object> comingKeys;
@@ -103,16 +103,16 @@ public class MembersComingActivity extends AppCompatActivity {
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
-  
+
   private void logComingKeysDetails() {
     Log.d(TAG, "ComingKeys contents:");
   }
-  
+
   @SuppressWarnings("unchecked")
   private HashMap<String, Object> extractComingKeysFromIntent() {
     return (HashMap<String, Object>) getIntent().getSerializableExtra("ComingKeys");
   }
-  
+
   private void setupEventHandlers() {
     membersList.setOnItemClickListener((parent, view, position, id) -> {});
     membersList.setOnItemLongClickListener((parent, view, position, id) -> false);
@@ -164,7 +164,13 @@ public class MembersComingActivity extends AppCompatActivity {
             for (User user : users.values()) {
               if (isValidUser(user)) {
                 String normalizedEmail = user.getEmail().replace('.', ' ');
-                Log.d(TAG, "Processing user: '" + user.getEmail() + "' -> normalized: '" + normalizedEmail + "'");
+                Log.d(
+                    TAG,
+                    "Processing user: '"
+                        + user.getEmail()
+                        + "' -> normalized: '"
+                        + normalizedEmail
+                        + "'");
 
                 if (comingFriends != null && isUserComing(normalizedEmail, comingFriends)) {
                   Log.d(TAG, "Found matching user: " + normalizedEmail);
@@ -193,18 +199,18 @@ public class MembersComingActivity extends AppCompatActivity {
           }
         });
   }
-  
+
   private void logComingKeysContents() {
     Log.d(TAG, "ComingKeys contents:");
     for (String key : comingKeys.keySet()) {
       Log.d(TAG, "  ComingKey: '" + key + "' -> " + comingKeys.get(key));
     }
   }
-  
+
   private boolean isValidUser(User user) {
     return user != null && user.getEmail() != null;
   }
-  
+
   private boolean isUserComing(String normalizedEmail, HashMap<String, Object> comingFriends) {
     for (String friendKey : comingFriends.keySet()) {
       Log.d(TAG, "  Comparing '" + normalizedEmail + "' with '" + friendKey + "'");

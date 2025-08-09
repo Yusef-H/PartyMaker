@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class UserRepository {
   private static final String TAG = "UserRepository";
-  
+
   // Error messages
   private static final String ERROR_INVALID_USER_ID = "Invalid user ID";
   private static final String ERROR_USER_NOT_FOUND = "User not found";
@@ -30,13 +30,13 @@ public class UserRepository {
   private static final String ERROR_USER_CANNOT_BE_NULL = "User cannot be null";
   private static final String ERROR_USER_KEY_NULL_OR_EMPTY = "User key cannot be null or empty";
   private static final String ERROR_GET_CURRENT_USER = "Error getting current user: ";
-  
+
   // Field names for database operations
   private static final String FIELD_USERNAME = "username";
   private static final String FIELD_EMAIL = "email";
   private static final String FIELD_PROFILE_IMAGE_URL = "profileImageUrl";
   private static final String FIELD_FRIEND_KEYS = "friendKeys";
-  
+
   // Character replacement constant
   private static final char DOT_CHAR = '.';
   private static final char SPACE_CHAR = ' ';
@@ -405,6 +405,7 @@ public class UserRepository {
 
   /**
    * Applies a single field update to a user object
+   *
    * @param user the user to update
    * @param field the field name to update
    * @param value the new value
@@ -453,7 +454,6 @@ public class UserRepository {
    * @param user The user to update
    * @param updates The updates to apply
    */
-  @SuppressWarnings("unchecked")
   private void applyUpdatesToUser(User user, Map<String, Object> updates) {
     if (user == null || updates == null) {
       return;

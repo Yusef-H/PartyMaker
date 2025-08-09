@@ -27,16 +27,16 @@ import android.view.ViewConfiguration;
 import java.util.HashMap;
 
 /**
- * Utility class for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker.
- * Provides static methods for intent manipulation, drag-and-drop functionality,
- * and various UI utilities. This class cannot be instantiated.
+ * Utility class for working with Intents, ExtrasMetadata, and UI helpers in PartyMaker. Provides
+ * static methods for intent manipulation, drag-and-drop functionality, and various UI utilities.
+ * This class cannot be instantiated.
  */
 public final class IntentExtrasManager {
-  
+
   // Constants for drag and drop functionality
   private static final String PROPERTY_FILE_NAME = "local.properties";
   private static final String EMPTY_STRING = "";
-  
+
   // Touch handling variables
   private static float downX, downY, dX, dY;
   private static int touchSlop;
@@ -112,7 +112,7 @@ public final class IntentExtrasManager {
   public static boolean dragChatButtonOnTouch(View view, MotionEvent event) {
     validateNotNull(view, "View cannot be null");
     validateNotNull(event, "MotionEvent cannot be null");
-    
+
     initializeTouchSlopIfNeeded(view);
 
     switch (event.getActionMasked()) {
@@ -160,7 +160,7 @@ public final class IntentExtrasManager {
   public static String getApiKey(Context context, String key) {
     validateNotNull(context, "Context cannot be null");
     validateNotNullOrEmpty(key, "Property key cannot be null or empty");
-    
+
     try (java.io.InputStream inputStream = context.getAssets().open(PROPERTY_FILE_NAME)) {
       java.util.Properties properties = new java.util.Properties();
       properties.load(inputStream);

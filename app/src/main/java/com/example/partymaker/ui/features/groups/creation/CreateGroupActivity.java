@@ -102,7 +102,6 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   private GoogleMap map;
   private LatLng chosenLatLng;
   private FusedLocationProviderClient locationClient;
-  private LoadingStateManager loadingStateManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -256,7 +255,8 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
       // Create a simple progress bar as fallback
       android.widget.ProgressBar progressBar = new android.widget.ProgressBar(this);
 
-      loadingStateManager =
+      // Use root content view
+      LoadingStateManager loadingStateManager =
           new LoadingStateManager.Builder()
               .contentView(findViewById(android.R.id.content)) // Use root content view
               .progressBar(progressBar)
@@ -284,9 +284,12 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
     }
 
     // Add entrance animations for UI elements with stagger effect
-    if (imgLogin != null) ButtonAnimationHelper.applyEntranceAnimation(imgLogin, LOGIN_ANIMATION_DELAY_MS);
-    if (tvPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(tvPartyName, NAME_ANIMATION_DELAY_MS);
-    if (etPartyName != null) ButtonAnimationHelper.applyEntranceAnimation(etPartyName, EDIT_TEXT_ANIMATION_DELAY_MS);
+    if (imgLogin != null)
+      ButtonAnimationHelper.applyEntranceAnimation(imgLogin, LOGIN_ANIMATION_DELAY_MS);
+    if (tvPartyName != null)
+      ButtonAnimationHelper.applyEntranceAnimation(tvPartyName, NAME_ANIMATION_DELAY_MS);
+    if (etPartyName != null)
+      ButtonAnimationHelper.applyEntranceAnimation(etPartyName, EDIT_TEXT_ANIMATION_DELAY_MS);
   }
 
   // Initialize map fragment and location services

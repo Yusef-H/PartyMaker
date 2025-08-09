@@ -25,7 +25,7 @@ public class FileManager {
   private static final String TAG = "FileManager";
   private static final String FILE_PROVIDER_AUTHORITY = "com.example.partymaker.fileprovider";
   private static final Executor executor = Executors.newSingleThreadExecutor();
-  
+
   // File operation constants
   private static final String DATE_FORMAT_PATTERN = "yyyyMMdd_HHmmss";
   private static final String IMAGE_FILE_PREFIX = "JPEG_";
@@ -33,7 +33,7 @@ public class FileManager {
   private static final String IMAGE_FILE_EXTENSION = ".jpg";
   private static final int JPEG_QUALITY = 90;
   private static final int COPY_BUFFER_SIZE = 4096;
-  
+
   // Size formatting constants
   private static final String[] SIZE_UNITS = {"B", "KB", "MB", "GB", "TB"};
   private static final int SIZE_UNIT_BASE = 1024;
@@ -183,7 +183,9 @@ public class FileManager {
     if (!fileOrDirectory
         .getAbsolutePath()
         .equals(Objects.requireNonNull(fileOrDirectory.getParentFile()).getAbsolutePath())) {
-      fileOrDirectory.delete();
+      if (!fileOrDirectory.delete()) {
+        Log.w(TAG, "Failed to delete file/directory: " + fileOrDirectory.getAbsolutePath());
+      }
     }
   }
 
@@ -226,7 +228,10 @@ public class FileManager {
 
     int digitGroups = (int) (Math.log10(size) / LOG_BASE);
     return String.format(
-        Locale.getDefault(), SIZE_FORMAT, size / Math.pow(SIZE_UNIT_BASE, digitGroups), SIZE_UNITS[digitGroups]);
+        Locale.getDefault(),
+        SIZE_FORMAT,
+        size / Math.pow(SIZE_UNIT_BASE, digitGroups),
+        SIZE_UNITS[digitGroups]);
   }
 
   /** Callback interface for file operations. */
@@ -235,7 +240,7 @@ public class FileManager {
 
     void onError(String error);
   }
-  
+
   /** Create timestamp string for file naming */
   private static String createTimestamp() {
     return new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault()).format(new Date());

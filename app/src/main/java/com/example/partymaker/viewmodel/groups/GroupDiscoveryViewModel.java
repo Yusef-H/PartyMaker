@@ -388,9 +388,6 @@ public class GroupDiscoveryViewModel extends BaseViewModel {
     }
 
     // Check if group allows new members
-    if (!group.isCanAdd()) {
-      return false;
-    }
 
     // Check if group is public
     return false;
