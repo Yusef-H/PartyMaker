@@ -207,10 +207,8 @@ public class LoginActivity extends AppCompatActivity {
 
   private void handleAuthenticationSuccess(@Nullable Boolean isAuthenticated) {
     if (Boolean.TRUE.equals(isAuthenticated)) {
-      // Show simple success message instead of problematic animation
-      UiStateManager.showSuccess(rootView, "🎉 Login successful! Welcome back!");
-
-      // Delay navigation briefly to show success message
+      // Success message is already shown by AuthViewModel through handleSuccessMessage()
+      // Just handle navigation after a brief delay
       ThreadUtils.runOnMainThreadDelayed(
           () -> {
             saveUserPreferences();
