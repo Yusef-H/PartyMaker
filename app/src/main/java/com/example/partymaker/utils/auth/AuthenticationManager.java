@@ -143,13 +143,11 @@ public class AuthenticationManager {
    * Logs out the current user
    *
    * @param context Application context
-   * @return true if logout was successful, false otherwise
    */
-  public static boolean logout(Context context) {
+  public static void logout(Context context) {
     Log.d(TAG, "Logging out user");
-    boolean authCleared = clearAuthData(context);
+    clearAuthData(context);
     clearAllUserData(context);
-    return authCleared;
   }
 
   /**
@@ -278,53 +276,6 @@ public class AuthenticationManager {
 
   /**
    * @param context Application context
-   * @return true if Firebase Auth is available, false otherwise
-   * @deprecated Use isLoggedIn() instead Checks if Firebase Auth is available and working
-   */
-  @Deprecated
-  public static boolean isFirebaseAuthAvailable(Context context) {
-    try {
-      FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-      return currentUser != null;
-    } catch (Exception e) {
-      Log.e(TAG, "Error checking Firebase Auth availability", e);
-      return false;
-    }
-  }
-
-  /**
-   * @param context Application context
-   * @param email User email
-   * @deprecated Use saveUserEmail() instead Sets the current user session for server mode
-   */
-  @Deprecated
-  public static void setCurrentUserSession(Context context, String email) {
-    try {
-      if (context == null || email == null || email.isEmpty()) {
-        return;
-      }
-
-      SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-      SharedPreferences.Editor editor = prefs.edit();
-
-      editor.putBoolean(KEY_SERVER_MODE_ACTIVE, true);
-      editor.putString(KEY_SERVER_MODE_EMAIL, email);
-      editor.putBoolean(KEY_SESSION_ACTIVE, true);
-      editor.putLong(KEY_LAST_LOGIN_TIME, System.currentTimeMillis());
-
-      editor.apply();
-
-      // Also save to our new method
-      saveUserEmail(context, email);
-
-      Log.d(TAG, "Session set for user: " + email);
-    } catch (Exception e) {
-      Log.e(TAG, "Error setting user session", e);
-    }
-  }
-
-  /**
-   * @param context Application context
    * @return true if user is authenticated, false otherwise
    * @deprecated Use isLoggedIn() instead Checks if user is authenticated with active session
    */
@@ -371,7 +322,7 @@ public class AuthenticationManager {
       String email = prefs.getString(KEY_SERVER_MODE_EMAIL, null);
 
       if (email != null) {
-        setCurrentUserSession(context, email);
+        saveUserEmail(context, email);
         Log.d(TAG, "Session refreshed for user: " + email);
       }
     } catch (Exception e) {

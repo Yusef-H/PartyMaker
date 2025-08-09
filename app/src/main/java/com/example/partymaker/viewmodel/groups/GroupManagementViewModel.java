@@ -172,7 +172,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
     Log.d(TAG, "Loading group management data for: " + currentGroupKey);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.getGroup(
                 currentGroupKey,
@@ -197,7 +197,7 @@ public class GroupManagementViewModel extends BaseViewModel {
       return;
     }
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           // Get member keys from group
           HashMap<String, Object> memberKeys = group.getFriendKeys();
@@ -257,7 +257,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
   /** Loads available users that can be invited to the group. */
   public void loadAvailableUsers() {
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             userRepository.getAllUsers(
                 new UserRepository.Callback<>() {
@@ -295,7 +295,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
     Log.d(TAG, "Adding member: " + user.getUsername());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.addMemberToGroup(
                 currentGroupKey,
@@ -339,7 +339,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
     Log.d(TAG, "Removing member: " + user.getUsername());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.removeMemberFromGroup(
                 currentGroupKey,
@@ -416,7 +416,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
     Log.d(TAG, "Updating group settings: " + updatedGroup.getGroupName());
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.updateGroup(
                 updatedGroup,
@@ -450,7 +450,7 @@ public class GroupManagementViewModel extends BaseViewModel {
 
     Log.d(TAG, "Deleting group: " + currentGroupKey);
 
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () ->
             groupRepository.deleteGroup(
                 currentGroupKey,

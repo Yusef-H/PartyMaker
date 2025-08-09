@@ -168,8 +168,9 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
         Group group = getItem(position);
         view.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
         ContentSharingManager.sharePartyText(context, group);
+        return true;
       }
-      return true;
+      return false;
     }
 
     /** Clears the ViewHolder content to prevent showing old data during recycling */

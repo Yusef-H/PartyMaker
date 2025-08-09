@@ -267,7 +267,7 @@ public class GroupCreationViewModel extends BaseViewModel {
     selectedImageUri.setValue(imageUri);
 
     // Compress and process the image
-    ThreadUtils.runOnBackground(
+    ThreadUtils.runInBackground(
         () -> {
           try {
             imageUploadInProgress.postValue(true);
@@ -331,7 +331,7 @@ public class GroupCreationViewModel extends BaseViewModel {
 
           Log.d(TAG, "Creating new group with admin: " + adminKey);
 
-          ThreadUtils.runOnBackground(
+          ThreadUtils.runInBackground(
               () -> {
                 try {
                   // Create group object

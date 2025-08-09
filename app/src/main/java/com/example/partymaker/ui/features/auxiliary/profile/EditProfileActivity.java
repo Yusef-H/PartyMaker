@@ -289,6 +289,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 dataSnapshot -> {
                   if (dataSnapshot.exists()) {
                     // Use Map instead of User.class to avoid Firebase serialization issues
+                    @SuppressWarnings("unchecked")
                     Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
                     if (userData != null) {
                       // Update UI with user data

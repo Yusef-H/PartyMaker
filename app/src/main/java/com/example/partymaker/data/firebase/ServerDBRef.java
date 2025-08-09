@@ -23,7 +23,7 @@ public class ServerDBRef {
   private static final FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
 
   // Firebase Auth (kept for authentication operations)
-  public static FirebaseAuth Auth = FirebaseAuth.getInstance();
+  public static final FirebaseAuth Auth = FirebaseAuth.getInstance();
   public static String CurrentUser;
 
   /**

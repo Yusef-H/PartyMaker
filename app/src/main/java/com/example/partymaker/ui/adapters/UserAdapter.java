@@ -92,7 +92,7 @@ public class UserAdapter extends ArrayAdapter<User> {
   private void setupUserImageView(View view, User user) {
     ImageView imageView = view.findViewById(R.id.imgUserListProfile);
 
-    if (AuthenticationManager.isFirebaseAuthAvailable(context)) {
+    if (AuthenticationManager.isLoggedIn(context)) {
       loadUserProfileImage(imageView, user);
     } else {
       setDefaultImage(imageView);
@@ -101,13 +101,24 @@ public class UserAdapter extends ArrayAdapter<User> {
 
   private void loadUserProfileImage(ImageView imageView, User user) {
     String email = getProcessedEmail(user);
-    String imagePath = "Users/" + email;
+
+    // Try primary path first: UsersImageProfile/Users/[email]
+    String primaryPath = "UsersImageProfile/Users/" + email;
 
     DBRef.refStorage
-        .child(imagePath)
+        .child(primaryPath)
         .getDownloadUrl()
         .addOnSuccessListener(uri -> loadImageWithPicasso(imageView, uri))
-        .addOnFailureListener(exception -> setDefaultImage(imageView));
+        .addOnFailureListener(
+            primaryException -> {
+              // Try fallback path: Users/[email]
+              String fallbackPath = "Users/" + email;
+              DBRef.refStorage
+                  .child(fallbackPath)
+                  .getDownloadUrl()
+                  .addOnSuccessListener(uri -> loadImageWithPicasso(imageView, uri))
+                  .addOnFailureListener(fallbackException -> setDefaultImage(imageView));
+            });
   }
 
   private String getProcessedEmail(User user) {

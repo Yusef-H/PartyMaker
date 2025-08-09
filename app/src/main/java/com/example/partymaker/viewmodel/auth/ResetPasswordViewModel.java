@@ -232,32 +232,33 @@ public class ResetPasswordViewModel extends BaseViewModel {
       if (countdownTask != null && !countdownTask.isDone()) {
         countdownTask.cancel(false);
       }
-      
+
       // Create scheduler if needed
       if (scheduler == null || scheduler.isShutdown()) {
         scheduler = Executors.newSingleThreadScheduledExecutor();
       }
-      
+
       // Schedule periodic updates every second
-      countdownTask = scheduler.scheduleAtFixedRate(
-          () -> {
-            ThreadUtils.runOnMainThread(
-                () -> {
-                  boolean canSend = canSendResetEmail();
-                  canSendReset.setValue(canSend);
-                  
-                  if (canSend) {
-                    setInfo("You can now request another password reset");
-                    // Cancel the task once we can send again
-                    if (countdownTask != null) {
-                      countdownTask.cancel(false);
-                    }
-                  }
-                });
-          },
-          0, // Initial delay
-          1, // Period
-          TimeUnit.SECONDS);
+      countdownTask =
+          scheduler.scheduleAtFixedRate(
+              () -> {
+                ThreadUtils.runOnMainThread(
+                    () -> {
+                      boolean canSend = canSendResetEmail();
+                      canSendReset.setValue(canSend);
+
+                      if (canSend) {
+                        setInfo("You can now request another password reset");
+                        // Cancel the task once we can send again
+                        if (countdownTask != null) {
+                          countdownTask.cancel(false);
+                        }
+                      }
+                    });
+              },
+              0, // Initial delay
+              1, // Period
+              TimeUnit.SECONDS);
     }
   }
 

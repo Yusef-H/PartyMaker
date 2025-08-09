@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -19,6 +20,7 @@
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
     <!-- Camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -90,11 +92,12 @@
         <activity android:name=".ui.features.groups.members.MembersInvitedActivity" />
         <activity
             android:name=".ui.features.groups.members.FriendsRemoveActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
         <activity android:name=".ui.features.groups.members.UsersListActivity" />
         <activity android:name=".ui.features.groups.discovery.JoinGroupActivity"
             android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
-        <activity android:name=".ui.features.groups.management.AdminSettingsActivity" />
+        <activity android:name=".ui.features.groups.management.AdminSettingsActivity"
+            android:theme="@style/Theme.PartyMaker.NoWindowBackground" />
         <activity android:name=".ui.features.groups.main.PartyMainActivity" />
         <activity
             android:name=".ui.features.groups.discovery.PublicGroupsActivity"

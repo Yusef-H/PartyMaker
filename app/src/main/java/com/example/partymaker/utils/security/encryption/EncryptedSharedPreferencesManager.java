@@ -349,7 +349,9 @@ public class EncryptedSharedPreferencesManager {
         } else if (value instanceof Float) {
           editor.putFloat(key, (Float) value);
         } else if (value instanceof Set) {
-          editor.putStringSet(key, (Set<String>) value);
+          @SuppressWarnings("unchecked")
+          Set<String> stringSet = (Set<String>) value;
+          editor.putStringSet(key, stringSet);
         }
       }
 

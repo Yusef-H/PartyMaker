@@ -39,17 +39,32 @@
                     android:src="@drawable/ic_search"
                     app:tint="@color/gray" />
 
-                <TextView
-                    android:id="@+id/search_hint"
+                <EditText
+                    android:id="@+id/etSearchGroups"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/search_your_parties"
+                    android:hint="@string/search_your_parties"
                     android:textAppearance="@style/TextAppearance.PartyMaker.BodyLarge"
-                    android:textColor="@color/gray"
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/gray"
                     android:background="@android:color/transparent"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:maxLines="1" />
+
+                <ImageView
+                    android:id="@+id/clearSearch"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/clear_search"
+                    android:src="@drawable/ic_close"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:visibility="gone"
+                    app:tint="@color/gray" />
 
                 <ImageView
                     android:id="@+id/voice_search"

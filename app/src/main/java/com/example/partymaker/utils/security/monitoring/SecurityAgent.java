@@ -1,5 +1,6 @@
 package com.example.partymaker.utils.security.monitoring;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -336,6 +337,7 @@ public class SecurityAgent {
     }
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
   private boolean isDataEncrypted() {
     // Check if app uses encryption for data storage
     try {
@@ -363,6 +365,7 @@ public class SecurityAgent {
     return isEncryptedSharedPreferencesUsed();
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
   private boolean isEncryptedSharedPreferencesUsed() {
     // Check if EncryptedSharedPreferences is used in the app
     try {
@@ -413,6 +416,7 @@ public class SecurityAgent {
     }
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
   private boolean isCodeObfuscated() {
     // Simple check - in reality would need more sophisticated analysis
     try {
@@ -533,6 +537,7 @@ public class SecurityAgent {
   }
 
   /** Get expected app signature hash for verification */
+  @SuppressLint("DiscouragedPrivateApi")
   private String getExpectedSignatureHash() {
     // In production, this should be loaded from a secure configuration
     // or BuildConfig to prevent hardcoding sensitive values in source code
@@ -550,22 +555,31 @@ public class SecurityAgent {
   /** Check if SSL pinning is enabled in network security config */
   private boolean isSSLPinningEnabled() {
     try {
-      // Check network security config for SSL pinning configuration
-      int networkConfigId =
-          context
-              .getResources()
-              .getIdentifier("network_security_config", "xml", context.getPackageName());
+      // Check if network security config is present in the application info
+      // Use reflection to avoid API level issues
+      android.content.pm.ApplicationInfo appInfo = context.getApplicationInfo();
 
-      if (networkConfigId != 0) {
-        // Network security config exists - assume SSL pinning is configured
-        // In a real implementation, you would parse the XML to verify pin-set entries
-        Log.d(TAG, "Network security config found");
-        return true;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        try {
+          java.lang.reflect.Field field = appInfo.getClass().getField("networkSecurityConfigRes");
+          int configRes = field.getInt(appInfo);
+          if (configRes != 0) {
+            // Network security config exists - assume SSL pinning is configured
+            // In a real implementation, you would parse the XML to verify pin-set entries
+            Log.d(TAG, "Network security config found");
+            return true;
+          }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+          Log.d(TAG, "networkSecurityConfigRes field not available on this API level");
+          // Field not available on this API level, continue with other checks
+        }
       }
 
       // Check if SSLPinningManager class is being used
       try {
-        Class.forName("com.example.partymaker.utils.security.network.SSLPinningManager");
+        @SuppressLint("DiscouragedPrivateApi")
+        Class<?> sslPinningClass =
+            Class.forName("com.example.partymaker.utils.security.network.SSLPinningManager");
         Log.d(TAG, "SSLPinningManager class found");
         return true;
       } catch (ClassNotFoundException e) {

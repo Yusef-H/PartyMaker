@@ -1,6 +1,5 @@
 package com.example.partymaker.ui.features.auxiliary.chatbot;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.LocaleList;
 import android.widget.EditText;
@@ -49,7 +48,6 @@ public class GptChatActivity extends AppCompatActivity {
   // ------------------------------------------------------------------------
   // onCreate
   // ------------------------------------------------------------------------
-  @SuppressLint("NotifyDataSetChanged")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -93,7 +91,7 @@ public class GptChatActivity extends AppCompatActivity {
                 + "How can I help?");
     history.add(welcome);
     visibleMessages.add(welcome); // NEW
-    chatAdapter.notifyDataSetChanged();
+    chatAdapter.notifyItemInserted(0);
 
     // ---------- Keyboard hint to English ----------
     messageInput.setImeHintLocales(new LocaleList(new Locale("en")));
@@ -184,13 +182,13 @@ public class GptChatActivity extends AppCompatActivity {
   // ------------------------------------------------------------------------
   // Send user message
   // ------------------------------------------------------------------------
-  @SuppressLint("NotifyDataSetChanged")
   private void sendMessage(String userText) {
     // ---------- User message ----------
     ChatMessageGpt userMsg = new ChatMessageGpt("user", userText);
+    int insertPosition = visibleMessages.size();
     visibleMessages.add(userMsg); // display
     history.add(userMsg); // for history
-    chatAdapter.notifyDataSetChanged();
+    chatAdapter.notifyItemInserted(insertPosition);
     chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
 
     // ---------- Call OpenAI ----------
@@ -204,8 +202,9 @@ public class GptChatActivity extends AppCompatActivity {
             ThreadUtils.runOnMainThread(
                 () -> {
                   history.add(assistantMsg); // for continued context
+                  int assistantInsertPosition = visibleMessages.size();
                   visibleMessages.add(assistantMsg); // for display
-                  chatAdapter.notifyDataSetChanged();
+                  chatAdapter.notifyItemInserted(assistantInsertPosition);
                   chatRecyclerView.scrollToPosition(visibleMessages.size() - 1);
                 });
 
