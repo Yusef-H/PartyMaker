@@ -97,4 +97,25 @@
 
     <!-- Modern accent colors for various UI states -->
     <color name="modern_accent_teal">#00BCD4</color>
+    
+    <!-- Gradient colors for premium backgrounds -->
+    <color name="gradient_start_primary">#0E81D1</color>
+    <color name="gradient_end_primary">#0A4F7A</color>
+    
+    <!-- Ripple effect colors -->
+    <color name="ripple_primary">#1A0E81D1</color>
+    
+    <!-- Badge colors -->
+    <color name="badge_new">#FF4081</color>
+    
+    <!-- Surface colors -->
+    <color name="surface_light">#FAFAFA</color>
+    
+    <!-- Status indicator colors -->
+    <color name="status_online">#4CAF50</color>
+    
+    <!-- Neutral colors for modern UI -->
+    <color name="neutral_500">#9E9E9E</color>
+    <color name="neutral_700">#616161</color>
+    <color name="neutral_900">#212121</color>
 </resources>
