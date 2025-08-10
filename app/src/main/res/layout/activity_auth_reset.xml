@@ -19,7 +19,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="54dp"
         android:contentDescription="@string/todo"
-        app:srcCompat="@drawable/ic_cake_white" />
+        app:srcCompat="@drawable/ic_cake_cyan" />
 
     <TextView
         android:id="@+id/tvForgotPass"
