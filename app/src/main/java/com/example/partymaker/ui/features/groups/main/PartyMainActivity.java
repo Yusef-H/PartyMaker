@@ -1583,7 +1583,7 @@ public class PartyMainActivity extends AppCompatActivity {
       Dialog dialog =
           new Dialog(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-      dialog.setContentView(R.layout.helper_map_view);
+      dialog.setContentView(R.layout.component_map_view);
 
       // Set up the close button
       Button btnCloseMap = dialog.findViewById(R.id.btnCloseMap);
