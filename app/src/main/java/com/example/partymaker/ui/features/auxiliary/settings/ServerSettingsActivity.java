@@ -8,8 +8,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.RadioGroup;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.example.partymaker.R;
 import com.example.partymaker.utils.media.FileManager;
 import com.example.partymaker.utils.server.ServerModeManager;
@@ -22,6 +27,8 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
   // SharedPreferences keys
   private static final String PREF_SERVER_URL = "server_url";
+  private static final String PREFS_NAME = "PartyMakerPrefs";
+  private static final String KEY_THEME_MODE = "theme_mode";
 
   // Default server configuration
   private static final String DEFAULT_SERVER_URL = "https://partymaker.onrender.com";
@@ -40,11 +47,19 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
   private SwitchCompat switchServerMode;
   private EditText editServerUrl;
+  private RadioGroup themeRadioGroup;
+  private MaterialRadioButton radioLight;
+  private MaterialRadioButton radioDark;
+  private MaterialRadioButton radioSystem;
+  private SharedPreferences preferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main_server_settings);
+
+    // Initialize preferences
+    preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
     setupActionBar();
 
@@ -57,6 +72,7 @@ public class ServerSettingsActivity extends AppCompatActivity {
   private void loadSettings() {
     configureServerModeSwitch();
     loadServerUrl();
+    loadThemePreference();
   }
 
   /** Saves the current settings and finishes the activity. */
@@ -108,6 +124,10 @@ public class ServerSettingsActivity extends AppCompatActivity {
   private void initializeViews() {
     switchServerMode = findViewById(R.id.switch_server_mode);
     editServerUrl = findViewById(R.id.edit_server_url);
+    themeRadioGroup = findViewById(R.id.themeRadioGroup);
+    radioLight = findViewById(R.id.radioLight);
+    radioDark = findViewById(R.id.radioDark);
+    radioSystem = findViewById(R.id.radioSystem);
   }
 
   /** Sets up click listeners for buttons. */
@@ -117,6 +137,24 @@ public class ServerSettingsActivity extends AppCompatActivity {
 
     btnSaveSettings.setOnClickListener(v -> saveSettings());
     btnClearCache.setOnClickListener(v -> clearCache());
+    
+    // Setup theme change listener
+    themeRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+      int themeMode;
+      if (checkedId == R.id.radioLight) {
+        themeMode = AppCompatDelegate.MODE_NIGHT_NO;
+      } else if (checkedId == R.id.radioDark) {
+        themeMode = AppCompatDelegate.MODE_NIGHT_YES;
+      } else {
+        themeMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+      }
+      
+      // Save preference
+      preferences.edit().putInt(KEY_THEME_MODE, themeMode).apply();
+      
+      // Apply theme
+      AppCompatDelegate.setDefaultNightMode(themeMode);
+    });
   }
 
   /** Configures the server mode switch (always enabled and disabled for user interaction). */
@@ -201,5 +239,29 @@ public class ServerSettingsActivity extends AppCompatActivity {
   private void showCacheCleanupCompletionMessage(String cacheSizeFormatted) {
     String message = String.format(MESSAGE_CACHE_CLEARED_FORMAT, cacheSizeFormatted);
     Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+  }
+  
+  /** Loads the theme preference and updates UI. */
+  private void loadThemePreference() {
+    int currentMode = preferences.getInt(KEY_THEME_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    
+    switch (currentMode) {
+      case AppCompatDelegate.MODE_NIGHT_NO:
+        radioLight.setChecked(true);
+        break;
+      case AppCompatDelegate.MODE_NIGHT_YES:
+        radioDark.setChecked(true);
+        break;
+      default:
+        radioSystem.setChecked(true);
+        break;
+    }
+  }
+  
+  /** Static method to apply saved theme preference on app startup */
+  public static void applyThemeFromPreferences(Context context) {
+    SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    int themeMode = prefs.getInt(KEY_THEME_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    AppCompatDelegate.setDefaultNightMode(themeMode);
   }
 }

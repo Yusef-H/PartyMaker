@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
@@ -33,6 +35,8 @@ import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.security.encryption.GroupMessageEncryption;
+import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.example.partymaker.viewmodel.groups.GroupChatViewModel;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +61,8 @@ public class ChatActivity extends AppCompatActivity {
   private ImageButton attachButton;
   private TextView tvPartyName;
   private TextView tvPartyMembers;
+  private ImageView imgPartyAvatar;
+  private MaterialToolbar toolbar;
   private String groupKey;
   private HashMap<String, Object> messageKeys;
   private FirebaseServerClient serverClient;
@@ -84,6 +90,8 @@ public class ChatActivity extends AppCompatActivity {
     if (actionBar != null) {
       actionBar.setTitle("Chat");
       actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0081d1")));
+      actionBar.setDisplayHomeAsUpEnabled(true); // Enable back button
+      actionBar.setDisplayShowHomeEnabled(true);
     }
 
     // Get data from intent directly
@@ -145,6 +153,11 @@ public class ChatActivity extends AppCompatActivity {
     attachButton = findViewById(R.id.btnAttach);
     tvPartyName = findViewById(R.id.tvPartyName);
     tvPartyMembers = findViewById(R.id.tvPartyMembers);
+    imgPartyAvatar = findViewById(R.id.imgPartyAvatar);
+    toolbar = findViewById(R.id.toolbar);
+    
+    // Setup toolbar navigation
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
     
     // Setup RecyclerView
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -955,6 +968,19 @@ public class ChatActivity extends AppCompatActivity {
                 if (actionBar != null) {
                   actionBar.setTitle(group.getGroupName());
                 }
+                
+                // Load group image if available
+                if (group.getGroupImageUrl() != null && !group.getGroupImageUrl().isEmpty()) {
+                  Glide.with(ChatActivity.this)
+                      .load(group.getGroupImageUrl())
+                      .placeholder(R.drawable.ic_celebration)
+                      .error(R.drawable.ic_celebration)
+                      .circleCrop()
+                      .into(imgPartyAvatar);
+                } else {
+                  // Keep default party icon if no image URL
+                  imgPartyAvatar.setImageResource(R.drawable.ic_celebration);
+                }
               });
             }
           }
@@ -964,5 +990,22 @@ public class ChatActivity extends AppCompatActivity {
             Log.e(TAG, "Failed to load group info: " + errorMessage);
           }
         });
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here.
+    if (item.getItemId() == android.R.id.home) {
+      // Handle the back button click
+      onBackPressed();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+  
+  @Override
+  public void onBackPressed() {
+    // Clean up resources if needed
+    super.onBackPressed();
   }
 }
