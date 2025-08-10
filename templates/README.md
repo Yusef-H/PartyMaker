@@ -163,9 +163,8 @@ firebase.storage.bucket=partymaker-app.appspot.com
 ## Support
 
 If you encounter issues with configuration:
-1. Check `CLAUDE.md` file for additional guidelines
-2. Refer to official documentation for each service
-3. Contact the development team for assistance
+1. Refer to official documentation for each service
+2. Contact the development team for assistance
 
 ---
 
