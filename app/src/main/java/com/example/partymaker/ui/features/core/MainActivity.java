@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
   private MainActivityViewModel viewModel;
   private String currentUserKey;
   private GroupAdapter groupAdapter;
-  private List<Group> allGroups = new ArrayList<>();
-  private List<Group> filteredGroups = new ArrayList<>();
+  private final List<Group> allGroups = new ArrayList<>();
+  private final List<Group> filteredGroups = new ArrayList<>();
 
   // UI State Management
   private LoadingStateManager loadingStateManager;

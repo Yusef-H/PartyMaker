@@ -59,7 +59,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private Object groupsRef;
   private GroupAdapter allGroupsAdapter;
   private ArrayList<Group> allGroups = new ArrayList<>();
-  private ArrayList<Group> filteredGroups = new ArrayList<>();
+  private final ArrayList<Group> filteredGroups = new ArrayList<>();
   private ChipGroup chipGroupFilters;
   private EditText searchEditText;
   private String currentSearchText = "";
