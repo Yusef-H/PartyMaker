@@ -27,6 +27,9 @@
     <!-- Additional colors -->
     <color name="green">#4CAF50</color>
     <color name="darkSlate">#455A64</color>
+    
+    <!-- Shimmer colors -->
+    <color name="shimmer_color">#DDDDDD</color>
 
     <!-- UI State Colors -->
     <color name="success_green">#4CAF50</color>
