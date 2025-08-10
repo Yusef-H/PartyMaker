@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shimmer loading layout for MainActivity -->
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shimmer_view_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="16dp"
+    shimmer:shimmer_auto_start="true"
+    shimmer:shimmer_base_color="#F3F3F3"
+    shimmer:shimmer_highlight_color="#FFFFFF"
+    shimmer:shimmer_duration="1500"
+    shimmer:shimmer_repeat_count="-1"
+    shimmer:shimmer_repeat_mode="restart"
+    shimmer:shimmer_shape="linear"
+    shimmer:shimmer_direction="left_to_right">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Include multiple shimmer items to simulate a list -->
+        <include layout="@layout/shimmer_group_item" />
+        <include layout="@layout/shimmer_group_item" />
+        <include layout="@layout/shimmer_group_item" />
+        <include layout="@layout/shimmer_group_item" />
+        <include layout="@layout/shimmer_group_item" />
+        <include layout="@layout/shimmer_group_item" />
+
+    </LinearLayout>
+
+</com.facebook.shimmer.ShimmerFrameLayout>

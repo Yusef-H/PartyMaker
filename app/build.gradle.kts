@@ -227,6 +227,7 @@ dependencies {
 
     // --- Animations ---
     implementation(libs.lottie)
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     // --- OpenAI & Networking ---
     implementation(libs.openai.client)
