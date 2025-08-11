@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.partymaker.R;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
 import com.example.partymaker.data.model.Group;
@@ -59,12 +60,14 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private Object groupsRef;
   private GroupAdapter allGroupsAdapter;
   private ArrayList<Group> allGroups = new ArrayList<>();
-  private ArrayList<Group> filteredGroups = new ArrayList<>();
+  private final ArrayList<Group> filteredGroups = new ArrayList<>();
   private ChipGroup chipGroupFilters;
   private EditText searchEditText;
   private String currentSearchText = "";
   private int currentFilterChipId = R.id.chipAll;
   private SwipeRefreshLayout swipeRefreshLayout;
+  private ShimmerFrameLayout shimmerFrameLayout;
+  private RecyclerView recyclerView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -136,12 +139,15 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   private void initializeViews() {
-    RecyclerView lv1 = findViewById(R.id.lv5);
-    if (lv1 != null) {
-      lv1.setLayoutManager(new LinearLayoutManager(this));
+    recyclerView = findViewById(R.id.lv5);
+    if (recyclerView != null) {
+      recyclerView.setLayoutManager(new LinearLayoutManager(this));
       allGroupsAdapter = new GroupAdapter(this, this::navigateToJoinGroup);
-      lv1.setAdapter(allGroupsAdapter);
+      recyclerView.setAdapter(allGroupsAdapter);
     }
+
+    // Initialize Shimmer
+    shimmerFrameLayout = findViewById(R.id.shimmer_view_container);
 
     // Initialize chip filter
     chipGroupFilters = findViewById(R.id.chipGroupFilters);
@@ -241,6 +247,13 @@ public class PublicGroupsActivity extends AppCompatActivity {
   }
 
   public void loadPublicGroups() {
+    // Show Shimmer only if no data exists
+    if (allGroups.isEmpty() && shimmerFrameLayout != null) {
+      shimmerFrameLayout.setVisibility(android.view.View.VISIBLE);
+      shimmerFrameLayout.startShimmer();
+      recyclerView.setVisibility(android.view.View.GONE);
+    }
+    
     initializeGroupsRef();
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     serverClient.getGroups(
@@ -248,6 +261,8 @@ public class PublicGroupsActivity extends AppCompatActivity {
           @Override
           public void onSuccess(Map<String, Group> data) {
             processServerGroupData(data);
+            // Hide Shimmer
+            hideShimmer();
             // Stop refresh animation
             if (swipeRefreshLayout != null) {
               swipeRefreshLayout.setRefreshing(false);
@@ -259,12 +274,24 @@ public class PublicGroupsActivity extends AppCompatActivity {
             Toast.makeText(
                     PublicGroupsActivity.this, "Server error: " + errorMessage, Toast.LENGTH_SHORT)
                 .show();
+            // Hide Shimmer
+            hideShimmer();
             // Stop refresh animation even on error
             if (swipeRefreshLayout != null) {
               swipeRefreshLayout.setRefreshing(false);
             }
           }
         });
+  }
+  
+  private void hideShimmer() {
+    if (shimmerFrameLayout != null) {
+      shimmerFrameLayout.stopShimmer();
+      shimmerFrameLayout.setVisibility(android.view.View.GONE);
+    }
+    if (recyclerView != null) {
+      recyclerView.setVisibility(android.view.View.VISIBLE);
+    }
   }
 
   private void initializeGroupsRef() {
@@ -277,6 +304,9 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private void processServerGroupData(Map<String, Group> groupData) {
     ArrayList<Group> groupList = filterPublicGroups(groupData);
     allGroups = new ArrayList<>(groupList);
+
+    // Hide Shimmer when data is processed
+    hideShimmer();
 
     if (!allGroups.isEmpty()) {
       // Apply initial filter and search

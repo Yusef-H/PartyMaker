@@ -157,6 +157,14 @@
                 android:paddingBottom="96dp"
                 tools:listitem="@layout/item_group" />
 
+            <!-- Shimmer Loading Effect -->
+            <include
+                android:id="@+id/shimmer_view_container"
+                layout="@layout/shimmer_main_activity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
             <!-- Empty State -->
             <LinearLayout
                 android:id="@+id/emptyStateLayout"

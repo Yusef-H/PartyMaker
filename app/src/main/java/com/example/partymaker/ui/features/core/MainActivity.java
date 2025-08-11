@@ -43,6 +43,7 @@ import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,13 +81,14 @@ public class MainActivity extends AppCompatActivity {
   private View rootView;
   private EditText searchEditText;
   private ImageView clearSearchButton;
+  private ShimmerFrameLayout shimmerFrameLayout;
 
   // Data Components
   private MainActivityViewModel viewModel;
   private String currentUserKey;
   private GroupAdapter groupAdapter;
-  private List<Group> allGroups = new ArrayList<>();
-  private List<Group> filteredGroups = new ArrayList<>();
+  private final List<Group> allGroups = new ArrayList<>();
+  private final List<Group> filteredGroups = new ArrayList<>();
 
   // UI State Management
   private LoadingStateManager loadingStateManager;
@@ -153,8 +155,27 @@ public class MainActivity extends AppCompatActivity {
 
   private void showLoadingStateInternal(boolean show, boolean showToast) {
     try {
+      // Don't show loading state if we already have data (cached)
+      boolean hasExistingData = groupAdapter != null && groupAdapter.getItemCount() > 0;
+      
+      if (show && !hasExistingData) {
+        // Only show Shimmer for initial load
+        if (shimmerFrameLayout != null) {
+          shimmerFrameLayout.setVisibility(View.VISIBLE);
+          shimmerFrameLayout.startShimmer();
+          groupsRecyclerView.setVisibility(View.GONE);
+        }
+        displayLoadingToastIfRequested(true, showToast);
+      } else {
+        // Hide loading states
+        if (shimmerFrameLayout != null) {
+          shimmerFrameLayout.stopShimmer();
+          shimmerFrameLayout.setVisibility(View.GONE);
+        }
+        groupsRecyclerView.setVisibility(View.VISIBLE);
+      }
+      
       updateRecyclerViewVisibility(show);
-      displayLoadingToastIfRequested(show, showToast);
     } catch (Exception e) {
       Log.e(TAG, "Error managing loading state", e);
     }
@@ -262,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
     swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     searchEditText = findViewById(R.id.etSearchGroups);
     clearSearchButton = findViewById(R.id.clearSearch);
+    shimmerFrameLayout = findViewById(R.id.shimmer_view_container);
   }
 
   private void validateCriticalViews() {
@@ -588,6 +610,12 @@ public class MainActivity extends AppCompatActivity {
     groupAdapter.updateItems(groups);
     Log.d(TAG, "Group adapter updated with " + groups.size() + " groups");
 
+    // Hide Shimmer when data is ready
+    if (shimmerFrameLayout != null) {
+      shimmerFrameLayout.stopShimmer();
+      shimmerFrameLayout.setVisibility(View.GONE);
+    }
+
     // Ensure content is properly visible after update
     if (groupsRecyclerView != null) {
       groupsRecyclerView.setVisibility(View.VISIBLE);
@@ -689,10 +717,17 @@ public class MainActivity extends AppCompatActivity {
   private void showLoadingIndicator() {
     // Only show loading overlay for initial load or force refresh
     if (groupAdapter == null || groupAdapter.getItemCount() == 0) {
+      // Show Shimmer for initial load
+      if (shimmerFrameLayout != null) {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
+        groupsRecyclerView.setVisibility(View.GONE);
+      }
       loadingStateManager.showNetworkSync("Loading your parties...");
     } else {
       // For refresh with existing data, just show subtle loading feedback
       Log.d(TAG, "Refreshing existing data - minimal loading feedback");
+      // Don't show Shimmer when we have cached data
     }
   }
 
@@ -701,6 +736,12 @@ public class MainActivity extends AppCompatActivity {
     loadingStateManager.showContent();
     stopSwipeRefreshIfActive();
 
+    // Hide Shimmer and show RecyclerView
+    if (shimmerFrameLayout != null) {
+      shimmerFrameLayout.stopShimmer();
+      shimmerFrameLayout.setVisibility(View.GONE);
+    }
+    
     // Ensure RecyclerView is fully visible
     if (groupsRecyclerView != null) {
       groupsRecyclerView.setVisibility(View.VISIBLE);
