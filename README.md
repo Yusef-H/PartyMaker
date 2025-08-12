@@ -11,11 +11,8 @@
   <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg" alt="Spring Boot"></a>
 </p>
 
-
-##
 ##
 **PartyMaker** is the smart way to plan any event. Our platform thinks for you - managing invites, coordinating schedules, and keeping everyone connected - so you spend less time organizing and more time celebrating. It's event planning that works.
-##
 ##
 
 ### System Architecture Overview
