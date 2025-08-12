@@ -30,7 +30,7 @@ public class LottieLoadingDemoActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.loading_lottie);
+    setContentView(R.layout.loading_lottie_animation);
 
     handler = new Handler(Looper.getMainLooper());
 

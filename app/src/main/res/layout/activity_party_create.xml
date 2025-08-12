@@ -295,6 +295,6 @@
     </RelativeLayout>
 
     <!-- Bottom Navigation -->
-    <include layout="@layout/helper_bottom_navigation" />
+    <include layout="@layout/component_bottom_navigation" />
 
 </LinearLayout>
