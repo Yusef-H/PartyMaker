@@ -10,31 +10,54 @@ plugins {
 
 buildscript {
     repositories {
+        // Use Google's Maven repository first for Android dependencies
         google()
+        // Use Maven Central for other dependencies  
         mavenCentral()
+        // Use Gradle Plugin Portal for Gradle plugins
+        gradlePluginPortal()
     }
     dependencies {
         // Plugin for managing secrets (API keys, etc.)
         classpath(libs.secrets.gradle.plugin)
+        
+        // Build optimization plugins
+        classpath("com.getkeepsafe.dexcount:dexcount-gradle-plugin:4.0.0")
+        classpath("com.github.ben-manes:gradle-versions-plugin:0.52.0")
     }
 }
 
 // Configure all projects in the build
 allprojects {
+
     // Apply common configurations to all modules
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         compilerOptions {
-            // Enable Java 8 compatibility
+            // Enable Java 11 compatibility 
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
 
-            // Use the experimental Kotlin compiler
-            freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
+            // Kotlin compiler optimizations
+            freeCompilerArgs.addAll(listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xjvm-default=all",
+                "-Xuse-k2" // Use K2 compiler for better performance
+            ))
         }
     }
 
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = JavaVersion.VERSION_11.toString()
         targetCompatibility = JavaVersion.VERSION_11.toString()
+        
+        // Java compiler optimizations
+        options.apply {
+            isIncremental = true
+            isFork = true
+            compilerArgs.addAll(listOf(
+                "-Xlint:none", // Disable lint warnings for faster compilation
+                "-nowarn" // Suppress warnings
+            ))
+        }
     }
 }
 
@@ -48,6 +71,17 @@ tasks.withType<Delete> {
         }.forEach {
             it.delete()
         }
+    }
+}
+
+// Build performance monitoring (configuration cache compatible)
+tasks.register("buildTimeReport") {
+    group = "build performance"
+    description = "Reports build performance metrics"
+    
+    doLast {
+        println("Build performance monitoring available")
+        println("Use --scan flag for detailed build insights")
     }
 }
 
