@@ -5,8 +5,8 @@
 </p>
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square" alt="Project Views">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://openjdk.java.net/projects/jdk/11/"><img src="https://img.shields.io/badge/Java-11-blue" alt="Java Version"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://openjdk.java.net/projects/jdk/11/"><img src="https://img.shields.io/badge/Java-11-yellow" alt="Java Version"></a>
   <a href="https://android-arsenal.com/api?level=33"><img src="https://img.shields.io/badge/API-33%2B-brightgreen.svg?style=flat" alt="Android API"></a>
   <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg" alt="Spring Boot"></a>
 </p>
