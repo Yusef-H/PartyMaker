@@ -9,6 +9,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.security.network.SSLPinningManager;
 import java.io.IOException;
@@ -42,6 +47,9 @@ public class NetworkManager {
   private ConnectivityManager connectivityManager;
   private ConnectivityManager.NetworkCallback networkCallback;
   private SSLPinningManager sslPinningManager;
+  private final Set<NetworkStateListener> listeners = ConcurrentHashMap.newKeySet();
+  private final ScheduledExecutorService retryExecutor = Executors.newScheduledThreadPool(1);
+  private String networkType = "Unknown";
 
   /** Private constructor for singleton pattern. */
   private NetworkManager() {
@@ -101,13 +109,29 @@ public class NetworkManager {
           @Override
           public void onAvailable(@NonNull Network network) {
             Log.d(TAG, "Network available");
+            updateNetworkType();
+            boolean wasOffline = !Boolean.TRUE.equals(isNetworkAvailable.getValue());
             updateNetworkStatus(true);
+            
+            if (wasOffline) {
+              retryPendingRequests();
+            }
           }
 
           @Override
           public void onLost(@NonNull Network network) {
             Log.d(TAG, "Network lost");
+            networkType = "None";
             updateNetworkStatus(false);
+            
+            // Notify listeners of network loss
+            for (NetworkStateListener listener : listeners) {
+              try {
+                listener.onNetworkLost();
+              } catch (Exception e) {
+                Log.e(TAG, "Error notifying network listener of loss", e);
+              }
+            }
           }
 
           @Override
@@ -117,7 +141,14 @@ public class NetworkManager {
                 capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                     && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
             Log.d(TAG, "Network capabilities changed, has internet: " + hasInternet);
+            
+            updateNetworkType();
+            boolean wasOffline = !Boolean.TRUE.equals(isNetworkAvailable.getValue());
             updateNetworkStatus(hasInternet);
+            
+            if (hasInternet && wasOffline) {
+              retryPendingRequests();
+            }
           }
         };
 
@@ -169,6 +200,7 @@ public class NetworkManager {
 
   /** Checks network availability and updates the LiveData. */
   public void checkNetworkAvailability() {
+    updateNetworkType();
     updateNetworkStatus(isNetworkAvailable());
   }
 
@@ -213,7 +245,7 @@ public class NetworkManager {
 
   /** Executes request in background thread */
   private void executeRequestInBackground(Runnable runnable, boolean[] completed) {
-    ThreadUtils.runInBackground(
+    ThreadUtils.executeNetworkTask(
         () -> {
           try {
             runnable.run();
@@ -308,6 +340,164 @@ public class NetworkManager {
   }
 
   /**
+   * Interface for listening to network state changes.
+   */
+  public interface NetworkStateListener {
+    void onNetworkAvailable();
+    void onNetworkLost();
+  }
+  
+  /**
+   * Adds a network state listener.
+   * 
+   * @param listener The listener to add
+   */
+  public void addNetworkStateListener(NetworkStateListener listener) {
+    listeners.add(listener);
+  }
+  
+  /**
+   * Removes a network state listener.
+   * 
+   * @param listener The listener to remove
+   */
+  public void removeNetworkStateListener(NetworkStateListener listener) {
+    listeners.remove(listener);
+  }
+  
+  /**
+   * Gets the current network type.
+   * 
+   * @return String describing the network type (WiFi, Mobile, None, Unknown)
+   */
+  public String getNetworkType() {
+    if (!isNetworkAvailable()) return "None";
+    return networkType;
+  }
+  
+  /**
+   * Updates network type information.
+   */
+  private void updateNetworkType() {
+    if (connectivityManager == null) {
+      networkType = "Unknown";
+      return;
+    }
+    
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+      Network activeNetwork = connectivityManager.getActiveNetwork();
+      NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+      
+      if (capabilities != null) {
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+          networkType = "WiFi";
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+          networkType = "Mobile";
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+          networkType = "Ethernet";
+        } else {
+          networkType = "Other";
+        }
+      } else {
+        networkType = "None";
+      }
+    } else {
+      networkType = "Unknown";
+    }
+  }
+  
+  /**
+   * Retries pending requests when network becomes available.
+   */
+  private void retryPendingRequests() {
+    ThreadUtils.executeNetworkTask(() -> {
+      Log.d(TAG, "Network available - notifying listeners for retry");
+      for (NetworkStateListener listener : listeners) {
+        try {
+          listener.onNetworkAvailable();
+        } catch (Exception e) {
+          Log.e(TAG, "Error notifying network listener", e);
+        }
+      }
+    });
+  }
+  
+  /**
+   * Schedules a network retry after a delay.
+   * 
+   * @param retryAction The action to retry
+   * @param delaySeconds Delay before retry in seconds
+   */
+  public void scheduleRetry(Runnable retryAction, long delaySeconds) {
+    retryExecutor.schedule(() -> {
+      if (isNetworkAvailable()) {
+        ThreadUtils.executeNetworkTask(retryAction);
+      } else {
+        Log.d(TAG, "Network still unavailable, skipping retry");
+      }
+    }, delaySeconds, TimeUnit.SECONDS);
+  }
+  
+  /**
+   * Executes a network operation with automatic retry on failure.
+   * 
+   * @param operation The network operation to execute
+   * @param maxRetries Maximum number of retries
+   * @param retryDelaySeconds Delay between retries in seconds
+   */
+  public void executeWithRetry(Runnable operation, int maxRetries, long retryDelaySeconds) {
+    executeWithRetryInternal(operation, maxRetries, retryDelaySeconds, 0);
+  }
+  
+  /**
+   * Internal method for retry logic with attempt counter.
+   */
+  private void executeWithRetryInternal(Runnable operation, int maxRetries, long retryDelaySeconds, int currentAttempt) {
+    if (!isNetworkAvailable()) {
+      if (currentAttempt < maxRetries) {
+        Log.d(TAG, "Network unavailable, scheduling retry " + (currentAttempt + 1) + "/" + maxRetries);
+        scheduleRetry(() -> executeWithRetryInternal(operation, maxRetries, retryDelaySeconds, currentAttempt + 1), 
+            retryDelaySeconds * (currentAttempt + 1)); // Exponential backoff
+      } else {
+        Log.w(TAG, "Max retries exceeded, giving up on network operation");
+      }
+      return;
+    }
+    
+    try {
+      ThreadUtils.executeNetworkTask(operation);
+    } catch (Exception e) {
+      if (currentAttempt < maxRetries) {
+        Log.w(TAG, "Network operation failed, retrying " + (currentAttempt + 1) + "/" + maxRetries, e);
+        scheduleRetry(() -> executeWithRetryInternal(operation, maxRetries, retryDelaySeconds, currentAttempt + 1), 
+            retryDelaySeconds * (currentAttempt + 1));
+      } else {
+        Log.e(TAG, "Network operation failed after " + maxRetries + " retries", e);
+      }
+    }
+  }
+  
+  /**
+   * Gets network quality estimate based on connection type.
+   * 
+   * @return Quality estimate (Excellent, Good, Fair, Poor)
+   */
+  public String getNetworkQuality() {
+    if (!isNetworkAvailable()) return "None";
+    
+    switch (networkType) {
+      case "WiFi":
+      case "Ethernet":
+        return "Excellent";
+      case "Mobile":
+        // Could be enhanced with actual bandwidth testing
+        return "Good";
+      default:
+        return "Fair";
+    }
+  }
+
+  /**
    * Releases resources used by the NetworkManager. Should be called when the application is
    * terminated.
    */
@@ -320,5 +510,18 @@ public class NetworkManager {
       }
       networkCallback = null;
     }
+    
+    // Shutdown retry executor
+    retryExecutor.shutdown();
+    try {
+      if (!retryExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+        retryExecutor.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      retryExecutor.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
+    
+    listeners.clear();
   }
 }
