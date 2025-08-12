@@ -34,6 +34,7 @@ import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.google.android.material.chip.ChipGroup;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +56,18 @@ public class PublicGroupsActivity extends BaseActivity {
   private static final int WEEK_FILTER = 7;
   private static final String FREE_PRICE = "0";
   private static final String FREE_PRICE_TEXT = "free";
+  
+  // Date format patterns for parsing
+  private static final SimpleDateFormat[] DATE_FORMATS = {
+      new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
+      new SimpleDateFormat("d/MM/yyyy", Locale.getDefault()),
+      new SimpleDateFormat("dd/M/yyyy", Locale.getDefault()),
+      new SimpleDateFormat("d/M/yyyy", Locale.getDefault()),
+      new SimpleDateFormat("dd/MMMM/yyyy", Locale.ENGLISH),
+      new SimpleDateFormat("d/MMMM/yyyy", Locale.ENGLISH),
+      new SimpleDateFormat("dd/MMM/yyyy", Locale.ENGLISH),
+      new SimpleDateFormat("d/MMM/yyyy", Locale.ENGLISH)
+  };
 
   private ArrayList<Group> groups;
   private String userKey;
@@ -469,13 +482,21 @@ public class PublicGroupsActivity extends BaseActivity {
       // Upcoming only filter
       if (filterUpcomingOnly) {
         try {
-          String dateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
-          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-          Date groupDate = sdf.parse(dateStr);
-          if (groupDate != null && groupDate.before(new Date())) {
-            passesFilter = false;
+          if (group.getGroupDays() != null && group.getGroupMonths() != null && group.getGroupYears() != null) {
+            String dateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
+            if (!dateStr.contains("null")) {
+              Date groupDate = parseDate(dateStr);
+              if (groupDate != null && groupDate.before(new Date())) {
+                passesFilter = false;
+              }
+            } else {
+              passesFilter = false; // Invalid date
+            }
+          } else {
+            passesFilter = false; // Missing date components
           }
         } catch (Exception e) {
+          Log.w(TAG, "Error filtering upcoming events", e);
           passesFilter = false;
         }
       }
@@ -527,20 +548,55 @@ public class PublicGroupsActivity extends BaseActivity {
   
   private int compareDates(Group g1, Group g2) {
     try {
+      // Check for null values first
+      if (g1.getGroupDays() == null || g1.getGroupMonths() == null || g1.getGroupYears() == null ||
+          g2.getGroupDays() == null || g2.getGroupMonths() == null || g2.getGroupYears() == null) {
+        return 0;
+      }
+      
       String date1 = g1.getGroupDays() + "/" + g1.getGroupMonths() + "/" + g1.getGroupYears();
       String date2 = g2.getGroupDays() + "/" + g2.getGroupMonths() + "/" + g2.getGroupYears();
       
-      SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-      Date d1 = sdf.parse(date1);
-      Date d2 = sdf.parse(date2);
-      
-      if (d1 != null && d2 != null) {
-        return d1.compareTo(d2);
+      // Check for "null" strings
+      if (date1.contains("null") || date2.contains("null")) {
+        return 0;
       }
+      
+      Date d1 = parseDate(date1);
+      Date d2 = parseDate(date2);
+      
+      if (d1 == null && d2 == null) return 0;
+      if (d1 == null) return 1;
+      if (d2 == null) return -1;
+      
+      return d1.compareTo(d2);
     } catch (Exception e) {
       Log.w(TAG, "Error comparing dates", e);
     }
     return 0;
+  }
+  
+  /**
+   * Parse date string with multiple format support
+   */
+  private Date parseDate(String dateStr) {
+    if (dateStr == null || dateStr.isEmpty() || dateStr.contains("null")) {
+      return null;
+    }
+    
+    // Try each date format
+    for (SimpleDateFormat format : DATE_FORMATS) {
+      try {
+        format.setLenient(false);
+        return format.parse(dateStr);
+      } catch (ParseException e) {
+        // Try next format
+      }
+    }
+    
+    // Log error only once for unparseable dates
+    Log.w(TAG, "Could not parse date: " + dateStr);
+    return null;
   }
   
   private void applyFilter(int chipId) {
@@ -583,10 +639,19 @@ public class PublicGroupsActivity extends BaseActivity {
 
   private boolean isGroupInDateRange(Group group, Calendar startDate, Calendar endDate) {
     try {
+      // Check for null values
+      if (group.getGroupDays() == null || group.getGroupMonths() == null || group.getGroupYears() == null) {
+        return false;
+      }
+      
       String groupDateStr =
           group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
-      SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-      Date groupDate = dateFormat.parse(groupDateStr);
+      
+      if (groupDateStr.contains("null")) {
+        return false;
+      }
+      
+      Date groupDate = parseDate(groupDateStr);
 
       if (groupDate != null) {
         Calendar groupCalendar = Calendar.getInstance();
