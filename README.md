@@ -2,19 +2,18 @@
   <img src="app/src/main/res/drawable/app_showcase.png" alt="PartyMaker Logo" width="400" style="max-width:100%;">
 </p>
 
-<h1 align="center">PartyMaker</h1>
-
 <p align="center">
   A smart, modern application for planning, organizing, and managing events.<br>
   Built with cutting-edge technology, an exceptional user experience, and a sleek design.
 </p>
 
-
-![Project Views](https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Java Version](https://img.shields.io/badge/Java-11-blue)](https://openjdk.java.net/projects/jdk/11/)
-[![Android API](https://img.shields.io/badge/API-33%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=33)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square" alt="Project Views">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://openjdk.java.net/projects/jdk/11/"><img src="https://img.shields.io/badge/Java-11-blue" alt="Java Version"></a>
+  <a href="https://android-arsenal.com/api?level=33"><img src="https://img.shields.io/badge/API-33%2B-brightgreen.svg?style=flat" alt="Android API"></a>
+  <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg" alt="Spring Boot"></a>
+</p>
 
 ## 🌟 Overview
 
