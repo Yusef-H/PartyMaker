@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ import com.example.partymaker.utils.auth.AuthenticationManager;
 import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.example.partymaker.utils.infrastructure.PerformanceMonitor;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import com.example.partymaker.utils.security.encryption.GroupMessageEncryption;
 import com.bumptech.glide.Glide;
@@ -45,7 +47,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity {
 
   private static final String TAG = "ChatActivity";
   private static final int MAX_RETRY_ATTEMPTS = 3;
@@ -74,6 +76,9 @@ public class ChatActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    PerformanceMonitor.startTiming("ChatActivity.onCreate");
+    PerformanceMonitor.trackMemoryUsage("ChatActivity.onCreate.start");
+    
     super.onCreate(savedInstanceState);
     Log.d(TAG, "ChatActivity onCreate called");
     setContentView(R.layout.activity_party_chat);
@@ -159,10 +164,8 @@ public class ChatActivity extends AppCompatActivity {
     // Setup toolbar navigation
     toolbar.setNavigationOnClickListener(v -> onBackPressed());
     
-    // Setup RecyclerView
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-    layoutManager.setStackFromEnd(false); // Start from top, oldest messages first
-    recyclerView.setLayoutManager(layoutManager);
+    // Setup RecyclerView with performance optimizations
+    setupRecyclerViewOptimizations();
 
     ShowData();
     eventHandler();
@@ -176,6 +179,9 @@ public class ChatActivity extends AppCompatActivity {
     
     // Load group info for toolbar
     loadGroupInfo();
+    
+    PerformanceMonitor.endTiming("ChatActivity.onCreate");
+    PerformanceMonitor.trackMemoryUsage("ChatActivity.onCreate.end");
   }
 
   /** Initialize group encryption for secure messaging */
@@ -335,6 +341,31 @@ public class ChatActivity extends AppCompatActivity {
         });
   }
 
+  private void setupRecyclerViewOptimizations() {
+    // Performance optimizations
+    recyclerView.setHasFixedSize(false); // Chat messages can have variable heights
+    recyclerView.setItemViewCacheSize(30); // Higher cache for chat messages
+    recyclerView.setDrawingCacheEnabled(true);
+    recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+    
+    // Custom layout manager with performance optimizations  
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+      @Override
+      public boolean supportsPredictiveItemAnimations() {
+        return false; // Better scroll performance
+      }
+    };
+    layoutManager.setStackFromEnd(false); // Start from top, oldest messages first
+    recyclerView.setLayoutManager(layoutManager);
+    
+    // Shared RecyclerView pool for memory efficiency
+    RecyclerView.RecycledViewPool sharedPool = new RecyclerView.RecycledViewPool();
+    sharedPool.setMaxRecycledViews(0, 30); // Higher cache for chat
+    recyclerView.setRecycledViewPool(sharedPool);
+    
+    Log.d(TAG, "Chat RecyclerView configured with performance optimizations");
+  }
+
   private void sendBotMessage(String answer) {
     ChatMessage botMsg = new ChatMessage();
     botMsg.setMessageUser("PartyBot");
@@ -369,6 +400,7 @@ public class ChatActivity extends AppCompatActivity {
   }
 
   private void ShowData() {
+    PerformanceMonitor.startTiming("ChatActivity.ShowData");
     Log.d(TAG, "ShowData: Starting to load messages");
     FirebaseServerClient serverClient = FirebaseServerClient.getInstance();
     Log.d(TAG, "ShowData: Got FirebaseServerClient instance: " + serverClient);
@@ -463,7 +495,7 @@ public class ChatActivity extends AppCompatActivity {
               ThreadUtils.runOnMainThread(
                   () -> {
                     Log.d(TAG, "ShowData: Updating adapter with " + messages.size() + " messages");
-                    adapter.setMessages(messages);
+                    adapter.updateMessages(messages);
 
                     // Scroll to the bottom (newest message)
                     if (messages.size() > 0) {
@@ -498,6 +530,7 @@ public class ChatActivity extends AppCompatActivity {
                           });
                     }
                     Log.d(TAG, "ShowData: Adapter updated successfully");
+                    PerformanceMonitor.endTiming("ChatActivity.ShowData");
                   });
             } else {
               Log.d(TAG, "ShowData: No messages found or messages list is null");
@@ -506,6 +539,7 @@ public class ChatActivity extends AppCompatActivity {
                   () -> {
                     adapter.clear();
                     Log.d(TAG, "ShowData: Cleared adapter as no messages were found");
+                    PerformanceMonitor.endTiming("ChatActivity.ShowData");
                   });
             }
           }
@@ -521,6 +555,7 @@ public class ChatActivity extends AppCompatActivity {
                           Toast.LENGTH_SHORT)
                       .show();
                   recyclerView.setVisibility(View.VISIBLE);
+                  PerformanceMonitor.endTiming("ChatActivity.ShowData");
                 });
           }
         });
@@ -1007,5 +1042,13 @@ public class ChatActivity extends AppCompatActivity {
   public void onBackPressed() {
     // Clean up resources if needed
     super.onBackPressed();
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    if (adapter != null) {
+      adapter = null;
+    }
+    // Clear any other references
   }
 }
