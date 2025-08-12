@@ -93,3 +93,19 @@ app/server/src/main/resources/firebase-service-account.json
 /agents/agent_app_polish.md
 /agents/agent_improve_code.md
 /agents/agent_warnings_fix.md
+
+# Documentation and optimization files
+*.md
+!README.md
+/optimization/
+/.claude/
+/scripts/*.gradle
+CODE_REVIEW_CHECKLIST.md
+PR_INSTRUCTIONS.md
+COMMIT_STRATEGY.md
+ENTERPRISE_REFACTORING_FINAL_REPORT.md
+JAVA_INTEGRATION_CHANGES.md
+OPTIMIZATION_GUIDE.md
+PROJECT_CHANGES_SUMMARY.md
+UI_IMPROVEMENTS_ROADMAP.md
+XML_ENTERPRISE_REFACTORING_CHECKLIST.md
