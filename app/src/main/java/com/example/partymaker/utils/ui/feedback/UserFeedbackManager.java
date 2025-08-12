@@ -1,5 +1,6 @@
 package com.example.partymaker.utils.ui.feedback;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
@@ -79,6 +80,14 @@ public class UserFeedbackManager {
   /** Shows an information dialog with single OK button */
   public static void showInfoDialog(
       @NonNull Context context, @NonNull String title, @NonNull String message) {
+    // Check if the context is still valid before showing dialog
+    if (context instanceof Activity) {
+      Activity activity = (Activity) context;
+      if (activity.isFinishing() || activity.isDestroyed()) {
+        return; // Don't show dialog if activity is finishing or destroyed
+      }
+    }
+    
     new MaterialAlertDialogBuilder(context)
         .setTitle(title)
         .setMessage(message)
@@ -93,6 +102,14 @@ public class UserFeedbackManager {
       @NonNull String title,
       @NonNull String message,
       @NonNull Runnable onRetry) {
+    // Check if the context is still valid before showing dialog
+    if (context instanceof Activity) {
+      Activity activity = (Activity) context;
+      if (activity.isFinishing() || activity.isDestroyed()) {
+        return; // Don't show dialog if activity is finishing or destroyed
+      }
+    }
+    
     new MaterialAlertDialogBuilder(context)
         .setTitle(title)
         .setMessage(message)

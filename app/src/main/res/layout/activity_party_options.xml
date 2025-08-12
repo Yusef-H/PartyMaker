@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/admin_options"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textOnBackground"
                 android:textSize="34sp" />
 
             <TextView

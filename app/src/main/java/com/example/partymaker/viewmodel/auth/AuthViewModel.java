@@ -195,9 +195,9 @@ public class AuthViewModel extends BaseViewModel {
                           () -> {
                             setLoading(false);
                             if (task.isSuccessful()) {
-                              handleSuccessfulLogin("Email login successful");
+                              handleSuccessfulLogin();
                             } else {
-                              handleAuthError("Email login failed", task.getException());
+                              handleAuthError(task.getException());
                             }
                           }));
         });
@@ -467,16 +467,14 @@ public class AuthViewModel extends BaseViewModel {
 
   /**
    * Handles successful login operations.
-   *
-   * @param message Success message to display
    */
-  private void handleSuccessfulLogin(String message) {
+  private void handleSuccessfulLogin() {
     FirebaseUser user = auth.getCurrentUser();
     if (user != null) {
       currentUser.setValue(user);
       isAuthenticated.setValue(true);
-      setSuccess(message);
-      Log.d(TAG, "Login successful: " + message);
+      setSuccess("Email login successful");
+      Log.d(TAG, "Login successful: " + "Email login successful");
     } else {
       setError("Authentication error: User not found");
       Log.e(TAG, "Login success but user is null");
@@ -486,19 +484,18 @@ public class AuthViewModel extends BaseViewModel {
   /**
    * Handles authentication errors with proper error messaging.
    *
-   * @param baseMessage Base error message
    * @param exception The exception that occurred
    */
-  private void handleAuthError(String baseMessage, Exception exception) {
-    String errorMessage = baseMessage;
+  private void handleAuthError(Exception exception) {
+    String errorMessage = "Email login failed";
     if (exception != null) {
       String exceptionMessage = exception.getMessage();
       if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
         errorMessage = exceptionMessage;
       }
-      Log.e(TAG, baseMessage, exception);
+      Log.e(TAG, "Email login failed", exception);
     } else {
-      Log.e(TAG, baseMessage);
+      Log.e(TAG, "Email login failed");
     }
     setError(errorMessage);
   }

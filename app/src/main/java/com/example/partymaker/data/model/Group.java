@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
@@ -12,7 +13,15 @@ import java.util.HashMap;
  * Represents a group (party) in the PartyMaker application. This class is annotated for Room
  * database storage.
  */
-@Entity(tableName = "groups")
+@Entity(tableName = "groups",
+        indices = {
+            @Index(value = "created_at", name = "idx_group_created"),
+            @Index(value = "admin_key", name = "idx_group_admin"),
+            @Index(value = {"group_type", "created_at"}, name = "idx_group_type_created"),
+            @Index(value = "admin_key", name = "idx_group_user"),
+            @Index(value = {"admin_key", "group_type"}, name = "idx_group_user_type"),
+            @Index(value = "group_name", name = "idx_group_name") // For search
+        })
 public class Group {
 
   /** Constants for group types */

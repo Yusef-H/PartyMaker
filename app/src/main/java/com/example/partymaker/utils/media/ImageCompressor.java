@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.support.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.io.ByteArrayOutputStream;
@@ -91,7 +91,7 @@ public class ImageCompressor {
   }
 
   private static Bitmap loadAndProcessBitmap(Context context, Uri imageUri) {
-    Bitmap bitmap = loadScaledBitmapFromUri(context, imageUri, MAX_WIDTH, MAX_HEIGHT);
+    Bitmap bitmap = loadScaledBitmapFromUri(context, imageUri);
     if (bitmap != null) {
       bitmap = rotateBitmapIfNeeded(context, imageUri, bitmap);
     }
@@ -114,14 +114,12 @@ public class ImageCompressor {
   /**
    * Loads a scaled bitmap from a Uri.
    *
-   * @param context The context
+   * @param context  The context
    * @param imageUri The Uri of the image
-   * @param maxWidth The maximum width
-   * @param maxHeight The maximum height
    * @return The scaled bitmap
    */
   private static Bitmap loadScaledBitmapFromUri(
-      Context context, Uri imageUri, int maxWidth, int maxHeight) {
+      Context context, Uri imageUri) {
     try {
       // Get the dimensions of the image
       BitmapFactory.Options options = new BitmapFactory.Options();
@@ -134,7 +132,7 @@ public class ImageCompressor {
       }
 
       // Calculate the sample size
-      int sampleSize = calculateInSampleSize(options, maxWidth, maxHeight);
+      int sampleSize = calculateInSampleSize(options, ImageCompressor.MAX_WIDTH, ImageCompressor.MAX_HEIGHT);
 
       // Load the bitmap with the calculated sample size
       options.inJustDecodeBounds = false;

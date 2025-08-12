@@ -55,7 +55,7 @@
             android:layout_marginBottom="24dp"
             android:background="@drawable/button_rounded_primary"
             android:text="@string/remove_friend"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/textOnBackground" />
 
         <TextView
             android:layout_width="match_parent"

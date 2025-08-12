@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import com.example.partymaker.ui.base.BaseActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.ChatMessage;
@@ -45,7 +46,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PartyMainActivity extends AppCompatActivity {
+public class PartyMainActivity extends BaseActivity {
   private static final String TAG = "PartyMainActivity";
 
   // Animation durations
@@ -1795,5 +1796,10 @@ public class PartyMainActivity extends AppCompatActivity {
     Intent intent = new Intent(PartyMainActivity.this, MainActivity.class);
     startActivity(intent);
     finish();
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear any activity-specific references
   }
 }

@@ -2,4 +2,7 @@
 <resources>
     <!-- Animation helper IDs -->
     <item name="refresh_animator_tag" type="id" />
+    
+    <!-- View optimization IDs -->
+    <item name="view_recycling_tag" type="id" />
 </resources>
