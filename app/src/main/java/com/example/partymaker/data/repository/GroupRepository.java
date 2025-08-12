@@ -3,8 +3,13 @@ package com.example.partymaker.data.repository;
 import android.content.Context;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import com.example.partymaker.data.api.Result;
+import com.example.partymaker.data.local.AppDatabase;
+import com.example.partymaker.data.local.GroupDao;
 import com.example.partymaker.data.model.Group;
+import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.security.encryption.GroupKeyManager;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -12,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Repository for Group data following the Repository pattern with proper separation of concerns.
@@ -55,8 +62,14 @@ public class GroupRepository {
 
   private LocalGroupDataSource localDataSource;
   private final RemoteGroupDataSource remoteDataSource;
+  private GroupDao groupDao; // Direct DAO access for optimized queries
   private Context applicationContext; // Using application context to avoid memory leaks
   private boolean isInitialized = false;
+  
+  // In-memory cache with expiration
+  private final Map<String, CachedData<List<Group>>> cache = new ConcurrentHashMap<>();
+  private static final long CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  private static final int DEFAULT_PAGE_SIZE = 20;
 
   /** Private constructor to prevent direct instantiation. */
   private GroupRepository() {
@@ -84,8 +97,9 @@ public class GroupRepository {
     if (context != null && !isInitialized) {
       this.applicationContext = context.getApplicationContext();
       this.localDataSource = new LocalGroupDataSource(context);
+      this.groupDao = AppDatabase.getInstance(context).groupDao();
       this.isInitialized = true;
-      Log.d(TAG, "GroupRepository initialized with local and remote data sources");
+      Log.d(TAG, "GroupRepository initialized with local and remote data sources + optimized DAO");
     } else if (context == null) {
       Log.e(TAG, "Cannot initialize GroupRepository: context is null");
     } else {
@@ -1033,10 +1047,176 @@ public class GroupRepository {
         });
   }
 
+  // Enhanced methods with caching and pagination
+  
+  /**
+   * Gets user groups with pagination and caching
+   *
+   * @param adminKey The admin key to filter by
+   * @param page The page number (0-based)
+   * @return LiveData containing paginated user groups
+   */
+  public LiveData<List<Group>> getUserGroupsPaginated(String adminKey, int page) {
+    if (!isInitialized) {
+      Log.e(TAG, "Repository not initialized");
+      return new MutableLiveData<>(new ArrayList<>());
+    }
+    
+    String cacheKey = "user_groups_" + adminKey + "_" + page;
+    
+    // Check cache first
+    CachedData<List<Group>> cached = cache.get(cacheKey);
+    if (cached != null && !cached.isExpired()) {
+      Log.d(TAG, "Returning cached user groups for page " + page);
+      return cached.data;
+    }
+    
+    // Get from local database with pagination
+    LiveData<List<Group>> localData = groupDao.getUserGroupsPaginated(adminKey, DEFAULT_PAGE_SIZE);
+    
+    // Transform and cache the result
+    MediatorLiveData<List<Group>> result = new MediatorLiveData<>();
+    result.addSource(localData, groups -> {
+      if (groups != null) {
+        result.setValue(groups);
+        // Cache the result
+        cache.put(cacheKey, new CachedData<>(new MutableLiveData<>(groups), System.currentTimeMillis()));
+      }
+    });
+    
+    // Fetch from remote if needed
+    ThreadUtils.executeDatabaseTask(() -> {
+      // This would typically fetch from server and update local database
+      // For now, we rely on the existing sync mechanisms
+    });
+    
+    return result;
+  }
+  
+  /**
+   * Search groups with caching
+   *
+   * @param query The search query
+   * @return LiveData containing search results
+   */
+  public LiveData<List<Group>> searchGroups(String query) {
+    if (!isInitialized) {
+      return new MutableLiveData<>(new ArrayList<>());
+    }
+    
+    if (query == null || query.trim().isEmpty()) {
+      return new MutableLiveData<>(new ArrayList<>());
+    }
+    
+    String cacheKey = "search_" + query.hashCode();
+    
+    // Check cache
+    CachedData<List<Group>> cached = cache.get(cacheKey);
+    if (cached != null && !cached.isExpired()) {
+      Log.d(TAG, "Returning cached search results for: " + query);
+      return cached.data;
+    }
+    
+    // Search locally first
+    LiveData<List<Group>> localData = groupDao.searchGroups(query, 50);
+    
+    MediatorLiveData<List<Group>> result = new MediatorLiveData<>();
+    result.addSource(localData, groups -> {
+      if (groups != null) {
+        result.setValue(groups);
+        // Cache search results
+        cache.put(cacheKey, new CachedData<>(new MutableLiveData<>(groups), System.currentTimeMillis()));
+      }
+    });
+    
+    return result;
+  }
+  
+  /**
+   * Get recent groups for quick access
+   *
+   * @return LiveData containing recent groups
+   */
+  public LiveData<List<Group>> getRecentGroups() {
+    if (!isInitialized) {
+      return new MutableLiveData<>(new ArrayList<>());
+    }
+    
+    return groupDao.getRecentGroups();
+  }
+  
+  /**
+   * Get public groups with pagination
+   *
+   * @param page The page number
+   * @return LiveData containing paginated public groups
+   */
+  public LiveData<List<Group>> getPublicGroupsPaginated(int page) {
+    if (!isInitialized) {
+      return new MutableLiveData<>(new ArrayList<>());
+    }
+    
+    int offset = page * DEFAULT_PAGE_SIZE;
+    return groupDao.getPublicGroupsPaginated(DEFAULT_PAGE_SIZE, offset);
+  }
+  
+  /**
+   * Cache cleanup - removes expired entries
+   */
+  public void clearExpiredCache() {
+    cache.entrySet().removeIf(entry -> entry.getValue().isExpired());
+    Log.d(TAG, "Cleared expired cache entries");
+  }
+  
+  /**
+   * Cleanup old data from database
+   */
+  public void cleanupOldData() {
+    if (!isInitialized) {
+      return;
+    }
+    
+    ThreadUtils.executeDatabaseTask(() -> {
+      long cutoffTime = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000); // 30 days
+      int deletedGroups = groupDao.deleteOldGroups(cutoffTime);
+      Log.d(TAG, "Cleaned up " + deletedGroups + " old groups");
+    });
+  }
+  
+  /**
+   * Get groups with location for map view
+   *
+   * @return LiveData containing groups with location
+   */
+  public LiveData<List<Group>> getGroupsWithLocation() {
+    if (!isInitialized) {
+      return new MutableLiveData<>(new ArrayList<>());
+    }
+    
+    return groupDao.getGroupsWithLocation();
+  }
+  
   // Re-use DataSource interfaces for consistency
   public interface DataCallback<T> extends DataSource.DataCallback<T> {}
 
   public interface OperationCallback extends DataSource.OperationCallback {}
+  
+  /**
+   * Cached data wrapper with expiration
+   */
+  private static class CachedData<T> {
+    final LiveData<T> data;
+    final long timestamp;
+    
+    CachedData(LiveData<T> data, long timestamp) {
+      this.data = data;
+      this.timestamp = timestamp;
+    }
+    
+    boolean isExpired() {
+      return System.currentTimeMillis() - timestamp > CACHE_DURATION;
+    }
+  }
 
   /** Decodes URL-encoded strings in group data. */
   private void decodeGroupData(Group group) {
