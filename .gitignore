@@ -99,7 +99,6 @@ app/server/src/main/resources/firebase-service-account.json
 !README.md
 /optimization/
 /.claude/
-/scripts/*.gradle
 CODE_REVIEW_CHECKLIST.md
 PR_INSTRUCTIONS.md
 COMMIT_STRATEGY.md

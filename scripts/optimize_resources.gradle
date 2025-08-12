@@ -1,0 +1,233 @@
+// Resource Optimization Script for PartyMaker
+// This script helps optimize images and resources
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
+task optimizeImages {
+    description = 'Optimize and compress image resources'
+    group = 'optimization'
+    
+    doLast {
+        println "\n=== Image Optimization Report ==="
+        
+        def totalOriginalSize = 0
+        def totalOptimizedSize = 0
+        def imageCount = 0
+        
+        def resDirs = [
+            file("src/main/res"),
+            file("src/debug/res"),
+            file("src/release/res")
+        ]
+        
+        resDirs.each { resDir ->
+            if (resDir.exists()) {
+                resDir.eachDirMatch(~/drawable.*|mipmap.*/) { dir ->
+                    dir.eachFileMatch(~/.*\.(png|jpg|jpeg)$/) { file ->
+                        imageCount++
+                        def originalSize = file.length()
+                        totalOriginalSize += originalSize
+                        
+                        // Check image dimensions
+                        try {
+                            BufferedImage img = ImageIO.read(file)
+                            def width = img.getWidth()
+                            def height = img.getHeight()
+                            
+                            // Flag oversized images
+                            if (width > 1920 || height > 1920) {
+                                println "⚠️  Oversized: ${file.name} (${width}x${height})"
+                            }
+                            
+                            // Flag images that could be vectors
+                            if (file.name.contains("ic_") && !file.name.contains(".9.")) {
+                                println "💡 Consider vector: ${file.name}"
+                            }
+                            
+                        } catch (Exception e) {
+                            println "Error reading ${file.name}: ${e.message}"
+                        }
+                        
+                        totalOptimizedSize += originalSize // For now, same as original
+                    }
+                }
+            }
+        }
+        
+        println "\nTotal images: $imageCount"
+        println "Total size: ${(totalOriginalSize / 1024).round()} KB"
+        println "Average size: ${imageCount > 0 ? (totalOriginalSize / imageCount / 1024).round() : 0} KB"
+    }
+}
+
+task findUnusedResources {
+    description = 'Find potentially unused resources'
+    group = 'optimization'
+    
+    doLast {
+        println "\n=== Unused Resources Check ==="
+        println "Run 'gradlew lint' for a comprehensive unused resources report"
+        println "Check build/reports/lint-results.html after running lint"
+        
+        // Quick check for common unused patterns
+        def resDir = file("src/main/res")
+        def srcDir = file("src/main/java")
+        def layoutDir = file("${resDir}/layout")
+        
+        if (layoutDir.exists()) {
+            def unusedLayouts = []
+            
+            layoutDir.eachFile { layoutFile ->
+                if (layoutFile.name.endsWith(".xml")) {
+                    def layoutName = layoutFile.name.replace(".xml", "")
+                    def referenced = false
+                    
+                    // Check if referenced in Java/Kotlin code
+                    srcDir.eachFileRecurse { srcFile ->
+                        if (srcFile.name.endsWith(".java") || srcFile.name.endsWith(".kt")) {
+                            if (srcFile.text.contains("R.layout.${layoutName}")) {
+                                referenced = true
+                                return true
+                            }
+                        }
+                    }
+                    
+                    if (!referenced) {
+                        unusedLayouts << layoutName
+                    }
+                }
+            }
+            
+            if (unusedLayouts) {
+                println "\nPotentially unused layouts:"
+                unusedLayouts.each { println "  - $it" }
+            } else {
+                println "No obviously unused layouts found"
+            }
+        }
+    }
+}
+
+task generateDrawableDensityReport {
+    description = 'Generate report of drawable density coverage'
+    group = 'optimization'
+    
+    doLast {
+        println "\n=== Drawable Density Report ==="
+        
+        def densities = ['ldpi', 'mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+        def drawableMap = [:]
+        
+        def resDir = file("src/main/res")
+        
+        // Collect all drawables
+        resDir.eachDirMatch(~/drawable.*/) { dir ->
+            def density = dir.name.replace("drawable-", "")
+            if (density == "drawable") density = "default"
+            
+            dir.eachFile { file ->
+                if (!file.name.startsWith(".")) {
+                    if (!drawableMap[file.name]) {
+                        drawableMap[file.name] = []
+                    }
+                    drawableMap[file.name] << density
+                }
+            }
+        }
+        
+        // Report missing densities
+        println "Drawables missing densities:"
+        drawableMap.each { name, foundDensities ->
+            def missing = densities.findAll { !foundDensities.contains(it) }
+            if (missing.size() > 0 && missing.size() < densities.size()) {
+                println "  ${name}: missing ${missing.join(', ')}"
+            }
+        }
+        
+        // Summary
+        def complete = drawableMap.findAll { k, v -> v.size() >= densities.size() }.size()
+        def partial = drawableMap.findAll { k, v -> v.size() > 1 && v.size() < densities.size() }.size()
+        def single = drawableMap.findAll { k, v -> v.size() == 1 }.size()
+        
+        println "\nSummary:"
+        println "  Complete density coverage: $complete drawables"
+        println "  Partial density coverage: $partial drawables"
+        println "  Single density only: $single drawables"
+    }
+}
+
+task optimizeGradle {
+    description = 'Check Gradle build configuration for optimization opportunities'
+    group = 'optimization'
+    
+    doLast {
+        println "\n=== Gradle Optimization Check ==="
+        
+        def buildFile = file("build.gradle") ?: file("build.gradle.kts")
+        def appBuildFile = file("app/build.gradle") ?: file("app/build.gradle.kts")
+        
+        def suggestions = []
+        
+        // Check for common optimization settings
+        if (appBuildFile.exists()) {
+            def content = appBuildFile.text
+            
+            if (!content.contains("minifyEnabled true")) {
+                suggestions << "Enable minification in release builds"
+            }
+            
+            if (!content.contains("shrinkResources true")) {
+                suggestions << "Enable resource shrinking in release builds"
+            }
+            
+            if (!content.contains("splits")) {
+                suggestions << "Consider using APK splits for different ABIs"
+            }
+            
+            if (!content.contains("resConfigs")) {
+                suggestions << "Consider limiting resource configurations with resConfigs"
+            }
+        }
+        
+        def gradleProperties = file("gradle.properties")
+        if (gradleProperties.exists()) {
+            def props = gradleProperties.text
+            
+            if (!props.contains("org.gradle.parallel=true")) {
+                suggestions << "Enable parallel builds in gradle.properties"
+            }
+            
+            if (!props.contains("org.gradle.caching=true")) {
+                suggestions << "Enable Gradle build cache"
+            }
+            
+            if (!props.contains("org.gradle.daemon=true")) {
+                suggestions << "Enable Gradle daemon"
+            }
+        }
+        
+        if (suggestions) {
+            println "Optimization suggestions:"
+            suggestions.each { println "  ✓ $it" }
+        } else {
+            println "✅ Build configuration looks optimized!"
+        }
+    }
+}
+
+// Main task to run all optimizations
+task runAllOptimizations {
+    description = 'Run all optimization analysis tasks'
+    group = 'optimization'
+    
+    dependsOn 'optimizeImages'
+    dependsOn 'findUnusedResources'
+    dependsOn 'generateDrawableDensityReport'
+    dependsOn 'optimizeGradle'
+    
+    doLast {
+        println "\n=== Optimization Analysis Complete ==="
+        println "Review the reports above for optimization opportunities"
+    }
+}
