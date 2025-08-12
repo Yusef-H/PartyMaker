@@ -13,8 +13,9 @@
 
 
 ##
-**PartyMaker** is an event management platform delivering measurable efficiency gains for event planning. 
-The solution integrates advanced automation, real-time analytics, and scalable microservices architecture to reduce planning overhead by 60% while ensuring compliance with organizational policies and budget controls.
+##
+**PartyMaker** is the smart way to plan any event. Our platform thinks for you - managing invites, coordinating schedules, and keeping everyone connected - so you spend less time organizing and more time celebrating. It's event planning that works.
+##
 ##
 
 ### System Architecture Overview
