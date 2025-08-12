@@ -6,9 +6,9 @@ This directory contains UML class diagrams for the PartyMaker application, organ
 
 ---
 
-## 🗂️ **UML Diagrams**
+## 🗂️ UML Diagrams
 
-### **📱 User Interface Layer**
+### 📱 User Interface Layer
 
 **[UML_Activities.md](UML_Activities.md)**  
 All Activity classes representing app screens - login, main dashboard, party management, chat, and settings.
@@ -21,7 +21,7 @@ Adapter classes for displaying lists - parties, chat messages, users, and UI com
 
 ---
 
-### **🗄️ Data Layer**
+### 🗄️ Data Layer
 
 **[UML_Data_Models.md](UML_Data_Models.md)**  
 Core data models - Group, User, ChatMessage, and ChatMessageGpt entities.
@@ -31,7 +31,7 @@ Repository pattern implementation with local and remote data sources for offline
 
 ---
 
-### **🛠️ Infrastructure Layer**
+### 🛠️ Infrastructure Layer
 
 **[UML_Managers_Utils.md](UML_Managers_Utils.md)**  
 Manager classes for specialized tasks - UI components, file handling, memory management, and business logic utilities.
@@ -44,7 +44,7 @@ Network layer with HTTP clients, connectivity management, and API communication.
 
 ---
 
-### **🔥 Backend Integration**
+### 🔥 Backend Integration
 
 **[UML_Server.md](UML_Server.md)**  
 Spring Boot server architecture with REST controllers, services, and configuration.
@@ -54,8 +54,9 @@ Firebase integration for real-time database, authentication, and cloud services.
 
 ---
 
-## 🏗️ **Architecture Structure**
+## 🏗️ Architecture Structure
 
+### Client-Side Architecture
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Activities    │◄──►│   ViewModels    │◄──►│  Repositories   │
@@ -65,11 +66,11 @@ Firebase integration for real-time database, authentication, and cloud services.
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │    Adapters     │    │    Managers     │    │  Data Models    │
-│  (6 organizers) │    │ (23+ specialists)│    │  (4 templates)  │
+│  (6 organizers) │    │(23+ specialists)│    │  (4 templates)  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-**Server & Integration**
+### Server & Integration
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │     Server      │◄──►│   Networking    │◄──►│   Firebase      │
@@ -85,16 +86,26 @@ Firebase integration for real-time database, authentication, and cloud services.
 
 ---
 
-## 📋 **Component Summary**
+## 📋 Component Summary
 
-| Layer | Components | Count |
-|-------|------------|-------|
-| **UI** | Activities, ViewModels, Adapters | 50 classes |
-| **Data** | Models, Repositories, Data Sources | 10 classes |
-| **Infrastructure** | Managers, Security, Networking | 40+ classes |
-| **Backend** | Server, Firebase Integration | 7 classes |
+| Layer | Components | Count | Description |
+|-------|------------|-------|-------------|
+| **UI** | Activities, ViewModels, Adapters | 50 classes | User interface and presentation logic |
+| **Data** | Models, Repositories, Data Sources | 10 classes | Data management and persistence |
+| **Infrastructure** | Managers, Security, Networking | 40+ classes | Core services and utilities |
+| **Backend** | Server, Firebase Integration | 7 classes | Server-side architecture |
 
 **Total**: 100+ classes organized across all application layers
+
+---
+
+## 🎯 Key Features
+
+- **MVVM Architecture**: Clean separation between UI, business logic, and data layers
+- **Repository Pattern**: Unified data access with offline/online synchronization
+- **Security First**: Comprehensive encryption and secure storage implementation
+- **Real-time Communication**: Firebase integration for live chat and updates
+- **Modular Design**: Well-organized components for maintainability and scalability
 
 ---
 
