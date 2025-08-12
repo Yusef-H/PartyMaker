@@ -65,6 +65,10 @@ public abstract class AppDatabase extends RoomDatabase {
           super.onCreate(db);
           Log.i(TAG, "Database created for the first time");
           createCustomIndexes(db);
+          
+          // Start database monitoring
+          DatabaseMonitor.getInstance().initialize(db);
+          DatabaseMonitor.getInstance().startMonitoring();
         }
 
         @Override
@@ -74,6 +78,9 @@ public abstract class AppDatabase extends RoomDatabase {
 
           enableForeignKeys(db);
           optimizeDatabasePerformance(db);
+          
+          // Track database open operation
+          DatabaseMonitor.getInstance().onDatabaseOpened(db);
         }
 
         @Override

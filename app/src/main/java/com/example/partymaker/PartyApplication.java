@@ -14,6 +14,7 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.infrastructure.system.MemoryManager;
+import com.example.partymaker.utils.infrastructure.PerformanceMonitor;
 import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.google.firebase.FirebaseApp;
@@ -28,18 +29,24 @@ public class PartyApplication extends Application {
     super.onCreate();
     instance = this;
 
+    // Start performance monitoring
+    PerformanceMonitor.startTiming("Application.onCreate");
+    PerformanceMonitor.trackMemoryUsage("Application.onCreate.start");
+
     // Apply saved theme preference
     ServerSettingsActivity.applyThemeFromPreferences(this);
     Log.d(TAG, "Theme preference applied");
 
     // Initialize Firebase
     try {
+      PerformanceMonitor.startTiming("Firebase.init");
       FirebaseApp.initializeApp(this);
       Log.d(TAG, "Firebase initialized successfully");
 
       // Initialize Firebase references
       DBRef.init();
       Log.d(TAG, "Firebase references initialized successfully");
+      PerformanceMonitor.endTiming("Firebase.init");
     } catch (Exception e) {
       Log.e(TAG, "Error initializing Firebase", e);
     }
@@ -80,6 +87,10 @@ public class PartyApplication extends Application {
     // Log memory info
     Log.d(TAG, "Initial memory usage: " + MemoryManager.getDetailedMemoryInfo());
 
+    // End application initialization timing
+    PerformanceMonitor.trackMemoryUsage("Application.onCreate.end");
+    PerformanceMonitor.endTiming("Application.onCreate");
+    
     Log.d(TAG, "Application initialized");
   }
 

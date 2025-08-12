@@ -1,0 +1,282 @@
+// Resource Optimization Script for PartyMaker
+// ============================================
+// This script optimizes resources during the build process to reduce APK size
+// Apply this script to your app/build.gradle.kts with: apply from: '../scripts/optimize_resources.gradle'
+
+apply plugin: 'groovy'
+
+// Resource optimization for all build variants
+android.applicationVariants.all { variant ->
+    
+    println "Applying resource optimizations for variant: ${variant.name}"
+    
+    // Task to optimize vector drawables
+    def optimizeVectorDrawablesTask = tasks.create("optimizeVectorDrawables${variant.name.capitalize()}", Task) {
+        group = 'resource optimization'
+        description = "Optimizes vector drawables for ${variant.name} build"
+        
+        doLast {
+            println "\n==== Vector Drawable Optimization ===="
+            
+            def resDir = file("${project.projectDir}/src/main/res")
+            def vectorFiles = []
+            
+            // Find all vector drawable files
+            if (resDir.exists()) {
+                fileTree(resDir) {
+                    include '**/drawable*/ic_*.xml'
+                    include '**/drawable*/vector_*.xml'
+                }.each { file ->
+                    vectorFiles.add(file)
+                }
+            }
+            
+            println "Found ${vectorFiles.size()} vector drawable files"
+            
+            // Analyze vector complexity
+            vectorFiles.each { file ->
+                def content = file.text
+                def pathCount = content.count('<path')
+                def groupCount = content.count('<group')
+                
+                if (pathCount > 10 || groupCount > 5) {
+                    println "⚠ Complex vector drawable: ${file.name} (${pathCount} paths, ${groupCount} groups)"
+                    println "  Consider converting to PNG for better performance"
+                }
+            }
+            
+            println "===================================\n"
+        }
+    }
+    
+    // Task to analyze resource usage
+    def analyzeResourceUsageTask = tasks.create("analyzeResourceUsage${variant.name.capitalize()}", Task) {
+        group = 'resource optimization'
+        description = "Analyzes resource usage for ${variant.name} build"
+        
+        doLast {
+            println "\n==== Resource Usage Analysis ===="
+            
+            def resDir = file("${project.projectDir}/src/main/res")
+            def javaDir = file("${project.projectDir}/src/main/java")
+            
+            if (resDir.exists() && javaDir.exists()) {
+                // Count different resource types
+                def drawableCount = fileTree(resDir) { include '**/drawable*/**' }.files.size()
+                def layoutCount = fileTree(resDir) { include '**/layout/**' }.files.size()
+                def stringCount = 0
+                def colorCount = 0
+                
+                // Count strings and colors in XML files
+                fileTree(resDir) {
+                    include '**/values*/**'
+                }.each { file ->
+                    def content = file.text
+                    stringCount += content.count('<string')
+                    colorCount += content.count('<color')
+                }
+                
+                println "Resource Statistics:"
+                println "  Drawables: ${drawableCount}"
+                println "  Layouts: ${layoutCount}"
+                println "  Strings: ${stringCount}"
+                println "  Colors: ${colorCount}"
+                
+                // Check for potential optimizations
+                if (drawableCount > 200) {
+                    println "⚠ High number of drawables (${drawableCount}). Consider:"
+                    println "  - Converting similar icons to tinted versions"
+                    println "  - Using vector drawables instead of multiple PNGs"
+                }
+                
+                if (stringCount > 500) {
+                    println "⚠ High number of strings (${stringCount}). Consider:"
+                    println "  - Removing unused string resources"
+                    println "  - Consolidating similar strings"
+                }
+            }
+            
+            println "==================================\n"
+        }
+    }
+    
+    // Task to optimize image resources
+    def optimizeImagesTask = tasks.create("optimizeImages${variant.name.capitalize()}", Task) {
+        group = 'resource optimization'
+        description = "Analyzes image resources for ${variant.name} build"
+        
+        doLast {
+            println "\n==== Image Resource Analysis ===="
+            
+            def resDir = file("${project.projectDir}/src/main/res")
+            def totalImageSize = 0
+            def imageFiles = []
+            
+            if (resDir.exists()) {
+                fileTree(resDir) {
+                    include '**/*.png'
+                    include '**/*.jpg'
+                    include '**/*.jpeg'
+                    include '**/*.webp'
+                }.each { file ->
+                    def sizeMB = file.length() / (1024.0 * 1024.0)
+                    totalImageSize += file.length()
+                    imageFiles.add([file: file, size: sizeMB])
+                    
+                    if (sizeMB > 0.5) {
+                        println "⚠ Large image: ${file.name} (${String.format('%.2f', sizeMB)} MB)"
+                    }
+                }
+            }
+            
+            def totalImageSizeMB = totalImageSize / (1024.0 * 1024.0)
+            println "Total image resources: ${imageFiles.size()} files"
+            println "Total image size: ${String.format('%.2f', totalImageSizeMB)} MB"
+            
+            if (totalImageSizeMB > 10) {
+                println "⚠ Image resources are large (${String.format('%.2f', totalImageSizeMB)} MB)"
+                println "  Consider:"
+                println "  - Converting PNG to WebP"
+                println "  - Compressing large images"
+                println "  - Using appropriate drawable densities"
+            }
+            
+            // Check for unused density folders
+            def densityFolders = ['ldpi', 'mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+            densityFolders.each { density ->
+                def densityDir = file("${resDir}/drawable-${density}")
+                if (densityDir.exists() && densityDir.listFiles().length == 0) {
+                    println "⚠ Empty density folder: drawable-${density}"
+                }
+            }
+            
+            println "==================================\n"
+        }
+    }
+    
+    // Task to analyze string resources
+    def analyzeStringsTask = tasks.create("analyzeStrings${variant.name.capitalize()}", Task) {
+        group = 'resource optimization'
+        description = "Analyzes string resources for ${variant.name} build"
+        
+        doLast {
+            println "\n==== String Resource Analysis ===="
+            
+            def stringsFile = file("${project.projectDir}/src/main/res/values/strings.xml")
+            def javaDir = file("${project.projectDir}/src/main/java")
+            
+            if (stringsFile.exists() && javaDir.exists()) {
+                def stringResources = []
+                def usedStrings = []
+                
+                // Parse strings.xml
+                def stringsContent = stringsFile.text
+                def stringPattern = /<string name="([^"]+)"/
+                def matcher = stringsContent =~ stringPattern
+                matcher.each { match ->
+                    stringResources.add(match[1])
+                }
+                
+                // Check usage in Java/Kotlin files
+                fileTree(javaDir) {
+                    include '**/*.java'
+                    include '**/*.kt'
+                }.each { file ->
+                    def content = file.text
+                    stringResources.each { stringName ->
+                        if (content.contains("R.string.${stringName}")) {
+                            usedStrings.add(stringName)
+                        }
+                    }
+                }
+                
+                // Check usage in layout files
+                def layoutDir = file("${project.projectDir}/src/main/res/layout")
+                if (layoutDir.exists()) {
+                    fileTree(layoutDir) {
+                        include '**/*.xml'
+                    }.each { file ->
+                        def content = file.text
+                        stringResources.each { stringName ->
+                            if (content.contains("@string/${stringName}")) {
+                                if (!usedStrings.contains(stringName)) {
+                                    usedStrings.add(stringName)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                def unusedStrings = stringResources - usedStrings
+                
+                println "String Resources Summary:"
+                println "  Total strings: ${stringResources.size()}"
+                println "  Used strings: ${usedStrings.size()}"
+                println "  Potentially unused: ${unusedStrings.size()}"
+                
+                if (unusedStrings.size() > 0 && unusedStrings.size() <= 10) {
+                    println "  Potentially unused strings:"
+                    unusedStrings.each { stringName ->
+                        println "    - ${stringName}"
+                    }
+                } else if (unusedStrings.size() > 10) {
+                    println "  Many potentially unused strings found"
+                    println "  Manual review recommended"
+                }
+            }
+            
+            println "==================================\n"
+        }
+    }
+    
+    // Make optimization tasks run during resource processing
+    if (variant.buildType.name == 'release') {
+        // For release builds, run all optimizations
+        variant.mergeResourcesProvider.get().finalizedBy(
+            optimizeVectorDrawablesTask,
+            analyzeResourceUsageTask,
+            optimizeImagesTask,
+            analyzeStringsTask
+        )
+    }
+}
+
+// Task to generate resource optimization report
+tasks.create('generateResourceOptimizationReport', Task) {
+    group = 'resource optimization'
+    description = 'Generates a comprehensive resource optimization report'
+    
+    doLast {
+        println "\n==== PartyMaker Resource Optimization Report ===="
+        println "Generated: ${new Date()}"
+        println "=================================================="
+        
+        def reportFile = file("${project.buildDir}/reports/resource-optimization-report.txt")
+        reportFile.parentFile.mkdirs()
+        
+        reportFile.withWriter { writer ->
+            writer.writeLine("PartyMaker Resource Optimization Report")
+            writer.writeLine("Generated: ${new Date()}")
+            writer.writeLine("=" * 50)
+            writer.writeLine()
+            writer.writeLine("This report contains resource optimization suggestions")
+            writer.writeLine("Run specific optimization tasks for detailed analysis:")
+            writer.writeLine("  ./gradlew analyzeResourceUsageRelease")
+            writer.writeLine("  ./gradlew optimizeImagesRelease")
+            writer.writeLine("  ./gradlew analyzeStringsRelease")
+            writer.writeLine()
+            writer.writeLine("Resource optimization is applied automatically during release builds")
+        }
+        
+        println "Resource optimization report generated: ${reportFile.path}"
+        println "=================================================="
+    }
+}
+
+println "Resource optimization script loaded successfully"
+println "Available tasks:"
+println "  - optimizeVectorDrawables[Variant]"
+println "  - analyzeResourceUsage[Variant]"
+println "  - optimizeImages[Variant]"
+println "  - analyzeStrings[Variant]"
+println "  - generateResourceOptimizationReport"

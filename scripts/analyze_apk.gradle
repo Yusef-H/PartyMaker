@@ -1,0 +1,357 @@
+// APK Analysis Script for PartyMaker
+// ==================================
+// This script provides comprehensive APK analysis and optimization suggestions
+// Apply this script to your app/build.gradle.kts with: apply from: '../scripts/analyze_apk.gradle'
+
+apply plugin: 'groovy'
+
+// APK Analysis Tasks
+tasks.create('analyzeApkSize', Task) {
+    group = 'apk analysis'
+    description = 'Analyzes APK size and provides detailed breakdown'
+    dependsOn 'assembleRelease'
+    
+    doLast {
+        println "\n==== PartyMaker APK Size Analysis ===="
+        
+        def apkDir = file("${project.buildDir}/outputs/apk/release")
+        def apkFile = null
+        
+        // Find the release APK
+        if (apkDir.exists()) {
+            apkDir.listFiles().each { file ->
+                if (file.name.endsWith('.apk') && !file.name.contains('unaligned')) {
+                    apkFile = file
+                }
+            }
+        }
+        
+        if (apkFile && apkFile.exists()) {
+            def apkSizeMB = apkFile.length() / (1024.0 * 1024.0)
+            def apkSizeKB = apkFile.length() / 1024.0
+            
+            println "APK Location: ${apkFile.path}"
+            println "APK Size: ${String.format('%.2f', apkSizeMB)} MB (${String.format('%.0f', apkSizeKB)} KB)"
+            
+            // Size recommendations
+            if (apkSizeMB < 10) {
+                println "✓ APK size is excellent (<10MB) - perfect for Play Store"
+            } else if (apkSizeMB < 25) {
+                println "✓ APK size is very good (10-25MB) - good for Play Store"
+            } else if (apkSizeMB < 50) {
+                println "✓ APK size is acceptable (25-50MB) - consider optimization"
+            } else if (apkSizeMB < 100) {
+                println "⚠ APK size is large (50-100MB) - optimization recommended"
+            } else {
+                println "❌ APK size is very large (>100MB) - optimization required"
+            }
+            
+            // App Bundle recommendation
+            if (apkSizeMB > 25) {
+                println "\n💡 Recommendations:"
+                println "  - Use Android App Bundle (.aab) for up to 20% smaller downloads"
+                println "  - Consider dynamic delivery for further size reduction"
+                println "  - Run './gradlew bundleRelease' to generate App Bundle"
+            }
+            
+            // Size comparison benchmarks
+            println "\n📊 Size Comparison:"
+            println "  - Small apps: <10MB (messaging, utilities)"
+            println "  - Medium apps: 10-50MB (social, productivity)"
+            println "  - Large apps: 50-150MB (games, multimedia)"
+            println "  - Your app: ${String.format('%.2f', apkSizeMB)} MB"
+            
+        } else {
+            println "❌ Release APK not found. Run './gradlew assembleRelease' first."
+        }
+        
+        println "===================================\n"
+    }
+}
+
+tasks.create('analyzeApkContent', Task) {
+    group = 'apk analysis'
+    description = 'Analyzes APK content breakdown'
+    dependsOn 'assembleRelease'
+    
+    doLast {
+        println "\n==== APK Content Analysis ===="
+        
+        def apkDir = file("${project.buildDir}/outputs/apk/release")
+        def apkFile = null
+        
+        if (apkDir.exists()) {
+            apkDir.listFiles().each { file ->
+                if (file.name.endsWith('.apk') && !file.name.contains('unaligned')) {
+                    apkFile = file
+                }
+            }
+        }
+        
+        if (apkFile && apkFile.exists()) {
+            println "Analyzing APK: ${apkFile.name}"
+            
+            // Try to extract and analyze APK contents using basic ZIP functionality
+            try {
+                def zipFile = new java.util.zip.ZipFile(apkFile)
+                def totalSize = 0
+                def resourcesSize = 0
+                def assetsSize = 0
+                def libSize = 0
+                def dexSize = 0
+                def otherSize = 0
+                
+                zipFile.entries().each { entry ->
+                    if (!entry.directory) {
+                        def size = entry.size
+                        totalSize += size
+                        
+                        def name = entry.name.toLowerCase()
+                        if (name.startsWith('res/')) {
+                            resourcesSize += size
+                        } else if (name.startsWith('assets/')) {
+                            assetsSize += size
+                        } else if (name.startsWith('lib/')) {
+                            libSize += size
+                        } else if (name.endsWith('.dex')) {
+                            dexSize += size
+                        } else {
+                            otherSize += size
+                        }
+                    }
+                }
+                
+                zipFile.close()
+                
+                // Convert to MB and calculate percentages
+                def totalMB = totalSize / (1024.0 * 1024.0)
+                def resourcesMB = resourcesSize / (1024.0 * 1024.0)
+                def assetsMB = assetsSize / (1024.0 * 1024.0)
+                def libMB = libSize / (1024.0 * 1024.0)
+                def dexMB = dexSize / (1024.0 * 1024.0)
+                def otherMB = otherSize / (1024.0 * 1024.0)
+                
+                def resourcesPercent = (resourcesSize / (double) totalSize) * 100
+                def assetsPercent = (assetsSize / (double) totalSize) * 100
+                def libPercent = (libSize / (double) totalSize) * 100
+                def dexPercent = (dexSize / (double) totalSize) * 100
+                def otherPercent = (otherSize / (double) totalSize) * 100
+                
+                println "\n📦 APK Content Breakdown:"
+                println "  Resources (res/):  ${String.format('%.2f', resourcesMB)} MB (${String.format('%.1f', resourcesPercent)}%)"
+                println "  Assets:            ${String.format('%.2f', assetsMB)} MB (${String.format('%.1f', assetsPercent)}%)"
+                println "  Native libs (lib/): ${String.format('%.2f', libMB)} MB (${String.format('%.1f', libPercent)}%)"
+                println "  DEX files:         ${String.format('%.2f', dexMB)} MB (${String.format('%.1f', dexPercent)}%)"
+                println "  Other:             ${String.format('%.2f', otherMB)} MB (${String.format('%.1f', otherPercent)}%)"
+                println "  Total:             ${String.format('%.2f', totalMB)} MB"
+                
+                // Optimization suggestions based on content
+                println "\n💡 Optimization Suggestions:"
+                if (resourcesPercent > 40) {
+                    println "  ⚠ Resources are ${String.format('%.1f', resourcesPercent)}% of APK"
+                    println "    - Convert PNG to WebP"
+                    println "    - Remove unused drawables"
+                    println "    - Use vector drawables where possible"
+                }
+                
+                if (assetsPercent > 20) {
+                    println "  ⚠ Assets are ${String.format('%.1f', assetsPercent)}% of APK"
+                    println "    - Compress JSON files"
+                    println "    - Optimize Lottie animations"
+                    println "    - Consider dynamic delivery for large assets"
+                }
+                
+                if (libPercent > 30) {
+                    println "  ⚠ Native libraries are ${String.format('%.1f', libPercent)}% of APK"
+                    println "    - Use ABI splits for different architectures"
+                    println "    - Remove unused native libraries"
+                }
+                
+                if (dexPercent > 25) {
+                    println "  ⚠ DEX files are ${String.format('%.1f', dexPercent)}% of APK"
+                    println "    - Enable ProGuard/R8 optimization"
+                    println "    - Remove unused dependencies"
+                    println "    - Use dependency exclusions"
+                }
+                
+            } catch (Exception e) {
+                println "⚠ Could not analyze APK contents: ${e.message}"
+                println "  APK exists but content analysis failed"
+            }
+        } else {
+            println "❌ Release APK not found. Run './gradlew assembleRelease' first."
+        }
+        
+        println "==============================\n"
+    }
+}
+
+tasks.create('analyzeMethodCount', Task) {
+    group = 'apk analysis'
+    description = 'Analyzes method count in APK (requires dexcount plugin)'
+    dependsOn 'assembleRelease'
+    
+    doLast {
+        println "\n==== Method Count Analysis ===="
+        
+        // Check if dexcount plugin is available
+        def dexCountTask = tasks.findByName('countReleaseClasses')
+        
+        if (dexCountTask) {
+            println "DEX method count available via dexcount plugin"
+            println "Run './gradlew countReleaseClasses' for detailed method count analysis"
+        } else {
+            println "💡 Install dexcount plugin for method count analysis:"
+            println "  Add to build.gradle: id 'com.getkeepsafe.dexcount'"
+        }
+        
+        // Basic DEX analysis
+        def apkDir = file("${project.buildDir}/outputs/apk/release")
+        def apkFile = null
+        
+        if (apkDir.exists()) {
+            apkDir.listFiles().each { file ->
+                if (file.name.endsWith('.apk') && !file.name.contains('unaligned')) {
+                    apkFile = file
+                }
+            }
+        }
+        
+        if (apkFile && apkFile.exists()) {
+            try {
+                def zipFile = new java.util.zip.ZipFile(apkFile)
+                def dexCount = 0
+                def totalDexSize = 0
+                
+                zipFile.entries().each { entry ->
+                    if (entry.name.endsWith('.dex')) {
+                        dexCount++
+                        totalDexSize += entry.size
+                    }
+                }
+                
+                zipFile.close()
+                
+                def dexSizeMB = totalDexSize / (1024.0 * 1024.0)
+                
+                println "DEX Files: ${dexCount}"
+                println "Total DEX Size: ${String.format('%.2f', dexSizeMB)} MB"
+                
+                if (dexCount > 1) {
+                    println "✓ MultiDex enabled (${dexCount} DEX files)"
+                } else {
+                    println "✓ Single DEX file - under 65K method limit"
+                }
+                
+                // Method count estimation (very rough)
+                def estimatedMethods = (dexSizeMB * 10000).intValue()
+                println "Estimated methods: ~${estimatedMethods} (rough approximation)"
+                
+                if (estimatedMethods > 50000) {
+                    println "⚠ High method count - consider:"
+                    println "  - Enabling ProGuard/R8 optimization"
+                    println "  - Removing unused dependencies"
+                    println "  - Using dependency exclusions"
+                }
+                
+            } catch (Exception e) {
+                println "⚠ Could not analyze DEX files: ${e.message}"
+            }
+        }
+        
+        println "============================\n"
+    }
+}
+
+tasks.create('generateApkReport', Task) {
+    group = 'apk analysis'
+    description = 'Generates comprehensive APK analysis report'
+    dependsOn 'assembleRelease'
+    
+    doLast {
+        println "\n==== Generating APK Analysis Report ===="
+        
+        def reportDir = file("${project.buildDir}/reports")
+        reportDir.mkdirs()
+        def reportFile = file("${reportDir}/apk-analysis-report.md")
+        
+        def apkDir = file("${project.buildDir}/outputs/apk/release")
+        def apkFile = null
+        
+        if (apkDir.exists()) {
+            apkDir.listFiles().each { file ->
+                if (file.name.endsWith('.apk') && !file.name.contains('unaligned')) {
+                    apkFile = file
+                }
+            }
+        }
+        
+        reportFile.withWriter { writer ->
+            writer.writeLine("# PartyMaker APK Analysis Report")
+            writer.writeLine()
+            writer.writeLine("**Generated:** ${new Date()}")
+            writer.writeLine()
+            
+            if (apkFile && apkFile.exists()) {
+                def apkSizeMB = apkFile.length() / (1024.0 * 1024.0)
+                
+                writer.writeLine("## APK Information")
+                writer.writeLine("- **File:** ${apkFile.name}")
+                writer.writeLine("- **Size:** ${String.format('%.2f', apkSizeMB)} MB")
+                writer.writeLine("- **Path:** ${apkFile.path}")
+                writer.writeLine()
+                
+                writer.writeLine("## Size Assessment")
+                if (apkSizeMB < 10) {
+                    writer.writeLine("✅ **Excellent** - APK size under 10MB")
+                } else if (apkSizeMB < 25) {
+                    writer.writeLine("✅ **Very Good** - APK size under 25MB")
+                } else if (apkSizeMB < 50) {
+                    writer.writeLine("⚠️ **Acceptable** - APK size under 50MB")
+                } else {
+                    writer.writeLine("❌ **Large** - APK size over 50MB - optimization recommended")
+                }
+                writer.writeLine()
+                
+                writer.writeLine("## Optimization Recommendations")
+                writer.writeLine("1. **App Bundle:** Use `.aab` format for up to 20% smaller downloads")
+                writer.writeLine("2. **Resource Optimization:** Run resource optimization tasks")
+                writer.writeLine("3. **ProGuard/R8:** Ensure code shrinking is enabled")
+                writer.writeLine("4. **Dependency Analysis:** Review large dependencies")
+                writer.writeLine()
+                
+                writer.writeLine("## Next Steps")
+                writer.writeLine("- Run `./gradlew bundleRelease` for App Bundle")
+                writer.writeLine("- Run `./gradlew analyzeApkContent` for detailed breakdown")
+                writer.writeLine("- Run resource optimization tasks for further analysis")
+                
+            } else {
+                writer.writeLine("❌ **APK Not Found**")
+                writer.writeLine("Run `./gradlew assembleRelease` to generate APK first.")
+            }
+        }
+        
+        println "APK analysis report generated: ${reportFile.path}"
+        println "=======================================\n"
+    }
+}
+
+// Convenience task that runs all APK analysis
+tasks.create('fullApkAnalysis', Task) {
+    group = 'apk analysis'
+    description = 'Runs comprehensive APK analysis (size, content, method count)'
+    dependsOn 'analyzeApkSize', 'analyzeApkContent', 'analyzeMethodCount', 'generateApkReport'
+    
+    doLast {
+        println "\n🎉 Full APK analysis completed!"
+        println "Check build/reports/apk-analysis-report.md for detailed report"
+    }
+}
+
+println "APK analysis script loaded successfully"
+println "Available tasks:"
+println "  - analyzeApkSize: Basic APK size analysis"
+println "  - analyzeApkContent: Detailed APK content breakdown"
+println "  - analyzeMethodCount: Method count analysis"
+println "  - generateApkReport: Generate markdown report"
+println "  - fullApkAnalysis: Run all APK analysis tasks"

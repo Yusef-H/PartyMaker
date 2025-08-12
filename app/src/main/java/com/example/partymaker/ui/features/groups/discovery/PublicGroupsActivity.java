@@ -15,8 +15,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class PublicGroupsActivity extends AppCompatActivity {
+public class PublicGroupsActivity extends BaseActivity {
   private static final String TAG = "PublicGroupsActivity";
   private static final String ACTION_BAR_START_COLOR = "#0E81D1";
   private static final String ACTION_BAR_END_COLOR = "#0E81D1";
