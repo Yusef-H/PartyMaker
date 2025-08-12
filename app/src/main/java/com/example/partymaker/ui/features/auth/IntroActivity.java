@@ -129,7 +129,7 @@ public class IntroActivity extends AppCompatActivity {
   }
 
   public void btnNextClick(View v) {
-    int current = getItem(PAGE_OFFSET);
+    int current = getItem();
     if (current < SLIDE_LAYOUTS.length) {
       viewPager.setCurrentItem(current);
     } else {
@@ -180,11 +180,10 @@ public class IntroActivity extends AppCompatActivity {
   /**
    * Returns the next item index for the ViewPager.
    *
-   * @param i the offset
    * @return the next item index
    */
-  private int getItem(int i) {
-    return viewPager.getCurrentItem() + i;
+  private int getItem() {
+    return viewPager.getCurrentItem() + IntroActivity.PAGE_OFFSET;
   }
 
   /** Launches the LoginActivity and finishes the intro. */

@@ -76,7 +76,7 @@ public class FileManager {
    * @param callback Callback for the operation
    */
   public static void saveBitmapToFile(Bitmap bitmap, File file, FileOperationCallback callback) {
-    ThreadUtils.runInBackground(
+    ThreadUtils.executeImageTask(
         () -> {
           try {
             FileOutputStream outputStream = new FileOutputStream(file);
@@ -103,7 +103,7 @@ public class FileManager {
    */
   public static void copyFile(
       Context context, Uri sourceUri, File destFile, FileOperationCallback callback) {
-    ThreadUtils.runInBackground(
+    ThreadUtils.executeImageTask(
         () -> {
           try {
             InputStream inputStream = context.getContentResolver().openInputStream(sourceUri);
