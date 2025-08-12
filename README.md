@@ -14,7 +14,7 @@
 ##
 **PartyMaker** is the smart way to plan any event. Our platform thinks for you - managing invites, coordinating schedules, and keeping everyone connected - so you spend less time organizing and more time celebrating. It's event planning that works.
 
-## Archirecture
+## Architecture
 ### System Architecture Overview
 
 PartyMaker follows a **multi-tier enterprise architecture** with clear separation of concerns and scalable design patterns:
