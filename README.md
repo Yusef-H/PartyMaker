@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="app/src/main/res/drawable/app_showcase.png" alt="PartyMaker Logo" width="400" style="max-width:100%;">
-</p>
+![App Showcase](app/src/main/res/drawable/app_showcase.png)
 
 <p align="center">
   A smart, modern application for planning, organizing, and managing events.<br>
