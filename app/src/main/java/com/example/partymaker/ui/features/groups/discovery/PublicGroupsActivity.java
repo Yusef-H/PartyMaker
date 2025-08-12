@@ -737,4 +737,35 @@ public class PublicGroupsActivity extends BaseActivity {
     startActivity(intent);
     finish();
   }
+  
+  @Override
+  protected void clearActivityReferences() {
+    // Clear references to prevent memory leaks
+    if (allGroupsAdapter != null) {
+      allGroupsAdapter = null;
+    }
+    if (swipeRefreshLayout != null) {
+      swipeRefreshLayout.setOnRefreshListener(null);
+      swipeRefreshLayout = null;
+    }
+    if (shimmerFrameLayout != null) {
+      shimmerFrameLayout.stopShimmer();
+      shimmerFrameLayout = null;
+    }
+    if (recyclerView != null) {
+      recyclerView.setAdapter(null);
+      recyclerView = null;
+    }
+    if (searchEditText != null) {
+      searchEditText = null;
+    }
+    if (chipGroupFilters != null) {
+      chipGroupFilters = null;
+    }
+    if (filterButton != null) {
+      filterButton = null;
+    }
+    allGroups.clear();
+    filteredGroups.clear();
+  }
 }
