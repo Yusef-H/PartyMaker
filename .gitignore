@@ -97,6 +97,7 @@ app/server/src/main/resources/firebase-service-account.json
 # Documentation and optimization files
 *.md
 !README.md
+!scripts/README.md
 /optimization/
 /.claude/
 CODE_REVIEW_CHECKLIST.md
