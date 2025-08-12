@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/group_name"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textOnBackground"
             android:textSize="34sp" />
 
 
@@ -29,7 +29,7 @@
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="@string/created_by"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/textOnBackground" />
 
         <TextView
             android:id="@+id/tvCreatedBy1"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="70dp"
             android:text="@string/username_date"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/textOnBackground" />
 
         <TextView
             android:id="@+id/tvYourEntry1"
@@ -47,7 +47,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginStart="5dp"
             android:text="@string/entry_price"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/textOnBackground" />
 
         <TextView
             android:id="@+id/tvEntryPrice1"
@@ -57,7 +57,7 @@
             android:layout_marginStart="5dp"
             android:layout_toRightOf="@id/tvYourEntry1"
             android:text="@string/free"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/textOnBackground" />
 
     </RelativeLayout>
 

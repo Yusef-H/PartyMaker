@@ -43,7 +43,7 @@
             android:layout_below="@+id/imgEditGroup"
             android:layout_centerHorizontal="true"
             android:text="@string/groupname"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textOnBackground"
             android:textSize="34sp" />
 
         <ImageButton
