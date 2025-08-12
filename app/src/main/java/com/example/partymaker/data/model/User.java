@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import com.google.firebase.database.PropertyName;
 import java.util.HashMap;
@@ -14,7 +15,13 @@ import java.util.UUID;
  * Represents a user in the PartyMaker application. This class is annotated for Room database
  * storage.
  */
-@Entity(tableName = "users")
+@Entity(tableName = "users",
+        indices = {
+            @Index(value = "email", name = "idx_user_email", unique = true),
+            @Index(value = "username", name = "idx_user_name"),
+            @Index(value = "created_at", name = "idx_user_created"),
+            @Index(value = {"username", "email"}, name = "idx_user_search")
+        })
 public class User {
   /** The user's unique key. */
   @PrimaryKey
