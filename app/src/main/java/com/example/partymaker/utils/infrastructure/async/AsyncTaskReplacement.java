@@ -152,7 +152,7 @@ public class AsyncTaskReplacement {
 
     /** Interface for HTTP request implementations */
     public interface HttpRequestTask {
-      String executeRequest() throws Exception;
+      String executeRequest();
     }
 
     /** Callback for network operations */
@@ -208,7 +208,7 @@ public class AsyncTaskReplacement {
 
     /** Interface for database operations */
     public interface DatabaseOperation<T> {
-      T execute() throws Exception;
+      T execute();
     }
 
     /** Callback for database operations */
