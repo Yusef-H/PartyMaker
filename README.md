@@ -1,4 +1,14 @@
-# PartyMaker 🎉
+<p align="center">
+  <img src="app/src/main/res/drawable/app_showcase.png" alt="PartyMaker Logo" width="400" style="max-width:100%;">
+</p>
+
+<h1 align="center">PartyMaker</h1>
+
+<p align="center">
+  A smart, modern application for planning, organizing, and managing events.<br>
+  Built with cutting-edge technology, an exceptional user experience, and a sleek design.
+</p>
+
 
 ![Project Views](https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
