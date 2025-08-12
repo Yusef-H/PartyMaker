@@ -13,6 +13,11 @@
     <!-- App's 2 primary colors -->
     <color name="primaryBlue">#0E81D1</color>
     <color name="primaryGray">#E4E9EF</color>
+    
+    <!-- Theme-aware text colors for automatic adaptation -->
+    <color name="textOnBackground">#181C21</color>
+    <color name="textOnSurface">#181C21</color>
+    <color name="textSecondary">#5A6670</color>
 
     <!-- Missing colors referenced in layouts -->
     <color name="blue_primary">#0E81D1</color>
