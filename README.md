@@ -1,8 +1,7 @@
 ![App Showcase](app/src/main/res/drawable/app_showcase.png)
-
 <p align="center">
   <strong>Intelligent event planning and management solution for modern organizations</strong><br>
-  Streamlining corporate events through enterprise-grade technology and AI-powered automation
+  make every celebration, gathering, and occasion effortlessly memorable
 </p>
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square" alt="Project Views">
@@ -10,17 +9,13 @@
   <a href="https://openjdk.java.net/projects/jdk/11/"><img src="https://img.shields.io/badge/Java-11-blue" alt="Java Version"></a>
   <a href="https://android-arsenal.com/api?level=33"><img src="https://img.shields.io/badge/API-33%2B-brightgreen.svg?style=flat" alt="Android API"></a>
   <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg" alt="Spring Boot"></a>
-  <img src="https://img.shields.io/badge/Architecture-Microservices-orange" alt="Microservices">
 </p>
 
-## Platform Overview
-**PartyMaker** is an event management platform delivering measurable efficiency gains for event planning. 
-The solution integrates advanced automation, real-time analytics, and scalable microservices architecture to reduce planning overhead by 60% while ensuring compliance with organizational policies and budget controls.
 
 ##
-*Transforming organizational event management through intelligent automation, delivering quantifiable ROI and operational excellence for enterprise clients.*
-
-## 🏗️ Enterprise Architecture
+**PartyMaker** is an event management platform delivering measurable efficiency gains for event planning. 
+The solution integrates advanced automation, real-time analytics, and scalable microservices architecture to reduce planning overhead by 60% while ensuring compliance with organizational policies and budget controls.
+##
 
 ### System Architecture Overview
 
