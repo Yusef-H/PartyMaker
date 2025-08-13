@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("com.diffplug.spotless") version "7.2.1"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.getkeepsafe.dexcount") // For APK analysis
@@ -87,6 +88,11 @@ android {
             // Disable Crashlytics in debug builds 
             buildConfigField("boolean", "ENABLE_CRASHLYTICS", "false")
             
+            // Disable Crashlytics collection for debug builds
+            // configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            //     mappingFileUploadEnabled = false
+            // }
+            
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -102,6 +108,11 @@ android {
             
             // Enable Crashlytics in release builds
             buildConfigField("boolean", "ENABLE_CRASHLYTICS", "true")
+            
+            // Enable Crashlytics collection for release builds
+            // configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            //     mappingFileUploadEnabled = true
+            // }
             
             // ProGuard/R8 configuration with optimization
             proguardFiles(
@@ -312,6 +323,10 @@ dependencies {
     // Firebase App Check for security
     implementation("com.google.firebase:firebase-appcheck-playintegrity:17.1.1")
     implementation("com.google.firebase:firebase-appcheck-debug:17.1.1")
+    
+    // Firebase Crashlytics for crash reporting (only in release builds)
+    implementation("com.google.firebase:firebase-crashlytics:19.0.3")
+    implementation("com.google.firebase:firebase-analytics:22.1.2")
 
     // --- Google Services ---
     implementation(libs.gms.play.services.auth)
