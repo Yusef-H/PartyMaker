@@ -308,6 +308,10 @@ dependencies {
     implementation(libs.google.firebase.storage)
     implementation(libs.firebase.firestore)
     // Note: Firebase Cloud Messaging intentionally excluded
+    
+    // Firebase App Check for security
+    implementation("com.google.firebase:firebase-appcheck-playintegrity:17.1.1")
+    implementation("com.google.firebase:firebase-appcheck-debug:17.1.1")
 
     // --- Google Services ---
     implementation(libs.gms.play.services.auth)

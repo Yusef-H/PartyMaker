@@ -65,6 +65,9 @@ public abstract class AppDatabase extends RoomDatabase {
           super.onCreate(db);
           Log.i(TAG, "Database created for the first time");
           createCustomIndexes(db);
+          
+          // Database monitoring is done through static methods
+          // No initialization needed for DatabaseMonitor
         }
 
         @Override
@@ -74,6 +77,9 @@ public abstract class AppDatabase extends RoomDatabase {
 
           enableForeignKeys(db);
           optimizeDatabasePerformance(db);
+          
+          // Log database opening
+          Log.d(TAG, "Database opened successfully");
         }
 
         @Override

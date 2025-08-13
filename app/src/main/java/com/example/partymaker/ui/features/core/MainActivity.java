@@ -94,6 +94,20 @@ public class MainActivity extends BaseActivity {
   private String currentSortMode = "date_nearest"; // default sort
   private boolean filterPublicOnly = false;
   private boolean filterPrivateOnly = false;
+  
+  // Date format patterns for parsing
+  private static final java.text.SimpleDateFormat[] DATE_FORMATS = {
+      new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()),
+      new java.text.SimpleDateFormat("d/MM/yyyy", java.util.Locale.getDefault()),
+      new java.text.SimpleDateFormat("dd/M/yyyy", java.util.Locale.getDefault()),
+      new java.text.SimpleDateFormat("d/M/yyyy", java.util.Locale.getDefault()),
+      new java.text.SimpleDateFormat("dd/MMMM/yyyy", java.util.Locale.ENGLISH),
+      new java.text.SimpleDateFormat("d/MMMM/yyyy", java.util.Locale.ENGLISH),
+      new java.text.SimpleDateFormat("dd/MMM/yyyy", java.util.Locale.ENGLISH),
+      new java.text.SimpleDateFormat("d/MMM/yyyy", java.util.Locale.ENGLISH)
+  };
+
+ 
   private boolean filterFreeOnly = false;
   private boolean filterUpcomingOnly = false;
   
@@ -821,20 +835,55 @@ public class MainActivity extends BaseActivity {
   
   private int compareDates(Group g1, Group g2) {
     try {
+      // Check for null values first
+      if (g1.getGroupDays() == null || g1.getGroupMonths() == null || g1.getGroupYears() == null ||
+          g2.getGroupDays() == null || g2.getGroupMonths() == null || g2.getGroupYears() == null) {
+        return 0;
+      }
+      
       String date1 = g1.getGroupDays() + "/" + g1.getGroupMonths() + "/" + g1.getGroupYears();
       String date2 = g2.getGroupDays() + "/" + g2.getGroupMonths() + "/" + g2.getGroupYears();
       
-      java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
-      java.util.Date d1 = sdf.parse(date1);
-      java.util.Date d2 = sdf.parse(date2);
-      
-      if (d1 != null && d2 != null) {
-        return d1.compareTo(d2);
+      // Check for "null" strings
+      if (date1.contains("null") || date2.contains("null")) {
+        return 0;
       }
+      
+      java.util.Date d1 = parseDate(date1);
+      java.util.Date d2 = parseDate(date2);
+      
+      if (d1 == null && d2 == null) return 0;
+      if (d1 == null) return 1;
+      if (d2 == null) return -1;
+      
+      return d1.compareTo(d2);
     } catch (Exception e) {
       Log.w(TAG, "Error comparing dates", e);
     }
     return 0;
+  }
+  
+  /**
+   * Parse date string with multiple format support
+   */
+  private java.util.Date parseDate(String dateStr) {
+    if (dateStr == null || dateStr.isEmpty() || dateStr.contains("null")) {
+      return null;
+    }
+    
+    // Try each date format
+    for (java.text.SimpleDateFormat format : DATE_FORMATS) {
+      try {
+        format.setLenient(false);
+        return format.parse(dateStr);
+      } catch (java.text.ParseException e) {
+        // Try next format
+      }
+    }
+    
+    // Log error only once for unparseable dates
+    Log.w(TAG, "Could not parse date: " + dateStr);
+    return null;
   }
   
   private void showSortFilterDialog() {

@@ -14,9 +14,13 @@ import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.data.repository.UserRepository;
 import com.example.partymaker.utils.infrastructure.system.MemoryManager;
+import com.example.partymaker.utils.infrastructure.PerformanceMonitor;
 import com.example.partymaker.ui.features.auxiliary.settings.ServerSettingsActivity;
 import com.example.partymaker.utils.ui.feedback.NotificationManager;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 
 /** Application class for PartyMaker. Initializes repositories and other app-wide components. */
 public class PartyApplication extends Application {
@@ -28,18 +32,27 @@ public class PartyApplication extends Application {
     super.onCreate();
     instance = this;
 
+    // Start performance monitoring
+    PerformanceMonitor.startTiming("Application.onCreate");
+    PerformanceMonitor.trackMemoryUsage("Application.onCreate.start");
+
     // Apply saved theme preference
     ServerSettingsActivity.applyThemeFromPreferences(this);
     Log.d(TAG, "Theme preference applied");
 
     // Initialize Firebase
     try {
+      PerformanceMonitor.startTiming("Firebase.init");
       FirebaseApp.initializeApp(this);
       Log.d(TAG, "Firebase initialized successfully");
+      
+      // Initialize Firebase App Check for security
+      initializeAppCheck();
 
       // Initialize Firebase references
       DBRef.init();
       Log.d(TAG, "Firebase references initialized successfully");
+      PerformanceMonitor.endTiming("Firebase.init");
     } catch (Exception e) {
       Log.e(TAG, "Error initializing Firebase", e);
     }
@@ -80,6 +93,10 @@ public class PartyApplication extends Application {
     // Log memory info
     Log.d(TAG, "Initial memory usage: " + MemoryManager.getDetailedMemoryInfo());
 
+    // End application initialization timing
+    PerformanceMonitor.trackMemoryUsage("Application.onCreate.end");
+    PerformanceMonitor.endTiming("Application.onCreate");
+    
     Log.d(TAG, "Application initialized");
   }
 
@@ -127,6 +144,33 @@ public class PartyApplication extends Application {
    */
   public static PartyApplication getInstance() {
     return instance;
+  }
+  
+  /**
+   * Initializes Firebase App Check for enhanced security.
+   * Uses Play Integrity for production and Debug provider for testing.
+   */
+  private void initializeAppCheck() {
+    try {
+      FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+      
+      if (BuildConfig.DEBUG) {
+        // Use debug provider for testing
+        Log.d(TAG, "Initializing App Check with Debug provider");
+        firebaseAppCheck.installAppCheckProviderFactory(
+            DebugAppCheckProviderFactory.getInstance());
+      } else {
+        // Use Play Integrity for production
+        Log.d(TAG, "Initializing App Check with Play Integrity provider");
+        firebaseAppCheck.installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance());
+      }
+      
+      Log.d(TAG, "Firebase App Check initialized successfully");
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to initialize App Check - continuing without it", e);
+      // App can still function without App Check, but with reduced security
+    }
   }
 
   /**

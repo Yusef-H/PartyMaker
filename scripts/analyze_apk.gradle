@@ -1,0 +1,173 @@
+// APK Analysis Script for PartyMaker
+// This script provides detailed analysis of APK size and contents
+
+task analyzeApk {
+    description = 'Analyze APK size and contents'
+    group = 'optimization'
+    
+    doLast {
+        def apkFile = file("${buildDir}/outputs/apk/release/app-release.apk")
+        
+        if (!apkFile.exists()) {
+            apkFile = file("${buildDir}/outputs/apk/debug/app-debug.apk")
+        }
+        
+        if (apkFile.exists()) {
+            println "\n=== APK Analysis Report ==="
+            println "File: ${apkFile.name}"
+            println "Size: ${(apkFile.length() / 1024 / 1024).round(2)} MB"
+            
+            // Analyze APK contents using Android SDK tools
+            exec {
+                commandLine 'aapt', 'dump', 'badging', apkFile.absolutePath
+                standardOutput = new ByteArrayOutputStream()
+                
+                doLast {
+                    def output = standardOutput.toString()
+                    def packageLine = output.find(/package: name='([^']+)'/)
+                    def versionCode = output.find(/versionCode='([^']+)'/)
+                    def versionName = output.find(/versionName='([^']+)'/)
+                    
+                    println "Package: $packageLine"
+                    println "Version: $versionName (code: $versionCode)"
+                }
+            }
+            
+            // Size breakdown
+            println "\n=== Size Breakdown ==="
+            exec {
+                commandLine 'unzip', '-l', apkFile.absolutePath
+                standardOutput = new ByteArrayOutputStream()
+                
+                doLast {
+                    def output = standardOutput.toString()
+                    def lines = output.split('\n')
+                    
+                    def dexSize = 0
+                    def resourceSize = 0
+                    def nativeSize = 0
+                    def assetsSize = 0
+                    
+                    lines.each { line ->
+                        if (line.contains('.dex')) {
+                            def size = line.trim().split(/\s+/)[0] as Long
+                            dexSize += size
+                        } else if (line.contains('res/')) {
+                            def size = line.trim().split(/\s+/)[0] as Long
+                            resourceSize += size
+                        } else if (line.contains('lib/')) {
+                            def size = line.trim().split(/\s+/)[0] as Long
+                            nativeSize += size
+                        } else if (line.contains('assets/')) {
+                            def size = line.trim().split(/\s+/)[0] as Long
+                            assetsSize += size
+                        }
+                    }
+                    
+                    println "DEX files: ${(dexSize / 1024 / 1024).round(2)} MB"
+                    println "Resources: ${(resourceSize / 1024 / 1024).round(2)} MB"
+                    println "Native libs: ${(nativeSize / 1024 / 1024).round(2)} MB"
+                    println "Assets: ${(assetsSize / 1024 / 1024).round(2)} MB"
+                }
+            }
+            
+            println "\n=== Method Count ==="
+            // Count methods in DEX files
+            exec {
+                commandLine 'sh', '-c', "unzip -p ${apkFile.absolutePath} classes*.dex | hexdump -C | grep -c 'invoke'"
+                standardOutput = new ByteArrayOutputStream()
+                
+                doLast {
+                    println "Approximate method references: ${standardOutput.toString().trim()}"
+                }
+            }
+            
+        } else {
+            println "No APK file found. Please build the app first."
+        }
+    }
+}
+
+// Task to find large resources
+task findLargeResources {
+    description = 'Find large resource files in the project'
+    group = 'optimization'
+    
+    doLast {
+        println "\n=== Large Resource Files (>100KB) ==="
+        
+        def resourceDirs = [
+            file("src/main/res"),
+            file("src/debug/res"),
+            file("src/release/res")
+        ]
+        
+        def largeFiles = []
+        
+        resourceDirs.each { dir ->
+            if (dir.exists()) {
+                dir.eachFileRecurse { file ->
+                    if (file.isFile() && file.length() > 100 * 1024) {
+                        largeFiles << [
+                            file: file,
+                            size: file.length()
+                        ]
+                    }
+                }
+            }
+        }
+        
+        largeFiles.sort { -it.size }.each { item ->
+            println "${item.file.name}: ${(item.size / 1024).round()} KB"
+        }
+        
+        if (largeFiles.isEmpty()) {
+            println "No large resource files found."
+        }
+    }
+}
+
+// Task to analyze ProGuard/R8 effectiveness
+task analyzeProguard {
+    description = 'Analyze ProGuard/R8 optimization effectiveness'
+    group = 'optimization'
+    
+    dependsOn 'assembleRelease'
+    
+    doLast {
+        def mappingFile = file("${buildDir}/outputs/mapping/release/mapping.txt")
+        
+        if (mappingFile.exists()) {
+            println "\n=== ProGuard/R8 Analysis ==="
+            
+            def lines = mappingFile.readLines()
+            def obfuscatedClasses = lines.count { it.contains('->') && !it.startsWith(' ') }
+            def obfuscatedMethods = lines.count { it.contains('->') && it.startsWith(' ') }
+            
+            println "Obfuscated classes: $obfuscatedClasses"
+            println "Obfuscated methods: $obfuscatedMethods"
+            println "Mapping file size: ${(mappingFile.length() / 1024).round()} KB"
+            
+            // Check for common optimization issues
+            println "\n=== Optimization Warnings ==="
+            
+            def keepRules = file("proguard-rules.pro").readLines()
+            def broadKeeps = keepRules.count { it.contains('keep class **') }
+            
+            if (broadKeeps > 0) {
+                println "⚠️  Found $broadKeeps broad keep rules that may prevent optimization"
+            }
+            
+            def debugLogs = lines.count { 
+                it.contains('Log.d') || it.contains('Log.v') || it.contains('BuildConfig.DEBUG')
+            }
+            
+            if (debugLogs > 0) {
+                println "⚠️  Found $debugLogs potential debug log references in release build"
+            }
+            
+        } else {
+            println "No ProGuard/R8 mapping file found. Build a release variant first."
+        }
+    }
+}
