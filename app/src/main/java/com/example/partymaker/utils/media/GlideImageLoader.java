@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.partymaker.R;
+import com.example.partymaker.utils.media.ImageOptimizationManager;
 
 /**
  * Utility class for loading images efficiently using Glide. Provides centralized image loading with
@@ -32,164 +33,89 @@ public class GlideImageLoader {
   private static final int DEFAULT_PLACEHOLDER = R.drawable.default_profile_image;
 
   /**
-   * Loads an image from a URL into an ImageView.
+   * Loads an image from a URL into an ImageView using optimized manager.
    *
    * @param context The context
    * @param imageUrl The URL of the image
    * @param imageView The ImageView to load the image into
    */
   public static void loadImage(Context context, String imageUrl, ImageView imageView) {
-    loadImage(context, imageUrl, imageView, DEFAULT_PLACEHOLDER);
+    ImageOptimizationManager.loadGroupThumbnail(imageView, imageUrl);
   }
 
   /**
-   * Loads an image from a URL into an ImageView with a custom placeholder.
+   * Loads an image from a URL into an ImageView with optimized settings.
+   * Now uses ImageOptimizationManager for better memory management.
    *
    * @param context The context
    * @param imageUrl The URL of the image
    * @param imageView The ImageView to load the image into
-   * @param placeholderResId Resource ID of the placeholder drawable
+   * @param placeholderResId Resource ID of the placeholder drawable (ignored, using optimized defaults)
    */
   public static void loadImage(
       Context context, String imageUrl, ImageView imageView, @DrawableRes int placeholderResId) {
-    if (context == null || imageView == null) {
-      return;
-    }
-
-    // Clear any previous load requests to prevent wrong images during RecyclerView recycling
-    Glide.with(context).clear(imageView);
-
-    // Create request with error handling, caching, and smooth transition
-    RequestBuilder<Drawable> requestBuilder =
-        Glide.with(context)
-            .load(imageUrl)
-            .apply(getRecyclerViewRequestOptions(placeholderResId))
-            .transition(
-                DrawableTransitionOptions.withCrossFade(
-                    CROSSFADE_DURATION_MS)) // Shorter crossfade for better UX
-            .listener(
-                new RequestListener<>() {
-                  @Override
-                  public boolean onLoadFailed(
-                      @Nullable GlideException e,
-                      Object model,
-                      Target<Drawable> target,
-                      boolean isFirstResource) {
-                    if (e != null) {
-                      e.logRootCauses("GlideImageLoader");
-                    }
-                    return false;
-                  }
-
-                  @Override
-                  public boolean onResourceReady(
-                      Drawable resource,
-                      Object model,
-                      Target<Drawable> target,
-                      DataSource dataSource,
-                      boolean isFirstResource) {
-                    return false;
-                  }
-                });
-
-    // Execute the request
-    requestBuilder.into(imageView);
+    ImageOptimizationManager.loadGroupThumbnail(imageView, imageUrl);
   }
 
   /**
-   * Loads a circular profile image from a URL.
+   * Loads a circular profile image from a URL using optimized manager.
    *
-   * @param context The context
+   * @param context The context (unused but kept for backward compatibility)
    * @param imageUrl The URL of the image
    * @param imageView The ImageView to load the image into
    */
   public static void loadProfileImage(Context context, String imageUrl, ImageView imageView) {
-    if (context == null || imageView == null) {
-      return;
-    }
-
-    Glide.with(context)
-        .load(imageUrl)
-        .apply(getDefaultRequestOptions(DEFAULT_PLACEHOLDER).circleCrop())
-        .into(imageView);
+    ImageOptimizationManager.loadProfileImage(imageView, imageUrl);
   }
 
   /**
-   * Preloads an image into the memory cache.
+   * Preloads an image into the memory cache using optimized manager.
    *
    * @param context The context
    * @param imageUrl The URL of the image
    */
   public static void preloadImage(Context context, String imageUrl) {
-    if (context == null || imageUrl == null || imageUrl.isEmpty()) {
-      return;
-    }
-
-    Glide.with(context).load(imageUrl).apply(createPreloadRequestOptions()).preload();
+    ImageOptimizationManager.preloadImage(context, imageUrl);
   }
 
   /**
-   * Preloads multiple images into the cache. Useful for preloading group images to improve
-   * RecyclerView scrolling performance.
+   * Preloads multiple images into the cache using optimized manager.
+   * Useful for preloading group images to improve RecyclerView scrolling performance.
    *
    * @param context The context
    * @param imageUrls List of image URLs to preload
    */
   public static void preloadImages(Context context, java.util.List<String> imageUrls) {
-    if (context == null || imageUrls == null || imageUrls.isEmpty()) {
-      return;
-    }
-
-    for (String imageUrl : imageUrls) {
-      if (imageUrl != null && !imageUrl.isEmpty()) {
-        preloadImage(context, imageUrl);
-      }
-    }
+    ImageOptimizationManager.preloadImages(context, imageUrls);
   }
 
   /**
-   * Clears the memory cache.
+   * Clears the memory cache using optimized manager.
    *
    * @param context The context
    */
   public static void clearMemoryCache(Context context) {
-    if (context == null) {
-      return;
-    }
-
-    Glide.get(context).clearMemory();
+    ImageOptimizationManager.clearMemoryCache(context);
   }
 
   /**
-   * Clears the disk cache.
+   * Clears the disk cache using optimized manager.
    *
    * @param context The context
    */
   public static void clearDiskCache(final Context context) {
-    if (context == null) {
-      return;
-    }
-
-    new Thread(() -> Glide.get(context).clearDiskCache()).start();
+    ImageOptimizationManager.clearDiskCache(context);
   }
 
   /**
-   * Clears any pending requests for a specific ImageView. This is useful for RecyclerView to
-   * prevent wrong images during recycling.
+   * Clears any pending requests for a specific ImageView using optimized manager.
+   * This is useful for RecyclerView to prevent wrong images during recycling.
    *
-   * @param context The context
+   * @param context The context (unused but kept for backward compatibility)
    * @param imageView The ImageView to clear
    */
   public static void clearImageView(Context context, ImageView imageView) {
-    if (context == null || imageView == null) {
-      return;
-    }
-
-    try {
-      Glide.with(context).clear(imageView);
-    } catch (Exception e) {
-      // Ignore exceptions when clearing, as this might happen during fragment destruction
-    }
+    ImageOptimizationManager.clearImageView(imageView);
   }
 
   /**

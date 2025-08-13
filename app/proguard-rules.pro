@@ -1,13 +1,21 @@
-# Enhanced ProGuard rules for PartyMaker with security hardening
+# Enhanced ProGuard rules for PartyMaker with security hardening and build optimization
 # ========================================================
 
-# General configuration
--optimizationpasses 5
+# ===== OPTIMIZATION CONFIGURATION =====
+# Increase optimization passes for better code shrinking
+-optimizationpasses 7
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -dontpreverify
 -verbose
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+# Advanced optimizations (enable aggressive optimization)
+-optimizations !code/simplification/advanced,!field/*,!class/merging/*,!code/simplification/arithmetic,!code/simplification/cast
+-allowaccessmodification
+-mergeinterfacesaggressively
+
+# Enable aggressive method and class inlining
+-optimizations class/unboxing/enum,method/inlining/*,method/marking/private,method/removal/parameter
 
 # Security: Obfuscate package structure
 -repackageclasses ''
@@ -173,3 +181,53 @@
 # Keep lambda expressions
 -dontwarn java.lang.invoke.**
 -dontwarn **$$Lambda$*
+
+# ===== PERFORMANCE OPTIMIZATION =====
+# Remove all debug and performance monitoring code in release builds
+-assumenosideeffects class com.example.partymaker.utils.infrastructure.PerformanceMonitor {
+    public static void startTiming(...);
+    public static void endTiming(...);
+    public static void trackMemoryUsage(...);
+    public static void logPerformanceMetrics(...);
+}
+
+# Remove network optimization debugging
+-assumenosideeffects class com.example.partymaker.utils.infrastructure.NetworkOptimizationManager {
+    public static void logNetworkMetrics(...);
+    public static void trackRequestTiming(...);
+}
+
+# Remove memory manager debugging 
+-assumenosideeffects class com.example.partymaker.utils.infrastructure.system.MemoryManager {
+    public static void logMemoryUsage(...);
+    public static void trackGarbageCollection(...);
+}
+
+# ===== NETWORK OPTIMIZATION =====
+# Optimize OkHttp and Retrofit
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.**
+-keep class okhttp3.** { *; }
+-keep class retrofit2.** { *; }
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# Keep Retrofit service interfaces
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keepclassmembernames interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# ===== APK SIZE OPTIMIZATION =====
+# Optimize enum usage
+-optimizations !code/simplification/enum
+
+# Remove unused code more aggressively
+-overloadaggressively
+
+# ===== ADDITIONAL OPTIMIZATION RULES =====
+# Enable string constant optimization
+-adaptresourcefilenames **.properties,**.gif,**.jpg,**.png
+-adaptresourcefilecontents **.properties,META-INF/MANIFEST.MF
