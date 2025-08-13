@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
@@ -26,7 +26,7 @@ import com.example.partymaker.utils.ui.maps.MapUtilitiesManager;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class JoinGroupActivity extends AppCompatActivity {
+public class JoinGroupActivity extends BaseActivity {
   private static final String TAG = "JoinGroupActivity";
   private ImageView imgCalender;
   private ImageView imgSeeHours;
@@ -362,5 +362,32 @@ public class JoinGroupActivity extends AppCompatActivity {
       Log.e(TAG, "Error showing share dialog", e);
       Toast.makeText(this, "Error opening share options", Toast.LENGTH_SHORT).show();
     }
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    imgCalender = null;
+    imgSeeHours = null;
+    tvDateText = null;
+    tvDateDays = null;
+    tvDateMonths = null;
+    tvDateYears = null;
+    tvDateHours = null;
+    tvSeeHours = null;
+    tvSeeDate = null;
+    tvAt = null;
+
+    // Clear data fields
+    GroupKey = null;
+    GroupLocation = null;
+    GroupDay = null;
+    GroupMonth = null;
+    GroupYear = null;
+    GroupHour = null;
+    CurrentUser = null;
+    FriendKeys = null;
+    groupName = null;
+    groupPrice = null;
   }
 }

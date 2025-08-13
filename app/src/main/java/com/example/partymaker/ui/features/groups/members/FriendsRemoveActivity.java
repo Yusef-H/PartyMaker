@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FriendsRemoveActivity extends AppCompatActivity {
+public class FriendsRemoveActivity extends BaseActivity {
   private static final String TAG = "FriendsRemoveActivity";
 
   // UI constants
@@ -442,5 +442,36 @@ public class FriendsRemoveActivity extends AppCompatActivity {
                 .show();
           }
         });
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    deleteButton = null;
+    emailInput = null;
+    adapter = null;
+
+    // Clear data objects
+    serverClient = null;
+    friendKeys = null;
+    comingKeys = null;
+    messageKeys = null;
+
+    // Clear lists
+    usersList.clear();
+    userKeys.clear();
+
+    // Clear string fields
+    groupKey = null;
+    currentFriend = null;
+    groupName = null;
+    groupDay = null;
+    groupMonth = null;
+    groupYear = null;
+    groupHour = null;
+    groupLocation = null;
+    adminKey = null;
+    createdAt = null;
+    groupPrice = null;
   }
 }

@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.DBRef;
@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class ChangeDateActivity extends AppCompatActivity {
+public class ChangeDateActivity extends BaseActivity {
 
   private static final String TAG = "ChangeDateActivity";
 
@@ -414,5 +414,39 @@ public class ChangeDateActivity extends AppCompatActivity {
     }
 
     return new int[] {hour, minute};
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    hideButton = null;
+    helpButton = null;
+    changeDateButton = null;
+    selectDateButton = null;
+    selectTimeButton = null;
+    hideText = null;
+    helpText = null;
+    instructionsText = null;
+    selectedDateText = null;
+    selectedTimeText = null;
+
+    // Clear data objects
+    friendKeys = null;
+    comingKeys = null;
+    messageKeys = null;
+    selectedDate = null;
+
+    // Clear string fields
+    groupKey = null;
+    groupName = null;
+    groupDay = null;
+    groupMonth = null;
+    groupYear = null;
+    groupHour = null;
+    groupLocation = null;
+    adminKey = null;
+    createdAt = null;
+    groupPrice = null;
+    userKey = null;
   }
 }

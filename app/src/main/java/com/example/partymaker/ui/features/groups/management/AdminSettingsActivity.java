@@ -21,6 +21,7 @@ import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.firebase.DBRef;
 import com.example.partymaker.data.model.ChatMessage;
+import com.example.partymaker.data.repository.GroupRepository;
 import com.example.partymaker.ui.features.core.MainActivity;
 import com.example.partymaker.ui.features.groups.main.PartyMainActivity;
 import com.example.partymaker.utils.core.ExtrasMetadata;
@@ -401,40 +402,31 @@ public class AdminSettingsActivity extends AppCompatActivity {
   }
 
   private void deleteGroup() {
-    // delete all messages written by current group
-    deleteGroupMessages();
-
-    // delete group from database
-    DBRef.refGroups.child(groupKey).removeValue();
-
-    // delete group's picture
-    DBRef.refStorage.child("Groups/" + groupKey).delete();
-
-    // Show success message
-    Toast.makeText(AdminSettingsActivity.this, DELETE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-
-    // Navigate to main activity
-    Intent intent = new Intent(getBaseContext(), MainActivity.class);
-    startActivity(intent);
-  }
-
-  private void deleteGroupMessages() {
-    DBRef.refMessages.addListenerForSingleValueEvent(
-        new ValueEventListener() {
-          @Override
-          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            for (DataSnapshot data : dataSnapshot.getChildren()) {
-              ChatMessage message = data.getValue(ChatMessage.class);
-              if (message != null && message.getGroupId() != null) {
-                if (message.getGroupId().equals(groupKey)) {
-                  data.getRef().removeValue();
-                }
-              }
-            }
-          }
-
-          @Override
-          public void onCancelled(@NonNull DatabaseError databaseError) {}
+    // Use GroupRepository to properly delete group and update cache
+    GroupRepository repository = GroupRepository.getInstance();
+    repository.deleteGroup(groupKey, new GroupRepository.OperationCallback() {
+      @Override
+      public void onComplete() {
+        // Group deleted successfully
+        ThreadUtils.runOnMainThread(() -> {
+          // Show success message
+          Toast.makeText(AdminSettingsActivity.this, DELETE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+          
+          // Navigate to main activity
+          Intent intent = new Intent(getBaseContext(), MainActivity.class);
+          startActivity(intent);
+          finish();
         });
+      }
+      
+      @Override
+      public void onError(String error) {
+        // Handle deletion error
+        ThreadUtils.runOnMainThread(() -> {
+          Toast.makeText(AdminSettingsActivity.this, "Failed to delete group: " + error, Toast.LENGTH_LONG).show();
+        });
+      }
+    });
   }
+
 }

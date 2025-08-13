@@ -10,7 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.firebase.FirebaseAccessManager;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UsersListActivity extends AppCompatActivity {
+public class UsersListActivity extends BaseActivity {
   private static final String TAG = "UsersListActivity";
 
   // UI constants
@@ -359,5 +359,20 @@ public class UsersListActivity extends AppCompatActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    userListView = null;
+
+    // Clear data objects
+    serverClient = null;
+    usersList = null;
+    friendKeys = null;
+    comingKeys = null;
+
+    // Clear static context reference
+    contextOfApplication = null;
   }
 }
