@@ -1,20 +1,20 @@
-# PartyMaker 🎉
+![App Showcase](app/src/main/res/drawable/app_showcase.png)
+<p align="center">
+  <strong>Intelligent event planning and management solution for modern organizations</strong><br>
+  make every celebration, gathering, and occasion effortlessly memorable
+</p>
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square" alt="Project Views">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://openjdk.java.net/projects/jdk/11/"><img src="https://img.shields.io/badge/Java-11-yellow" alt="Java Version"></a>
+  <a href="https://android-arsenal.com/api?level=33"><img src="https://img.shields.io/badge/API-33%2B-brightgreen.svg?style=flat" alt="Android API"></a>
+  <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg" alt="Spring Boot"></a>
+</p>
 
-![Project Views](https://komarev.com/ghpvc/?username=Natifishman&repo=PartyMaker&color=blue&style=flat-square)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Java Version](https://img.shields.io/badge/Java-11-blue)](https://openjdk.java.net/projects/jdk/11/)
-[![Android API](https://img.shields.io/badge/API-33%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=33)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
+##
+**PartyMaker** is the smart way to plan any event. Our platform thinks for you - managing invites, coordinating schedules, and keeping everyone connected - so you spend less time organizing and more time celebrating. It's event planning that works.
 
-## 🌟 Overview
-
-**PartyMaker** is an enterprise-grade social event planning platform that revolutionizes how people create, manage, and participate in social events. Built with a modern client-server architecture, it combines native Android development with Spring Boot backend services, providing real-time communication, intelligent AI assistance, and comprehensive event management capabilities.
-
-### 🎯 Mission Statement
-*Bringing people together through seamless event planning and social connection, powered by cutting-edge technology and intelligent automation.*
-
-## 🏗️ Enterprise Architecture
-
+## Architecture
 ### System Architecture Overview
 
 PartyMaker follows a **multi-tier enterprise architecture** with clear separation of concerns and scalable design patterns:

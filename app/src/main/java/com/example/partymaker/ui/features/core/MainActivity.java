@@ -106,6 +106,8 @@ public class MainActivity extends BaseActivity {
       new java.text.SimpleDateFormat("dd/MMM/yyyy", java.util.Locale.ENGLISH),
       new java.text.SimpleDateFormat("d/MMM/yyyy", java.util.Locale.ENGLISH)
   };
+
+ 
   private boolean filterFreeOnly = false;
   private boolean filterUpcomingOnly = false;
   
