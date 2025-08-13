@@ -18,14 +18,14 @@ import com.example.partymaker.data.model.User;
  */
 @Database(
     entities = {Group.class, User.class, ChatMessage.class},
-    version = 6,
+    version = 7,
     exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
   private static final String TAG = "AppDatabase";
   private static final String DATABASE_NAME = "partymaker_database";
-  private static final int DATABASE_VERSION = 6;
+  private static final int DATABASE_VERSION = 7;
   private static final int CACHE_SIZE = 10000;
   private static volatile AppDatabase INSTANCE;
 
@@ -53,7 +53,7 @@ public abstract class AppDatabase extends RoomDatabase {
         .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
         .fallbackToDestructiveMigration()
         .fallbackToDestructiveMigrationOnDowngrade()
-        .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5)
+        .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6)
         .build();
   }
 
@@ -64,6 +64,7 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
           super.onCreate(db);
           Log.i(TAG, "Database created for the first time");
+          createCustomIndexes(db);
         }
 
         @Override
@@ -98,6 +99,14 @@ public abstract class AppDatabase extends RoomDatabase {
     closeDatabase();
     deleteDatabaseFiles(context);
     Log.i(TAG, "Database and related files deleted");
+  }
+
+  private static void createCustomIndexes(SupportSQLiteDatabase db) {
+    // Create composite indexes for complex queries
+    db.execSQL("CREATE INDEX IF NOT EXISTS idx_group_search ON groups(group_name COLLATE NOCASE, group_location COLLATE NOCASE)");
+    db.execSQL("CREATE INDEX IF NOT EXISTS idx_message_unread ON chat_messages(groupKey, encrypted, timestamp)");
+    db.execSQL("CREATE INDEX IF NOT EXISTS idx_user_search ON users(username COLLATE NOCASE, email COLLATE NOCASE)");
+    Log.d(TAG, "Custom indexes created");
   }
 
   private static void enableForeignKeys(SupportSQLiteDatabase db) {
