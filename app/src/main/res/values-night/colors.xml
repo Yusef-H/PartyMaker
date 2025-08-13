@@ -16,6 +16,11 @@
     <color name="primaryBlue">#3D94D9</color> <!-- Slightly muted blue for dark mode -->
     <color name="primaryGray">#1E1E1E</color> <!-- Very dark gray for surfaces -->
     
+    <!-- Theme-aware text colors for automatic adaptation -->
+    <color name="textOnBackground">#E1E1E1</color>
+    <color name="textOnSurface">#E1E1E1</color>
+    <color name="textSecondary">#B0B0B0</color>
+    
     <!-- Missing colors referenced in layouts -->
     <color name="blue_primary">#3D94D9</color>
     <color name="gray_medium">#757575</color>
