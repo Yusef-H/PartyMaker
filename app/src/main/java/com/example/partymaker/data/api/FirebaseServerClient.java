@@ -12,6 +12,8 @@ import com.example.partymaker.data.model.Group;
 import com.example.partymaker.data.model.User;
 import com.example.partymaker.utils.core.AppConstants;
 import com.example.partymaker.utils.infrastructure.async.AsyncTaskReplacement;
+import com.example.partymaker.utils.infrastructure.NetworkOptimizationManager;
+import com.example.partymaker.utils.infrastructure.RequestMetrics;
 import com.example.partymaker.utils.security.network.SSLPinningManager;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
@@ -27,13 +29,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +65,9 @@ public class FirebaseServerClient {
   /** ExecutorService for background tasks. */
   private final ExecutorService executor = Executors.newCachedThreadPool();
 
+  /** Request deduplication map */
+  private final Map<String, CompletableFuture<String>> ongoingRequests = new ConcurrentHashMap<>();
+
   /** Handler for posting to main thread. */
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -67,6 +76,9 @@ public class FirebaseServerClient {
 
   /** Secure OkHttpClient for network requests. */
   private OkHttpClient secureClient;
+
+  /** Optimized OkHttpClient for general requests. */
+  private OkHttpClient optimizedClient;
 
   /** The current server URL. */
   private String serverUrl = AppConstants.Network.DEFAULT_SERVER_URL;
@@ -105,6 +117,9 @@ public class FirebaseServerClient {
     /* SSL Pinning Manager for secure connections. */
     SSLPinningManager sslPinningManager = SSLPinningManager.getInstance(isProduction);
     secureClient = sslPinningManager.createSecureClient();
+
+    // Initialize optimized client for general requests
+    optimizedClient = NetworkOptimizationManager.getOptimizedHttpClient(context);
 
     Log.i(
         TAG,
@@ -1628,10 +1643,181 @@ public class FirebaseServerClient {
     }
   }
 
+  /**
+   * Makes an optimized HTTP request with deduplication and enhanced error handling.
+   * 
+   * @param endpoint The API endpoint
+   * @param method The HTTP method (GET, POST, PUT, DELETE)
+   * @param jsonBody The request body (for POST/PUT requests)
+   * @return CompletableFuture containing the response string
+   */
+  private CompletableFuture<String> makeOptimizedRequest(String endpoint, String method, String jsonBody) {
+    // Create request key for deduplication
+    String requestKey = method + ":" + endpoint + ":" + (jsonBody != null ? jsonBody.hashCode() : 0);
+    
+    // Return existing request if in progress (for GET requests only)
+    if ("GET".equals(method) && ongoingRequests.containsKey(requestKey)) {
+      Log.d(TAG, "Returning existing request for: " + endpoint);
+      return ongoingRequests.get(requestKey);
+    }
+    
+    CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+      return executeOptimizedHttpRequest(endpoint, method, jsonBody);
+    }, executor).whenComplete((result, throwable) -> {
+      ongoingRequests.remove(requestKey);
+      
+      if (throwable != null) {
+        RequestMetrics.recordFailure(serverUrl + AppConstants.Network.API_BASE_PATH + endpoint);
+        Log.e(TAG, "Request failed: " + endpoint, throwable);
+      }
+    });
+    
+    // Store only GET requests for deduplication
+    if ("GET".equals(method)) {
+      ongoingRequests.put(requestKey, future);
+    }
+    
+    return future;
+  }
+  
+  /**
+   * Executes an optimized HTTP request using the optimized client.
+   */
+  private String executeOptimizedHttpRequest(String endpoint, String method, String jsonBody) {
+    long startTime = System.currentTimeMillis();
+    String fullUrl = serverUrl + AppConstants.Network.API_BASE_PATH + endpoint;
+    
+    try {
+      Request.Builder requestBuilder = new Request.Builder()
+          .url(fullUrl)
+          .addHeader("Content-Type", "application/json")
+          .addHeader("User-Agent", "PartyMaker-Android/" + BuildConfig.VERSION_NAME);
+      
+      // Add method and body
+      if ("GET".equals(method)) {
+        requestBuilder.get();
+      } else if ("POST".equals(method)) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody != null ? jsonBody : "{}");
+        requestBuilder.post(body);
+      } else if ("PUT".equals(method)) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody != null ? jsonBody : "{}");
+        requestBuilder.put(body);
+      } else if ("DELETE".equals(method)) {
+        requestBuilder.delete();
+      }
+      
+      Request request = requestBuilder.build();
+      
+      try (Response response = optimizedClient.newCall(request).execute()) {
+        long duration = System.currentTimeMillis() - startTime;
+        RequestMetrics.recordRequestTime(fullUrl, duration);
+        
+        if (!response.isSuccessful()) {
+          throw new IOException("HTTP " + response.code() + ": " + response.message());
+        }
+        
+        ResponseBody responseBody = response.body();
+        return responseBody != null ? responseBody.string() : "";
+      }
+      
+    } catch (IOException e) {
+      long duration = System.currentTimeMillis() - startTime;
+      RequestMetrics.recordRequestTime(fullUrl, duration);
+      RequestMetrics.recordFailure(fullUrl);
+      throw new RuntimeException("Network request failed: " + endpoint, e);
+    }
+  }
+  
+  /**
+   * Batch request helper class for grouping multiple requests.
+   */
+  public static class BatchRequest {
+    final String endpoint;
+    final String method;
+    final String body;
+    
+    public BatchRequest(String endpoint, String method, String body) {
+      this.endpoint = endpoint;
+      this.method = method;
+      this.body = body;
+    }
+  }
+  
+  /**
+   * Makes multiple requests in batch for improved performance.
+   * 
+   * @param requests List of batch requests
+   * @return CompletableFuture containing list of response strings
+   */
+  public CompletableFuture<List<String>> makeBatchRequests(List<BatchRequest> requests) {
+    List<CompletableFuture<String>> futures = requests.stream()
+        .map(req -> makeOptimizedRequest(req.endpoint, req.method, req.body))
+        .collect(Collectors.toList());
+        
+    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+        .thenApply(v -> futures.stream()
+            .map(CompletableFuture::join)
+            .collect(Collectors.toList()));
+  }
+  
+  /**
+   * Prefetches common data for improved user experience.
+   * 
+   * @param userId The user ID to prefetch data for
+   */
+  public void prefetchCommonData(String userId) {
+    if (userId == null || userId.isEmpty()) {
+      return;
+    }
+    
+    executor.execute(() -> {
+      try {
+        Log.d(TAG, "Prefetching common data for user: " + userId);
+        
+        // Prefetch user groups (fire and forget)
+        makeOptimizedRequest("Groups", "GET", null);
+        
+        // Prefetch user data
+        makeOptimizedRequest("Users/" + userId.replace("@", "%40"), "GET", null);
+        
+        Log.d(TAG, "Prefetch requests initiated for user: " + userId);
+      } catch (Exception e) {
+        Log.w(TAG, "Failed to prefetch data", e);
+      }
+    });
+  }
+  
+  /**
+   * Clears all network state and caches.
+   */
+  public void clearNetworkState() {
+    ongoingRequests.clear();
+    NetworkOptimizationManager.clearAllCaches();
+    Log.d(TAG, "Network state cleared");
+  }
+  
+  /**
+   * Gets network performance statistics.
+   * 
+   * @return Performance statistics string
+   */
+  public String getNetworkStats() {
+    StringBuilder stats = new StringBuilder();
+    stats.append("Ongoing requests: ").append(ongoingRequests.size()).append("\n");
+    stats.append(RequestMetrics.getCacheStats()).append("\n");
+    
+    // Print detailed stats to log
+    RequestMetrics.printNetworkStats();
+    
+    return stats.toString();
+  }
+
   /** Cleanup resources when the app is shutting down */
   public void cleanup() {
     Log.d(TAG, "Cleaning up FirebaseServerClient resources");
+    ongoingRequests.clear();
     executor.shutdownNow();
+    NetworkOptimizationManager.clearAllCaches();
     NetworkUtils.cancelAllOperations();
   }
 
