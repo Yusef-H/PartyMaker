@@ -21,6 +21,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.example.partymaker.utils.media.ImageOptimizationManager;
 
 /** Application class for PartyMaker. Initializes repositories and other app-wide components. */
 public class PartyApplication extends Application {
@@ -48,6 +50,9 @@ public class PartyApplication extends Application {
       
       // Initialize Firebase App Check for security
       initializeAppCheck();
+      
+      // Initialize Crashlytics
+      initializeCrashlytics();
 
       // Initialize Firebase references
       DBRef.init();
@@ -92,6 +97,13 @@ public class PartyApplication extends Application {
 
     // Log memory info
     Log.d(TAG, "Initial memory usage: " + MemoryManager.getDetailedMemoryInfo());
+
+    // Setup global exception handler
+    setupGlobalExceptionHandler();
+    
+    // Optimize image loading configuration
+    ImageOptimizationManager.optimizeGlideConfiguration(this);
+    Log.d(TAG, "Image loading optimized");
 
     // End application initialization timing
     PerformanceMonitor.trackMemoryUsage("Application.onCreate.end");
@@ -174,6 +186,91 @@ public class PartyApplication extends Application {
   }
 
   /**
+   * Initializes Firebase Crashlytics for crash reporting.
+   */
+  private void initializeCrashlytics() {
+    try {
+      FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+      
+      // Enable/disable based on build type
+      crashlytics.setCrashlyticsCollectionEnabled(BuildConfig.ENABLE_CRASHLYTICS);
+      
+      if (BuildConfig.ENABLE_CRASHLYTICS) {
+        Log.d(TAG, "Crashlytics enabled for crash reporting");
+        
+        // Set user properties
+        crashlytics.setUserId("user_" + System.currentTimeMillis());
+        crashlytics.setCustomKey("app_version", BuildConfig.VERSION_NAME);
+        crashlytics.setCustomKey("debug_mode", BuildConfig.DEBUG);
+        
+        // Test log (only in debug)
+        if (BuildConfig.DEBUG) {
+          crashlytics.log("PartyApplication initialized successfully");
+        }
+      } else {
+        Log.d(TAG, "Crashlytics disabled for debug builds");
+      }
+      
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to initialize Crashlytics", e);
+    }
+  }
+
+  /**
+   * Sets up global exception handler for uncaught exceptions.
+   */
+  private void setupGlobalExceptionHandler() {
+    // Store the original handler before replacing it
+    final Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
+    
+    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        Log.e(TAG, "Uncaught exception in thread: " + thread.getName(), throwable);
+        
+        // Log crash information
+        Log.e(TAG, "Crash details - Message: " + throwable.getMessage());
+        Log.e(TAG, "Crash details - Cause: " + (throwable.getCause() != null ? throwable.getCause().toString() : "None"));
+        
+        // Send to Crashlytics if enabled
+        try {
+          if (BuildConfig.ENABLE_CRASHLYTICS) {
+            FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+            crashlytics.recordException(throwable);
+            crashlytics.log("Uncaught exception in thread: " + thread.getName());
+          }
+        } catch (Exception e) {
+          Log.e(TAG, "Failed to report crash to Crashlytics", e);
+        }
+        
+        // In debug builds, show additional information
+        if (BuildConfig.DEBUG) {
+          Log.e(TAG, "Stack trace: ", throwable);
+          Log.e(TAG, "Thread state: " + thread.getState());
+          Log.e(TAG, "Memory info: " + MemoryManager.getDetailedMemoryInfo());
+        }
+        
+        // Attempt graceful cleanup
+        try {
+          MemoryManager.getInstance().emergencyCleanup();
+        } catch (Exception e) {
+          Log.e(TAG, "Error during emergency cleanup", e);
+        }
+        
+        // Call the original handler to terminate the app
+        if (originalHandler != null) {
+          originalHandler.uncaughtException(thread, throwable);
+        } else {
+          // Fallback termination
+          System.exit(1);
+        }
+      }
+    });
+    
+    Log.d(TAG, "Global exception handler configured");
+  }
+
+  /**
    * Sets up memory monitoring for debug builds.
    */
   private void setupMemoryMonitoring() {
@@ -216,5 +313,7 @@ public class PartyApplication extends Application {
   public void onTrimMemory(int level) {
     super.onTrimMemory(level);
     MemoryManager.getInstance().emergencyCleanup();
+    // Also trim image cache memory
+    ImageOptimizationManager.trimMemory(this, level);
   }
 }

@@ -9,7 +9,7 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MembersInvitedActivity extends AppCompatActivity {
+public class MembersInvitedActivity extends BaseActivity {
 
   private static final String TAG = "MembersInvitedActivity";
 
@@ -69,8 +69,14 @@ public class MembersInvitedActivity extends AppCompatActivity {
       userKey = AuthenticationManager.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {
-      userKey = intent.getStringExtra("UserKey");
-      Log.d(TAG, "UserKey from Intent: " + userKey);
+      // Safe intent extras handling
+      if (intent != null && intent.getExtras() != null) {
+        userKey = intent.getStringExtra("UserKey");
+        Log.d(TAG, "UserKey from Intent: " + userKey);
+      } else {
+        userKey = null;
+        Log.w(TAG, "No intent or extras available for UserKey");
+      }
     }
 
     membersList = findViewById(R.id.lv2);
@@ -224,5 +230,15 @@ public class MembersInvitedActivity extends AppCompatActivity {
             + "\nUsername: "
             + user.getUsername()
             + "\n\nDo you want to remove this user?");
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    membersList = null;
+
+    // Clear data objects
+    friendKeys = null;
+    adminKey = null;
   }
 }

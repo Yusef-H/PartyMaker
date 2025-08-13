@@ -14,7 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.ui.features.auth.IntroActivity;
@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1.0
  */
 @SuppressLint("CustomSplashScreen")
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
   private static final class Config {
     static final int SPLASH_DELAY_MS = 3000;
@@ -294,5 +294,11 @@ public class SplashActivity extends AppCompatActivity {
 
     splashViewModel = null;
     configManager = null;
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear all references to prevent memory leaks
+    cleanupResources();
   }
 }

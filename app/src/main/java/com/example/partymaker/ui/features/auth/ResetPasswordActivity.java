@@ -21,7 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.viewmodel.auth.ResetPasswordViewModel;
@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version 2.0
  * @since 1.0
  */
-public class ResetPasswordActivity extends AppCompatActivity {
+public class ResetPasswordActivity extends BaseActivity {
 
   private static final class Config {
     static final String LOG_TAG = "ResetPasswordActivity";
@@ -259,6 +259,28 @@ public class ResetPasswordActivity extends AppCompatActivity {
     themeManager = null;
     emailValidator = null;
     resetPasswordViewModel = null;
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    lightThemeButton = null;
+    darkThemeButton = null;
+    resetPasswordButton = null;
+    helpButton = null;
+    hideInstructionsButton = null;
+    emailInputField = null;
+    resetLayout = null;
+    forgotPasswordTextView = null;
+    helpTextView = null;
+    instructionsTextView = null;
+    hideInstructionsTextView = null;
+    cakeImageView = null;
+
+    // Clear dependencies and managers
+    resetPasswordViewModel = null;
+    themeManager = null;
+    emailValidator = null;
   }
 
   // Inner Classes and Text Watcher

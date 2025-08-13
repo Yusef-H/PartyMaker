@@ -6,7 +6,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GptChatActivity extends AppCompatActivity {
+public class GptChatActivity extends BaseActivity {
 
   // ---------- System prompt ----------
   private static final ChatMessageGpt SYSTEM_PROMPT = // NEW
@@ -213,5 +213,26 @@ public class GptChatActivity extends AppCompatActivity {
                 () -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
           }
         });
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    chatRecyclerView = null;
+    messageInput = null;
+    chatAdapter = null;
+
+    // Clear data objects
+    openAiApi = null;
+    viewModel = null;
+
+    // Clear lists
+    visibleMessages.clear();
+    history.clear();
+
+    // Shutdown executor
+    if (executor != null && !executor.isShutdown()) {
+      executor.shutdown();
+    }
   }
 }

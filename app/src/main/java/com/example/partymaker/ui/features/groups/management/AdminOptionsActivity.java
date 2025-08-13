@@ -16,7 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.cardview.widget.CardView;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
@@ -41,7 +41,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class AdminOptionsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class AdminOptionsActivity extends BaseActivity implements OnMapReadyCallback {
   // Constants
   private static final String TAG = "AdminOptionsActivity";
   private static final String API_KEY_METADATA = "com.google.android.geo.API_KEY";
@@ -474,5 +474,35 @@ public class AdminOptionsActivity extends AppCompatActivity implements OnMapRead
                 .show();
           }
         });
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    mainContent = null;
+    cardPrice = null;
+    cardLocation = null;
+    saveLocationButton = null;
+    mapContainer = null;
+
+    // Clear data objects
+    friendKeys = null;
+    comingKeys = null;
+    messageKeys = null;
+    map = null;
+    chosenLatLng = null;
+
+    // Clear string fields
+    adminKey = null;
+    groupKey = null;
+    groupName = null;
+    groupDay = null;
+    groupMonth = null;
+    groupYear = null;
+    groupHour = null;
+    groupLocation = null;
+    createdAt = null;
+    groupPrice = null;
+    userKey = null;
   }
 }

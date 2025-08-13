@@ -394,9 +394,15 @@ public class PartyMainActivity extends BaseActivity {
 
   /** Extracts keys from intent and sets up user authentication */
   private void extractKeysFromIntent(Intent intent) {
-    // Try to get groupKey directly from intent first
-    groupKey = intent.getStringExtra("groupKey");
-    Log.d(TAG, "groupKey from intent: " + groupKey);
+    // Safe intent extras handling
+    if (intent != null && intent.getExtras() != null) {
+      // Try to get groupKey directly from intent first
+      groupKey = intent.getStringExtra("groupKey");
+      Log.d(TAG, "groupKey from intent: " + groupKey);
+    } else {
+      Log.w(TAG, "No intent or extras available for groupKey");
+      groupKey = null;
+    }
 
     // If not found, try to get it from ExtrasMetadata
     if (groupKey == null || groupKey.isEmpty()) {
@@ -416,9 +422,14 @@ public class PartyMainActivity extends BaseActivity {
       Log.d(TAG, "userKey from AuthenticationManager: " + userKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user email", e);
-      // Fallback to intent if auth fails
-      userKey = intent.getStringExtra("userKey");
-      Log.d(TAG, "userKey from intent: " + userKey);
+      // Safe fallback to intent if auth fails
+      if (intent != null && intent.getExtras() != null) {
+        userKey = intent.getStringExtra("userKey");
+        Log.d(TAG, "userKey from intent: " + userKey);
+      } else {
+        userKey = null;
+        Log.w(TAG, "No intent or extras available for userKey fallback");
+      }
     }
   }
 

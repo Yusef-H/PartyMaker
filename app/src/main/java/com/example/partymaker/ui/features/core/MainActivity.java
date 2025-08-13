@@ -47,6 +47,7 @@ import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
 import com.example.partymaker.utils.ui.ViewOptimizationHelper;
 import com.example.partymaker.utils.ui.AnimationOptimizer;
+import com.example.partymaker.utils.ui.RecyclerViewScrollOptimizer;
 import com.example.partymaker.utils.infrastructure.PerformanceMonitor;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -368,6 +369,9 @@ public class MainActivity extends BaseActivity {
     // Use ViewOptimizationHelper for comprehensive RecyclerView optimization
     ViewOptimizationHelper.optimizeRecyclerView(groupsRecyclerView);
     
+    // Apply scroll optimizations for smoother scrolling
+    RecyclerViewScrollOptimizer.optimizeScrolling(groupsRecyclerView);
+    
     // Setup animation optimizations
     AnimationOptimizer.optimizeRecyclerViewAnimations(groupsRecyclerView);
     AnimationOptimizer.applyStaggeredAnimation(groupsRecyclerView);
@@ -376,7 +380,7 @@ public class MainActivity extends BaseActivity {
     groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
     groupsRecyclerView.setAdapter(groupAdapter);
     
-    Log.d(TAG, "RecyclerView configured with comprehensive optimizations");
+    Log.d(TAG, "RecyclerView configured with comprehensive optimizations and scroll enhancements");
   }
   
   // Comprehensive view optimization method

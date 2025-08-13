@@ -16,7 +16,7 @@ import com.example.partymaker.utils.media.ImageOptimizationManager;
 public class ViewOptimizationHelper {
     private static final String TAG = "ViewOptimization";
     
-    // Optimize RecyclerView setup for better performance
+    // Optimize RecyclerView setup for better performance and reduce OpenGLRenderer operations
     public static void optimizeRecyclerView(RecyclerView recyclerView) {
         if (recyclerView == null) {
             Log.w(TAG, "RecyclerView is null, cannot optimize");
@@ -37,13 +37,32 @@ public class ViewOptimizationHelper {
             // Disable item animator for better performance during updates
             recyclerView.setItemAnimator(null);
             
+            // Disable nested scrolling to reduce OpenGLRenderer operations
+            recyclerView.setNestedScrollingEnabled(false);
+            
+            // Reduce overdraw by disabling clipToPadding when not needed
+            recyclerView.setClipToPadding(false);
+            
             // Setup layout manager optimizations
             LinearLayoutManager layoutManager = new LinearLayoutManager(recyclerView.getContext()) {
                 @Override
                 public boolean supportsPredictiveItemAnimations() {
                     return false; // Disable for better scroll performance
                 }
+                
+                @Override
+                public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+                    try {
+                        super.onLayoutChildren(recycler, state);
+                    } catch (IndexOutOfBoundsException e) {
+                        Log.e(TAG, "Error in RecyclerView layout", e);
+                    }
+                }
             };
+            
+            // Enable prefetch for smoother scrolling (Android 5.0+)
+            layoutManager.setItemPrefetchEnabled(true);
+            layoutManager.setInitialPrefetchItemCount(4);
             
             recyclerView.setLayoutManager(layoutManager);
             
@@ -52,7 +71,21 @@ public class ViewOptimizationHelper {
             sharedPool.setMaxRecycledViews(0, 25); // Increase pool size for group items
             recyclerView.setRecycledViewPool(sharedPool);
             
-            Log.d(TAG, "RecyclerView optimized successfully");
+            // Add scroll listener to optimize rendering during scroll
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                        // Reduce layer type during fast scroll to minimize GPU operations
+                        recyclerView.setLayerType(View.LAYER_TYPE_NONE, null);
+                    } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        // Re-enable hardware acceleration when idle
+                        recyclerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                    }
+                }
+            });
+            
+            Log.d(TAG, "RecyclerView optimized successfully with OpenGLRenderer optimizations");
         } catch (Exception e) {
             Log.e(TAG, "Error optimizing RecyclerView", e);
         }
@@ -78,8 +111,11 @@ public class ViewOptimizationHelper {
             // Set appropriate scale type for consistent sizing
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             
-            // Enable hardware acceleration for better rendering
-            imageView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            // Use software layer for static images to reduce GPU operations
+            // Hardware layer is only beneficial for animations
+            imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            
+            // Note: setFilterBitmap is not available in ImageView, it's for Bitmap drawing
             
             // No specific optimization needed here - let the image loading handle it
             // ImageOptimizationManager provides optimized loading methods

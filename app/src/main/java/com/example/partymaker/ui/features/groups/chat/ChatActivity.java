@@ -103,9 +103,15 @@ public class ChatActivity extends BaseActivity {
     Log.d(TAG, "Getting extras from intent");
     Intent intent = getIntent();
 
-    // Get groupKey directly from intent first
-    groupKey = intent.getStringExtra("GroupKey");
-    Log.d(TAG, "groupKey from direct intent extra: " + groupKey);
+    // Safe intent extras handling
+    if (intent != null && intent.getExtras() != null) {
+      // Get groupKey directly from intent first
+      groupKey = intent.getStringExtra("GroupKey");
+      Log.d(TAG, "groupKey from direct intent extra: " + groupKey);
+    } else {
+      Log.w(TAG, "No intent or extras available for GroupKey");
+      groupKey = null;
+    }
 
     // Try to get data from ExtrasMetadata only if direct intent extra is null
     if (groupKey == null || groupKey.isEmpty()) {
@@ -139,8 +145,14 @@ public class ChatActivity extends BaseActivity {
       Log.d(TAG, "userKey initialized from AuthHelper: " + userKey);
     } catch (Exception e) {
       Log.e(TAG, "Failed to get current user from AuthHelper", e);
-      userKey = intent.getStringExtra("UserKey"); // Fallback to intent if auth fails
-      Log.d(TAG, "Using fallback userKey from intent: " + userKey);
+      // Safe fallback to intent if auth fails
+      if (intent != null && intent.getExtras() != null) {
+        userKey = intent.getStringExtra("UserKey");
+        Log.d(TAG, "Using fallback userKey from intent: " + userKey);
+      } else {
+        userKey = null;
+        Log.w(TAG, "No intent or extras available for UserKey fallback");
+      }
 
       if (userKey == null) {
         Log.e(TAG, "userKey is null after fallback");

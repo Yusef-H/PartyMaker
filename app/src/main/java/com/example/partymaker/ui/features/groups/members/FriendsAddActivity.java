@@ -12,7 +12,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
@@ -22,7 +22,7 @@ import com.example.partymaker.utils.core.IntentExtrasManager;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FriendsAddActivity extends AppCompatActivity {
+public class FriendsAddActivity extends BaseActivity {
   private static final String TAG = "FriendsAddActivity";
   private static final String INPUT_EMAIL_MESSAGE = "Input email please";
   private static final String EMAIL_NOT_FOUND_MESSAGE = "Email not found";
@@ -518,5 +518,40 @@ public class FriendsAddActivity extends AppCompatActivity {
         btnHelp,
         tvHelp);
     showViews(tvAddMore, btnYes, btnNo);
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    btnHide = null;
+    btnHelp = null;
+    btnAddFriend = null;
+    btnYes = null;
+    btnNo = null;
+    btnFriendsList = null;
+    tvHide = null;
+    tvHelp = null;
+    tvInstructions1 = null;
+    tvAddMore = null;
+    etFriendEmail = null;
+
+    // Clear data objects
+    friendKeys = null;
+    comingKeys = null;
+    messageKeys = null;
+    serverClient = null;
+
+    // Clear string fields
+    groupKey = null;
+    currentFriend = null;
+    groupName = null;
+    groupDay = null;
+    groupMonth = null;
+    groupYear = null;
+    groupHour = null;
+    groupLocation = null;
+    adminKey = null;
+    createdAt = null;
+    groupPrice = null;
   }
 }

@@ -26,7 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  * Activity for user registration, including form validation, animations, and notifications. Handles
  * user input, password strength, and registration logic.
  */
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseActivity {
   /** Notification channel ID. */
   private static final String CHANNEL_ID = "registration_channel";
 
@@ -838,5 +838,30 @@ public class RegisterActivity extends AppCompatActivity {
     NotificationManager notificationManager =
         (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     notificationManager.notify(1, builder.build());
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI references
+    tilEmail = null;
+    tilUsername = null;
+    tilPassword = null;
+    etEmail = null;
+    etUsername = null;
+    etPassword = null;
+    btnRegister = null;
+    btnPress = null;
+    imgRegister = null;
+    headerCard = null;
+    formCard = null;
+    celebrationLayout = null;
+    passwordStrengthBar = null;
+    passwordStrengthText = null;
+    formProgressText = null;
+    progressIndicator = null;
+    progressBar = null;
+    
+    // Clear ViewModels
+    authViewModel = null;
   }
 }

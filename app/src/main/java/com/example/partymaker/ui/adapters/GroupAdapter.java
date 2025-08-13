@@ -52,6 +52,13 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
   @Override
   public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(context).inflate(R.layout.item_group, parent, false);
+    // Reduce overdraw by setting background only where needed
+    view.setWillNotDraw(false);
+    // Disable child clipping for better performance
+    if (view instanceof ViewGroup) {
+      ((ViewGroup) view).setClipChildren(false);
+      ((ViewGroup) view).setClipToPadding(false);
+    }
     return new GroupViewHolder(view);
   }
 
@@ -65,6 +72,28 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
 
       // No entrance animations to prevent spacing issues
       // Items will appear immediately without animation interference
+    }
+  }
+  
+  @Override
+  public void onBindViewHolder(@NonNull GroupViewHolder holder, int position, @NonNull java.util.List<Object> payloads) {
+    if (payloads.isEmpty()) {
+      // Full bind
+      onBindViewHolder(holder, position);
+    } else {
+      // Partial bind for better performance - only update what changed
+      Group group = getItem(position);
+      if (group != null) {
+        for (Object payload : payloads) {
+          if ("name".equals(payload)) {
+            holder.setGroupName(group);
+          } else if ("date".equals(payload)) {
+            holder.setGroupDate(group);
+          } else if ("image".equals(payload)) {
+            holder.loadGroupImage(group.getGroupKey());
+          }
+        }
+      }
     }
   }
 
@@ -135,6 +164,21 @@ public class GroupAdapter extends OptimizedRecyclerAdapter<Group, GroupAdapter.G
       groupNameTextView = itemView.findViewById(R.id.tvGroupName);
       groupDateTextView = itemView.findViewById(R.id.tvGroupDate);
       groupImageView = itemView.findViewById(R.id.imgGroupPicture);
+      
+      // Optimize text views to reduce GPU operations
+      if (groupNameTextView != null) {
+        groupNameTextView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        groupNameTextView.setIncludeFontPadding(false);
+      }
+      if (groupDateTextView != null) {
+        groupDateTextView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        groupDateTextView.setIncludeFontPadding(false);
+      }
+      // Image view uses software layer for static images
+      if (groupImageView != null) {
+        groupImageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+      }
+      
       setupClickListeners();
     }
 

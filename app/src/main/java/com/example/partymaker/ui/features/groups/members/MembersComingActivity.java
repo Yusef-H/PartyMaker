@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.model.User;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MembersComingActivity extends AppCompatActivity {
+public class MembersComingActivity extends BaseActivity {
 
   private static final String TAG = "MembersComingActivity";
 
@@ -84,8 +84,14 @@ public class MembersComingActivity extends AppCompatActivity {
       userKey = AuthenticationManager.getCurrentUserKey(this);
       Log.d(TAG, "UserKey from AuthHelper: " + userKey);
     } catch (Exception e) {
-      userKey = getIntent().getStringExtra("UserKey");
-      Log.d(TAG, "UserKey from Intent: " + userKey);
+      // Safe intent extras handling
+      if (getIntent() != null && getIntent().getExtras() != null) {
+        userKey = getIntent().getStringExtra("UserKey");
+        Log.d(TAG, "UserKey from Intent: " + userKey);
+      } else {
+        userKey = null;
+        Log.w(TAG, "No intent or extras available for UserKey");
+      }
     }
 
     membersList = findViewById(R.id.lv3);
@@ -229,5 +235,15 @@ public class MembersComingActivity extends AppCompatActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    membersList = null;
+
+    // Clear data objects
+    comingKeys = null;
+    adminKey = null;
   }
 }

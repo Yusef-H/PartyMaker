@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
@@ -23,7 +23,7 @@ import com.example.partymaker.utils.server.ServerModeManager;
  * Activity for managing server settings. Allows users to configure the server URL and manage cache
  * settings. Server mode is always enabled in this version.
  */
-public class ServerSettingsActivity extends AppCompatActivity {
+public class ServerSettingsActivity extends BaseActivity {
 
   // SharedPreferences keys
   private static final String PREF_SERVER_URL = "server_url";
@@ -263,5 +263,19 @@ public class ServerSettingsActivity extends AppCompatActivity {
     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     int themeMode = prefs.getInt(KEY_THEME_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     AppCompatDelegate.setDefaultNightMode(themeMode);
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    switchServerMode = null;
+    editServerUrl = null;
+    themeRadioGroup = null;
+    radioLight = null;
+    radioDark = null;
+    radioSystem = null;
+    
+    // Clear preferences reference
+    preferences = null;
   }
 }

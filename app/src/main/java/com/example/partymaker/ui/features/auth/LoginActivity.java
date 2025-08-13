@@ -19,7 +19,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.NetworkManager;
@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version 2.0
  * @since 1.0
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
   private static final class Config {
     static final String LOG_TAG = "LoginActivity";
@@ -610,6 +610,32 @@ public class LoginActivity extends AppCompatActivity {
         currentAnimatedButton.clearAnimation();
         currentAnimatedButton = null;
       }
+    }
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear all UI references
+    // Clear UI references
+    emailEditText = null;
+    passwordEditText = null;
+    loginButton = null;
+    registerButton = null;
+    resetPasswordButton = null;
+    googleSignInButton = null;
+    progressBar = null;
+    rememberMeCheckbox = null;
+    aboutButton = null;
+    rootView = null;
+    
+    // Clear ViewModels and other objects
+    authViewModel = null;
+    firebaseAuth = null;
+    
+    // Clear animation manager
+    if (animationManager != null) {
+      animationManager.clearAnimations();
+      animationManager = null;
     }
   }
 }
