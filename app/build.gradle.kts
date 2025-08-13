@@ -9,7 +9,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.diffplug.spotless") version "7.2.1"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("com.getkeepsafe.dexcount") // For APK analysis
+    id("com.getkeepsafe.dexcount") version "4.0.0" // For APK analysis
 }
 
 android {
