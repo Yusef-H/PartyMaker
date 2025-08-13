@@ -58,7 +58,7 @@ public class GroupRepositoryTest {
   public void testGetGroup_CacheHit_ReturnsFromCache() {
     // Given
     String groupKey = "test-group-key";
-    Group mockGroup = createMockGroup(groupKey, "Test Group");
+    Group mockGroup = createMockGroup(groupKey);
 
     doAnswer(
             invocation -> {
@@ -99,7 +99,7 @@ public class GroupRepositoryTest {
   public void testGetGroup_CacheMiss_FallsBackToRemote() {
     // Given
     String groupKey = "test-group-key";
-    Group mockGroup = createMockGroup(groupKey, "Test Group");
+    Group mockGroup = createMockGroup(groupKey);
 
     // Mock cache miss
     doAnswer(
@@ -159,7 +159,7 @@ public class GroupRepositoryTest {
   public void testGetGroup_ForceRefresh_SkipsCache() {
     // Given
     String groupKey = "test-group-key";
-    Group mockGroup = createMockGroup(groupKey, "Test Group");
+    Group mockGroup = createMockGroup(groupKey);
 
     // Mock successful remote fetch
     doAnswer(
@@ -200,7 +200,7 @@ public class GroupRepositoryTest {
   public void testSaveGroup_Success_SavesRemoteAndLocal() {
     // Given
     String groupKey = "test-group-key";
-    Group mockGroup = createMockGroup(groupKey, "Test Group");
+    Group mockGroup = createMockGroup(groupKey);
 
     // Mock successful remote save
     doAnswer(
@@ -247,7 +247,7 @@ public class GroupRepositoryTest {
   public void testObserveGroup_ReturnsLiveData() {
     // Given
     String groupKey = "test-group-key";
-    Group mockGroup = createMockGroup(groupKey, "Test Group");
+    Group mockGroup = createMockGroup(groupKey);
     MutableLiveData<Group> mockLiveData = new MutableLiveData<>();
     mockLiveData.setValue(mockGroup);
 
@@ -263,10 +263,10 @@ public class GroupRepositoryTest {
   }
 
   /** Helper method to create a mock Group for testing. */
-  private Group createMockGroup(String key, String name) {
+  private Group createMockGroup(String key) {
     Group group = new Group();
     group.setGroupKey(key);
-    group.setGroupName(name);
+    group.setGroupName("Test Group");
     group.setGroupLocation("Test Location");
     group.setAdminKey("test-admin");
     return group;
