@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -68,6 +69,14 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private SwipeRefreshLayout swipeRefreshLayout;
   private ShimmerFrameLayout shimmerFrameLayout;
   private RecyclerView recyclerView;
+  private android.widget.ImageButton filterButton;
+  
+  // Sort and Filter State
+  private String currentSortMode = "date_nearest"; // default sort
+  private boolean filterOnlyFree = false;
+  private boolean filterTodayOnly = false;
+  private boolean filterWeekOnly = false;
+  private boolean filterUpcomingOnly = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -141,9 +150,7 @@ public class PublicGroupsActivity extends AppCompatActivity {
   private void initializeViews() {
     recyclerView = findViewById(R.id.lv5);
     if (recyclerView != null) {
-      recyclerView.setLayoutManager(new LinearLayoutManager(this));
-      allGroupsAdapter = new GroupAdapter(this, this::navigateToJoinGroup);
-      recyclerView.setAdapter(allGroupsAdapter);
+      setupPublicGroupsRecyclerView();
     }
 
     // Initialize Shimmer
@@ -155,12 +162,48 @@ public class PublicGroupsActivity extends AppCompatActivity {
     // Initialize search
     searchEditText = findViewById(R.id.etSearch);
     
+    // Initialize filter button
+    filterButton = findViewById(R.id.btnFilter);
+    
     // Initialize SwipeRefreshLayout
     swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     setupSwipeRefresh();
   }
 
+  private void setupPublicGroupsRecyclerView() {
+    // Performance optimizations
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setItemViewCacheSize(25);
+    recyclerView.setDrawingCacheEnabled(true);
+    recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+    
+    // Custom layout manager with performance optimizations
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+      @Override
+      public boolean supportsPredictiveItemAnimations() {
+        return false; // Better scroll performance
+      }
+    };
+    recyclerView.setLayoutManager(layoutManager);
+    
+    // Shared RecyclerView pool for memory efficiency
+    RecyclerView.RecycledViewPool sharedPool = new RecyclerView.RecycledViewPool();
+    sharedPool.setMaxRecycledViews(0, 25);
+    recyclerView.setRecycledViewPool(sharedPool);
+    
+    // Set adapter
+    allGroupsAdapter = new GroupAdapter(this, this::navigateToJoinGroup);
+    recyclerView.setAdapter(allGroupsAdapter);
+    
+    Log.d(TAG, "Public groups RecyclerView configured with performance optimizations");
+  }
+
   private void setupEventHandlers() {
+    // Setup filter button
+    if (filterButton != null) {
+      filterButton.setOnClickListener(v -> showSortFilterDialog());
+    }
+    
     // Setup chip filtering
     if (chipGroupFilters != null) {
       chipGroupFilters.setOnCheckedStateChangeListener(
@@ -351,32 +394,40 @@ public class PublicGroupsActivity extends AppCompatActivity {
       return;
     }
 
-    // First apply chip filter
-    ArrayList<Group> chipFiltered = new ArrayList<>();
+    // Start with all groups
+    ArrayList<Group> results = new ArrayList<>(allGroups);
     
-    if (currentFilterChipId == R.id.chipAll) {
-      chipFiltered = new ArrayList<>(allGroups);
-    } else if (currentFilterChipId == R.id.chipToday) {
-      chipFiltered = filterGroupsByDate(allGroups, TODAY_FILTER);
+    // Apply chip filter
+    if (currentFilterChipId == R.id.chipToday) {
+      results = filterGroupsByDate(results, TODAY_FILTER);
     } else if (currentFilterChipId == R.id.chipThisWeek) {
-      chipFiltered = filterGroupsByDate(allGroups, WEEK_FILTER);
+      results = filterGroupsByDate(results, WEEK_FILTER);
     } else if (currentFilterChipId == R.id.chipFree) {
-      chipFiltered = filterGroupsByPrice(allGroups);
+      results = filterGroupsByPrice(results);
     }
-
-    // Then apply search filter
-    filteredGroups.clear();
-    if (currentSearchText.isEmpty()) {
-      filteredGroups.addAll(chipFiltered);
-    } else {
+    
+    // Apply additional filters from dialog
+    results = applyAdditionalFilters(results);
+    
+    // Apply search filter
+    if (!currentSearchText.isEmpty()) {
+      ArrayList<Group> searchFiltered = new ArrayList<>();
       String lowerSearchText = currentSearchText.toLowerCase();
-      for (Group group : chipFiltered) {
+      for (Group group : results) {
         if (group.getGroupName() != null && 
             group.getGroupName().toLowerCase().contains(lowerSearchText)) {
-          filteredGroups.add(group);
+          searchFiltered.add(group);
         }
       }
+      results = searchFiltered;
     }
+    
+    // Apply sorting
+    results = sortGroups(results);
+    
+    // Update the filtered list
+    filteredGroups.clear();
+    filteredGroups.addAll(results);
 
     // Update adapter
     if (allGroupsAdapter != null) {
@@ -384,6 +435,112 @@ public class PublicGroupsActivity extends AppCompatActivity {
     }
 
     Log.d(TAG, "Filter and search applied, showing " + filteredGroups.size() + " groups");
+  }
+  
+  private ArrayList<Group> applyAdditionalFilters(ArrayList<Group> groups) {
+    ArrayList<Group> filtered = new ArrayList<>();
+    
+    for (Group group : groups) {
+      boolean passesFilter = true;
+      
+      // Free only filter from dialog
+      if (filterOnlyFree) {
+        if (!isFreeGroup(group)) {
+          passesFilter = false;
+        }
+      }
+      
+      // Today only filter from dialog
+      if (filterTodayOnly && !filterWeekOnly) {
+        ArrayList<Group> todayGroups = filterGroupsByDate(groups, TODAY_FILTER);
+        if (!todayGroups.contains(group)) {
+          passesFilter = false;
+        }
+      }
+      
+      // Week only filter from dialog
+      if (filterWeekOnly) {
+        ArrayList<Group> weekGroups = filterGroupsByDate(groups, WEEK_FILTER);
+        if (!weekGroups.contains(group)) {
+          passesFilter = false;
+        }
+      }
+      
+      // Upcoming only filter
+      if (filterUpcomingOnly) {
+        try {
+          String dateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
+          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+          Date groupDate = sdf.parse(dateStr);
+          if (groupDate != null && groupDate.before(new Date())) {
+            passesFilter = false;
+          }
+        } catch (Exception e) {
+          passesFilter = false;
+        }
+      }
+      
+      if (passesFilter) {
+        filtered.add(group);
+      }
+    }
+    
+    return filtered;
+  }
+  
+  private ArrayList<Group> sortGroups(ArrayList<Group> groups) {
+    ArrayList<Group> sorted = new ArrayList<>(groups);
+    
+    switch (currentSortMode) {
+      case "date_nearest":
+        sorted.sort((g1, g2) -> compareDates(g1, g2));
+        break;
+        
+      case "date_farthest":
+        sorted.sort((g1, g2) -> compareDates(g2, g1));
+        break;
+        
+      case "name_az":
+        sorted.sort((g1, g2) -> {
+          String name1 = g1.getGroupName() != null ? g1.getGroupName() : "";
+          String name2 = g2.getGroupName() != null ? g2.getGroupName() : "";
+          return name1.compareToIgnoreCase(name2);
+        });
+        break;
+        
+      case "name_za":
+        sorted.sort((g1, g2) -> {
+          String name1 = g1.getGroupName() != null ? g1.getGroupName() : "";
+          String name2 = g2.getGroupName() != null ? g2.getGroupName() : "";
+          return name2.compareToIgnoreCase(name1);
+        });
+        break;
+        
+      case "recently_added":
+        // Reverse the list to show newest first
+        java.util.Collections.reverse(sorted);
+        break;
+    }
+    
+    return sorted;
+  }
+  
+  private int compareDates(Group g1, Group g2) {
+    try {
+      String date1 = g1.getGroupDays() + "/" + g1.getGroupMonths() + "/" + g1.getGroupYears();
+      String date2 = g2.getGroupDays() + "/" + g2.getGroupMonths() + "/" + g2.getGroupYears();
+      
+      SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+      Date d1 = sdf.parse(date1);
+      Date d2 = sdf.parse(date2);
+      
+      if (d1 != null && d2 != null) {
+        return d1.compareTo(d2);
+      }
+    } catch (Exception e) {
+      Log.w(TAG, "Error comparing dates", e);
+    }
+    return 0;
   }
   
   private void applyFilter(int chipId) {
@@ -462,6 +619,87 @@ public class PublicGroupsActivity extends AppCompatActivity {
       Log.w(TAG, "Failed to parse price for group: " + group.getGroupName(), e);
       return false;
     }
+  }
+  
+  private void showSortFilterDialog() {
+    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+    android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_sort_filter, null);
+    builder.setView(dialogView);
+    
+    // Get dialog components
+    android.widget.RadioGroup radioGroupSort = dialogView.findViewById(R.id.radioGroupSort);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxPublic = dialogView.findViewById(R.id.checkboxPublic);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxPrivate = dialogView.findViewById(R.id.checkboxPrivate);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxFree = dialogView.findViewById(R.id.checkboxFree);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxUpcoming = dialogView.findViewById(R.id.checkboxUpcoming);
+    
+    // Hide public/private checkboxes for PublicGroups screen (all are public here)
+    checkboxPublic.setVisibility(android.view.View.GONE);
+    checkboxPrivate.setVisibility(android.view.View.GONE);
+    
+    // Set current values
+    switch (currentSortMode) {
+      case "date_nearest":
+        radioGroupSort.check(R.id.radioDateNearest);
+        break;
+      case "date_farthest":
+        radioGroupSort.check(R.id.radioDateFarthest);
+        break;
+      case "name_az":
+        radioGroupSort.check(R.id.radioNameAZ);
+        break;
+      case "name_za":
+        radioGroupSort.check(R.id.radioNameZA);
+        break;
+      case "recently_added":
+        radioGroupSort.check(R.id.radioRecentlyAdded);
+        break;
+    }
+    
+    checkboxFree.setChecked(filterOnlyFree);
+    checkboxUpcoming.setChecked(filterUpcomingOnly);
+    
+    android.app.AlertDialog dialog = builder.create();
+    
+    // Setup dialog buttons
+    dialogView.findViewById(R.id.btnReset).setOnClickListener(v -> {
+      // Reset to defaults
+      radioGroupSort.check(R.id.radioDateNearest);
+      checkboxFree.setChecked(false);
+      checkboxUpcoming.setChecked(false);
+      // Also reset chips
+      if (chipGroupFilters != null) {
+        chipGroupFilters.check(R.id.chipAll);
+      }
+    });
+    
+    dialogView.findViewById(R.id.btnCancel).setOnClickListener(v -> dialog.dismiss());
+    
+    dialogView.findViewById(R.id.btnApply).setOnClickListener(v -> {
+      // Apply the selected filters and sort
+      int selectedSortId = radioGroupSort.getCheckedRadioButtonId();
+      if (selectedSortId == R.id.radioDateNearest) {
+        currentSortMode = "date_nearest";
+      } else if (selectedSortId == R.id.radioDateFarthest) {
+        currentSortMode = "date_farthest";
+      } else if (selectedSortId == R.id.radioNameAZ) {
+        currentSortMode = "name_az";
+      } else if (selectedSortId == R.id.radioNameZA) {
+        currentSortMode = "name_za";
+      } else if (selectedSortId == R.id.radioRecentlyAdded) {
+        currentSortMode = "recently_added";
+      }
+      
+      filterOnlyFree = checkboxFree.isChecked();
+      filterUpcomingOnly = checkboxUpcoming.isChecked();
+      
+      // Apply the filters
+      applyFilterAndSearch();
+      
+      dialog.dismiss();
+    });
+    
+    dialog.show();
   }
 
   @Override

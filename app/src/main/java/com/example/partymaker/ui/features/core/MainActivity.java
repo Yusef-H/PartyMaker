@@ -14,14 +14,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import com.example.partymaker.ui.base.BaseActivity;
+
 import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieDrawable;
@@ -37,11 +40,14 @@ import com.example.partymaker.utils.core.ExtrasMetadata;
 import com.example.partymaker.utils.core.IntentExtrasManager;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
 import com.example.partymaker.utils.ui.animation.ButtonAnimationHelper;
-import com.example.partymaker.utils.ui.animation.CustomRefreshAnimationHelper;
+// import com.example.partymaker.utils.ui.animation.CustomRefreshAnimationHelper; // Removed - no refresh animations
 import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
+import com.example.partymaker.utils.ui.ViewOptimizationHelper;
+import com.example.partymaker.utils.ui.AnimationOptimizer;
+import com.example.partymaker.utils.infrastructure.PerformanceMonitor;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -49,7 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
   private static final String TAG = "MainActivity";
 
@@ -81,7 +87,27 @@ public class MainActivity extends AppCompatActivity {
   private View rootView;
   private EditText searchEditText;
   private ImageView clearSearchButton;
+  private ImageView filterButton;
   private ShimmerFrameLayout shimmerFrameLayout;
+  
+  // Sort and Filter State
+  private String currentSortMode = "date_nearest"; // default sort
+  private boolean filterPublicOnly = false;
+  private boolean filterPrivateOnly = false;
+  private boolean filterFreeOnly = false;
+  private boolean filterUpcomingOnly = false;
+  
+  // ViewStub references for performance optimization
+  private ViewStub stubShimmerLoading;
+  private ViewStub stubEmptyState;
+  private ViewStub stubLoadingOverlay;
+  private ViewStub stubProgressBar;
+  
+  // Inflated views from ViewStubs
+  private View inflatedShimmerView;
+  private View inflatedEmptyView;
+  private View inflatedLoadingOverlay;
+  private View inflatedProgressBar;
 
   // Data Components
   private MainActivityViewModel viewModel;
@@ -100,11 +126,17 @@ public class MainActivity extends AppCompatActivity {
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    PerformanceMonitor.startTiming("MainActivity.onCreate");
+    PerformanceMonitor.trackMemoryUsage("MainActivity.onCreate.start");
+    
     super.onCreate(savedInstanceState);
     try {
       initializeActivity();
+      PerformanceMonitor.endTiming("MainActivity.onCreate");
+      PerformanceMonitor.trackMemoryUsage("MainActivity.onCreate.end");
     } catch (Exception e) {
       Log.e(TAG, "Fatal error in onCreate", e);
+      PerformanceMonitor.endTiming("MainActivity.onCreate");
       handleFatalError("An unexpected error occurred. Please restart the app.");
     }
   }
@@ -120,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     initializeComponents();
     setupUserInterface();
+    optimizeViews();
     loadInitialData();
   }
 
@@ -132,21 +165,22 @@ public class MainActivity extends AppCompatActivity {
     setupActionBar();
     setupEventHandlers();
     setupSearchBar();
+    setupSwipeRefresh();
     setupFloatingChatButton();
     setupBottomNavigation();
     observeViewModel();
   }
 
   private void loadInitialData() {
-    showLoadingState(false); // Show loading without toast
+    showLoadingState(); // Show loading without toast
 
     Log.d(TAG, "Loading groups for user: " + currentUserKey);
     viewModel.loadUserGroups(currentUserKey, true);
     updateLastRefreshTime();
   }
 
-  private void showLoadingState(boolean showToast) {
-    showLoadingStateInternal(true, showToast);
+  private void showLoadingState() {
+    showLoadingStateInternal(true, false);
   }
 
   private void hideLoadingState() {
@@ -159,18 +193,27 @@ public class MainActivity extends AppCompatActivity {
       boolean hasExistingData = groupAdapter != null && groupAdapter.getItemCount() > 0;
       
       if (show && !hasExistingData) {
-        // Only show Shimmer for initial load
+        // Inflate shimmer view if needed and show it
+        inflateShimmerViewIfNeeded();
+        
         if (shimmerFrameLayout != null) {
           shimmerFrameLayout.setVisibility(View.VISIBLE);
           shimmerFrameLayout.startShimmer();
           groupsRecyclerView.setVisibility(View.GONE);
+        } else if (inflatedShimmerView != null) {
+          inflatedShimmerView.setVisibility(View.VISIBLE);
+          groupsRecyclerView.setVisibility(View.GONE);
         }
-        displayLoadingToastIfRequested(true, showToast);
+        
+        displayLoadingToastIfRequested(showToast);
       } else {
         // Hide loading states
         if (shimmerFrameLayout != null) {
           shimmerFrameLayout.stopShimmer();
           shimmerFrameLayout.setVisibility(View.GONE);
+        }
+        if (inflatedShimmerView != null) {
+          inflatedShimmerView.setVisibility(View.GONE);
         }
         groupsRecyclerView.setVisibility(View.VISIBLE);
       }
@@ -189,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  private void displayLoadingToastIfRequested(boolean isLoading, boolean shouldShowToast) {
-    if (isLoading && shouldShowToast && !hasShownLoadingToast) {
+  private void displayLoadingToastIfRequested(boolean shouldShowToast) {
+    if (true && shouldShowToast && !hasShownLoadingToast) {
       displayLoadingToast();
       hasShownLoadingToast = true;
     }
@@ -273,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
     validateCriticalViews();
     configureRecyclerView();
     setupLoadingStateManager();
-    setupSwipeRefresh();
+    // SwipeRefresh removed - no pull to refresh
   }
 
   private void findViews() {
@@ -282,7 +325,21 @@ public class MainActivity extends AppCompatActivity {
     chatFloatingActionButton = findViewById(R.id.fabChat);
     swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     searchEditText = findViewById(R.id.etSearchGroups);
+    
+    // Disable overscroll effect completely
+    if (groupsRecyclerView != null) {
+      groupsRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    }
     clearSearchButton = findViewById(R.id.clearSearch);
+    filterButton = findViewById(R.id.filter_button);
+    
+    // Find ViewStubs for performance optimization
+    stubShimmerLoading = findViewById(R.id.stub_shimmer_loading);
+    stubEmptyState = findViewById(R.id.stub_empty_state);
+    stubLoadingOverlay = findViewById(R.id.stub_loading_overlay);
+    stubProgressBar = findViewById(R.id.stub_progress_bar);
+    
+    // Keep the original shimmer reference for backward compatibility
     shimmerFrameLayout = findViewById(R.id.shimmer_view_container);
   }
 
@@ -294,9 +351,99 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void configureRecyclerView() {
-    groupsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    // Use ViewOptimizationHelper for comprehensive RecyclerView optimization
+    ViewOptimizationHelper.optimizeRecyclerView(groupsRecyclerView);
+    
+    // Setup animation optimizations
+    AnimationOptimizer.optimizeRecyclerViewAnimations(groupsRecyclerView);
+    AnimationOptimizer.applyStaggeredAnimation(groupsRecyclerView);
+    
+    // Set adapter
     groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
     groupsRecyclerView.setAdapter(groupAdapter);
+    
+    Log.d(TAG, "RecyclerView configured with comprehensive optimizations");
+  }
+  
+  // Comprehensive view optimization method
+  private void optimizeViews() {
+    try {
+      // Optimize root view group
+      if (rootView instanceof ViewGroup) {
+        ViewOptimizationHelper.optimizeViewGroup((ViewGroup) rootView);
+      }
+      
+      // Enable hardware acceleration for smooth animations
+      getWindow().setFlags(
+          WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+          WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+      
+      ViewOptimizationHelper.enableHardwareAcceleration(rootView);
+      
+      // Animate FAB entrance
+      if (chatFloatingActionButton != null) {
+        AnimationOptimizer.animateViewEntrance(chatFloatingActionButton, FAB_ANIMATION_DELAY_MS);
+      }
+      
+      Log.d(TAG, "Comprehensive view optimizations applied");
+    } catch (Exception e) {
+      Log.e(TAG, "Error applying view optimizations", e);
+    }
+  }
+  
+  // ViewStub inflation methods for performance optimization
+  private void inflateShimmerViewIfNeeded() {
+    if (inflatedShimmerView == null && stubShimmerLoading != null) {
+      ViewOptimizationHelper.inflateViewStubAsync(stubShimmerLoading, new ViewOptimizationHelper.ViewStubInflationCallback() {
+        @Override
+        public void onInflationComplete(View inflatedView) {
+          inflatedShimmerView = inflatedView;
+          shimmerFrameLayout = inflatedView.findViewById(R.id.shimmer_container);
+          Log.d(TAG, "Shimmer view inflated successfully");
+        }
+        
+        @Override
+        public void onInflationFailed(String error) {
+          Log.e(TAG, "Failed to inflate shimmer view: " + error);
+        }
+      });
+    }
+  }
+  
+  private void inflateEmptyStateViewIfNeeded() {
+    if (inflatedEmptyView == null && stubEmptyState != null) {
+      ViewOptimizationHelper.inflateViewStubAsync(stubEmptyState, new ViewOptimizationHelper.ViewStubInflationCallback() {
+        @Override
+        public void onInflationComplete(View inflatedView) {
+          inflatedEmptyView = inflatedView;
+          // Apply entrance animation
+          AnimationOptimizer.animateViewEntrance(inflatedView, 0);
+          Log.d(TAG, "Empty state view inflated successfully");
+        }
+        
+        @Override
+        public void onInflationFailed(String error) {
+          Log.e(TAG, "Failed to inflate empty state view: " + error);
+        }
+      });
+    }
+  }
+  
+  private void inflateLoadingOverlayIfNeeded() {
+    if (inflatedLoadingOverlay == null && stubLoadingOverlay != null) {
+      ViewOptimizationHelper.inflateViewStubAsync(stubLoadingOverlay, new ViewOptimizationHelper.ViewStubInflationCallback() {
+        @Override
+        public void onInflationComplete(View inflatedView) {
+          inflatedLoadingOverlay = inflatedView;
+          Log.d(TAG, "Loading overlay inflated successfully");
+        }
+        
+        @Override
+        public void onInflationFailed(String error) {
+          Log.e(TAG, "Failed to inflate loading overlay: " + error);
+        }
+      });
+    }
   }
 
   private void handleFatalError(String message) {
@@ -305,10 +452,40 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupLoadingStateManager() {
-    android.widget.ProgressBar progressBar = findViewById(R.id.progress_bar_fallback);
-    android.widget.TextView loadingText = findViewById(R.id.loading_text);
-    LottieAnimationView lottieAnimation = findViewById(R.id.lottie_loading);
-    View loadingOverlay = findViewById(R.id.loading_overlay);
+    // First try to inflate the ViewStubs if they haven't been inflated yet
+    android.widget.ProgressBar progressBar = null;
+    android.widget.TextView loadingText = null;
+    LottieAnimationView lottieAnimation = null;
+    View loadingOverlay = null;
+    
+    // Try to inflate the progress bar stub
+    ViewStub progressStub = findViewById(R.id.stub_progress_bar);
+    if (progressStub != null) {
+      try {
+        progressStub.inflate();
+      } catch (Exception e) {
+        // Already inflated or error
+      }
+    }
+    progressBar = findViewById(R.id.progress_bar_fallback);
+    
+    // Try to inflate the loading overlay stub for Lottie
+    ViewStub loadingStub = findViewById(R.id.stub_loading_overlay);
+    if (loadingStub != null) {
+      try {
+        loadingStub.inflate();
+      } catch (Exception e) {
+        // Already inflated or error
+      }
+    }
+    loadingOverlay = findViewById(R.id.loading_overlay);
+    loadingText = findViewById(R.id.loading_text);
+    lottieAnimation = findViewById(R.id.lottie_loading);
+    
+    // If progressBar is still null, create one programmatically
+    if (progressBar == null) {
+      progressBar = findOrCreateProgressBar();
+    }
 
     loadingStateManager =
         createLoadingStateManagerWithLottie(
@@ -370,30 +547,17 @@ public class MainActivity extends AppCompatActivity {
         .build();
   }
 
-  private void setupSwipeRefresh() {
-    if (swipeRefreshLayout == null) {
-      return;
-    }
-
-    configureRefreshIndicatorColors();
-    setRefreshListener();
-  }
-
-  private void configureRefreshIndicatorColors() {
-    // Apply professional party-themed refresh layout
-    CustomRefreshAnimationHelper.setupPartyRefreshLayout(swipeRefreshLayout);
-  }
-
-  private void setRefreshListener() {
-    swipeRefreshLayout.setOnRefreshListener(this::handlePullToRefresh);
-  }
-
   private void handlePullToRefresh() {
-    Log.d(TAG, "Pull-to-refresh triggered");
+    Log.d(TAG, "Pull-to-refresh initiated");
 
     if (isRefreshRequestValid()) {
       performForceRefresh();
       updateLastRefreshTime();
+    } else {
+      // Stop refresh animation if request is not valid
+      if (swipeRefreshLayout != null) {
+        swipeRefreshLayout.setRefreshing(false);
+      }
     }
   }
 
@@ -402,10 +566,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void performForceRefresh() {
-    // Don't show loading state manager for refresh to avoid shake
-    Log.d(TAG, "Performing force refresh without loading overlay");
-
-    // No custom animations during refresh to prevent shake
+    Log.d(TAG, "Performing force refresh");
+    
+    // Clear current search and filters for fresh data
+    if (searchEditText != null) {
+      searchEditText.setText("");
+    }
+    
+    // Force reload from server
     viewModel.loadUserGroups(currentUserKey, true);
   }
 
@@ -474,10 +642,29 @@ public class MainActivity extends AppCompatActivity {
     actionBar.setDisplayHomeAsUpEnabled(false);
   }
 
+  private void setupSwipeRefresh() {
+    if (swipeRefreshLayout != null) {
+      // Set refresh colors to match app theme
+      swipeRefreshLayout.setColorSchemeResources(
+          R.color.colorPrimary,
+          R.color.colorAccent,
+          R.color.primaryBlue
+      );
+      
+      // Set refresh listener
+      swipeRefreshLayout.setOnRefreshListener(this::handlePullToRefresh);
+    }
+  }
+  
   private void setupSearchBar() {
     if (searchEditText == null || clearSearchButton == null) {
       Log.w(TAG, "Search components not found");
       return;
+    }
+    
+    // Setup filter button
+    if (filterButton != null) {
+      filterButton.setOnClickListener(v -> showSortFilterDialog());
     }
 
     // Setup text change listener for search
@@ -504,21 +691,23 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void filterGroups(String searchText) {
-    if (searchText.isEmpty()) {
-      // Show all groups
-      filteredGroups.clear();
-      filteredGroups.addAll(allGroups);
-    } else {
-      // Filter groups by name (case-insensitive)
-      filteredGroups.clear();
-      String lowerSearchText = searchText.toLowerCase();
-      for (Group group : allGroups) {
-        if (group.getGroupName() != null && 
-            group.getGroupName().toLowerCase().contains(lowerSearchText)) {
-          filteredGroups.add(group);
-        }
-      }
+    List<Group> results = new ArrayList<>(allGroups);
+    
+    // Apply text search filter
+    if (!searchText.isEmpty()) {
+      results = filterByText(results, searchText);
     }
+    
+    // Apply other filters
+    results = applyFilters(results);
+    
+    // Apply sorting
+    results = sortGroups(results);
+    
+    // Update filtered groups
+    filteredGroups.clear();
+    filteredGroups.addAll(results);
+    
     // Update the adapter with filtered groups without triggering loading state
     if (groupAdapter != null) {
       // Directly update items without going through ViewModel to avoid loading state
@@ -534,6 +723,211 @@ public class MainActivity extends AppCompatActivity {
         loadingStateManager.showContent();
       }
     }
+  }
+  
+  private List<Group> filterByText(List<Group> groups, String searchText) {
+    List<Group> filtered = new ArrayList<>();
+    String lowerSearchText = searchText.toLowerCase();
+    for (Group group : groups) {
+      if (group.getGroupName() != null && 
+          group.getGroupName().toLowerCase().contains(lowerSearchText)) {
+        filtered.add(group);
+      }
+    }
+    return filtered;
+  }
+  
+  private List<Group> applyFilters(List<Group> groups) {
+    List<Group> filtered = new ArrayList<>();
+    
+    for (Group group : groups) {
+      boolean passesFilter = true;
+      
+      // Public/Private filter
+      if (filterPublicOnly && group.getGroupType() != 0) { // 0 is public
+        passesFilter = false;
+      }
+      if (filterPrivateOnly && group.getGroupType() != 1) { // 1 is private
+        passesFilter = false;
+      }
+      
+      // Free entry filter
+      if (filterFreeOnly) {
+        String price = group.getGroupPrice();
+        if (price != null && !price.equals("0") && !price.equalsIgnoreCase("free")) {
+          passesFilter = false;
+        }
+      }
+      
+      // Upcoming only filter
+      if (filterUpcomingOnly) {
+        try {
+          String dateStr = group.getGroupDays() + "/" + group.getGroupMonths() + "/" + group.getGroupYears();
+          java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+          java.util.Date groupDate = sdf.parse(dateStr);
+          if (groupDate != null && groupDate.before(new java.util.Date())) {
+            passesFilter = false;
+          }
+        } catch (Exception e) {
+          // If date parsing fails, exclude the group
+          passesFilter = false;
+        }
+      }
+      
+      if (passesFilter) {
+        filtered.add(group);
+      }
+    }
+    
+    return filtered;
+  }
+  
+  private List<Group> sortGroups(List<Group> groups) {
+    List<Group> sorted = new ArrayList<>(groups);
+    
+    switch (currentSortMode) {
+      case "date_nearest":
+        sorted.sort((g1, g2) -> compareDates(g1, g2));
+        break;
+        
+      case "date_farthest":
+        sorted.sort((g1, g2) -> compareDates(g2, g1));
+        break;
+        
+      case "name_az":
+        sorted.sort((g1, g2) -> {
+          String name1 = g1.getGroupName() != null ? g1.getGroupName() : "";
+          String name2 = g2.getGroupName() != null ? g2.getGroupName() : "";
+          return name1.compareToIgnoreCase(name2);
+        });
+        break;
+        
+      case "name_za":
+        sorted.sort((g1, g2) -> {
+          String name1 = g1.getGroupName() != null ? g1.getGroupName() : "";
+          String name2 = g2.getGroupName() != null ? g2.getGroupName() : "";
+          return name2.compareToIgnoreCase(name1);
+        });
+        break;
+        
+      case "recently_added":
+        // Reverse the list to show newest first (assuming they're added at the end)
+        java.util.Collections.reverse(sorted);
+        break;
+    }
+    
+    return sorted;
+  }
+  
+  private int compareDates(Group g1, Group g2) {
+    try {
+      String date1 = g1.getGroupDays() + "/" + g1.getGroupMonths() + "/" + g1.getGroupYears();
+      String date2 = g2.getGroupDays() + "/" + g2.getGroupMonths() + "/" + g2.getGroupYears();
+      
+      java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+      java.util.Date d1 = sdf.parse(date1);
+      java.util.Date d2 = sdf.parse(date2);
+      
+      if (d1 != null && d2 != null) {
+        return d1.compareTo(d2);
+      }
+    } catch (Exception e) {
+      Log.w(TAG, "Error comparing dates", e);
+    }
+    return 0;
+  }
+  
+  private void showSortFilterDialog() {
+    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_sort_filter, null);
+    builder.setView(dialogView);
+    
+    // Get dialog components
+    android.widget.RadioGroup radioGroupSort = dialogView.findViewById(R.id.radioGroupSort);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxPublic = dialogView.findViewById(R.id.checkboxPublic);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxPrivate = dialogView.findViewById(R.id.checkboxPrivate);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxFree = dialogView.findViewById(R.id.checkboxFree);
+    com.google.android.material.checkbox.MaterialCheckBox checkboxUpcoming = dialogView.findViewById(R.id.checkboxUpcoming);
+    
+    // Set current values
+    switch (currentSortMode) {
+      case "date_nearest":
+        radioGroupSort.check(R.id.radioDateNearest);
+        break;
+      case "date_farthest":
+        radioGroupSort.check(R.id.radioDateFarthest);
+        break;
+      case "name_az":
+        radioGroupSort.check(R.id.radioNameAZ);
+        break;
+      case "name_za":
+        radioGroupSort.check(R.id.radioNameZA);
+        break;
+      case "recently_added":
+        radioGroupSort.check(R.id.radioRecentlyAdded);
+        break;
+    }
+    
+    checkboxPublic.setChecked(filterPublicOnly);
+    checkboxPrivate.setChecked(filterPrivateOnly);
+    checkboxFree.setChecked(filterFreeOnly);
+    checkboxUpcoming.setChecked(filterUpcomingOnly);
+    
+    // Ensure public and private are mutually exclusive
+    checkboxPublic.setOnCheckedChangeListener((buttonView, isChecked) -> {
+      if (isChecked && checkboxPrivate.isChecked()) {
+        checkboxPrivate.setChecked(false);
+      }
+    });
+    
+    checkboxPrivate.setOnCheckedChangeListener((buttonView, isChecked) -> {
+      if (isChecked && checkboxPublic.isChecked()) {
+        checkboxPublic.setChecked(false);
+      }
+    });
+    
+    android.app.AlertDialog dialog = builder.create();
+    
+    // Setup dialog buttons
+    dialogView.findViewById(R.id.btnReset).setOnClickListener(v -> {
+      // Reset to defaults
+      radioGroupSort.check(R.id.radioDateNearest);
+      checkboxPublic.setChecked(false);
+      checkboxPrivate.setChecked(false);
+      checkboxFree.setChecked(false);
+      checkboxUpcoming.setChecked(false);
+    });
+    
+    dialogView.findViewById(R.id.btnCancel).setOnClickListener(v -> dialog.dismiss());
+    
+    dialogView.findViewById(R.id.btnApply).setOnClickListener(v -> {
+      // Apply the selected filters and sort
+      int selectedSortId = radioGroupSort.getCheckedRadioButtonId();
+      if (selectedSortId == R.id.radioDateNearest) {
+        currentSortMode = "date_nearest";
+      } else if (selectedSortId == R.id.radioDateFarthest) {
+        currentSortMode = "date_farthest";
+      } else if (selectedSortId == R.id.radioNameAZ) {
+        currentSortMode = "name_az";
+      } else if (selectedSortId == R.id.radioNameZA) {
+        currentSortMode = "name_za";
+      } else if (selectedSortId == R.id.radioRecentlyAdded) {
+        currentSortMode = "recently_added";
+      }
+      
+      filterPublicOnly = checkboxPublic.isChecked();
+      filterPrivateOnly = checkboxPrivate.isChecked();
+      filterFreeOnly = checkboxFree.isChecked();
+      filterUpcomingOnly = checkboxUpcoming.isChecked();
+      
+      // Apply the filters
+      String currentSearchText = searchEditText != null ? searchEditText.getText().toString() : "";
+      filterGroups(currentSearchText);
+      
+      dialog.dismiss();
+    });
+    
+    dialog.show();
   }
 
   private void observeViewModel() {
@@ -681,6 +1075,9 @@ public class MainActivity extends AppCompatActivity {
   private void showEmptyGroupsState() {
     Log.d(TAG, "Displaying empty groups state with animation");
     loadingStateManager.showEmptyWithAnimation("No groups found. Tap + to create a new group");
+    
+    // Inflate and show empty state view if needed
+    inflateEmptyStateViewIfNeeded();
     showEmptyState();
   }
 
@@ -752,13 +1149,7 @@ public class MainActivity extends AppCompatActivity {
   private void stopSwipeRefreshIfActive() {
     if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
       swipeRefreshLayout.setRefreshing(false);
-
-      // Stop custom refresh animation without zoom feedback
-      LottieAnimationView lottieView = findViewById(R.id.lottie_loading);
-      if (lottieView != null) {
-        CustomRefreshAnimationHelper.createCustomRefreshAnimation(rootView, lottieView, false);
-        // Removed the annoying zoom success feedback
-      }
+      Log.d(TAG, "SwipeRefresh animation stopped");
     }
   }
 
@@ -958,15 +1349,20 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void displayEmptyStateMessage() {
-    TextView emptyView = findViewById(R.id.emptyGroupsView);
-    if (emptyView != null) {
-      showEmptyViewMessage(emptyView);
+    // With ViewStub optimization, empty state is handled through inflatedEmptyView
+    if (inflatedEmptyView != null) {
+      inflatedEmptyView.setVisibility(View.VISIBLE);
+      // Apply entrance animation
+      AnimationOptimizer.animateViewEntrance(inflatedEmptyView, 0);
     } else {
+      // Fallback to inflating empty state
+      inflateEmptyStateViewIfNeeded();
       showEmptyStateFallback();
     }
   }
 
   private void showEmptyViewMessage(TextView emptyView) {
+    // This method is no longer needed with ViewStub approach
     emptyView.setVisibility(View.VISIBLE);
     emptyView.setText("No groups found. Tap + to create a new group");
   }
@@ -984,9 +1380,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void hideEmptyStateView() {
-    TextView emptyView = findViewById(R.id.emptyGroupsView);
-    if (emptyView != null) {
-      emptyView.setVisibility(View.GONE);
+    // With ViewStub optimization, hide the inflated empty state view
+    if (inflatedEmptyView != null) {
+      inflatedEmptyView.setVisibility(View.GONE);
     }
   }
 
@@ -1017,20 +1413,20 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void navigateToServerSettings() {
-    navigateToActivity(ServerSettingsActivity.class);
+    navigateToActivity();
   }
 
-  private void navigateToActivity(Class<?> activityClass) {
-    if (activityClass == null) {
+  private void navigateToActivity() {
+    if (ServerSettingsActivity.class == null) {
       Log.e(TAG, "Cannot navigate: activity class is null");
       return;
     }
 
     try {
-      Intent intent = new Intent(getApplicationContext(), activityClass);
+      Intent intent = new Intent(getApplicationContext(), ServerSettingsActivity.class);
       startActivity(intent);
     } catch (Exception e) {
-      Log.e(TAG, "Failed to navigate to activity: " + activityClass.getSimpleName(), e);
+      Log.e(TAG, "Failed to navigate to activity: " + ServerSettingsActivity.class.getSimpleName(), e);
     }
   }
 
@@ -1119,8 +1515,18 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   protected void onResume() {
+    PerformanceMonitor.startTiming("MainActivity.onResume");
     super.onResume();
     refreshGroupsIfNeeded();
+    PerformanceMonitor.endTiming("MainActivity.onResume");
+    PerformanceMonitor.trackMemoryUsage("MainActivity.onResume");
+  }
+
+  @Override
+  protected void onPause() {
+    PerformanceMonitor.startTiming("MainActivity.onPause");
+    super.onPause();
+    PerformanceMonitor.endTiming("MainActivity.onPause");
   }
 
   private void refreshGroupsIfNeeded() {
@@ -1165,5 +1571,38 @@ public class MainActivity extends AppCompatActivity {
         String.format(
             "onResume: Skipping refresh - within cooldown period (%dms ago, cooldown: %dms)",
             timeSinceLastRefresh, REFRESH_COOLDOWN_MS));
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear view references to prevent memory leaks
+    if (rootView != null) {
+      ViewOptimizationHelper.clearViewReferences(rootView);
+    }
+    
+    // Clear animation cache
+    AnimationOptimizer.clearAnimationCache();
+    
+    // Clear adapter and view model references
+    if (groupAdapter != null) {
+      groupAdapter = null;
+    }
+    if (viewModel != null) {
+      viewModel = null;
+    }
+    
+    // Clear ViewStub references
+    stubShimmerLoading = null;
+    stubEmptyState = null;
+    stubLoadingOverlay = null;
+    stubProgressBar = null;
+    
+    // Clear inflated view references
+    inflatedShimmerView = null;
+    inflatedEmptyView = null;
+    inflatedLoadingOverlay = null;
+    inflatedProgressBar = null;
+    
+    Log.d(TAG, "Activity references cleared for memory optimization");
   }
 }

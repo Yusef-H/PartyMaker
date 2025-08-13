@@ -9,7 +9,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.diffplug.spotless") version "7.2.1"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("com.github.ben-manes.versions") version "0.52.0"
+    id("com.getkeepsafe.dexcount") // For APK analysis
 }
 
 android {
@@ -23,6 +23,24 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = null // Disable Android instrumentation tests
+        
+        // MultiDex optimization
+        multiDexEnabled = true
+        multiDexKeepProguard = file("multidex-rules.pro")
+        
+        // Vector drawable optimization
+        vectorDrawables {
+            useSupportLibrary = true
+            generatedDensities("mdpi", "hdpi", "xhdpi", "xxhdpi")
+        }
+        
+        // Resource configuration - keep only needed languages
+        // Using the new androidResources API instead of deprecated resourceConfigurations
+        
+        // Native library optimization - remove x86 for production builds
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+        }
 
         // Load API keys from local.properties OR secrets.properties
         val localPropertiesFile = rootProject.file("local.properties")
@@ -59,20 +77,40 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+            isPseudoLocalesEnabled = false // Disable for faster builds
+            isCrunchPngs = false // Disable PNG crunching in debug for faster builds
+            
+            // Disable Crashlytics in debug builds 
+            buildConfigField("boolean", "ENABLE_CRASHLYTICS", "false")
+            
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
         }
-        debug {
-            isMinifyEnabled = false
+        
+        release {
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isPseudoLocalesEnabled = false
+            isCrunchPngs = true // Enable PNG optimization in release
+            
+            // Enable Crashlytics in release builds
+            buildConfigField("boolean", "ENABLE_CRASHLYTICS", "true")
+            
+            // ProGuard/R8 configuration with optimization
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            
+            // Zip align is enabled by default in modern AGP
+            // isZipAlignEnabled = true
         }
     }
 
@@ -83,15 +121,74 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
+        // Kotlin compiler optimizations
+        freeCompilerArgs += listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xjvm-default=all"
+        )
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
+        // Disable unused features for faster builds
+        dataBinding = false
+        mlModelBinding = false
+        prefab = false
+        renderScript = false
+        shaders = false
     }
 
     composeOptions {
         kotlinCompilerExtensionVersion = "2.0.0"
+    }
+    
+    // Resource optimization - keep only needed languages
+    androidResources {
+        localeFilters += listOf("en", "he")
+    }
+    
+    // Packaging optimization
+    packaging {
+        resources {
+            // Pick first occurrence of duplicate files
+            pickFirsts += listOf(
+                "**/libc++_shared.so",
+                "**/libjsc.so",
+                "META-INF/DEPENDENCIES"
+            )
+            
+            // Exclude unnecessary files to reduce APK size
+            excludes += listOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt", 
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1",
+                "META-INF/*.kotlin_module",
+                "**/*.kotlin_builtins",
+                "**/kotlin/**",
+                "kotlin-tooling-metadata.json"
+            )
+        }
+    }
+    
+    // Bundle optimization for App Bundle builds  
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
     }
 
     // Disable all test options
@@ -176,11 +273,16 @@ spotless {
 dependencies {
     // --- AndroidX Core ---
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.appcompat) {
+        exclude(group = "androidx.legacy", module = "legacy-support-v4")
+    }
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.activity.compose)
+    
+    // --- Image Processing ---
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -243,9 +345,97 @@ dependencies {
 
     // --- Security ---
     implementation(libs.androidx.security.crypto)
+
+    // --- Memory Leak Detection (Debug Only) ---
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 }
 
 // Secrets plugin configuration
 secrets {
     defaultPropertiesFileName = "secrets.properties"
+}
+
+// Build optimization scripts available:
+// Run: ./gradlew generateResourceOptimizationReport
+// Run: ./gradlew fullApkAnalysis
+
+// ===== BUILD OPTIMIZATION & ANALYSIS TASKS =====
+
+// APK Size Analysis Task
+tasks.register("analyzeApk") {
+    group = "build analysis"
+    description = "Analyzes APK size and provides optimization suggestions"
+    dependsOn("assembleRelease")
+    
+    doLast {
+        val apkFile = file("${layout.buildDirectory.get()}/outputs/apk/release/app-release.apk")
+        
+        if (apkFile.exists()) {
+            val apkSizeMB = apkFile.length() / (1024.0 * 1024.0)
+            
+            println("\n==== PartyMaker APK Analysis ====")
+            println("APK Size: ${String.format("%.2f", apkSizeMB)} MB")
+            
+            when {
+                apkSizeMB < 25 -> println("✓ APK size is excellent (<25MB)")
+                apkSizeMB < 50 -> println("✓ APK size is good (25-50MB)")
+                apkSizeMB < 100 -> println("⚠ APK size is acceptable (50-100MB)")
+                else -> println("❌ APK size is large (>100MB) - consider optimization")
+            }
+            
+            println("Recommend using App Bundle for smaller downloads")
+            println("==============================\n")
+        } else {
+            println("❌ Release APK not found. Run 'assembleRelease' first.")
+        }
+    }
+}
+
+// Dependency Size Analysis Task  
+tasks.register("analyzeDependencies") {
+    group = "build analysis"
+    description = "Analyzes dependency sizes"
+    
+    doLast {
+        println("\n==== Dependency Size Analysis ====")
+        
+        configurations.getByName("implementation").resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
+            val file = artifact.file
+            if (file.exists()) {
+                val sizeMB = file.length() / (1024.0 * 1024.0)
+                if (sizeMB > 1.0) {
+                    println("${artifact.name}: ${String.format("%.2f", sizeMB)} MB")
+                }
+            }
+        }
+        
+        println("==================================\n")
+    }
+}
+
+// Build Cache Analysis
+tasks.register("analyzeBuildCache") {
+    group = "build analysis"
+    description = "Provides build cache statistics"
+    
+    doLast {
+        println("\n==== Build Cache Analysis ====")
+        println("Gradle User Home: ${gradle.gradleUserHomeDir}")
+        
+        val cacheDir = file("${gradle.gradleUserHomeDir}/caches")
+        if (cacheDir.exists()) {
+            val cacheSizeGB = cacheDir.walkTopDown()
+                .filter { it.isFile }
+                .map { it.length() }
+                .sum() / (1024.0 * 1024.0 * 1024.0)
+            
+            println("Cache Size: ${String.format("%.2f", cacheSizeGB)} GB")
+            
+            if (cacheSizeGB > 5.0) {
+                println("⚠ Consider cleaning cache: ./gradlew cleanBuildCache")
+            }
+        }
+        
+        println("==============================\n")
+    }
 }
