@@ -48,6 +48,24 @@
     <string name="admin_options">Admin Options</string>
     <string name="admin_email">Admin Email</string>
     <string name="location">Location</string>
+    
+    <!-- Sort and Filter Dialog -->
+    <string name="filter_sort">Filter and Sort</string>
+    <string name="sort_and_filter">Sort and Filter</string>
+    <string name="sort_by">Sort by</string>
+    <string name="filter_by">Filter by</string>
+    <string name="sort_date_nearest">Date (Nearest first)</string>
+    <string name="sort_date_farthest">Date (Farthest first)</string>
+    <string name="sort_name_az">Name (A-Z)</string>
+    <string name="sort_name_za">Name (Z-A)</string>
+    <string name="sort_recently_added">Recently added</string>
+    <string name="filter_public_only">Public parties only</string>
+    <string name="filter_private_only">Private parties only</string>
+    <string name="filter_free_only">Free entry only</string>
+    <string name="filter_upcoming_only">Upcoming only</string>
+    <string name="reset">Reset</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
     <string name="location_pin">📍 Location</string>
     <string name="date">Date</string>
     <string name="press_to_see_time">press to see time</string>
@@ -105,7 +123,6 @@
     <string name="not_coming">Not Coming</string>
     <string name="coming">Coming</string>
     <string name="add_friends">Add Friends</string>
-    <string name="reset">Reset</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="fast">Fast ⚡</string>
     <string name="fun">Fun 🎉</string>
@@ -256,8 +273,8 @@
 
     <!-- Search and Filter -->
     <string name="search">Search</string>
-    <string name="search_your_parties">Search your parties...</string>
-    <string name="search_parties">Search parties...</string>
+    <string name="search_your_parties">Search your parties…</string>
+    <string name="search_parties">Search parties…</string>
     <string name="voice_search">Voice search</string>
     <string name="filter_parties">Filter parties</string>
     <string name="clear_search">Clear search</string>
@@ -266,22 +283,22 @@
     <string name="this_week">This Week</string>
 
     <!-- Loading States -->
-    <string name="loading_your_parties">Loading your parties...</string>
-    <string name="loading">Loading...</string>
+    <string name="loading_your_parties">Loading your parties…</string>
+    <string name="loading">Loading…</string>
     <string name="something_went_wrong">Something went wrong</string>
-    <string name="creating_your_amazing_party">Creating your amazing party...</string>
+    <string name="creating_your_amazing_party">Creating your amazing party…</string>
     <string name="main_content">Main Content</string>
 
     <!-- Chat -->
     <string name="online">Online</string>
     <string name="chat_options">Chat options</string>
     <string name="attachment_options">Attachment options</string>
-    <string name="ai_thinking">AI is thinking...</string>
+    <string name="ai_thinking">AI is thinking…</string>
     <string name="party_avatar">Party avatar</string>
     <string name="party_name">Party Name</string>
     <string name="members_count">5 members</string>
     <string name="attach_file">Attach file</string>
-    <string name="type_message_hint">Type a message...</string>
+    <string name="type_message_hint">Type a message…</string>
     <string name="send_message">Send message</string>
     <string name="someone_typing">Someone is typing...</string>
     <string name="message_status">Message status</string>
