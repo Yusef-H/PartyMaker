@@ -17,7 +17,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.partymaker.R;
 import com.example.partymaker.utils.infrastructure.system.ThreadUtils;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import java.util.List;
+import android.util.LruCache;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Optimized image loading manager that provides memory-efficient image loading
@@ -25,6 +29,16 @@ import java.util.List;
  */
 public class ImageOptimizationManager {
     private static final String TAG = "ImageOptimization";
+    
+    // Image loading state management
+    private static final AtomicBoolean isImageLoadingPaused = new AtomicBoolean(false);
+    
+    // LRU cache for URL validation results to avoid repeated Firebase checks
+    private static final LruCache<String, Boolean> urlValidationCache = new LruCache<>(100);
+    
+    // Memory cache size (10% of available memory)
+    private static final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    private static final int cacheSize = maxMemory / 10;
     
     // Optimized request options for different image types
     private static final RequestOptions thumbnailOptions = new RequestOptions()
@@ -60,6 +74,19 @@ public class ImageOptimizationManager {
     public static void loadGroupThumbnail(ImageView imageView, String url) {
         if (imageView == null || url == null || url.isEmpty()) return;
         
+        // Check if image loading is paused (during scroll)
+        if (isImageLoadingPaused.get()) {
+            imageView.setImageResource(R.drawable.default_group_image);
+            return;
+        }
+        
+        // Check URL validation cache first
+        Boolean isValid = urlValidationCache.get(url);
+        if (isValid != null && !isValid) {
+            imageView.setImageResource(R.drawable.default_group_image);
+            return;
+        }
+        
         Glide.with(imageView.getContext())
             .load(url)
             .apply(thumbnailOptions)
@@ -67,12 +94,14 @@ public class ImageOptimizationManager {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                     Log.w(TAG, "Failed to load group thumbnail: " + url, e);
+                    urlValidationCache.put(url, false); // Cache invalid URL
                     return false;
                 }
                 
                 @Override
                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                     Log.d(TAG, "Loaded group thumbnail from: " + dataSource);
+                    urlValidationCache.put(url, true); // Cache valid URL
                     return false;
                 }
             })
@@ -171,10 +200,116 @@ public class ImageOptimizationManager {
         ThreadUtils.executeImageTask(() -> {
             try {
                 Glide.get(context).clearDiskCache();
+                // Also clear our validation cache
+                urlValidationCache.evictAll();
             } catch (Exception e) {
                 Log.w(TAG, "Error clearing disk cache", e);
             }
         });
+    }
+    
+    /**
+     * Pauses image loading (useful during fast scrolling)
+     */
+    public static void pauseImageLoading() {
+        isImageLoadingPaused.set(true);
+    }
+    
+    /**
+     * Resumes image loading
+     */
+    public static void resumeImageLoading() {
+        isImageLoadingPaused.set(false);
+    }
+    
+    /**
+     * Optimizes Glide configuration for the application
+     */
+    public static void optimizeGlideConfiguration(Context context) {
+        try {
+            // Set memory cache size
+            Glide.get(context).setMemoryCategory(com.bumptech.glide.MemoryCategory.NORMAL);
+            
+            Log.d(TAG, "Glide configuration optimized - cache size: " + cacheSize + "KB");
+        } catch (Exception e) {
+            Log.e(TAG, "Error optimizing Glide configuration", e);
+        }
+    }
+    
+    /**
+     * Trims memory when the app is under memory pressure
+     */
+    public static void trimMemory(Context context, int level) {
+        try {
+            Glide.get(context).trimMemory(level);
+            
+            // Clear validation cache on critical memory pressure
+            if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) {
+                urlValidationCache.evictAll();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Error trimming memory", e);
+        }
+    }
+    
+    /**
+     * Validates if a Firebase Storage reference exists before loading image
+     * @param imagePath The Firebase Storage path
+     * @param imageView The ImageView to load into if exists
+     * @param fallbackImage Resource ID for fallback image
+     */
+    public static void loadImageWithStorageValidation(String imagePath, ImageView imageView, int fallbackImage) {
+        if (imageView == null || imagePath == null || imagePath.isEmpty()) {
+            if (imageView != null) {
+                imageView.setImageResource(fallbackImage);
+            }
+            return;
+        }
+        
+        try {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference imageRef = storage.getReference(imagePath);
+            
+            // Check if image exists
+            imageRef.getMetadata().addOnSuccessListener(metadata -> {
+                // Image exists, load it
+                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Log.d(TAG, "Loading validated image: " + uri.toString());
+                    loadGroupThumbnail(imageView, uri.toString());
+                }).addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to get download URL for: " + imagePath, e);
+                    imageView.setImageResource(fallbackImage);
+                });
+            }).addOnFailureListener(e -> {
+                // Image doesn't exist, use fallback
+                Log.w(TAG, "Image not found in storage: " + imagePath, e);
+                imageView.setImageResource(fallbackImage);
+            });
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error validating storage reference: " + imagePath, e);
+            imageView.setImageResource(fallbackImage);
+        }
+    }
+    
+    /**
+     * Enhanced group image loading with Firebase Storage validation
+     * @param imageView The ImageView to load into
+     * @param imagePath Firebase Storage path (e.g., "Groups/groupKey" or "UsersImageProfile/Groups/groupKey")
+     */
+    public static void loadGroupImageWithValidation(ImageView imageView, String imagePath) {
+        if (imageView == null || imagePath == null || imagePath.isEmpty()) {
+            if (imageView != null) {
+                imageView.setImageResource(R.drawable.placeholder_group);
+            }
+            return;
+        }
+        
+        // Try new path first, then fallback to old path
+        String newPath = imagePath.startsWith("UsersImageProfile/") ? imagePath : "UsersImageProfile/Groups/" + imagePath;
+        String oldPath = imagePath.startsWith("Groups/") ? imagePath : "Groups/" + imagePath;
+        
+        loadImageWithStorageValidation(newPath, imageView, R.drawable.placeholder_group);
     }
     
     // Private constructor to prevent instantiation
