@@ -154,9 +154,8 @@ public class AuthenticationManager {
    * Clears all authentication data
    *
    * @param context Application context
-   * @return true if successful, false otherwise
    */
-  public static boolean clearAuthData(Context context) {
+  public static void clearAuthData(Context context) {
     boolean firebaseSignOutSuccess = false;
     boolean sharedPrefsSuccess = false;
 
@@ -188,7 +187,6 @@ public class AuthenticationManager {
       Log.e(TAG, "Error clearing SharedPreferences auth data", e);
     }
 
-    return firebaseSignOutSuccess || sharedPrefsSuccess;
   }
 
   /**

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,7 +14,14 @@ import java.util.Map;
  * Represents a chat message in the PartyMaker application. This class is annotated for Room
  * database storage.
  */
-@Entity(tableName = "chat_messages")
+@Entity(tableName = "chat_messages",
+        indices = {
+            @Index(value = "groupKey", name = "idx_message_group"),
+            @Index(value = {"groupKey", "timestamp"}, name = "idx_message_group_time"),
+            @Index(value = "senderKey", name = "idx_message_sender"),
+            @Index(value = "timestamp", name = "idx_message_time"),
+            @Index(value = {"groupKey", "encrypted"}, name = "idx_message_group_encrypted")
+        })
 public class ChatMessage {
   /** The unique key for the message. */
   @PrimaryKey

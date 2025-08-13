@@ -34,6 +34,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.partymaker.R;
@@ -78,7 +79,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-public class CreateGroupActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallback {
   // Constants
   private static final int IMAGE_PICKER_REQUEST_CODE = 100;
   private static final int INSTRUCTION_DELAY_MS = 3000;
@@ -1012,5 +1013,14 @@ public class CreateGroupActivity extends AppCompatActivity implements OnMapReady
   public static class GroupType {
     public static final int PUBLIC = 0;
     public static final int PRIVATE = 1;
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear any activity-specific references
+    if (map != null) {
+      map.clear();
+      map = null;
+    }
   }
 }

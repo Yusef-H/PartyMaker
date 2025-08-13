@@ -1,7 +1,12 @@
 package com.example.partymaker;
 
+import android.app.Activity;
 import android.app.Application;
+import android.os.Bundle;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.example.partymaker.BuildConfig;
 import com.example.partymaker.data.api.ConnectivityManager;
 import com.example.partymaker.data.api.FirebaseServerClient;
 import com.example.partymaker.data.api.NetworkManager;
@@ -16,10 +21,12 @@ import com.google.firebase.FirebaseApp;
 /** Application class for PartyMaker. Initializes repositories and other app-wide components. */
 public class PartyApplication extends Application {
   private static final String TAG = "PartyApplication";
+  private static PartyApplication instance;
 
   @Override
   public void onCreate() {
     super.onCreate();
+    instance = this;
 
     // Apply saved theme preference
     ServerSettingsActivity.applyThemeFromPreferences(this);
@@ -61,6 +68,14 @@ public class PartyApplication extends Application {
 
     // Initialize repositories
     initializeRepositories();
+
+    // Initialize memory management
+    MemoryManager.getInstance();
+
+    // Setup memory monitoring in debug builds
+    if (BuildConfig.DEBUG) {
+      setupMemoryMonitoring();
+    }
 
     // Log memory info
     Log.d(TAG, "Initial memory usage: " + MemoryManager.getDetailedMemoryInfo());
@@ -107,13 +122,55 @@ public class PartyApplication extends Application {
     Log.d(TAG, "Application terminated");
   }
 
+  /**
+   * Gets the singleton instance of the application.
+   */
+  public static PartyApplication getInstance() {
+    return instance;
+  }
+
+  /**
+   * Sets up memory monitoring for debug builds.
+   */
+  private void setupMemoryMonitoring() {
+    // LeakCanary is automatically initialized
+
+    // Additional memory monitoring
+    registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+      @Override
+      public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+        Log.d("MemoryMonitor", "Activity created: " + activity.getClass().getSimpleName());
+        MemoryManager.getInstance().logMemoryStats();
+      }
+
+      @Override
+      public void onActivityDestroyed(@NonNull Activity activity) {
+        Log.d("MemoryMonitor", "Activity destroyed: " + activity.getClass().getSimpleName());
+        MemoryManager.getInstance().logMemoryStats();
+      }
+
+      // Other lifecycle methods...
+      @Override public void onActivityStarted(@NonNull Activity activity) {}
+      @Override public void onActivityResumed(@NonNull Activity activity) {}
+      @Override public void onActivityPaused(@NonNull Activity activity) {}
+      @Override public void onActivityStopped(@NonNull Activity activity) {}
+      @Override public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+    });
+  }
+
   @Override
   public void onLowMemory() {
     super.onLowMemory();
 
-    // Perform memory cleanup
-    MemoryManager.performMemoryCleanup(this);
+    // Perform memory cleanup using enhanced memory manager
+    MemoryManager.getInstance().emergencyCleanup();
 
     Log.d(TAG, "Low memory cleanup performed");
+  }
+
+  @Override
+  public void onTrimMemory(int level) {
+    super.onTrimMemory(level);
+    MemoryManager.getInstance().emergencyCleanup();
   }
 }
