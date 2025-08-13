@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.core.content.FileProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.utils.security.monitoring.SecurityAgent;
@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /** Activity for running security scans */
-public class SecurityScanActivity extends AppCompatActivity {
+public class SecurityScanActivity extends BaseActivity {
 
   // Constants
   private static final String TAG = "SecurityScanActivity";
@@ -290,5 +290,22 @@ public class SecurityScanActivity extends AppCompatActivity {
         SECURITY_SCORE_TEXT,
         currentReport.getOverallScore(),
         currentReport.getSecurityGrade());
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    securityScoreText = null;
+    securityGradeText = null;
+    issuesFoundText = null;
+    scanStatusText = null;
+    runScanButton = null;
+    exportReportButton = null;
+    shareReportButton = null;
+    progressBar = null;
+
+    // Clear data objects
+    securityAgent = null;
+    currentReport = null;
   }
 }

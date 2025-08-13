@@ -17,7 +17,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.partymaker.ui.base.BaseActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.partymaker.R;
 import com.example.partymaker.data.api.AppNetworkError;
@@ -39,7 +39,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditProfileActivity extends AppCompatActivity {
+public class EditProfileActivity extends BaseActivity {
 
   private static final String TAG = "EditProfileActivity";
   private static final String ACTION_BAR_START_COLOR = "#0E81D1";
@@ -920,5 +920,19 @@ public class EditProfileActivity extends AppCompatActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void clearActivityReferences() {
+    // Clear UI components
+    imgProfile = null;
+    etUsername = null;
+    btnSaveProfile = null;
+    btnSignOut = null;
+    progressBar = null;
+    rootLayout = null;
+
+    // Clear ViewModel
+    profileViewModel = null;
   }
 }
