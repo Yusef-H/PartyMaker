@@ -161,6 +161,34 @@
         <item name="android:windowBackground">@null</item>
     </style>
 
+    <!-- Custom DatePicker theme -->
+    <style name="CustomDatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primaryBlue</item>
+        <item name="android:datePickerStyle">@style/CustomDatePickerStyle</item>
+        <item name="android:textColorPrimary">@color/primaryBlue</item>
+        <item name="android:colorControlNormal">@color/primaryBlue</item>
+    </style>
+
+    <style name="CustomDatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:headerBackground">@color/primaryBlue</item>
+        <item name="android:dateTextAppearance">@style/DatePickerTextAppearance</item>
+    </style>
+
+    <style name="DatePickerTextAppearance" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/primaryBlue</item>
+    </style>
+
+    <!-- Custom TimePicker theme -->
+    <style name="CustomTimePickerTheme">
+        <item name="android:numbersTextColor">@color/white</item>
+        <item name="android:numbersBackgroundColor">@android:color/transparent</item>
+        <item name="android:numbersSelectorColor">@color/modern_accent_teal</item>
+        <item name="android:amPmTextColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/modern_accent_teal</item>
+        <item name="colorAccent">@color/modern_accent_teal</item>
+    </style>
+
     <!-- Material3 themes without window background -->
     <style name="Theme.Material3.Login.NoWindowBackground" parent="Theme.Material3.Login">
         <item name="android:windowBackground">@null</item>

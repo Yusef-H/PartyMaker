@@ -149,10 +149,12 @@
 
             <TimePicker
                 android:id="@+id/timePicker"
+                style="@style/TimePickerStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:timePickerMode="clock"
+                android:theme="@style/CustomTimePickerTheme"
                 android:visibility="invisible" />
 
         </LinearLayout>

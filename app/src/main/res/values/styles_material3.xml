@@ -67,4 +67,13 @@
     <!-- Bottom Navigation Style -->
     <!-- Dialog Styles -->
     <!-- Navigation styles removed due to compatibility issues -->
+    
+    <!-- Custom TimePicker Style with better visibility -->
+    <style name="TimePickerStyle" parent="@android:style/Widget.Material.Light.TimePicker">
+        <item name="android:headerBackground">@color/primaryBlue</item>
+        <item name="android:numbersTextColor">@color/white</item>
+        <item name="android:numbersSelectorColor">@color/modern_accent_teal</item>
+        <item name="android:numbersBackgroundColor">@android:color/transparent</item>
+        <item name="android:amPmTextColor">@color/white</item>
+    </style>
 </resources>

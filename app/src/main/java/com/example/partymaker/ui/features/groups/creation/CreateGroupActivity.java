@@ -105,6 +105,7 @@ public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallb
   private GoogleMap map;
   private LatLng chosenLatLng;
   private FusedLocationProviderClient locationClient;
+  private boolean isDatePickerShowing = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +224,11 @@ public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallb
     etPartyName = findViewById(R.id.etPartyName);
     groupTypeCheckBox = findViewById(R.id.cbGroupType);
     timePicker = findViewById(R.id.timePicker);
+    
+    // Apply custom theme to TimePicker programmatically for better visibility
+    if (timePicker != null && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+      timePicker.setHour(timePicker.getHour()); // Refresh to apply theme
+    }
 
     // Floating action button
     chatFab = findViewById(R.id.fabChat);
@@ -502,6 +508,7 @@ public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallb
     showViews(tvPartyDate, tvHours, tvSelectedDate, timePicker, btnAddGroup, btnBack2);
 
     hideMapAndLocationSearch();
+    // Automatically show date picker for better UX
     showDatePicker();
   }
 
@@ -934,31 +941,21 @@ public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallb
   }
 
   private void showDatePicker() {
+    // Prevent showing multiple date pickers
+    if (isDatePickerShowing) {
+      return;
+    }
+    
+    isDatePickerShowing = true;
+    
     DatePickerDialog datePickerDialog =
         new DatePickerDialog(
             this,
+            android.R.style.Theme_Material_Light_Dialog_Alert,
             (view, year, month, dayOfMonth) -> {
-              Calendar pickedDate = Calendar.getInstance();
-              pickedDate.set(year, month, dayOfMonth);
-
-              // Check if picked date is in the past
-              Calendar today = Calendar.getInstance();
-              today.set(Calendar.HOUR_OF_DAY, 0);
-              today.set(Calendar.MINUTE, 0);
-              today.set(Calendar.SECOND, 0);
-              today.set(Calendar.MILLISECOND, 0);
-
-              if (pickedDate.before(today)) {
-                Toast.makeText(
-                        this,
-                        "Cannot select a date in the past. Please choose today or a future date.",
-                        Toast.LENGTH_LONG)
-                    .show();
-                return;
-              }
-
               selectedDate.set(year, month, dayOfMonth);
               updateSelectedDate();
+              isDatePickerShowing = false;
             },
             selectedDate.get(Calendar.YEAR),
             selectedDate.get(Calendar.MONTH),
@@ -967,6 +964,22 @@ public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallb
     // Set minimum date to today to prevent past date selection
     Calendar today = Calendar.getInstance();
     datePickerDialog.getDatePicker().setMinDate(today.getTimeInMillis());
+    
+    // Fix button text color to be visible
+    datePickerDialog.setOnShowListener(dialog -> {
+      Button positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE);
+      Button negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE);
+      if (positiveButton != null) {
+        positiveButton.setTextColor(ContextCompat.getColor(this, R.color.primaryBlue));
+      }
+      if (negativeButton != null) {
+        negativeButton.setTextColor(ContextCompat.getColor(this, R.color.primaryBlue));
+      }
+    });
+    
+    // Handle dialog cancel/dismiss
+    datePickerDialog.setOnCancelListener(dialog -> isDatePickerShowing = false);
+    datePickerDialog.setOnDismissListener(dialog -> isDatePickerShowing = false);
 
     datePickerDialog.show();
   }
