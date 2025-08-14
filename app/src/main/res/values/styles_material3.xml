@@ -9,7 +9,7 @@
         <item name="rippleColor">@color/primaryBlue</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="strokeWidth">0dp</item>
-        <item name="android:stateListAnimator">@animator/material3_card_state_list_animator</item>
+        <item name="android:stateListAnimator">@null</item>
     </style>
 
     <!-- Material You Button Styles -->

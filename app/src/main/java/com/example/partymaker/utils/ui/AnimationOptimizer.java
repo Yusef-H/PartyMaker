@@ -137,49 +137,10 @@ public class AnimationOptimizer {
         return slideUp;
     }
     
-    // Staggered animation for RecyclerView items
+    // Staggered animation for RecyclerView items - DISABLED for smooth scrolling
     public static void applyStaggeredAnimation(RecyclerView recyclerView) {
-        if (recyclerView == null) {
-            return;
-        }
-        
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private boolean isAnimating = false;
-            
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                
-                // Only animate if scrolling down and not already animating
-                if (dy > 0 && !isAnimating) {
-                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                    if (layoutManager != null) {
-                        animateVisibleItems(recyclerView, layoutManager);
-                    }
-                }
-            }
-            
-            private void animateVisibleItems(RecyclerView recyclerView, LinearLayoutManager layoutManager) {
-                isAnimating = true;
-                int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                
-                for (int i = firstVisibleItem; i <= lastVisibleItem; i++) {
-                    View itemView = layoutManager.findViewByPosition(i);
-                    if (itemView != null && itemView.getAnimation() == null) {
-                        // Use property animator for better performance
-                        ObjectAnimator slideIn = ObjectAnimator.ofFloat(itemView, "translationY", 100f, 0f);
-                        slideIn.setDuration(MEDIUM_ANIMATION_DURATION);
-                        slideIn.setStartDelay((i - firstVisibleItem) * 50L);
-                        slideIn.setInterpolator(new OvershootInterpolator(1.1f));
-                        slideIn.start();
-                    }
-                }
-                
-                // Reset animation flag after delay
-                recyclerView.postDelayed(() -> isAnimating = false, MEDIUM_ANIMATION_DURATION + 300);
-            }
-        });
+        // Animation disabled to prevent unwanted scroll effects
+        Log.d(TAG, "Staggered animation disabled for better scroll performance");
     }
     
     // Combined animation for better performance
@@ -217,27 +178,10 @@ public class AnimationOptimizer {
         // Disable item animations for better scroll performance
         recyclerView.setItemAnimator(null);
         
-        // Add subtle entrance animations for new items
-        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(@NonNull View view) {
-                if (!shouldDisableAnimations(view.getContext())) {
-                    // Subtle fade-in for new items
-                    view.setAlpha(0f);
-                    ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
-                    fadeIn.setDuration(FAST_ANIMATION_DURATION);
-                    fadeIn.start();
-                }
-            }
-            
-            @Override
-            public void onChildViewDetachedFromWindow(@NonNull View view) {
-                // Clean up any running animations
-                view.clearAnimation();
-            }
-        });
+        // No entrance animations to prevent scroll jank
+        // Items will appear immediately without animation
         
-        Log.d(TAG, "RecyclerView animations optimized");
+        Log.d(TAG, "RecyclerView animations disabled for smooth scrolling");
     }
     
     // Shimmer effect animation for loading states

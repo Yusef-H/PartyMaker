@@ -45,9 +45,6 @@ import com.example.partymaker.utils.ui.components.LoadingStateManager;
 import com.example.partymaker.utils.ui.components.UiStateManager;
 import com.example.partymaker.utils.ui.feedback.UserFeedbackManager;
 import com.example.partymaker.utils.ui.navigation.NavigationManager;
-import com.example.partymaker.utils.ui.ViewOptimizationHelper;
-import com.example.partymaker.utils.ui.AnimationOptimizer;
-import com.example.partymaker.utils.ui.RecyclerViewScrollOptimizer;
 import com.example.partymaker.utils.infrastructure.PerformanceMonitor;
 import com.example.partymaker.viewmodel.core.MainActivityViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -366,44 +363,61 @@ public class MainActivity extends BaseActivity {
   }
 
   private void configureRecyclerView() {
-    // Use ViewOptimizationHelper for comprehensive RecyclerView optimization
-    ViewOptimizationHelper.optimizeRecyclerView(groupsRecyclerView);
+    // Basic RecyclerView setup without problematic optimizations
+    groupsRecyclerView.setHasFixedSize(true);
+    groupsRecyclerView.setItemViewCacheSize(25);
+    groupsRecyclerView.setDrawingCacheEnabled(true);
+    groupsRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
     
-    // Apply scroll optimizations for smoother scrolling
-    RecyclerViewScrollOptimizer.optimizeScrolling(groupsRecyclerView);
+    // Custom layout manager with performance optimizations
+    android.widget.LinearLayout.LayoutParams layoutParams = 
+        new android.widget.LinearLayout.LayoutParams(
+            android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+            android.widget.LinearLayout.LayoutParams.MATCH_PARENT);
+    groupsRecyclerView.setLayoutParams(layoutParams);
     
-    // Setup animation optimizations
-    AnimationOptimizer.optimizeRecyclerViewAnimations(groupsRecyclerView);
-    AnimationOptimizer.applyStaggeredAnimation(groupsRecyclerView);
+    androidx.recyclerview.widget.LinearLayoutManager layoutManager = 
+        new androidx.recyclerview.widget.LinearLayoutManager(this) {
+      @Override
+      public boolean supportsPredictiveItemAnimations() {
+        return false; // Better scroll performance
+      }
+    };
+    groupsRecyclerView.setLayoutManager(layoutManager);
+    
+    // Shared RecyclerView pool for memory efficiency
+    RecyclerView.RecycledViewPool sharedPool = new RecyclerView.RecycledViewPool();
+    sharedPool.setMaxRecycledViews(0, 25);
+    groupsRecyclerView.setRecycledViewPool(sharedPool);
+    
+    // Disable item animator for smooth scrolling
+    groupsRecyclerView.setItemAnimator(null);
     
     // Set adapter
     groupAdapter = new GroupAdapter(this, this::navigateToGroupScreen);
     groupsRecyclerView.setAdapter(groupAdapter);
     
-    Log.d(TAG, "RecyclerView configured with comprehensive optimizations and scroll enhancements");
+    Log.d(TAG, "RecyclerView configured with basic optimizations for smooth scrolling");
   }
   
   // Comprehensive view optimization method
   private void optimizeViews() {
     try {
-      // Optimize root view group
-      if (rootView instanceof ViewGroup) {
-        ViewOptimizationHelper.optimizeViewGroup((ViewGroup) rootView);
-      }
+      // Skip view optimizations that cause scrolling issues
       
       // Enable hardware acceleration for smooth animations
       getWindow().setFlags(
           WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
           WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
       
-      ViewOptimizationHelper.enableHardwareAcceleration(rootView);
+      // Hardware acceleration is already enabled
       
-      // Animate FAB entrance
+      // FAB is ready
       if (chatFloatingActionButton != null) {
-        AnimationOptimizer.animateViewEntrance(chatFloatingActionButton, FAB_ANIMATION_DELAY_MS);
+        Log.d(TAG, "FAB configured");
       }
       
-      Log.d(TAG, "Comprehensive view optimizations applied");
+      Log.d(TAG, "View setup completed");
     } catch (Exception e) {
       Log.e(TAG, "Error applying view optimizations", e);
     }
@@ -412,55 +426,35 @@ public class MainActivity extends BaseActivity {
   // ViewStub inflation methods for performance optimization
   private void inflateShimmerViewIfNeeded() {
     if (inflatedShimmerView == null && stubShimmerLoading != null) {
-      ViewOptimizationHelper.inflateViewStubAsync(stubShimmerLoading, new ViewOptimizationHelper.ViewStubInflationCallback() {
-        @Override
-        public void onInflationComplete(View inflatedView) {
-          inflatedShimmerView = inflatedView;
-          shimmerFrameLayout = inflatedView.findViewById(R.id.shimmer_container);
-          Log.d(TAG, "Shimmer view inflated successfully");
-        }
-        
-        @Override
-        public void onInflationFailed(String error) {
-          Log.e(TAG, "Failed to inflate shimmer view: " + error);
-        }
-      });
+      try {
+        inflatedShimmerView = stubShimmerLoading.inflate();
+        shimmerFrameLayout = inflatedShimmerView.findViewById(R.id.shimmer_container);
+        Log.d(TAG, "Shimmer view inflated successfully");
+      } catch (Exception e) {
+        Log.e(TAG, "Failed to inflate shimmer view", e);
+      }
     }
   }
   
   private void inflateEmptyStateViewIfNeeded() {
     if (inflatedEmptyView == null && stubEmptyState != null) {
-      ViewOptimizationHelper.inflateViewStubAsync(stubEmptyState, new ViewOptimizationHelper.ViewStubInflationCallback() {
-        @Override
-        public void onInflationComplete(View inflatedView) {
-          inflatedEmptyView = inflatedView;
-          // Apply entrance animation
-          AnimationOptimizer.animateViewEntrance(inflatedView, 0);
-          Log.d(TAG, "Empty state view inflated successfully");
-        }
-        
-        @Override
-        public void onInflationFailed(String error) {
-          Log.e(TAG, "Failed to inflate empty state view: " + error);
-        }
-      });
+      try {
+        inflatedEmptyView = stubEmptyState.inflate();
+        Log.d(TAG, "Empty state view inflated successfully");
+      } catch (Exception e) {
+        Log.e(TAG, "Failed to inflate empty state view", e);
+      }
     }
   }
   
   private void inflateLoadingOverlayIfNeeded() {
     if (inflatedLoadingOverlay == null && stubLoadingOverlay != null) {
-      ViewOptimizationHelper.inflateViewStubAsync(stubLoadingOverlay, new ViewOptimizationHelper.ViewStubInflationCallback() {
-        @Override
-        public void onInflationComplete(View inflatedView) {
-          inflatedLoadingOverlay = inflatedView;
-          Log.d(TAG, "Loading overlay inflated successfully");
-        }
-        
-        @Override
-        public void onInflationFailed(String error) {
-          Log.e(TAG, "Failed to inflate loading overlay: " + error);
-        }
-      });
+      try {
+        inflatedLoadingOverlay = stubLoadingOverlay.inflate();
+        Log.d(TAG, "Loading overlay inflated successfully");
+      } catch (Exception e) {
+        Log.e(TAG, "Failed to inflate loading overlay", e);
+      }
     }
   }
 
@@ -1405,8 +1399,6 @@ public class MainActivity extends BaseActivity {
     // With ViewStub optimization, empty state is handled through inflatedEmptyView
     if (inflatedEmptyView != null) {
       inflatedEmptyView.setVisibility(View.VISIBLE);
-      // Apply entrance animation
-      AnimationOptimizer.animateViewEntrance(inflatedEmptyView, 0);
     } else {
       // Fallback to inflating empty state
       inflateEmptyStateViewIfNeeded();
@@ -1629,12 +1621,7 @@ public class MainActivity extends BaseActivity {
   @Override
   protected void clearActivityReferences() {
     // Clear view references to prevent memory leaks
-    if (rootView != null) {
-      ViewOptimizationHelper.clearViewReferences(rootView);
-    }
-    
-    // Clear animation cache
-    AnimationOptimizer.clearAnimationCache();
+    // Clean up completed
     
     // Clear adapter and view model references
     if (groupAdapter != null) {

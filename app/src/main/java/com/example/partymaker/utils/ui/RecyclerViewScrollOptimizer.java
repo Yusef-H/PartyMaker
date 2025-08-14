@@ -133,20 +133,16 @@ public class RecyclerViewScrollOptimizer {
          */
         private void onScrollStart(@NonNull RecyclerView recyclerView) {
             try {
-                // Reduce quality during scroll for better performance
-                for (int i = 0; i < recyclerView.getChildCount(); i++) {
-                    View child = recyclerView.getChildAt(i);
-                    if (child != null) {
-                        // Use software layer during scroll to reduce GPU operations
-                        child.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    }
-                }
+                // Skip layer type changes - causes visual issues
                 
-                // Pause complex animations
-                recyclerView.getItemAnimator().setMoveDuration(0);
-                recyclerView.getItemAnimator().setAddDuration(0);
-                recyclerView.getItemAnimator().setRemoveDuration(0);
-                recyclerView.getItemAnimator().setChangeDuration(0);
+                // Pause complex animations if animator exists
+                RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+                if (animator != null) {
+                    animator.setMoveDuration(0);
+                    animator.setAddDuration(0);
+                    animator.setRemoveDuration(0);
+                    animator.setChangeDuration(0);
+                }
                 
                 Log.v(TAG, "Scroll optimizations activated");
             } catch (Exception e) {
@@ -159,24 +155,18 @@ public class RecyclerViewScrollOptimizer {
          */
         private void onScrollStop(@NonNull RecyclerView recyclerView) {
             try {
-                // Restore quality when idle
-                for (int i = 0; i < recyclerView.getChildCount(); i++) {
-                    View child = recyclerView.getChildAt(i);
-                    if (child != null) {
-                        // Re-enable hardware acceleration when idle
-                        child.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                    }
-                }
+                // Skip layer type changes - causes visual issues
                 
                 // Resume image loading
                 ImageOptimizationManager.resumeImageLoading();
                 
-                // Restore animations
-                if (recyclerView.getItemAnimator() != null) {
-                    recyclerView.getItemAnimator().setMoveDuration(250);
-                    recyclerView.getItemAnimator().setAddDuration(250);
-                    recyclerView.getItemAnimator().setRemoveDuration(250);
-                    recyclerView.getItemAnimator().setChangeDuration(250);
+                // Restore animations if animator exists
+                RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+                if (animator != null) {
+                    animator.setMoveDuration(250);
+                    animator.setAddDuration(250);
+                    animator.setRemoveDuration(250);
+                    animator.setChangeDuration(250);
                 }
                 
                 Log.v(TAG, "Scroll optimizations deactivated");
