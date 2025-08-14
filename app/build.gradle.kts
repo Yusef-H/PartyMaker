@@ -66,7 +66,8 @@ android {
                 ?: ""
 
         val mapsKey =
-            properties.getProperty("maps.api.key")
+            properties.getProperty("MAPS_KEY")
+                ?: properties.getProperty("maps.api.key")
                 ?: properties.getProperty("MAPS_API_KEY")
                 ?: System.getenv("MAPS_API_KEY")
                 ?: ""

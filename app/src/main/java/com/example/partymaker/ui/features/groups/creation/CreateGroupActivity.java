@@ -3,6 +3,8 @@ package com.example.partymaker.ui.features.groups.creation;
 import static com.example.partymaker.utils.core.IntentExtrasManager.hideViews;
 import static com.example.partymaker.utils.core.IntentExtrasManager.showViews;
 
+import com.example.partymaker.BuildConfig;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -137,8 +139,9 @@ public class CreateGroupActivity extends BaseActivity implements OnMapReadyCallb
   // Initialize Google Places API if not already initialized
   private void initializePlacesAPI() {
     if (!Places.isInitialized()) {
-      String apiKey = IntentExtrasManager.getApiKey(this, "MAPS_KEY");
-      if (apiKey.isEmpty()) {
+      // Use the API key from BuildConfig (loaded from secrets.properties)
+      String apiKey = BuildConfig.MAPS_API_KEY;
+      if (apiKey == null || apiKey.isEmpty() || apiKey.equals("YOUR_API_KEY_HERE")) {
         // Use a default key from resources or show an error message
         Toast.makeText(
                 this,
